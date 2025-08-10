@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enrollment Hub — Admin Portal (Protected)</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- Password Gate -->
+  <div id="gate" class="gate">
+    <div class="gate-card">
+      <h1>Admin Portal</h1>
+      <p class="muted">Enter the password to continue.</p>
+      <form id="gate-form" class="form">
+        <input id="gate-input" type="password" placeholder="Password" autocomplete="current-password" required />
+        <div class="controls">
+          <button class="btn primary" type="submit">Unlock</button>
+          <span id="gate-error" class="muted small" style="color:#b91c1c;display:none">Incorrect password. Try again.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <header class="app-header" style="min-height:var(--header-h)">
+    <div class="wrap">
+      <div class="row">
+        <div class="logo"><span class="dot"></span> Enrollment Hub</div>
+        <div class="grow"></div>
+        <div class="date-pill"><span id="today-label"></span></div>
+      </div>
+      <nav class="quickbar" aria-label="Quick actions">
+        <a class="btn" href="../enrollment-hub-dashboard-v11/index.html" target="_blank" rel="noopener">Home Dashboard</a>
+        <a class="btn" href="../studio-central-v3/index.html" target="_blank" rel="noopener">Studio Central</a>
+        <a class="btn primary" href="#" aria-current="page">Admin Portal</a>
+      </nav>
+    </div>
+  </header>
+
+  <main aria-live="polite">
+    <div class="wrap">
+      <div class="grid">
+        <section>
+          <article class="card admin-section" id="employees">
+            <h3>Employees</h3>
+            <div class="panel">
+              <div id="emp-rows" class="repeater"></div>
+              <div class="controls">
+                <button id="add-emp" class="btn">Add employee</button>
+                <button id="save-emp" class="btn primary">Save employees</button>
+              </div>
+              <p class="muted small" style="margin-top:6px">These names populate the Daily Check-In dropdown and the “Who” menu in Today’s schedule.</p>
+            </div>
+          </article>
+
+          <article class="card admin-section" id="announcements">
+            <h3>Announcements</h3>
+            <div class="row-2">
+              <div class="panel">
+                <h4>Today</h4>
+                <div class="form">
+                  <label for="today-title">Title</label>
+                  <input id="today-title" type="text" placeholder="e.g., Phones are hot" />
+                  <label for="today-note">Note</label>
+                  <textarea id="today-note" placeholder="Short note that appears under the title"></textarea>
+                </div>
+                <div class="subhead">Bullet items</div>
+                <div id="today-list" class="repeater"></div>
+                <div class="controls">
+                  <button id="add-today" class="btn">Add item</button>
+                  <button id="save-today" class="btn primary">Save Today</button>
+                </div>
+              </div>
+              <div class="panel">
+                <h4>This Week</h4>
+                <div class="form">
+                  <label for="week-title">Title</label>
+                  <input id="week-title" type="text" placeholder="e.g., Training Thursday" />
+                  <label for="week-note">Note</label>
+                  <textarea id="week-note" placeholder="Short note that appears under the title"></textarea>
+                </div>
+                <div class="subhead">Bullet items</div>
+                <div id="week-list" class="repeater"></div>
+                <div class="controls">
+                  <button id="add-week" class="btn">Add item</button>
+                  <button id="save-week" class="btn primary">Save Week</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="card admin-section" id="skill-spill">
+            <h3>The Skill Spill</h3>
+            <div class="form grid-2">
+              <div>
+                <label for="ss-title">Title</label>
+                <input id="ss-title" type="text" placeholder="e.g., Overcoming Common Enrollment Objections" />
+              </div>
+              <div>
+                <label for="ss-link">Video Link</label>
+                <input id="ss-link" type="url" placeholder="https://..." />
+              </div>
+              <div class="full">
+                <label for="ss-text">Description</label>
+                <textarea id="ss-text" placeholder="Brief notes for the team..."></textarea>
+              </div>
+            </div>
+            <div class="controls">
+              <button id="save-ss" class="btn primary">Save Skill Spill</button>
+            </div>
+          </article>
+
+          <article class="card admin-section" id="quota">
+            <h3>Quota Snapshot</h3>
+            <div class="panel">
+              <h4>Team</h4>
+              <div class="form grid-2">
+                <div>
+                  <label for="team-achieved">Achieved</label>
+                  <input id="team-achieved" type="number" min="0" step="1" />
+                </div>
+                <div>
+                  <label for="team-target">Target</label>
+                  <input id="team-target" type="number" min="0" step="1" />
+                </div>
+              </div>
+            </div>
+            <div class="panel" style="margin-top:10px">
+              <h4>People</h4>
+              <div id="people-rows" class="repeater"></div>
+              <div class="controls">
+                <button id="add-person" class="btn">Add person</button>
+                <button id="save-people" class="btn primary">Save people</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="card admin-section" id="today-schedule">
+            <h3>Today’s Schedule</h3>
+            <div id="sched-rows" class="repeater"></div>
+            <div class="controls">
+              <button id="add-slot" class="btn">Add row</button>
+              <button id="save-sched" class="btn primary">Save schedule</button>
+            </div>
+          </article>
+        </section>
+
+        <aside>
+          <article class="card admin-section" id="checkins">
+            <h3>Daily Check-Ins</h3>
+            <div class="controls" style="justify-content:space-between">
+              <span class="muted small">View and delete submissions</span>
+              <button id="clear-checkins" class="btn">Delete all</button>
+            </div>
+            <div id="checkins-table" class="table-wrap"></div>
+          </article>
+
+          <article class="card admin-section" id="thoughts">
+            <h3>Thought Box</h3>
+            <div class="controls" style="justify-content:space-between">
+              <span class="muted small">Anonymous submissions</span>
+              <button id="clear-thoughts" class="btn">Delete all</button>
+            </div>
+            <div id="thoughts-table" class="table-wrap"></div>
+          </article>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="wrap" style="opacity:.7;padding-bottom:40px">
+    <div class="row" style="justify-content:center;font-size:12px" aria-hidden="true">
+      <span>Mockup • Client-side password gate (session-only)</span>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

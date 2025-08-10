@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enrollment Hub — Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+<header class="app-header" style="min-height:var(--header-h)">
+  <div class="wrap">
+    <div class="row">
+      <div class="logo"><span class="dot"></span> Enrollment Hub</div>
+      <div class="grow"></div>
+      <div class="date-pill"><span id="today-label"></span></div>
+    </div>
+    <nav class="quickbar" aria-label="Quick actions">
+      <a class="btn primary" href="#checkin">Daily Check-In</a>
+      <a class="btn" href="studio-central.html" target="_blank" rel="noopener">Studio Central</a>
+      <a class="btn" href="#quota">Quota Snapshot</a>
+      <a class="btn" href="#weekly-training">The Skill Spill</a>
+      <a class="btn" href="#thought-box">Thought Box</a>
+      <a class="btn" href="admin.html" target="_blank" rel="noopener">Admin Portal</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="grid">
+      <section>
+        <article class="card ann" id="announcements">
+          <h3>Announcements</h3>
+          <div class="row-2">
+            <div>
+              <span class="tag today">Today</span>
+              <div id="today-title" class="title" style="font-weight:800;margin-top:8px"></div>
+              <div id="today-note" class="muted small" style="margin:6px 0 10px"></div>
+              <div id="ann-today" class="list"></div>
+            </div>
+            <div>
+              <span class="tag week">This Week</span>
+              <div id="week-title" class="title" style="font-weight:800;margin-top:8px"></div>
+              <div id="week-note" class="muted small" style="margin:6px 0 10px"></div>
+              <div id="ann-week" class="list"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card today" id="today">
+          <h3>Today</h3>
+          <table aria-label="Schedule overview">
+            <thead><tr><th>Who</th><th>Shift</th><th>Role</th><th>Lunch</th><th>1-on-1</th></tr></thead>
+            <tbody id="today-body"></tbody>
+          </table>
+        </article>
+
+        <article class="card training-highlight" id="weekly-training">
+          <h3>The Skill Spill</h3>
+          <div class="list training-list" id="skillspill-wrap"></div>
+        </article>
+
+        <article class="card" id="checkin">
+          <h3>Daily Check-In</h3>
+          <form class="form" id="checkin-form" action="#" method="post">
+            <div class="row-2">
+              <div><label for="who">Your name</label><select id="who" name="who" required><option value="">Select…</option></select></div>
+              <div><label for="date">Date</label><input id="date" name="date" type="date" required /></div>
+            </div>
+
+            <fieldset class="group">
+              <legend>How manageable was your workload today?</legend>
+              <p class="muted small" style="margin:-6px 0 6px">1 = I got to everything • 2 = Mostly manageable • 3 = It was too much</p>
+              <div class="controls">
+                <label><input type="radio" name="load" value="1" required /> 1</label>
+                <label><input type="radio" name="load" value="2" /> 2</label>
+                <label><input type="radio" name="load" value="3" /> 3</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Did you complete all the deals assigned to you?</legend>
+              <div class="controls">
+                <label><input type="radio" name="deals_done" value="yes" required /> Yes</label>
+                <label><input type="radio" name="deals_done" value="no" /> No</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Did you complete all the tasks assigned to you?</legend>
+              <div class="controls">
+                <label><input type="radio" name="tasks_done" value="yes" required /> Yes</label>
+                <label><input type="radio" name="tasks_done" value="no" /> No</label>
+              </div>
+            </fieldset>
+
+            <div><label for="notes">Comments about how things went <span class="muted">(optional)</span></label><textarea id="notes" name="notes" placeholder="Share any wins, blockers, or feedback…"></textarea></div>
+            <div class="controls"><button class="btn" type="submit">Submit check-in</button><span class="muted">All required questions must be answered before submitting.</span></div>
+          </form>
+        </article>
+
+        <article class="card inbox" id="thought-box">
+          <h3>Thought Box</h3>
+          <p class="muted">Share ideas, comments, questions, or concerns — submitted anonymously.</p>
+          <form class="form" id="thought-form" action="#" method="post">
+            <div><label for="thoughts">Your message</label><textarea id="thoughts" name="thoughts" placeholder="Drop your thoughts here…" required></textarea></div>
+            <div class="controls"><button class="btn" type="submit">Submit</button><span class="muted">No name or email collected.</span></div>
+          </form>
+        </article>
+      </section>
+
+      <aside>
+        <article class="card quota" id="quota">
+          <h3>Quota Snapshot</h3>
+          <div class="list" style="gap:12px">
+            <div class="item" style="background:#fff">
+              <div style="min-width:90px"><strong>Team</strong></div>
+              <div style="flex:1">
+                <div class="bar"><div class="bar-fill" id="team-bar"></div></div>
+                <div class="muted small" id="team-text" style="margin-top:6px">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="list quota-people" id="quota-people" style="margin-top:10px"></div>
+        </article>
+
+        <h3 class="sidebar-title">Links & Resources</h3>
+        <article class="card links accent-teal">
+          <h4>OPUS Dashboards</h4>
+          <div class="list">
+            <a class="link-item" href="https://thepianoplaceutah.opus1.io/today" target="_blank" rel="noopener"><span class="dot"></span>The Piano Place</a>
+            <a class="link-item" href="https://greateraustinmusicacademy.opus1.io/today" target="_blank" rel="noopener"><span class="dot"></span>Greater Austin Music Academy</a>
+            <a class="link-item" href="https://gwinnettschoolofmusic.opus1.io/today" target="_blank" rel="noopener"><span class="dot"></span>Gwinnett School of Music</a>
+            <a class="link-item" href="https://artsacademy.opus1.io/dashboard" target="_blank" rel="noopener"><span class="dot"></span>Arts Academy</a>
+            <a class="link-item" href="https://champaignschoolofmusic.opus1.io/dashboard" target="_blank" rel="noopener"><span class="dot"></span>Champaign School of Music</a>
+            <a class="link-item" href="https://southloopschoolofmusic.opus1.io/dashboard" target="_blank" rel="noopener"><span class="dot"></span>South Loop School of Music</a>
+            <a class="link-item" href="https://flourishmusicacademy.opus1.io/today" target="_blank" rel="noopener"><span class="dot"></span>Flourish Music Academy</a>
+            <a class="link-item" href="https://musiclearningcenter.opus1.io/today" target="_blank" rel="noopener"><span class="dot"></span>Music Learning Center</a>
+          </div>
+        </article>
+
+        <article class="card links accent-blue">
+          <h4>Enrollment Tools</h4>
+          <div class="list">
+            <a class="link-item" href="https://app.hubspot.com/contacts/20717024/objects/0-3/views/my/board" target="_blank" rel="noopener"><span class="dot"></span>HubSpot</a>
+            <a class="link-item" href="https://trello.com/b/Ds2LQfzj/the-piano-place" target="_blank" rel="noopener"><span class="dot"></span>Trello</a>
+            <a class="link-item" href="https://share.hsforms.com/1R2qMOoHiQJauAQfW0Y6oZQcc1cw" target="_blank" rel="noopener"><span class="dot"></span>Registration Form</a>
+            <a class="link-item" href="https://share.hsforms.com/10JAeGrHoQNefSDQnzZjHYwcc1cw" target="_blank" rel="noopener"><span class="dot"></span>Withdrawal Form</a>
+            <a class="link-item" href="https://docs.google.com/spreadsheets/d/1Maggdc4bKH-cbBnHcbvH4q677RH4HnElo76x1Ifa-3k/edit?usp=sharing" target="_blank" rel="noopener"><span class="dot"></span>Sales Tracking</a>
+            <a class="link-item" href="https://sites.google.com/thepianoplaceutah.com/enrollment-team-hub/home?authuser=1&pli=1" target="_blank" rel="noopener"><span class="dot"></span>Enrollment Hub</a>
+          </div>
+        </article>
+
+        <article class="card links accent-amber">
+          <h4>Team Resources</h4>
+          <div class="list">
+            <a class="link-item" href="#" target="_blank" rel="noopener"><span class="dot"></span>Enrollment Calendar</a>
+            <a class="link-item" href="#" target="_blank" rel="noopener"><span class="dot"></span>Request Time Off</a>
+            <a class="link-item" href="#" target="_blank" rel="noopener"><span class="dot"></span>Team Policies</a>
+            <a class="link-item" href="#" target="_blank" rel="noopener"><span class="dot"></span>Weekly Meeting Link</a>
+            <a class="link-item" href="#" target="_blank" rel="noopener"><span class="dot"></span>One-on-one Meeting Link</a>
+            <a class="link-item" href="#" target="_blank" rel="noopener"><span class="dot"></span>Training Resources</a>
+            <a class="link-item" href="#" target="_blank" rel="noopener"><span class="dot"></span>Quotas</a>
+          </div>
+        </article>
+      </aside>
+    </div>
+  </div>
+</main>
+<footer class="wrap" style="opacity:.7;padding-bottom:40px">
+  <div class="row" style="justify-content:center;font-size:12px" aria-hidden="true">
+    <span>Mockup • No live data • Admin is the only place for edits</span>
+  </div>
+</footer>
+<script src="dashboard.js"></script>
+</body></html>

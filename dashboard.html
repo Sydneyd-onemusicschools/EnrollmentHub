@@ -172,3 +172,138 @@
 </footer>
 <script src="dashboard.js"></script>
 </body></html>
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  // Supabase (your actual project + anon key)
+  const SUPABASE_URL = "https://iwsbfkctkhihppmbbhhi.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3c2Jma2N0a2hpaHBwbWJiaGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4ODI0MDIsImV4cCI6MjA3MDQ1ODQwMn0.uojWO03aBqvKVZ-ivRvIOTNRreoTsGzR3L-T6VLWw64";
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Keep each page separate (so admin.html won’t mix with dashboard.html)
+  const PAGE = location.pathname || "dashboard.html";
+
+  // Grab all user-editable fields automatically
+  function allFields() {
+    return Array.from(document.querySelectorAll(
+      'input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]), textarea, select, [contenteditable]'
+    ));
+  }
+
+  function keyFor(el, index) {
+    // Radios are grouped by name
+    if (el.tagName === "INPUT" && el.type === "radio") {
+      const name = el.name || el.id || `radio-${index}`;
+      return `radio:${name}`;
+    }
+    // Prefer id, then name, else assign one
+    if (el.id) return el.id;
+    if (el.name) return `name:${el.name}`;
+    const k = `${el.tagName.toLowerCase()}-${index}`;
+    el.id = k; // give it a stable id so it stays consistent
+    return k;
+  }
+
+  function getCurrentRadioValue(name) {
+    const checked = document.querySelector(`input[type="radio"][name="${CSS.escape(name)}"]:checked`);
+    return checked ? checked.value : "";
+  }
+
+  function setRadioValue(name, value) {
+    const radios = document.querySelectorAll(`input[type="radio"][name="${CSS.escape(name)}"]`);
+    radios.forEach(r => r.checked = (r.value === value));
+  }
+
+  function getVal(el) {
+    if (el.isContentEditable) return el.innerHTML;
+    if (el.tagName === "INPUT") {
+      if (el.type === "checkbox") return String(el.checked);
+      if (el.type === "radio")   return null; // handled per-group
+      return el.value;
+    }
+    if (el.tagName === "TEXTAREA" || el.tagName === "SELECT") return el.value;
+    return el.textContent;
+  }
+
+  function setVal(el, v) {
+    if (v === undefined || v === null) return;
+    if (el.isContentEditable) { el.innerHTML = v; return; }
+    if (el.tagName === "INPUT") {
+      if (el.type === "checkbox") { el.checked = (v === "true"); return; }
+      if (el.type === "radio") { /* handled in batch by name */ return; }
+      el.value = v; return;
+    }
+    if (el.tagName === "TEXTAREA" || el.tagName === "SELECT") { el.value = v; return; }
+    el.textContent = v;
+  }
+
+  // Load saved values for this page
+  async function loadState() {
+    const { data, error } = await supabase
+      .from("page_state")
+      .select("element,value")
+      .eq("page", PAGE);
+    if (error) { console.error("Load error:", error); return; }
+
+    const map = new Map(data.map(r => [r.element, r.value ?? ""]));
+
+    // First set all non-radio controls
+    allFields().forEach((el, i) => {
+      const key = keyFor(el, i);
+      if (key.startsWith("radio:")) return;
+      setVal(el, map.get(key));
+    });
+
+    // Then set radio groups by saved value
+    const radioGroups = new Set(
+      allFields()
+        .filter(el => el.tagName === "INPUT" && el.type === "radio")
+        .map(r => r.name || r.id)
+    );
+    radioGroups.forEach(groupName => {
+      const key = `radio:${groupName}`;
+      const saved = map.get(key);
+      if (saved !== undefined) setRadioValue(groupName, saved);
+    });
+  }
+
+  // Debounced batch save
+  const pending = new Map();
+  let timer = null;
+  function queueSave(key, value) {
+    pending.set(key, value);
+    if (!timer) timer = setTimeout(flush, 400);
+  }
+  async function flush() {
+    const rows = Array.from(pending.entries()).map(([element, value]) => ({ page: PAGE, element, value }));
+    pending.clear();
+    timer = null;
+    if (!rows.length) return;
+    const { error } = await supabase
+      .from("page_state")
+      .upsert(rows, { onConflict: "page,element" });
+    if (error) console.error("Save error:", error);
+  }
+
+  function bindSaves() {
+    allFields().forEach((el, i) => {
+      const key = keyFor(el, i);
+      const handler = () => {
+        if (el.tagName === "INPUT" && el.type === "radio") {
+          const name = el.name || el.id || key.replace(/^radio:/, "");
+          const v = getCurrentRadioValue(name);
+          queueSave(`radio:${name}`, v);
+        } else {
+          const v = getVal(el, i);
+          if (v !== null) queueSave(key, v);
+        }
+      };
+      el.addEventListener("input", handler);
+      el.addEventListener("change", handler);
+    });
+  }
+
+  await loadState();
+  bindSaves();
+</script>

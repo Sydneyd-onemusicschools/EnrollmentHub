@@ -171,4 +171,86 @@
   </div>
 </footer>
 <script src="dashboard.js"></script>
+  <script type="module">
+  // 1) Firebase SDKs from Google CDN
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  // 2) REPLACE these with your real values from Firebase settings
+  const firebaseConfig = {
+    apiKey: "REPLACE_ME",
+    authDomain: "REPLACE_ME",
+    databaseURL: "REPLACE_ME",   // looks like https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com or ...firebasedatabase.app
+    projectId: "REPLACE_ME",
+    appId: "REPLACE_ME"
+  };
+
+  // 3) Start Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const auth = getAuth();
+  await signInAnonymously(auth);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+
+    // One shared bucket for this page
+    const baseRef = ref(db, "page_state/dashboard");
+
+    // Grab all inputs/selects/textareas
+    const all = Array.from(document.querySelectorAll("input, select, textarea"))
+      // ignore buttons/files to keep things clean
+      .filter(el => !["submit", "button", "file"].includes(el.type || ""));
+
+    const keyOf = (el) => el.id || el.name; // make sure each field has an id or name
+    const getVal = (el) => {
+      if (el.type === "checkbox") return el.checked;
+      if (el.type === "radio") {
+        const checked = document.querySelector(`input[type="radio"][name="${el.name}"]:checked`);
+        return checked ? checked.value : "";
+      }
+      return el.value;
+    };
+    const setVal = (el, val) => {
+      if (el.type === "checkbox") el.checked = !!val;
+      else if (el.type === "radio") {
+        const r = document.querySelector(`input[type="radio"][name="${el.name}"][value="${val}"]`);
+        if (r) r.checked = true;
+      } else if (val !== undefined && val !== null) {
+        el.value = val;
+      }
+    };
+
+    // Load current saved state
+    try {
+      const snap = await get(baseRef);
+      const data = snap.val() || {};
+      all.forEach(el => keyOf(el) && setVal(el, data[keyOf(el)]));
+    } catch (e) { console.error(e); }
+
+    // Debounced save
+    let pending = {};
+    let timer = null;
+    const flush = () => { update(baseRef, pending).catch(console.error); pending = {}; timer = null; };
+    const queue = (k, v) => { pending[k] = v; if (!timer) timer = setTimeout(flush, 300); };
+
+    all.forEach(el => {
+      const k = keyOf(el);
+      if (!k) return;
+      el.addEventListener("input", () => queue(k, getVal(el)));
+      el.addEventListener("change", () => queue(k, getVal(el)));
+    });
+
+    // Optional: auto-fill today's date if empty (expects <input id="date" type="date">)
+    const dateEl = document.getElementById("date");
+    if (dateEl && !dateEl.value) {
+      const d = new Date();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      dateEl.value = `${d.getFullYear()}-${mm}-${dd}`;
+      queue("date", dateEl.value);
+    }
+  });
+</script>
 </body></html>

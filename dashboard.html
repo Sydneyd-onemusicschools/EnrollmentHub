@@ -29,15 +29,6 @@
       <section>
         <article class="card ann" id="announcements">
           <h3>Announcements</h3>
-<h4>Today</h4>
-<div id="announce-today" contenteditable="true">
-  Type today’s announcements here…
-</div>
-
-<h4>This Week</h4>
-<div id="announce-week" contenteditable="true">
-  This week’s notes…
-</div>
           <div class="row-2">
             <div>
               <span class="tag today">Today</span>
@@ -60,29 +51,6 @@
             <thead><tr><th>Who</th><th>Shift</th><th>Role</th><th>Lunch</th><th>1-on-1</th></tr></thead>
             <tbody id="today-body"></tbody>
           </table>
-          <table>
-  <thead>
-    <tr><th>Who</th><th>Shift</th><th>Role</th><th>Lunch</th><th>1-on-1</th></tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td contenteditable="true" data-sync data-key="today-r1-who"></td>
-      <td contenteditable="true" data-sync data-key="today-r1-shift"></td>
-      <td contenteditable="true" data-sync data-key="today-r1-role"></td>
-      <td contenteditable="true" data-sync data-key="today-r1-lunch"></td>
-      <td contenteditable="true" data-sync data-key="today-r1-11"></td>
-    </tr>
-    <tr>
-      <td contenteditable="true" data-sync data-key="today-r2-who"></td>
-      <td contenteditable="true" data-sync data-key="today-r2-shift"></td>
-      <td contenteditable="true" data-sync data-key="today-r2-role"></td>
-      <td contenteditable="true" data-sync data-key="today-r2-lunch"></td>
-      <td contenteditable="true" data-sync data-key="today-r2-11"></td>
-    </tr>
-    <!-- add more rows if you need -->
-  </tbody>
-</table>
-
         </article>
 
         <article class="card training-highlight" id="weekly-training">
@@ -92,17 +60,7 @@
 
         <article class="card" id="checkin">
           <h3>Daily Check-In</h3>
-          <h3>Daily Check-Ins</h3>
-<div id="checkins-table"></div>
-<script>
-  renderSubmissions('checkin-form', document.getElementById('checkins-table'));
-</script>
-     <h3>Daily Check-In</h3>
-<form class="form" id="checkin-form"
-      action="#"
-      method="post"
-      data-reset-on-submit
-      data-success-message="Check-in saved!">
+          <form class="form" id="checkin-form" action="#" method="post">
             <div class="row-2">
               <div><label for="who">Your name</label><select id="who" name="who" required><option value="">Select…</option></select></div>
               <div><label for="date">Date</label><input id="date" name="date" type="date" required /></div>
@@ -213,15 +171,4 @@
   </div>
 </footer>
 <script src="dashboard.js"></script>
-  <script type="module">
-    <script src="state-sync.js"></script>
-<script>
-  setupSharedState({
-    binId: '689971ced0ea881f40566634',
-    apiKey: '$2a$10$QwNPU417yQUGiJmLBYbRke3Z1ihLINypRyZc6WttyJpUL/8EJpeNy',
-    keyType: 'access',
-    debounceMs: 600
-  });
-</script>
 </body></html>
-

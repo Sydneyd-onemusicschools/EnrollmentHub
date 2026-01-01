@@ -860,9 +860,9 @@
                 if (error) throw error;
 
                 policies = policies.filter(i => i.id !== currentItemId);
-                sections = steps.filter(s => s.policy_id !== currentItemId);
+                sections = sections.filter(s => s.policy_id !== currentItemId);
 
-                showToast('Training item deleted', true);
+                showToast('Policy deleted', true);
                 backToList();
             } catch (error) {
                 console.error('Error deleting policy:', error);

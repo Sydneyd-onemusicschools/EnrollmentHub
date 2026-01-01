@@ -686,6 +686,7 @@
                 <!-- Save Footer -->
                 <div class="save-footer">
                     <button class="back-button" onclick="backToList()">Cancel</button>
+                    <button class="button" style="background: #ef4444; margin-left: auto;" onclick="deleteStudio()">Delete Studio</button>
                     <button class="button" onclick="saveStudio()">Save Studio</button>
                 </div>
             </div>
@@ -914,6 +915,33 @@
             } catch (error) {
                 console.error('Error saving studio:', error);
                 showToast('Error saving studio', false);
+            }
+        }
+
+        window.deleteStudio = async function() {
+            if (!confirm('Are you sure you want to delete this studio? This will also delete all associated instruments, programs, links, and sections. This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('studios')
+                    .delete()
+                    .eq('id', currentStudioId);
+
+                if (error) throw error;
+
+                studios = studios.filter(s => s.id !== currentStudioId);
+                instruments = instruments.filter(i => i.studio_id !== currentStudioId);
+                programs = programs.filter(p => p.studio_id !== currentStudioId);
+                links = links.filter(l => l.studio_id !== currentStudioId);
+                sections = sections.filter(s => s.studio_id !== currentStudioId);
+
+                showToast('Studio deleted', true);
+                backToList();
+            } catch (error) {
+                console.error('Error deleting studio:', error);
+                showToast('Error deleting studio', false);
             }
         }
 

@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Snippets</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        #sidebar-container {
+            /* Sidebar placeholder */
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            margin-top: 4rem;
+        }
+
+        .section-header:first-of-type {
+            margin-top: 0;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.02em;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .category-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            flex: 1;
+            cursor: pointer;
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            letter-spacing: -0.01em;
+        }
+
+        .category-name:hover {
+            background: #fafafa;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0;
+            border-radius: 10px;
+            opacity: 0;
+            transition: all 0.2s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            font-weight: 600;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .category-card:hover .delete-btn,
+        .snippet-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .snippets-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .snippet-card {
+            background: #fafafa;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1.5px solid transparent;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .snippet-card:hover {
+            background: white;
+            border-color: #f0f0f0;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .snippet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .snippet-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.35rem;
+            flex: 1;
+        }
+
+        .snippet-subheading {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .snippet-content {
+            color: #1a1a1a;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .snippet-content p {
+            margin-bottom: 0.75rem;
+        }
+
+        .snippet-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .snippet-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .snippet-btn {
+            background: #f5f5f5;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .snippet-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .snippet-btn.copy-btn:hover {
+            background: #10b981;
+        }
+
+        .button-outline {
+            width: 100%;
+            background: transparent;
+            border: 2px dashed #e5e7eb;
+            border-radius: 14px;
+            padding: 1rem;
+            color: #9ca3af;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+        }
+
+        .button-outline:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.03);
+        }
+
+        .empty-state {
+            color: #9ca3af;
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 3rem 1rem;
+            font-weight: 400;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .paragraphs-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .paragraph-item {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1.5px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .paragraph-item:focus-within {
+            background: white;
+            border-color: #ff6b6b;
+        }
+
+        .paragraph-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .toolbar-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 700;
+            font-family: serif;
+        }
+
+        .toolbar-btn:hover {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .toolbar-btn.active {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .paragraph-editor {
+            min-height: 100px;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #1a1a1a;
+            outline: none;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+        }
+
+        .paragraph-editor:focus {
+            border-color: #ff6b6b;
+        }
+
+        .paragraph-editor:empty:before {
+            content: 'Type your text here... Press Enter for new lines';
+            color: #9ca3af;
+        }
+
+        .remove-paragraph-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .remove-paragraph-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-paragraph-btn {
+            background: #f5f5f5;
+            border: 2px dashed #e5e7eb;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 0.875rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .add-paragraph-btn:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.03);
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .modal-btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-btn.save {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .modal-btn.save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .category-card {
+                padding: 1.5rem;
+            }
+
+            .snippets-container {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                margin: 1rem;
+                max-height: 90vh;
+            }
+
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: 1.5rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .delete-btn {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.35rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>Enrollment Hub</h1>
+                <h2>Snippets</h2>
+                <p>Save and organize reusable text snippets with formatting</p>
+            </div>
+
+            <div id="loading" class="loading">Loading...</div>
+
+            <div id="content" style="display: none;">
+                <!-- Categories Section -->
+                <div class="section-header">
+                    <h2>Categories</h2>
+                    <button class="button" onclick="addCategory()">+ Add Category</button>
+                </div>
+
+                <div id="categories-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Edit Snippet</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" id="snippetTitle" class="form-input" placeholder="Enter snippet title">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subheading (Optional)</label>
+                    <input type="text" id="snippetSubheading" class="form-input" placeholder="Enter subheading">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Paragraphs</label>
+                    <div id="paragraphsContainer" class="paragraphs-container"></div>
+                    <button class="add-paragraph-btn" onclick="addParagraphField()">+ Add Paragraph</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn save" onclick="saveSnippet()">Save Snippet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        // Supabase configuration
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let data = {
+            categories: [],
+            snippets: []
+        };
+
+        let currentEditingSnippet = null;
+        let currentCategoryId = null;
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
+        // Load all data from Supabase
+        async function loadData() {
+            try {
+                const [categoriesResult, snippetsResult] = await Promise.all([
+                    supabase.from('snippet_categories').select('*').order('order_index'),
+                    supabase.from('snippets').select('*').order('order_index')
+                ]);
+
+                if (categoriesResult.error) throw categoriesResult.error;
+                if (snippetsResult.error) throw snippetsResult.error;
+
+                data.categories = categoriesResult.data || [];
+                data.snippets = snippetsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                renderCategories();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading data. Please refresh.', false);
+            }
+        }
+
+        async function addCategory() {
+            const name = prompt('Category name:', 'New Category');
+            if (!name) return;
+
+            try {
+                const maxOrder = data.categories.length > 0 
+                    ? Math.max(...data.categories.map(c => c.order_index)) 
+                    : 0;
+
+                const { data: newCategory, error } = await supabase
+                    .from('snippet_categories')
+                    .insert({
+                        name,
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                data.categories.push(newCategory);
+                renderCategories();
+                showToast('Category added!', true);
+            } catch (error) {
+                console.error('Error adding category:', error);
+                showToast('Error adding category', false);
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Delete this category and all its snippets?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('snippet_categories')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                data.categories = data.categories.filter(c => c.id !== id);
+                data.snippets = data.snippets.filter(s => s.category_id !== id);
+                renderCategories();
+                showToast('Category deleted', true);
+            } catch (error) {
+                console.error('Error deleting category:', error);
+                showToast('Error deleting category', false);
+            }
+        }
+
+        async function editCategoryName(id) {
+            const category = data.categories.find(c => c.id === id);
+            const newName = prompt('Category name:', category.name);
+            if (!newName) return;
+
+            try {
+                const { error } = await supabase
+                    .from('snippet_categories')
+                    .update({ name: newName })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                category.name = newName;
+                renderCategories();
+                showToast('Updated!', true);
+            } catch (error) {
+                console.error('Error updating category:', error);
+                showToast('Error updating category', false);
+            }
+        }
+
+        function openSnippetModal(categoryId, snippetId = null) {
+            currentCategoryId = categoryId;
+            currentEditingSnippet = snippetId;
+
+            const modal = document.getElementById('editModal');
+            const title = document.getElementById('snippetTitle');
+            const subheading = document.getElementById('snippetSubheading');
+            const modalTitle = document.getElementById('modalTitle');
+
+            if (snippetId) {
+                const snippet = data.snippets.find(s => s.id === snippetId);
+                modalTitle.textContent = 'Edit Snippet';
+                title.value = snippet.title;
+                subheading.value = snippet.subheading || '';
+                renderParagraphFields(snippet.paragraphs || []);
+            } else {
+                modalTitle.textContent = 'New Snippet';
+                title.value = '';
+                subheading.value = '';
+                renderParagraphFields(['']);
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditingSnippet = null;
+            currentCategoryId = null;
+        }
+
+        function renderParagraphFields(paragraphs = ['']) {
+            const container = document.getElementById('paragraphsContainer');
+            container.innerHTML = paragraphs.map((p, index) => `
+                <div class="paragraph-item" data-index="${index}">
+                    <div class="paragraph-toolbar">
+                        <button class="toolbar-btn" onclick="formatText(${index}, 'bold')" title="Bold"><b>B</b></button>
+                        <button class="toolbar-btn" onclick="formatText(${index}, 'italic')" title="Italic"><i>I</i></button>
+                        ${paragraphs.length > 1 ? `<button class="remove-paragraph-btn" onclick="removeParagraphField(${index})">Remove</button>` : ''}
+                    </div>
+                    <div class="paragraph-editor" contenteditable="true" data-index="${index}">${p}</div>
+                </div>
+            `).join('');
+        }
+
+        window.formatText = function(index, format) {
+            const editor = document.querySelector(`.paragraph-editor[data-index="${index}"]`);
+            editor.focus();
+            
+            if (format === 'bold') {
+                document.execCommand('bold', false, null);
+            } else if (format === 'italic') {
+                document.execCommand('italic', false, null);
+            }
+        }
+
+        window.addParagraphField = function() {
+            const editors = document.querySelectorAll('.paragraph-editor');
+            const paragraphs = Array.from(editors).map(e => e.innerHTML);
+            paragraphs.push('');
+            renderParagraphFields(paragraphs);
+        }
+
+        window.removeParagraphField = function(index) {
+            const editors = document.querySelectorAll('.paragraph-editor');
+            const paragraphs = Array.from(editors).map(e => e.innerHTML);
+            paragraphs.splice(index, 1);
+            renderParagraphFields(paragraphs);
+        }
+
+        async function saveSnippet() {
+            const title = document.getElementById('snippetTitle').value.trim();
+            if (!title) {
+                alert('Please enter a title');
+                return;
+            }
+
+            const subheading = document.getElementById('snippetSubheading').value.trim();
+            const editors = document.querySelectorAll('.paragraph-editor');
+            const paragraphs = Array.from(editors)
+                .map(e => e.innerHTML.trim())
+                .filter(p => p);
+
+            if (paragraphs.length === 0) {
+                alert('Please add at least one paragraph');
+                return;
+            }
+
+            try {
+                if (currentEditingSnippet) {
+                    const { error } = await supabase
+                        .from('snippets')
+                        .update({
+                            title,
+                            subheading,
+                            paragraphs
+                        })
+                        .eq('id', currentEditingSnippet);
+
+                    if (error) throw error;
+
+                    const snippet = data.snippets.find(s => s.id === currentEditingSnippet);
+                    snippet.title = title;
+                    snippet.subheading = subheading;
+                    snippet.paragraphs = paragraphs;
+
+                    showToast('Snippet updated!', true);
+                } else {
+                    const categorySnippets = data.snippets.filter(s => s.category_id === currentCategoryId);
+                    const maxOrder = categorySnippets.length > 0 
+                        ? Math.max(...categorySnippets.map(s => s.order_index)) 
+                        : 0;
+
+                    const { data: newSnippet, error } = await supabase
+                        .from('snippets')
+                        .insert({
+                            category_id: currentCategoryId,
+                            title,
+                            subheading,
+                            paragraphs,
+                            order_index: maxOrder + 1
+                        })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    data.snippets.push(newSnippet);
+                    showToast('Snippet added!', true);
+                }
+
+                closeModal();
+                renderCategories();
+            } catch (error) {
+                console.error('Error saving snippet:', error);
+                showToast('Error saving snippet', false);
+            }
+        }
+
+        async function deleteSnippet(id) {
+            if (!confirm('Delete this snippet?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('snippets')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                data.snippets = data.snippets.filter(s => s.id !== id);
+                renderCategories();
+                showToast('Snippet deleted', true);
+            } catch (error) {
+                console.error('Error deleting snippet:', error);
+                showToast('Error deleting snippet', false);
+            }
+        }
+
+        function copySnippet(id) {
+            const snippet = data.snippets.find(s => s.id === id);
+            let text = snippet.title + '\n';
+            if (snippet.subheading) text += snippet.subheading + '\n';
+            text += '\n';
+            text += snippet.paragraphs.map(p => {
+                const temp = document.createElement('div');
+                temp.innerHTML = p;
+                return temp.textContent;
+            }).join('\n\n');
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!', true);
+            });
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categories-container');
+            
+            if (data.categories.length === 0) {
+                container.innerHTML = '<div class="empty-state">No categories yet. Click "Add Category" to get started.</div>';
+                return;
+            }
+
+            container.innerHTML = data.categories.map(category => {
+                const categorySnippets = data.snippets.filter(s => s.category_id === category.id);
+
+                return `
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="category-name" onclick="editCategoryName('${category.id}')">
+                                ${category.name}
+                            </div>
+                            <button class="delete-btn" onclick="deleteCategory('${category.id}')">×</button>
+                        </div>
+                        <div class="snippets-container">
+                            ${categorySnippets.length === 0 
+                                ? '<div class="empty-state">No snippets yet. Click "Add Snippet" to get started.</div>'
+                                : categorySnippets.map(snippet => `
+                                    <div class="snippet-card">
+                                        <div class="snippet-header">
+                                            <div>
+                                                <div class="snippet-title">${snippet.title}</div>
+                                                ${snippet.subheading ? `<div class="snippet-subheading">${snippet.subheading}</div>` : ''}
+                                            </div>
+                                        </div>
+                                        <div class="snippet-content">
+                                            ${snippet.paragraphs.map(p => `<p>${p}</p>`).join('')}
+                                        </div>
+                                        <div class="snippet-actions">
+                                            <button class="snippet-btn copy-btn" onclick="copySnippet('${snippet.id}')">Copy</button>
+                                            <button class="snippet-btn" onclick="openSnippetModal('${category.id}', '${snippet.id}')">Edit</button>
+                                            <button class="snippet-btn" onclick="deleteSnippet('${snippet.id}')">Delete</button>
+                                        </div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                        <button class="button-outline" onclick="openSnippetModal('${category.id}')">+ Add Snippet</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Expose functions to global scope
+        window.addCategory = addCategory;
+        window.deleteCategory = deleteCategory;
+        window.editCategoryName = editCategoryName;
+        window.openSnippetModal = openSnippetModal;
+        window.closeModal = closeModal;
+        window.saveSnippet = saveSnippet;
+        window.deleteSnippet = deleteSnippet;
+        window.copySnippet = copySnippet;
+
+        // Initialize
+        loadData();
+
+        // Close modal on overlay click
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target.id === 'editModal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

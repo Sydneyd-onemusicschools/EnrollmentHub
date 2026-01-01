@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Training Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        #sidebar-container {
+            /* Sidebar placeholder */
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        .filters-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-bar, .filter-select {
+            padding: 1rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .filter-select {
+            min-width: 200px;
+        }
+
+        .search-bar:focus, .filter-select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .category-section {
+            margin-bottom: 3rem;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .category-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .category-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .icon-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .icon-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .training-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .training-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .training-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .training-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .training-notes {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #9ca3af;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        /* Edit Page Styles */
+        .edit-page {
+            display: none;
+        }
+
+        .edit-page.active {
+            display: block;
+        }
+
+        .edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .back-button {
+            background: #f5f5f5;
+            color: #6b7280;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+        }
+
+        .edit-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .step-card {
+            background: #fafafa;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .remove-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .remove-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .bullet-item {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .bullet-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .add-item-btn {
+            background: transparent;
+            border: 2px dashed #e5e7eb;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .add-item-btn:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.03);
+        }
+
+        .save-footer {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .training-items-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-section {
+                flex-direction: column;
+            }
+
+            .search-bar, .filter-select {
+                width: 100%;
+            }
+
+            .category-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .category-actions {
+                width: 100%;
+            }
+
+            .icon-button, .button, .back-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.35rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <div id="loading" class="loading">Loading...</div>
+
+            <!-- List View -->
+            <div id="listView" class="list-view" style="display: none;">
+                <div class="header">
+                    <h1>Enrollment Hub</h1>
+                    <h2>Training Hub</h2>
+                    <p>Organize and manage team training materials</p>
+                </div>
+
+                <div class="filters-section">
+                    <input type="text" id="searchBar" class="search-bar" placeholder="Search training items..." oninput="filterTraining()">
+                    <select id="categoryFilter" class="filter-select" onchange="filterTraining()">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+
+                <button class="button" onclick="createCategory()" style="margin-bottom: 2rem;">+ Add Category</button>
+
+                <div id="categoriesContainer"></div>
+            </div>
+
+            <!-- Edit View -->
+            <div id="editView" class="edit-page">
+                <div class="edit-header">
+                    <button class="back-button" onclick="backToList()">← Back to Training Hub</button>
+                    <h2 id="editTitle" style="font-size: 2rem; font-weight: 700; color: #1a1a1a;">Edit Training Item</h2>
+                </div>
+
+                <!-- Section 1: Basic Information -->
+                <div class="edit-section">
+                    <h3 class="section-title">Basic Information</h3>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" id="trainingTitle" class="form-input" placeholder="e.g., New Employee Setup">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select id="categoryId" class="form-select">
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Section 2: Steps -->
+                <div class="edit-section">
+                    <h3 class="section-title">Training Steps</h3>
+                    <div id="stepsList"></div>
+                    <button class="add-item-btn" onclick="addStep()">+ Add Step</button>
+                </div>
+
+                <!-- Section 3: Notes -->
+                <div class="edit-section">
+                    <h3 class="section-title">Notes</h3>
+                    <div class="form-group">
+                        <textarea id="trainingNotes" class="form-textarea" placeholder="General notes about this training..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Save Footer -->
+                <div class="save-footer">
+                    <button class="back-button" onclick="backToList()">Cancel</button>
+                    <button class="button" style="background: #ef4444; margin-left: auto;" onclick="deleteTrainingItem()">Delete</button>
+                    <button class="button" onclick="saveTrainingItem()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let categories = [];
+        let trainingItems = [];
+        let steps = [];
+        let bullets = [];
+        let currentItemId = null;
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            else toast.classList.add('error');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
+        async function loadData() {
+            try {
+                const [categoriesResult, itemsResult, stepsResult, bulletsResult] = await Promise.all([
+                    supabase.from('training_categories').select('*').order('order_index'),
+                    supabase.from('training_items').select('*').order('order_index'),
+                    supabase.from('training_steps').select('*').order('order_index'),
+                    supabase.from('training_step_bullets').select('*').order('order_index')
+                ]);
+
+                if (categoriesResult.error) throw categoriesResult.error;
+                if (itemsResult.error) throw itemsResult.error;
+                if (stepsResult.error) throw stepsResult.error;
+                if (bulletsResult.error) throw bulletsResult.error;
+
+                categories = categoriesResult.data || [];
+                trainingItems = itemsResult.data || [];
+                steps = stepsResult.data || [];
+                bullets = bulletsResult.data || [];
+
+                // Populate filter dropdown
+                const categoryFilter = document.getElementById('categoryFilter');
+                const categorySelect = document.getElementById('categoryId');
+                
+                categoryFilter.innerHTML = '<option value="">All Categories</option>';
+                categorySelect.innerHTML = '<option value="">Select category</option>';
+                
+                categories.forEach(category => {
+                    const filterOption = document.createElement('option');
+                    filterOption.value = category.id;
+                    filterOption.textContent = category.name;
+                    categoryFilter.appendChild(filterOption);
+
+                    const selectOption = document.createElement('option');
+                    selectOption.value = category.id;
+                    selectOption.textContent = category.name;
+                    categorySelect.appendChild(selectOption);
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('listView').style.display = 'block';
+
+                renderCategories();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading data', false);
+            }
+        }
+
+        function renderCategories(filtered = null) {
+            const container = document.getElementById('categoriesContainer');
+            const categoriesToShow = filtered !== null ? filtered : categories;
+
+            if (categoriesToShow.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No categories yet. Click "Add Category" to get started!</p></div>';
+                return;
+            }
+
+            container.innerHTML = categoriesToShow.map(category => {
+                const categoryItems = trainingItems.filter(item => item.category_id === category.id);
+
+                return `
+                    <div class="category-section">
+                        <div class="category-header">
+                            <div class="category-name">${category.name}</div>
+                            <div class="category-actions">
+                                <button class="icon-button" onclick="editCategory('${category.id}')">Edit</button>
+                                <button class="icon-button" onclick="addTrainingItem('${category.id}')">+ Add Training</button>
+                            </div>
+                        </div>
+                        <div class="training-items-grid">
+                            ${categoryItems.length === 0 ? 
+                                '<div class="empty-state"><p>No training items in this category yet</p></div>' :
+                                categoryItems.map(item => `
+                                    <div class="training-card" onclick="editTrainingItem('${item.id}')">
+                                        <div class="training-title">${item.title}</div>
+                                        ${item.notes ? `<div class="training-notes">${item.notes}</div>` : ''}
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.filterTraining = function() {
+            const search = document.getElementById('searchBar').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+
+            let filteredCategories = categories;
+
+            if (categoryFilter) {
+                filteredCategories = categories.filter(c => c.id === categoryFilter);
+            }
+
+            if (search) {
+                const matchingItems = trainingItems.filter(item =>
+                    item.title.toLowerCase().includes(search) ||
+                    (item.notes || '').toLowerCase().includes(search)
+                );
+                const matchingCategoryIds = [...new Set(matchingItems.map(item => item.category_id))];
+                filteredCategories = filteredCategories.filter(c => matchingCategoryIds.includes(c.id));
+            }
+
+            renderCategories(filteredCategories);
+        }
+
+        window.createCategory = async function() {
+            const name = prompt('Enter category name:');
+            if (!name) return;
+
+            try {
+                const maxOrder = categories.length > 0 ? Math.max(...categories.map(c => c.order_index)) : 0;
+                
+                const { data, error } = await supabase
+                    .from('training_categories')
+                    .insert({ name, order_index: maxOrder + 1 })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                categories.push(data);
+                showToast('Category created!', true);
+                loadData();
+            } catch (error) {
+                console.error('Error creating category:', error);
+                showToast('Error creating category', false);
+            }
+        }
+
+        window.editCategory = async function(id) {
+            const category = categories.find(c => c.id === id);
+            const newName = prompt('Edit category name:', category.name);
+            if (!newName || newName === category.name) return;
+
+            try {
+                const { error } = await supabase
+                    .from('training_categories')
+                    .update({ name: newName })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                category.name = newName;
+                showToast('Category updated!', true);
+                renderCategories();
+            } catch (error) {
+                console.error('Error updating category:', error);
+                showToast('Error updating category', false);
+            }
+        }
+
+        window.addTrainingItem = async function(categoryId) {
+            try {
+                const categoryItems = trainingItems.filter(item => item.category_id === categoryId);
+                const maxOrder = categoryItems.length > 0 ? Math.max(...categoryItems.map(i => i.order_index)) : 0;
+
+                const { data, error } = await supabase
+                    .from('training_items')
+                    .insert({
+                        category_id: categoryId,
+                        title: 'New Training Item',
+                        notes: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                trainingItems.push(data);
+                editTrainingItem(data.id);
+            } catch (error) {
+                console.error('Error creating training item:', error);
+                showToast('Error creating training item', false);
+            }
+        }
+
+        window.editTrainingItem = async function(id) {
+            currentItemId = id;
+            const item = trainingItems.find(i => i.id === id);
+
+            document.getElementById('editTitle').textContent = item.title || 'New Training Item';
+            document.getElementById('trainingTitle').value = item.title || '';
+            document.getElementById('categoryId').value = item.category_id || '';
+            document.getElementById('trainingNotes').value = item.notes || '';
+
+            const itemSteps = steps.filter(s => s.training_item_id === id);
+            renderSteps(itemSteps);
+
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('editView').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        window.backToList = function() {
+            document.getElementById('editView').classList.remove('active');
+            document.getElementById('listView').style.display = 'block';
+            loadData();
+            window.scrollTo(0, 0);
+        }
+
+        window.saveTrainingItem = async function() {
+            const item = trainingItems.find(i => i.id === currentItemId);
+            
+            const itemData = {
+                title: document.getElementById('trainingTitle').value,
+                category_id: document.getElementById('categoryId').value,
+                notes: document.getElementById('trainingNotes').value
+            };
+
+            try {
+                const { error } = await supabase
+                    .from('training_items')
+                    .update(itemData)
+                    .eq('id', currentItemId);
+
+                if (error) throw error;
+
+                Object.assign(item, itemData);
+                showToast('Training item saved!', true);
+                backToList();
+            } catch (error) {
+                console.error('Error saving training item:', error);
+                showToast('Error saving training item', false);
+            }
+        }
+
+        window.deleteTrainingItem = async function() {
+            if (!confirm('Delete this training item? This will also delete all steps and bullets.')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('training_items')
+                    .delete()
+                    .eq('id', currentItemId);
+
+                if (error) throw error;
+
+                trainingItems = trainingItems.filter(i => i.id !== currentItemId);
+                steps = steps.filter(s => s.training_item_id !== currentItemId);
+
+                showToast('Training item deleted', true);
+                backToList();
+            } catch (error) {
+                console.error('Error deleting training item:', error);
+                showToast('Error deleting training item', false);
+            }
+        }
+
+        // Steps Functions
+        function renderSteps(itemSteps) {
+            const container = document.getElementById('stepsList');
+            container.innerHTML = itemSteps.map((step, index) => {
+                const stepBullets = bullets.filter(b => b.training_step_id === step.id);
+                
+                return `
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">${index + 1}</div>
+                            <button class="remove-btn" onclick="removeStep('${step.id}')">Remove Step</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Step Description</label>
+                            <input type="text" class="form-input" value="${step.step_text}" onchange="updateStep('${step.id}', 'step_text', this.value)" placeholder="What needs to be done?">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Link (Optional)</label>
+                            <input type="url" class="form-input" value="${step.link || ''}" onchange="updateStep('${step.id}', 'link', this.value)" placeholder="https://...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Bullet Points</label>
+                            <div id="bullets-${step.id}">
+                                ${stepBullets.map(bullet => `
+                                    <div class="bullet-item">
+                                        <div class="bullet-dot"></div>
+                                        <input type="text" class="form-input" value="${bullet.bullet_text}" onchange="updateBullet('${bullet.id}', this.value)" placeholder="Bullet point" style="border: none; padding: 0;">
+                                        <button class="remove-btn" onclick="removeBullet('${bullet.id}', '${step.id}')" style="margin-left: auto;">×</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button class="add-item-btn" onclick="addBullet('${step.id}')" style="margin-top: 0.5rem;">+ Add Bullet Point</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.addStep = async function() {
+            try {
+                const itemSteps = steps.filter(s => s.training_item_id === currentItemId);
+                const maxOrder = itemSteps.length > 0 ? Math.max(...itemSteps.map(s => s.order_index)) : 0;
+
+                const { data, error } = await supabase
+                    .from('training_steps')
+                    .insert({
+                        training_item_id: currentItemId,
+                        step_text: '',
+                        link: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                steps.push(data);
+                renderSteps(steps.filter(s => s.training_item_id === currentItemId));
+            } catch (error) {
+                console.error('Error adding step:', error);
+                showToast('Error adding step', false);
+            }
+        }
+
+        window.updateStep = async function(id, field, value) {
+            try {
+                const updateData = {};
+                updateData[field] = value;
+
+                const { error } = await supabase
+                    .from('training_steps')
+                    .update(updateData)
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const step = steps.find(s => s.id === id);
+                step[field] = value;
+            } catch (error) {
+                console.error('Error updating step:', error);
+            }
+        }
+
+        window.removeStep = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('training_steps')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                steps = steps.filter(s => s.id !== id);
+                bullets = bullets.filter(b => b.training_step_id !== id);
+                renderSteps(steps.filter(s => s.training_item_id === currentItemId));
+                showToast('Step removed', true);
+            } catch (error) {
+                console.error('Error removing step:', error);
+                showToast('Error removing step', false);
+            }
+        }
+
+        // Bullets Functions
+        window.addBullet = async function(stepId) {
+            try {
+                const stepBullets = bullets.filter(b => b.training_step_id === stepId);
+                const maxOrder = stepBullets.length > 0 ? Math.max(...stepBullets.map(b => b.order_index)) : 0;
+
+                const { data, error } = await supabase
+                    .from('training_step_bullets')
+                    .insert({
+                        training_step_id: stepId,
+                        bullet_text: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                bullets.push(data);
+                renderSteps(steps.filter(s => s.training_item_id === currentItemId));
+            } catch (error) {
+                console.error('Error adding bullet:', error);
+                showToast('Error adding bullet', false);
+            }
+        }
+
+        window.updateBullet = async function(id, value) {
+            try {
+                const { error } = await supabase
+                    .from('training_step_bullets')
+                    .update({ bullet_text: value })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const bullet = bullets.find(b => b.id === id);
+                bullet.bullet_text = value;
+            } catch (error) {
+                console.error('Error updating bullet:', error);
+            }
+        }
+
+        window.removeBullet = async function(id, stepId) {
+            try {
+                const { error } = await supabase
+                    .from('training_step_bullets')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                bullets = bullets.filter(b => b.id !== id);
+                renderSteps(steps.filter(s => s.training_item_id === currentItemId));
+            } catch (error) {
+                console.error('Error removing bullet:', error);
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

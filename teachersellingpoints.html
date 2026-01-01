@@ -497,6 +497,14 @@
                     <h3 class="section-title">Basic Information</h3>
                     <div class="form-grid">
                         <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="firstName" class="form-input" placeholder="First name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="lastName" class="form-input" placeholder="Last name">
+                        </div>
+                        <div class="form-group">
                             <label class="form-label">Brand</label>
                             <input type="text" id="brand" class="form-input" placeholder="e.g., Main Music School">
                         </div>
@@ -510,9 +518,12 @@
                                 <option value="">Select gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
-                                <option value="Non-binary">Non-binary</option>
-                                <option value="Prefer not to say">Prefer not to say</option>
+                                <option value="Other">Other</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Year Started at Studio</label>
+                            <input type="number" id="yearStarted" class="form-input" placeholder="e.g., 2020">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Status</label>
@@ -522,18 +533,19 @@
                             </select>
                         </div>
                     </div>
+                    <div id="lastUpdated" style="margin-top: 1rem; color: #6b7280; font-size: 0.875rem;"></div>
                 </div>
 
                 <!-- Section 2: Education & Preferences -->
                 <div class="edit-section">
                     <h3 class="section-title">Education & Preferences</h3>
                     <div class="checkbox-group">
-                        <input type="checkbox" id="formalEducation" class="checkbox">
+                        <input type="checkbox" id="formalEducation" class="checkbox" onchange="toggleEducationDetails()">
                         <label for="formalEducation" class="checkbox-label">Formal Music Education</label>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Language(s) They Can Teach In</label>
-                        <input type="text" id="languages" class="form-input" placeholder="e.g., English, Spanish">
+                    <div id="educationDetails" class="form-group" style="display: none;">
+                        <label class="form-label">Education Details</label>
+                        <textarea id="educationDetailsText" class="form-textarea" placeholder="e.g., Juilliard School of Music - Bachelor of Music Performance"></textarea>
                     </div>
                     <div class="checkbox-group">
                         <input type="checkbox" id="specialNeeds" class="checkbox">
@@ -545,21 +557,28 @@
                     </div>
                 </div>
 
-                <!-- Section 3: Cities -->
+                <!-- Section 3: Languages -->
+                <div class="edit-section">
+                    <h3 class="section-title">Languages</h3>
+                    <div id="languagesList"></div>
+                    <button class="add-item-btn" onclick="addLanguage()">+ Add Language</button>
+                </div>
+
+                <!-- Section 4: Cities -->
                 <div class="edit-section">
                     <h3 class="section-title">Cities</h3>
                     <div id="citiesList"></div>
                     <button class="add-item-btn" onclick="addCity()">+ Add City</button>
                 </div>
 
-                <!-- Section 4: Instruments -->
+                <!-- Section 5: Instruments -->
                 <div class="edit-section">
                     <h3 class="section-title">Instruments & Specialties</h3>
                     <div id="instrumentsList"></div>
                     <button class="add-item-btn" onclick="addInstrument()">+ Add Instrument</button>
                 </div>
 
-                <!-- Section 5: Teaching Strengths -->
+                <!-- Section 6: Teaching Strengths -->
                 <div class="edit-section">
                     <h3 class="section-title">Teaching Strengths</h3>
                     <div class="form-group">
@@ -576,7 +595,7 @@
                     </div>
                 </div>
 
-                <!-- Section 6: Additional Notes -->
+                <!-- Section 7: Additional Notes -->
                 <div class="edit-section">
                     <h3 class="section-title">Additional Notes</h3>
                     <div class="form-group">
@@ -606,6 +625,7 @@
 
         let teachers = [];
         let cities = [];
+        let languages = [];
         let instruments = [];
         let currentTeacherId = null;
 
@@ -620,18 +640,21 @@
 
         async function loadData() {
             try {
-                const [teachersResult, citiesResult, instrumentsResult] = await Promise.all([
+                const [teachersResult, citiesResult, languagesResult, instrumentsResult] = await Promise.all([
                     supabase.from('teachers').select('*').order('brand'),
                     supabase.from('teacher_cities').select('*').order('order_index'),
+                    supabase.from('teacher_languages').select('*').order('order_index'),
                     supabase.from('teacher_instruments').select('*').order('order_index')
                 ]);
 
                 if (teachersResult.error) throw teachersResult.error;
                 if (citiesResult.error) throw citiesResult.error;
+                if (languagesResult.error) throw languagesResult.error;
                 if (instrumentsResult.error) throw instrumentsResult.error;
 
                 teachers = teachersResult.data || [];
                 cities = citiesResult.data || [];
+                languages = languagesResult.data || [];
                 instruments = instrumentsResult.data || [];
 
                 document.getElementById('loading').style.display = 'none';
@@ -659,8 +682,8 @@
 
                 return `
                     <div class="teacher-card ${teacher.status}" onclick="editTeacher('${teacher.id}')">
-                        <div class="teacher-brand">${teacher.brand}</div>
-                        <div class="teacher-location">${teacherCities.join(', ') || 'No cities'} • ${teacher.state || 'No state'}</div>
+                        <div class="teacher-brand">${teacher.first_name} ${teacher.last_name}</div>
+                        <div class="teacher-location">${teacher.brand} • ${teacherCities.join(', ') || 'No cities'} • ${teacher.state || 'No state'}</div>
                         <div class="teacher-instruments">Instruments: ${teacherInstruments.join(', ') || 'None listed'}</div>
                     </div>
                 `;
@@ -688,11 +711,14 @@
                 const { data, error } = await supabase
                     .from('teachers')
                     .insert({
+                        first_name: 'New',
+                        last_name: 'Teacher',
                         brand: 'New Teacher',
                         state: '',
                         gender: '',
+                        year_started_at_studio: null,
                         formal_music_education: false,
-                        languages: '',
+                        formal_education_details: '',
                         special_needs_willing: false,
                         online_willing: false,
                         teaching_strength_1: '',
@@ -718,13 +744,16 @@
             currentTeacherId = id;
             const teacher = teachers.find(t => t.id === id);
 
-            document.getElementById('editTitle').textContent = teacher.brand || 'New Teacher';
+            document.getElementById('editTitle').textContent = `${teacher.first_name} ${teacher.last_name}` || 'New Teacher';
+            document.getElementById('firstName').value = teacher.first_name || '';
+            document.getElementById('lastName').value = teacher.last_name || '';
             document.getElementById('brand').value = teacher.brand || '';
             document.getElementById('state').value = teacher.state || '';
             document.getElementById('gender').value = teacher.gender || '';
+            document.getElementById('yearStarted').value = teacher.year_started_at_studio || '';
             document.getElementById('status').value = teacher.status || 'active';
             document.getElementById('formalEducation').checked = teacher.formal_music_education || false;
-            document.getElementById('languages').value = teacher.languages || '';
+            document.getElementById('educationDetailsText').value = teacher.formal_education_details || '';
             document.getElementById('specialNeeds').checked = teacher.special_needs_willing || false;
             document.getElementById('onlineWilling').checked = teacher.online_willing || false;
             document.getElementById('strength1').value = teacher.teaching_strength_1 || '';
@@ -732,10 +761,21 @@
             document.getElementById('strength3').value = teacher.teaching_strength_3 || '';
             document.getElementById('additionalNotes').value = teacher.additional_notes || '';
 
+            // Show/hide education details based on checkbox
+            document.getElementById('educationDetails').style.display = teacher.formal_music_education ? 'block' : 'none';
+
+            // Display last updated
+            if (teacher.updated_at) {
+                const lastUpdated = new Date(teacher.updated_at).toLocaleString();
+                document.getElementById('lastUpdated').textContent = `Last updated: ${lastUpdated}`;
+            }
+
             const teacherCities = cities.filter(c => c.teacher_id === id);
+            const teacherLanguages = languages.filter(l => l.teacher_id === id);
             const teacherInstruments = instruments.filter(i => i.teacher_id === id);
 
             renderCities(teacherCities);
+            renderLanguages(teacherLanguages);
             renderInstruments(teacherInstruments);
 
             document.getElementById('listView').style.display = 'none';
@@ -750,16 +790,25 @@
             window.scrollTo(0, 0);
         }
 
+        window.toggleEducationDetails = function() {
+            const checkbox = document.getElementById('formalEducation');
+            const detailsDiv = document.getElementById('educationDetails');
+            detailsDiv.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
         window.saveTeacher = async function() {
             const teacher = teachers.find(t => t.id === currentTeacherId);
             
             const teacherData = {
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
                 brand: document.getElementById('brand').value,
                 state: document.getElementById('state').value,
                 gender: document.getElementById('gender').value,
+                year_started_at_studio: document.getElementById('yearStarted').value ? parseInt(document.getElementById('yearStarted').value) : null,
                 status: document.getElementById('status').value,
                 formal_music_education: document.getElementById('formalEducation').checked,
-                languages: document.getElementById('languages').value,
+                formal_education_details: document.getElementById('educationDetailsText').value,
                 special_needs_willing: document.getElementById('specialNeeds').checked,
                 online_willing: document.getElementById('onlineWilling').checked,
                 teaching_strength_1: document.getElementById('strength1').value,
@@ -786,7 +835,7 @@
         }
 
         window.deleteTeacher = async function() {
-            if (!confirm('Are you sure you want to delete this teacher? This will also delete all associated cities and instruments. This cannot be undone.')) {
+            if (!confirm('Are you sure you want to delete this teacher? This will also delete all associated cities, languages, and instruments. This cannot be undone.')) {
                 return;
             }
 
@@ -800,6 +849,7 @@
 
                 teachers = teachers.filter(t => t.id !== currentTeacherId);
                 cities = cities.filter(c => c.teacher_id !== currentTeacherId);
+                languages = languages.filter(l => l.teacher_id !== currentTeacherId);
                 instruments = instruments.filter(i => i.teacher_id !== currentTeacherId);
 
                 showToast('Teacher deleted', true);
@@ -807,6 +857,80 @@
             } catch (error) {
                 console.error('Error deleting teacher:', error);
                 showToast('Error deleting teacher', false);
+            }
+        }
+
+        // Languages Functions
+        function renderLanguages(teacherLanguages) {
+            const container = document.getElementById('languagesList');
+            container.innerHTML = teacherLanguages.map(lang => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <input type="text" class="form-input" value="${lang.language}" onchange="updateLanguage('${lang.id}', this.value)" placeholder="Language name">
+                        <button class="remove-btn" onclick="removeLanguage('${lang.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addLanguage = async function() {
+            try {
+                const teacherLanguages = languages.filter(l => l.teacher_id === currentTeacherId);
+                const maxOrder = teacherLanguages.length > 0 
+                    ? Math.max(...teacherLanguages.map(l => l.order_index)) 
+                    : 0;
+
+                const { data, error } = await supabase
+                    .from('teacher_languages')
+                    .insert({
+                        teacher_id: currentTeacherId,
+                        language: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                languages.push(data);
+                renderLanguages(languages.filter(l => l.teacher_id === currentTeacherId));
+            } catch (error) {
+                console.error('Error adding language:', error);
+                showToast('Error adding language', false);
+            }
+        }
+
+        window.updateLanguage = async function(id, value) {
+            try {
+                const { error } = await supabase
+                    .from('teacher_languages')
+                    .update({ language: value })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const language = languages.find(l => l.id === id);
+                language.language = value;
+            } catch (error) {
+                console.error('Error updating language:', error);
+            }
+        }
+
+        window.removeLanguage = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('teacher_languages')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                languages = languages.filter(l => l.id !== id);
+                renderLanguages(languages.filter(l => l.teacher_id === currentTeacherId));
+                showToast('Language removed', true);
+            } catch (error) {
+                console.error('Error removing language:', error);
+                showToast('Error removing language', false);
             }
         }
 

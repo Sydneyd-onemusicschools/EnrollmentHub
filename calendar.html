@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Calendar</title>
+    
+    <!-- FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .button-secondary {
+            background: #f5f5f5;
+            color: #1a1a1a;
+            box-shadow: none;
+        }
+
+        .button-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        #calendar {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* FullCalendar Customizations */
+        .fc {
+            font-family: inherit;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .fc .fc-button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .fc .fc-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #ee5a6f 0%, #ff6b6b 100%);
+        }
+
+        .fc .fc-button:disabled {
+            opacity: 0.5;
+        }
+
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background: #1a1a1a;
+        }
+
+        .fc-event {
+            border: none;
+            cursor: pointer;
+        }
+
+        .fc-event.bold-event {
+            font-weight: 700;
+        }
+
+        .fc-event.starred-event::before {
+            content: '⭐ ';
+        }
+
+        .fc-daygrid-day.fc-day-today {
+            background-color: rgba(255, 107, 107, 0.1) !important;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .close-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 1rem;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: flex-end;
+        }
+
+        .event-types-list {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .event-type-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 12px;
+        }
+
+        .color-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .event-type-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 10001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            #calendar {
+                padding: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="container">
+            <div id="loading" class="loading">Loading calendar...</div>
+
+            <div id="mainView" style="display: none;">
+                <div class="header">
+                    <h1>Enrollment Hub</h1>
+                    <h2>Calendar</h2>
+                    <p>Manage events, holidays, and important dates</p>
+                </div>
+
+                <div class="controls">
+                    <button class="button" onclick="openAddEventModal()">+ Add Event</button>
+                    <button class="button button-secondary" onclick="openEventTypesModal()">Manage Event Types</button>
+                </div>
+
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Event Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="eventModalTitle">Add Event</h3>
+                <button class="close-btn" onclick="closeEventModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" id="eventTitle" class="form-input" placeholder="e.g., Team Meeting">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Event Type</label>
+                <select id="eventType" class="form-select"></select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Start Date & Time</label>
+                <input type="datetime-local" id="eventStart" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">End Date & Time</label>
+                <input type="datetime-local" id="eventEnd" class="form-input">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="eventAllDay" class="checkbox">
+                <label for="eventAllDay" class="checkbox-label">All Day Event</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="eventBold" class="checkbox">
+                <label for="eventBold" class="checkbox-label">Bold Text</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="eventStarred" class="checkbox">
+                <label for="eventStarred" class="checkbox-label">⭐ Star/Favorite Event</label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Location (Optional)</label>
+                <input type="text" id="eventLocation" class="form-input" placeholder="e.g., Main Office">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description (Optional)</label>
+                <textarea id="eventDescription" class="form-textarea" placeholder="Event details..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select id="eventStatus" class="form-select">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeEventModal()">Cancel</button>
+                <button id="deleteEventBtn" class="button" style="background: #ef4444; margin-right: auto; display: none;" onclick="deleteEvent()">Delete</button>
+                <button class="button" onclick="saveEvent()">Save Event</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Types Modal -->
+    <div id="eventTypesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Event Types</h3>
+                <button class="close-btn" onclick="closeEventTypesModal()">×</button>
+            </div>
+
+            <button class="button" onclick="addEventType()" style="margin-bottom: 1.5rem; width: 100%;">+ Add Event Type</button>
+
+            <div id="eventTypesList" class="event-types-list"></div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeEventTypesModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let calendar;
+        let eventTypes = [];
+        let events = [];
+        let currentEventId = null;
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            else toast.classList.add('error');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
+        async function loadData() {
+            try {
+                const [typesResult, eventsResult] = await Promise.all([
+                    supabase.from('calendar_event_types').select('*').order('order_index'),
+                    supabase.from('calendar_events').select('*').order('start_date')
+                ]);
+
+                if (typesResult.error) throw typesResult.error;
+                if (eventsResult.error) throw eventsResult.error;
+
+                eventTypes = typesResult.data || [];
+                events = eventsResult.data || [];
+
+                populateEventTypeDropdown();
+                initializeCalendar();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('mainView').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading calendar', false);
+            }
+        }
+
+        function populateEventTypeDropdown() {
+            const select = document.getElementById('eventType');
+            select.innerHTML = '<option value="">Select event type</option>' + 
+                eventTypes.map(type => `<option value="${type.id}">${type.name}</option>`).join('');
+        }
+
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                },
+                events: getCalendarEvents(),
+                dateClick: handleDateClick,
+                eventClick: handleEventClick,
+                height: 'auto',
+                eventDisplay: 'block'
+            });
+
+            calendar.render();
+        }
+
+        function getCalendarEvents() {
+            return events
+                .filter(event => event.status === 'active')
+                .map(event => {
+                    const eventType = eventTypes.find(t => t.id === event.event_type_id);
+                    const color = event.custom_color || (eventType ? eventType.color : '#3b82f6');
+                    
+                    return {
+                        id: event.id,
+                        title: event.title,
+                        start: event.start_date,
+                        end: event.end_date,
+                        allDay: event.all_day,
+                        backgroundColor: color,
+                        borderColor: color,
+                        classNames: [
+                            event.is_bold ? 'bold-event' : '',
+                            event.is_starred ? 'starred-event' : ''
+                        ].filter(Boolean)
+                    };
+                });
+        }
+
+        function handleDateClick(info) {
+            openAddEventModal(info.dateStr);
+        }
+
+        function handleEventClick(info) {
+            const eventId = info.event.id;
+            const event = events.find(e => e.id === eventId);
+            if (event) {
+                openEditEventModal(event);
+            }
+        }
+
+        window.openAddEventModal = function(dateStr = null) {
+            currentEventId = null;
+            document.getElementById('eventModalTitle').textContent = 'Add Event';
+            document.getElementById('deleteEventBtn').style.display = 'none';
+            
+            // Clear form
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventType').value = '';
+            document.getElementById('eventStart').value = dateStr ? dateStr + 'T09:00' : '';
+            document.getElementById('eventEnd').value = '';
+            document.getElementById('eventAllDay').checked = false;
+            document.getElementById('eventBold').checked = false;
+            document.getElementById('eventStarred').checked = false;
+            document.getElementById('eventLocation').value = '';
+            document.getElementById('eventDescription').value = '';
+            document.getElementById('eventStatus').value = 'active';
+            
+            document.getElementById('eventModal').classList.add('active');
+        }
+
+        function openEditEventModal(event) {
+            currentEventId = event.id;
+            document.getElementById('eventModalTitle').textContent = 'Edit Event';
+            document.getElementById('deleteEventBtn').style.display = 'block';
+            
+            // Populate form
+            document.getElementById('eventTitle').value = event.title || '';
+            document.getElementById('eventType').value = event.event_type_id || '';
+            document.getElementById('eventStart').value = event.start_date ? new Date(event.start_date).toISOString().slice(0, 16) : '';
+            document.getElementById('eventEnd').value = event.end_date ? new Date(event.end_date).toISOString().slice(0, 16) : '';
+            document.getElementById('eventAllDay').checked = event.all_day || false;
+            document.getElementById('eventBold').checked = event.is_bold || false;
+            document.getElementById('eventStarred').checked = event.is_starred || false;
+            document.getElementById('eventLocation').value = event.location || '';
+            document.getElementById('eventDescription').value = event.description || '';
+            document.getElementById('eventStatus').value = event.status || 'active';
+            
+            document.getElementById('eventModal').classList.add('active');
+        }
+
+        window.closeEventModal = function() {
+            document.getElementById('eventModal').classList.remove('active');
+            currentEventId = null;
+        }
+
+        window.saveEvent = async function() {
+            const eventData = {
+                title: document.getElementById('eventTitle').value,
+                event_type_id: document.getElementById('eventType').value || null,
+                start_date: document.getElementById('eventStart').value ? new Date(document.getElementById('eventStart').value).toISOString() : null,
+                end_date: document.getElementById('eventEnd').value ? new Date(document.getElementById('eventEnd').value).toISOString() : null,
+                all_day: document.getElementById('eventAllDay').checked,
+                is_bold: document.getElementById('eventBold').checked,
+                is_starred: document.getElementById('eventStarred').checked,
+                location: document.getElementById('eventLocation').value,
+                description: document.getElementById('eventDescription').value,
+                status: document.getElementById('eventStatus').value
+            };
+
+            if (!eventData.title || !eventData.start_date) {
+                showToast('Title and start date are required', false);
+                return;
+            }
+
+            try {
+                if (currentEventId) {
+                    // Update existing event
+                    const { error } = await supabase
+                        .from('calendar_events')
+                        .update(eventData)
+                        .eq('id', currentEventId);
+
+                    if (error) throw error;
+
+                    const eventIndex = events.findIndex(e => e.id === currentEventId);
+                    events[eventIndex] = { ...events[eventIndex], ...eventData };
+                    
+                    showToast('Event updated!', true);
+                } else {
+                    // Create new event
+                    const { data, error } = await supabase
+                        .from('calendar_events')
+                        .insert(eventData)
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    events.push(data);
+                    showToast('Event created!', true);
+                }
+
+                closeEventModal();
+                calendar.removeAllEvents();
+                calendar.addEventSource(getCalendarEvents());
+            } catch (error) {
+                console.error('Error saving event:', error);
+                showToast('Error saving event', false);
+            }
+        }
+
+        window.deleteEvent = async function() {
+            if (!confirm('Delete this event? This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('calendar_events')
+                    .delete()
+                    .eq('id', currentEventId);
+
+                if (error) throw error;
+
+                events = events.filter(e => e.id !== currentEventId);
+                
+                closeEventModal();
+                calendar.removeAllEvents();
+                calendar.addEventSource(getCalendarEvents());
+                
+                showToast('Event deleted', true);
+            } catch (error) {
+                console.error('Error deleting event:', error);
+                showToast('Error deleting event', false);
+            }
+        }
+
+        // Event Types Management
+        window.openEventTypesModal = function() {
+            renderEventTypes();
+            document.getElementById('eventTypesModal').classList.add('active');
+        }
+
+        window.closeEventTypesModal = function() {
+            document.getElementById('eventTypesModal').classList.remove('active');
+        }
+
+        function renderEventTypes() {
+            const container = document.getElementById('eventTypesList');
+            container.innerHTML = eventTypes.map(type => `
+                <div class="event-type-item">
+                    <div class="color-preview" style="background-color: ${type.color};"></div>
+                    <div class="event-type-name">${type.name}</div>
+                    <input type="color" value="${type.color}" onchange="updateEventTypeColor('${type.id}', this.value)" style="cursor: pointer;">
+                    <button class="button button-secondary" onclick="editEventTypeName('${type.id}', '${type.name}')" style="padding: 0.5rem 1rem;">Edit</button>
+                </div>
+            `).join('');
+        }
+
+        window.addEventType = async function() {
+            const name = prompt('Enter event type name:');
+            if (!name) return;
+
+            try {
+                const maxOrder = eventTypes.length > 0 ? Math.max(...eventTypes.map(t => t.order_index)) : 0;
+                
+                const { data, error } = await supabase
+                    .from('calendar_event_types')
+                    .insert({ name, color: '#3b82f6', order_index: maxOrder + 1 })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                eventTypes.push(data);
+                renderEventTypes();
+                populateEventTypeDropdown();
+                showToast('Event type created!', true);
+            } catch (error) {
+                console.error('Error creating event type:', error);
+                showToast('Error creating event type', false);
+            }
+        }
+
+        window.editEventTypeName = async function(id, currentName) {
+            const newName = prompt('Edit event type name:', currentName);
+            if (!newName || newName === currentName) return;
+
+            try {
+                const { error } = await supabase
+                    .from('calendar_event_types')
+                    .update({ name: newName })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const type = eventTypes.find(t => t.id === id);
+                type.name = newName;
+                
+                renderEventTypes();
+                populateEventTypeDropdown();
+                showToast('Event type updated!', true);
+            } catch (error) {
+                console.error('Error updating event type:', error);
+                showToast('Error updating event type', false);
+            }
+        }
+
+        window.updateEventTypeColor = async function(id, color) {
+            try {
+                const { error } = await supabase
+                    .from('calendar_event_types')
+                    .update({ color })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const type = eventTypes.find(t => t.id === id);
+                type.color = color;
+                
+                calendar.removeAllEvents();
+                calendar.addEventSource(getCalendarEvents());
+                
+                showToast('Color updated!', true);
+            } catch (error) {
+                console.error('Error updating color:', error);
+                showToast('Error updating color', false);
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

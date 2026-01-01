@@ -933,7 +933,7 @@
             }
             container.innerHTML = shoutouts.map(item => `
                 <div class="item">
-                    <div class="item-content" innerHTML>${item.content}</div>
+                    <div class="item-content">${item.content}</div>
                     <div class="item-actions">
                         <button class="button button-secondary button-small" onclick="editShoutout('${item.id}')">Edit</button>
                         <button class="button button-secondary button-small" onclick="deleteShoutout('${item.id}')">Delete</button>

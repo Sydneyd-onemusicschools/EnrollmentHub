@@ -931,6 +931,7 @@
                 container.innerHTML = '<p style="color: #9ca3af;">No shoutouts yet</p>';
                 return;
             }
+            console.log('Rendering shoutouts:', shoutouts); // DEBUG
             container.innerHTML = shoutouts.map(item => `
                 <div class="item">
                     <div class="item-content">${item.content}</div>
@@ -971,7 +972,7 @@
 
         window.editShoutout = function(id) {
             const item = shoutouts.find(s => s.id === id);
-            const content = prompt('Edit shoutout (use <b>text</b> for bold):', item.content.replace(/<b>/g, '').replace(/<\/b>/g, ''));
+            const content = prompt('Edit shoutout (use <b>text</b> for bold):', item.content);
             if (content) {
                 updateShoutout(id, content);
             }
@@ -1066,7 +1067,7 @@
 
         window.editAnnouncement = function(id) {
             const item = announcements.find(a => a.id === id);
-            const content = prompt('Edit announcement (use <b>text</b> for bold):', item.content.replace(/<b>/g, '').replace(/<\/b>/g, ''));
+            const content = prompt('Edit announcement (use <b>text</b> for bold):', item.content);
             if (content) {
                 updateAnnouncement(id, content);
             }
@@ -1188,7 +1189,7 @@
 
         window.editPromo = function(id) {
             const item = promos.find(p => p.id === id);
-            const content = prompt('Edit promo (use <b>text</b> for bold):', item.content.replace(/<b>/g, '').replace(/<\/b>/g, ''));
+            const content = prompt('Edit promo (use <b>text</b> for bold):', item.content);
             if (content) {
                 updatePromo(id, content);
             }

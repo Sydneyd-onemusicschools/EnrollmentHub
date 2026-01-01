@@ -606,7 +606,7 @@
 
         async function loadData() {
             try {
-                const [categoriesResult, itemsResult, stepsResult, bulletsResult] = await Promise.all([
+                const [categoriesResult, itemsResult, sectionsResult, bulletsResult] = await Promise.all([
                     supabase.from('policy_categories').select('*').order('order_index'),
                     supabase.from('policies').select('*').order('order_index'),
                     supabase.from('policy_sections').select('*').order('order_index'),
@@ -615,12 +615,12 @@
 
                 if (categoriesResult.error) throw categoriesResult.error;
                 if (itemsResult.error) throw itemsResult.error;
-                if (stepsResult.error) throw stepsResult.error;
+                if (sectionsResult.error) throw sectionsResult.error;
                 if (bulletsResult.error) throw bulletsResult.error;
 
                 categories = categoriesResult.data || [];
                 policies = itemsResult.data || [];
-                sections = stepsResult.data || [];
+                sections = sectionsResult.data || [];
                 bullets = bulletsResult.data || [];
 
                 // Populate filter dropdown
@@ -873,47 +873,47 @@
         // Steps Functions
         function renderSections(itemSections) {
             const container = document.getElementById('sectionsList');
-            container.innerHTML = itemSections.map((step, index) => {
-                const stepBullets = bullets.filter(b => b.policy_section_id === step.id);
+            container.innerHTML = itemSections.map((section, index) => {
+                const sectionBullets = bullets.filter(b => b.policy_section_id === section.id);
                 
                 return `
                     <div class="step-card">
                         <div class="step-header">
                             <div class="step-number">${index + 1}</div>
-                            <button class="remove-btn" onclick="removeSection('${step.id}')">Remove Step</button>
+                            <button class="remove-btn" onclick="removeSection('${section.id}')">Remove Section</button>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Step Description</label>
-                            <input type="text" class="form-input" value="${step.section_text}" onchange="updateSection('${step.id}', 'section_text', this.value)" placeholder="What needs to be done?">
+                            <label class="form-label">Section Text</label>
+                            <input type="text" class="form-input" value="${section.section_text}" onchange="updateSection('${section.id}', 'section_text', this.value)" placeholder="What needs to be done?">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Link (Optional)</label>
-                            <input type="url" class="form-input" value="${step.link || ''}" onchange="updateSection('${step.id}', 'link', this.value)" placeholder="https://...">
+                            <input type="url" class="form-input" value="${section.link || ''}" onchange="updateSection('${section.id}', 'link', this.value)" placeholder="https://...">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Bullet Points</label>
-                            <div id="bullets-${step.id}">
-                                ${stepBullets.map(bullet => `
+                            <div id="bullets-${section.id}">
+                                ${sectionBullets.map(bullet => `
                                     <div class="bullet-item">
                                         <div class="bullet-dot"></div>
                                         <input type="text" class="form-input" value="${bullet.bullet_text}" onchange="updateBullet('${bullet.id}', this.value)" placeholder="Bullet point" style="border: none; padding: 0;">
-                                        <button class="remove-btn" onclick="removeBullet('${bullet.id}', '${step.id}')" style="margin-left: auto;">×</button>
+                                        <button class="remove-btn" onclick="removeBullet('${bullet.id}', '${section.id}')" style="margin-left: auto;">×</button>
                                     </div>
                                 `).join('')}
                             </div>
-                            <button class="add-item-btn" onclick="addBullet('${step.id}')" style="margin-top: 0.5rem;">+ Add Bullet Point</button>
+                            <button class="add-item-btn" onclick="addBullet('${section.id}')" style="margin-top: 0.5rem;">+ Add Bullet Point</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        window.addStep = async function() {
+        window.addSection = async function() {
             try {
-                const itemSections = steps.filter(s => s.policy_id === currentItemId);
+                const itemSections = sections.filter(s => s.policy_id === currentItemId);
                 const maxOrder = itemSections.length > 0 ? Math.max(...itemSections.map(s => s.order_index)) : 0;
 
                 const { data, error } = await supabase
@@ -929,15 +929,15 @@
 
                 if (error) throw error;
 
-                steps.push(data);
-                renderSections(steps.filter(s => s.policy_id === currentItemId));
+                sections.push(data);
+                renderSections(sections.filter(s => s.policy_id === currentItemId));
             } catch (error) {
-                console.error('Error adding step:', error);
-                showToast('Error adding step', false);
+                console.error('Error adding section:', error);
+                showToast('Error adding section', false);
             }
         }
 
-        window.updateStep = async function(id, field, value) {
+        window.updateSection = async function(id, field, value) {
             try {
                 const updateData = {};
                 updateData[field] = value;
@@ -949,14 +949,14 @@
 
                 if (error) throw error;
 
-                const step = steps.find(s => s.id === id);
-                step[field] = value;
+                const section = sections.find(s => s.id === id);
+                section[field] = value;
             } catch (error) {
-                console.error('Error updating step:', error);
+                console.error('Error updating section:', error);
             }
         }
 
-        window.removeStep = async function(id) {
+        window.removeSection = async function(id) {
             try {
                 const { error } = await supabase
                     .from('policy_sections')
@@ -965,26 +965,26 @@
 
                 if (error) throw error;
 
-                sections = steps.filter(s => s.id !== id);
+                sections = sections.filter(s => s.id !== id);
                 bullets = bullets.filter(b => b.policy_section_id !== id);
-                renderSections(steps.filter(s => s.policy_id === currentItemId));
-                showToast('Step removed', true);
+                renderSections(sections.filter(s => s.policy_id === currentItemId));
+                showToast('Section removed', true);
             } catch (error) {
-                console.error('Error removing step:', error);
-                showToast('Error removing step', false);
+                console.error('Error removing section:', error);
+                showToast('Error removing section', false);
             }
         }
 
         // Bullets Functions
-        window.addBullet = async function(stepId) {
+        window.addBullet = async function(sectionId) {
             try {
-                const stepBullets = bullets.filter(b => b.policy_section_id === stepId);
-                const maxOrder = stepBullets.length > 0 ? Math.max(...stepBullets.map(b => b.order_index)) : 0;
+                const sectionBullets = bullets.filter(b => b.policy_section_id === sectionId);
+                const maxOrder = sectionBullets.length > 0 ? Math.max(...sectionBullets.map(b => b.order_index)) : 0;
 
                 const { data, error } = await supabase
                     .from('policy_section_bullets')
                     .insert({
-                        policy_section_id: stepId,
+                        policy_section_id: sectionId,
                         bullet_text: '',
                         order_index: maxOrder + 1
                     })
@@ -994,7 +994,7 @@
                 if (error) throw error;
 
                 bullets.push(data);
-                renderSections(steps.filter(s => s.policy_id === currentItemId));
+                renderSections(sections.filter(s => s.policy_id === currentItemId));
             } catch (error) {
                 console.error('Error adding bullet:', error);
                 showToast('Error adding bullet', false);
@@ -1017,7 +1017,7 @@
             }
         }
 
-        window.removeBullet = async function(id, stepId) {
+        window.removeBullet = async function(id, sectionId) {
             try {
                 const { error } = await supabase
                     .from('policy_section_bullets')
@@ -1027,7 +1027,7 @@
                 if (error) throw error;
 
                 bullets = bullets.filter(b => b.id !== id);
-                renderSections(steps.filter(s => s.policy_id === currentItemId));
+                renderSections(sections.filter(s => s.policy_id === currentItemId));
             } catch (error) {
                 console.error('Error removing bullet:', error);
             }

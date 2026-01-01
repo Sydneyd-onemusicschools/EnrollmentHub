@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Team</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        #sidebar-container {
+            /* Sidebar placeholder */
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.02em;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .team-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .team-card.inactive {
+            opacity: 0.6;
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .team-name {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.25rem;
+        }
+
+        .team-email {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .role-badge {
+            padding: 0.375rem 0.875rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .role-badge.admin {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+
+        .role-badge.team {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .team-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.25rem;
+        }
+
+        .stat-box {
+            background: #fafafa;
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.35rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .stat-unit {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.active {
+            background: #10b981;
+        }
+
+        .status-dot.inactive {
+            background: #ef4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #9ca3af;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0 2rem;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .modal-tab.active {
+            color: #ff6b6b;
+            border-bottom-color: #ff6b6b;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .time-input-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .time-input-group .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .log-table th {
+            text-align: left;
+            padding: 0.75rem;
+            background: #fafafa;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .log-table td {
+            padding: 0.875rem 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+
+        .log-table tr:hover {
+            background: #fafafa;
+        }
+
+        .delete-log-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .delete-log-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .modal-btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-btn.save {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .modal-btn.save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .no-logs {
+            text-align: center;
+            padding: 2rem;
+            color: #9ca3af;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                margin: 1rem;
+                max-height: 90vh;
+            }
+
+            .modal-tabs {
+                overflow-x: auto;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .log-table {
+                font-size: 0.875rem;
+            }
+
+            .log-table th,
+            .log-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.35rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>Enrollment Hub</h1>
+                <h2>Team</h2>
+                <p>Manage team members and track time off</p>
+            </div>
+
+            <div id="loading" class="loading">Loading...</div>
+
+            <div id="content" style="display: none;">
+                <div class="section-header">
+                    <h2>Team Members</h2>
+                    <button class="button" onclick="openTeamModal()">+ Add Team Member</button>
+                </div>
+
+                <div id="team-grid" class="team-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Member Modal -->
+    <div id="teamModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Team Member</h3>
+            </div>
+            
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="info">Info</button>
+                <button class="modal-tab" data-tab="hours">Hours Log</button>
+                <button class="modal-tab" data-tab="wfh">WFH Days</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tab 1: Info -->
+                <div class="tab-content active" data-tab="info">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="firstName" class="form-input" placeholder="First name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="lastName" class="form-input" placeholder="Last name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" id="phone" class="form-input" placeholder="(555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="email@example.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="Enter password">
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Role</label>
+                            <select id="role" class="form-select">
+                                <option value="team">Team Member</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="status" class="form-select">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Yearly Hours</label>
+                            <input type="number" id="yearlyHours" class="form-input" placeholder="80" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">WFH Days</label>
+                            <input type="number" id="wfhDays" class="form-input" placeholder="12" step="0.5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Hours Log -->
+                <div class="tab-content" data-tab="hours">
+                    <button class="button" onclick="showLogHoursForm()">+ Log Time Off</button>
+                    
+                    <div id="logHoursForm" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #fafafa; border-radius: 12px;">
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="hoursDate" class="form-input">
+                        </div>
+                        <div class="time-input-group">
+                            <div class="form-group">
+                                <label class="form-label">Hours</label>
+                                <input type="number" id="hoursAmount" class="form-input" placeholder="2" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Minutes</label>
+                                <input type="number" id="minutesAmount" class="form-input" placeholder="30" min="0" max="59">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Reason</label>
+                            <input type="text" id="hoursReason" class="form-input" placeholder="e.g., Doctor appointment">
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="modal-btn save" onclick="saveHoursLog()">Save</button>
+                            <button class="modal-btn cancel" onclick="hideLogHoursForm()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div id="hoursLogTable"></div>
+                </div>
+
+                <!-- Tab 3: WFH Days -->
+                <div class="tab-content" data-tab="wfh">
+                    <button class="button" onclick="showLogWFHForm()">+ Log WFH Day</button>
+                    
+                    <div id="logWFHForm" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #fafafa; border-radius: 12px;">
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="wfhDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Days Used</label>
+                            <input type="number" id="wfhDaysUsed" class="form-input" placeholder="1" step="0.5" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Reason</label>
+                            <input type="text" id="wfhReason" class="form-input" placeholder="e.g., Working from home">
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="modal-btn save" onclick="saveWFHLog()">Save</button>
+                            <button class="modal-btn cancel" onclick="hideLogWFHForm()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div id="wfhLogTable"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="closeTeamModal()">Close</button>
+                <button class="modal-btn save" onclick="saveTeamMember()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let teamMembers = [];
+        let timeLogs = [];
+        let currentMemberId = null;
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
+        async function loadData() {
+            try {
+                const [membersResult, logsResult] = await Promise.all([
+                    supabase.from('team_members').select('*').order('created_at'),
+                    supabase.from('time_off_logs').select('*').order('log_date', { ascending: false })
+                ]);
+
+                if (membersResult.error) throw membersResult.error;
+                if (logsResult.error) throw logsResult.error;
+
+                teamMembers = membersResult.data || [];
+                timeLogs = logsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                renderTeam();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading data', false);
+            }
+        }
+
+        function calculateRemaining(memberId, type) {
+            const member = teamMembers.find(m => m.id === memberId);
+            if (!member) return 0;
+
+            const logs = timeLogs.filter(l => l.team_member_id === memberId && l.log_type === type);
+            
+            if (type === 'hours') {
+                const totalUsed = logs.reduce((sum, log) => {
+                    const hours = parseFloat(log.hours || 0);
+                    const minutes = parseFloat(log.minutes || 0) / 60;
+                    return sum + hours + minutes;
+                }, 0);
+                return Math.max(0, parseFloat(member.yearly_hours || 0) - totalUsed);
+            } else {
+                const totalUsed = logs.reduce((sum, log) => sum + parseFloat(log.days || 0), 0);
+                return Math.max(0, parseFloat(member.wfh_days || 0) - totalUsed);
+            }
+        }
+
+        function renderTeam() {
+            const grid = document.getElementById('team-grid');
+            
+            if (teamMembers.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><p>No team members yet. Click "Add Team Member" to get started.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = teamMembers.map(member => {
+                const remainingHours = calculateRemaining(member.id, 'hours');
+                const remainingWFH = calculateRemaining(member.id, 'wfh');
+
+                return `
+                    <div class="team-card ${member.status}" onclick="openTeamModal('${member.id}')">
+                        <div class="team-header">
+                            <div>
+                                <div class="team-name">${member.first_name} ${member.last_name}</div>
+                                <div class="team-email">${member.email || 'No email'}</div>
+                            </div>
+                            <span class="role-badge ${member.role}">${member.role}</span>
+                        </div>
+                        
+                        <div class="team-stats">
+                            <div class="stat-box">
+                                <div class="stat-label">Hours Left</div>
+                                <div class="stat-value">${remainingHours.toFixed(1)} <span class="stat-unit">hrs</span></div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">WFH Days</div>
+                                <div class="stat-value">${remainingWFH.toFixed(1)} <span class="stat-unit">days</span></div>
+                            </div>
+                        </div>
+
+                        <div class="status-indicator">
+                            <span class="status-dot ${member.status}"></span>
+                            ${member.status === 'active' ? 'Active' : 'Inactive'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.openTeamModal = function(memberId = null) {
+            currentMemberId = memberId;
+            const modal = document.getElementById('teamModal');
+            const modalTitle = document.getElementById('modalTitle');
+
+            // Switch to info tab
+            switchTab('info');
+
+            if (memberId) {
+                const member = teamMembers.find(m => m.id === memberId);
+                modalTitle.textContent = `${member.first_name} ${member.last_name}`;
+                
+                document.getElementById('firstName').value = member.first_name;
+                document.getElementById('lastName').value = member.last_name;
+                document.getElementById('phone').value = member.phone || '';
+                document.getElementById('email').value = member.email || '';
+                document.getElementById('password').value = member.password || '';
+                document.getElementById('role').value = member.role;
+                document.getElementById('status').value = member.status;
+                document.getElementById('yearlyHours').value = member.yearly_hours || 0;
+                document.getElementById('wfhDays').value = member.wfh_days || 0;
+
+                loadHoursLog();
+                loadWFHLog();
+            } else {
+                modalTitle.textContent = 'New Team Member';
+                document.getElementById('firstName').value = '';
+                document.getElementById('lastName').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('role').value = 'team';
+                document.getElementById('status').value = 'active';
+                document.getElementById('yearlyHours').value = '';
+                document.getElementById('wfhDays').value = '';
+            }
+
+            modal.classList.add('active');
+        }
+
+        window.closeTeamModal = function() {
+            document.getElementById('teamModal').classList.remove('active');
+            currentMemberId = null;
+            hideLogHoursForm();
+            hideLogWFHForm();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.modal-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.dataset.tab === tabName) {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        // Tab switching
+        document.querySelectorAll('.modal-tab').forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+        });
+
+        window.saveTeamMember = async function() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+
+            if (!firstName || !lastName) {
+                alert('Please enter first and last name');
+                return;
+            }
+
+            const memberData = {
+                first_name: firstName,
+                last_name: lastName,
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value.trim(),
+                role: document.getElementById('role').value,
+                status: document.getElementById('status').value,
+                yearly_hours: parseFloat(document.getElementById('yearlyHours').value) || 0,
+                wfh_days: parseFloat(document.getElementById('wfhDays').value) || 0
+            };
+
+            try {
+                if (currentMemberId) {
+                    const { error } = await supabase
+                        .from('team_members')
+                        .update(memberData)
+                        .eq('id', currentMemberId);
+
+                    if (error) throw error;
+
+                    const member = teamMembers.find(m => m.id === currentMemberId);
+                    Object.assign(member, memberData);
+                    showToast('Team member updated!', true);
+                } else {
+                    const { data, error } = await supabase
+                        .from('team_members')
+                        .insert(memberData)
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    teamMembers.push(data);
+                    showToast('Team member added!', true);
+                }
+
+                closeTeamModal();
+                renderTeam();
+            } catch (error) {
+                console.error('Error saving team member:', error);
+                showToast('Error saving team member', false);
+            }
+        }
+
+        window.showLogHoursForm = function() {
+            document.getElementById('logHoursForm').style.display = 'block';
+            document.getElementById('hoursDate').valueAsDate = new Date();
+        }
+
+        window.hideLogHoursForm = function() {
+            document.getElementById('logHoursForm').style.display = 'none';
+            document.getElementById('hoursDate').value = '';
+            document.getElementById('hoursAmount').value = '';
+            document.getElementById('minutesAmount').value = '';
+            document.getElementById('hoursReason').value = '';
+        }
+
+        window.saveHoursLog = async function() {
+            const date = document.getElementById('hoursDate').value;
+            const hours = parseFloat(document.getElementById('hoursAmount').value) || 0;
+            const minutes = parseInt(document.getElementById('minutesAmount').value) || 0;
+            const reason = document.getElementById('hoursReason').value.trim();
+
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+
+            if (hours === 0 && minutes === 0) {
+                alert('Please enter hours or minutes');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('time_off_logs')
+                    .insert({
+                        team_member_id: currentMemberId,
+                        log_type: 'hours',
+                        log_date: date,
+                        hours: hours,
+                        minutes: minutes,
+                        reason: reason
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                timeLogs.unshift(data);
+                hideLogHoursForm();
+                loadHoursLog();
+                renderTeam();
+                showToast('Time logged!', true);
+            } catch (error) {
+                console.error('Error saving log:', error);
+                showToast('Error saving log', false);
+            }
+        }
+
+        function loadHoursLog() {
+            const logs = timeLogs.filter(l => l.team_member_id === currentMemberId && l.log_type === 'hours');
+            const container = document.getElementById('hoursLogTable');
+
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="no-logs">No time off logged yet</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reason</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${logs.map(log => {
+                            const hours = parseFloat(log.hours || 0);
+                            const minutes = parseInt(log.minutes || 0);
+                            let timeStr = '';
+                            if (hours > 0) timeStr += `${hours}h `;
+                            if (minutes > 0) timeStr += `${minutes}m`;
+                            
+                            return `
+                                <tr>
+                                    <td>${new Date(log.log_date).toLocaleDateString()}</td>
+                                    <td>${timeStr.trim()}</td>
+                                    <td>${log.reason || '-'}</td>
+                                    <td><button class="delete-log-btn" onclick="deleteLog('${log.id}')">Delete</button></td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        window.showLogWFHForm = function() {
+            document.getElementById('logWFHForm').style.display = 'block';
+            document.getElementById('wfhDate').valueAsDate = new Date();
+        }
+
+        window.hideLogWFHForm = function() {
+            document.getElementById('logWFHForm').style.display = 'none';
+            document.getElementById('wfhDate').value = '';
+            document.getElementById('wfhDaysUsed').value = '';
+            document.getElementById('wfhReason').value = '';
+        }
+
+        window.saveWFHLog = async function() {
+            const date = document.getElementById('wfhDate').value;
+            const days = parseFloat(document.getElementById('wfhDaysUsed').value) || 0;
+            const reason = document.getElementById('wfhReason').value.trim();
+
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+
+            if (days === 0) {
+                alert('Please enter days used');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('time_off_logs')
+                    .insert({
+                        team_member_id: currentMemberId,
+                        log_type: 'wfh',
+                        log_date: date,
+                        days: days,
+                        reason: reason
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                timeLogs.unshift(data);
+                hideLogWFHForm();
+                loadWFHLog();
+                renderTeam();
+                showToast('WFH day logged!', true);
+            } catch (error) {
+                console.error('Error saving log:', error);
+                showToast('Error saving log', false);
+            }
+        }
+
+        function loadWFHLog() {
+            const logs = timeLogs.filter(l => l.team_member_id === currentMemberId && l.log_type === 'wfh');
+            const container = document.getElementById('wfhLogTable');
+
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="no-logs">No WFH days logged yet</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Days</th>
+                            <th>Reason</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${logs.map(log => `
+                            <tr>
+                                <td>${new Date(log.log_date).toLocaleDateString()}</td>
+                                <td>${log.days}</td>
+                                <td>${log.reason || '-'}</td>
+                                <td><button class="delete-log-btn" onclick="deleteLog('${log.id}')">Delete</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        window.deleteLog = async function(logId) {
+            if (!confirm('Delete this log entry?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('time_off_logs')
+                    .delete()
+                    .eq('id', logId);
+
+                if (error) throw error;
+
+                timeLogs = timeLogs.filter(l => l.id !== logId);
+                loadHoursLog();
+                loadWFHLog();
+                renderTeam();
+                showToast('Log deleted', true);
+            } catch (error) {
+                console.error('Error deleting log:', error);
+                showToast('Error deleting log', false);
+            }
+        }
+
+        loadData();
+
+        document.getElementById('teamModal').addEventListener('click', (e) => {
+            if (e.target.id === 'teamModal') {
+                closeTeamModal();
+            }
+        });
+    </script>
+</body>
+</html>

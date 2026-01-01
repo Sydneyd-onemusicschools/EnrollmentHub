@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Quick Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        #sidebar-container {
+            /* Sidebar placeholder - ready for your custom sidebar */
+            /* On mobile, this would typically be a hamburger menu or hidden */
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            margin-top: 4rem;
+        }
+
+        .section-header:first-of-type {
+            margin-top: 0;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.02em;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .studio-card,
+        .category-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .studio-card:hover,
+        .category-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        .studio-header,
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .reorder-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .reorder-btn {
+            background: #f5f5f5;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            border-radius: 10px;
+            opacity: 0;
+            transition: all 0.2s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .reorder-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .studio-card:hover .reorder-btn,
+        .category-card:hover .reorder-btn {
+            opacity: 1;
+        }
+
+        .reorder-btn:disabled {
+            color: #e5e7eb;
+            cursor: not-allowed;
+        }
+
+        .reorder-btn:disabled:hover {
+            background: #f5f5f5;
+        }
+
+        .studio-name,
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            flex: 1;
+            cursor: pointer;
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            letter-spacing: -0.01em;
+        }
+
+        .studio-brand:hover,
+        .category-brand:hover {
+            background: #fafafa;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0;
+            border-radius: 10px;
+            opacity: 0;
+            transition: all 0.2s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            font-weight: 600;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .studio-card:hover .delete-btn,
+        .category-card:hover .delete-btn,
+        .link-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .field-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .field-value {
+            padding: 1rem 1.25rem;
+            border: 1.5px solid transparent;
+            border-radius: 14px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fafafa;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .field-value:hover {
+            border-color: #ff6b6b;
+            background: white;
+        }
+
+        .placeholder {
+            color: #d1d5db;
+            font-weight: 400;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.25rem;
+            background: #fafafa;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+            border: 1.5px solid transparent;
+        }
+
+        .link-item:hover {
+            background: white;
+            border-color: #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .link-reorder {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .link-reorder-btn {
+            background: #f5f5f5;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0;
+            border-radius: 8px;
+            opacity: 0;
+            transition: all 0.2s ease;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .link-reorder-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .link-item:hover .link-reorder-btn {
+            opacity: 1;
+        }
+
+        .link-reorder-btn:disabled {
+            color: #e5e7eb;
+            cursor: not-allowed;
+        }
+
+        .link-reorder-btn:disabled:hover {
+            background: #f5f5f5;
+        }
+
+        .link-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .link-field {
+            cursor: pointer;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .link-field:hover {
+            background: rgba(255, 107, 107, 0.06);
+        }
+
+        .link-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .link-subtitle {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .link-url {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+            font-weight: 400;
+        }
+
+        .button-outline {
+            width: 100%;
+            background: transparent;
+            border: 2px dashed #e5e7eb;
+            border-radius: 14px;
+            padding: 1rem;
+            color: #9ca3af;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+        }
+
+        .button-outline:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.03);
+        }
+
+        .empty-state {
+            color: #9ca3af;
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 3rem 1rem;
+            font-weight: 400;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .studio-card, .category-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            .studio-header,
+            .category-header {
+                padding-bottom: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .studio-name,
+            .category-name {
+                font-size: 1.25rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                margin-top: 3rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .button {
+                width: 100%;
+                padding: 1rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .reorder-buttons {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .reorder-btn,
+            .delete-btn {
+                opacity: 1;
+            }
+
+            .link-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .link-reorder {
+                flex-direction: row;
+                gap: 0.5rem;
+                order: -1;
+                justify-content: flex-start;
+            }
+
+            .link-reorder-btn {
+                opacity: 1;
+            }
+
+            .field-value {
+                min-height: 52px;
+                padding: 1rem;
+            }
+
+            .toast {
+                bottom: 1rem;
+                right: 1rem;
+                left: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-wrapper {
+                padding: 1.25rem 0.875rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.35rem;
+            }
+
+            .section-header {
+                margin-top: 2.5rem;
+            }
+
+            .studio-card, .category-card {
+                padding: 1.25rem;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .reorder-btn,
+            .delete-btn,
+            .link-reorder-btn {
+                opacity: 1;
+            }
+
+            .field-value,
+            .link-field,
+            .studio-name,
+            .category-name,
+            .button,
+            .button-outline {
+                min-height: 44px;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>Enrollment Hub</h1>
+                <h2>Quick Links</h2>
+                <p>Manage your studio information and quick access links</p>
+            </div>
+
+            <div id="loading" class="loading">Loading...</div>
+
+            <div id="content" style="display: none;">
+                <!-- Studios Section -->
+                <div class="section-header">
+                    <h2>Studios</h2>
+                    <button class="button" onclick="addStudio()">+ Add Studio</button>
+                </div>
+
+                <div id="studios-container"></div>
+
+                <!-- Categories Section -->
+                <div class="section-header">
+                    <h2>Categories</h2>
+                    <button class="button" onclick="addCategory()">+ Add Category</button>
+                </div>
+
+                <div id="categories-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        // Supabase configuration
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let data = {
+            studios: [],
+            categories: [],
+            links: []
+        };
+
+        // Toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isError) toast.classList.add('error');
+            setTimeout(() => toast.className = 'toast', 3000);
+        }
+
+        // Load all data from Supabase
+        async function loadData() {
+            try {
+                const [studiosResult, categoriesResult, linksResult] = await Promise.all([
+                    supabase.from('studios').select('*').order('order_index'),
+                    supabase.from('categories').select('*').order('order_index'),
+                    supabase.from('quick_links').select('*').order('order_index')
+                ]);
+
+                if (studiosResult.error) throw studiosResult.error;
+                if (categoriesResult.error) throw categoriesResult.error;
+                if (linksResult.error) throw linksResult.error;
+
+                data.studios = studiosResult.data || [];
+                data.categories = categoriesResult.data || [];
+                data.links = linksResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                renderStudios();
+                renderCategories();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading data. Please refresh the page.', true);
+            }
+        }
+
+        // Studio functions
+        async function addStudio() {
+            const name = prompt('Studio brand:', 'New Studio');
+            if (!name) return;
+
+            try {
+                const maxOrder = data.studios.length > 0 
+                    ? Math.max(...data.studios.map(s => s.order_index)) 
+                    : 0;
+
+                const { data: newStudio, error } = await supabase
+                    .from('studios')
+                    .insert({
+                        name,
+                        state: '',
+                        monthly_rate: '',
+                        annual_fee: '',
+                        phone_number: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                data.studios.push(newStudio);
+                renderStudios();
+                showToast('Studio added!');
+            } catch (error) {
+                console.error('Error adding studio:', error);
+                showToast('Error adding studio', true);
+            }
+        }
+
+        async function deleteStudio(id) {
+            if (!confirm('Delete this studio?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('studios')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                data.studios = data.studios.filter(s => s.id !== id);
+                renderStudios();
+                showToast('Studio deleted');
+            } catch (error) {
+                console.error('Error deleting studio:', error);
+                showToast('Error deleting studio', true);
+            }
+        }
+
+        async function editStudio(id, field) {
+            const studio = data.studios.find(s => s.id === id);
+            const currentValue = studio[field] || '';
+            let promptText = field.replace('_', ' ');
+            promptText = promptText.charAt(0).toUpperCase() + promptText.slice(1);
+            
+            const newValue = prompt(`Edit ${promptText}:`, currentValue);
+            if (newValue === null) return;
+
+            try {
+                const { error } = await supabase
+                    .from('studios')
+                    .update({ [field]: newValue })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                studio[field] = newValue;
+                renderStudios();
+                showToast('Updated!');
+            } catch (error) {
+                console.error('Error updating studio:', error);
+                showToast('Error updating studio', true);
+            }
+        }
+
+        function renderStudios() {
+            const container = document.getElementById('studios-container');
+            
+            if (data.studios.length === 0) {
+                container.innerHTML = '<div class="empty-state">No studios yet. Click "Add Studio" to get started.</div>';
+                return;
+            }
+
+            container.innerHTML = data.studios.map((studio, index) => `
+                <div class="studio-card">
+                    <div class="studio-header">
+                        <div class="reorder-buttons">
+                            <button class="reorder-btn">↑</button>
+                            <button class="reorder-btn">↓</button>
+                        </div>
+                        <div class="studio-name" onclick="editStudio('${studio.id}', 'name')">
+                            ${studio.brand}
+                        </div>
+                        <button class="delete-btn" onclick="deleteStudio('${studio.id}')">×</button>
+                    </div>
+                    <div class="grid">
+                        <div class="field-group">
+                            <label class="field-label">State</label>
+                            <div class="field-value" onclick="editStudio('${studio.id}', 'state')">
+                                ${studio.state || '<span class="placeholder">Click to edit</span>'}
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Monthly Rate</label>
+                            <div class="field-value" onclick="editStudio('${studio.id}', 'monthly_rate')">
+                                ${studio.monthly_rate || '<span class="placeholder">Click to edit</span>'}
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Annual Fee</label>
+                            <div class="field-value" onclick="editStudio('${studio.id}', 'annual_fee')">
+                                ${studio.annual_fee || '<span class="placeholder">Click to edit</span>'}
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Phone Number</label>
+                            <div class="field-value" onclick="editStudio('${studio.id}', 'phone_number')">
+                                ${studio.phone_number || '<span class="placeholder">Click to edit</span>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Category functions
+        async function addCategory() {
+            const name = prompt('Category brand:', 'New Category');
+            if (!name) return;
+
+            try {
+                const maxOrder = data.categories.length > 0 
+                    ? Math.max(...data.categories.map(c => c.order_index)) 
+                    : 0;
+
+                const { data: newCategory, error } = await supabase
+                    .from('categories')
+                    .insert({
+                        name,
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                data.categories.push(newCategory);
+                renderCategories();
+                showToast('Category added!');
+            } catch (error) {
+                console.error('Error adding category:', error);
+                showToast('Error adding category', true);
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Delete this category and all its links?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('categories')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                data.categories = data.categories.filter(c => c.id !== id);
+                data.links = data.links.filter(l => l.category_id !== id);
+                renderCategories();
+                showToast('Category deleted');
+            } catch (error) {
+                console.error('Error deleting category:', error);
+                showToast('Error deleting category', true);
+            }
+        }
+
+        async function editCategory(id) {
+            const category = data.categories.find(c => c.id === id);
+            const newName = prompt('Category brand:', category.name);
+            if (!newName) return;
+
+            try {
+                const { error } = await supabase
+                    .from('categories')
+                    .update({ brand: newName })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                category.name = newName;
+                renderCategories();
+                showToast('Updated!');
+            } catch (error) {
+                console.error('Error updating category:', error);
+                showToast('Error updating category', true);
+            }
+        }
+
+        // Link functions
+        async function addLink(categoryId) {
+            const title = prompt('Link title:', 'New Link');
+            if (!title) return;
+
+            const subtitle = prompt('Subtitle:', 'Click to edit');
+            const url = prompt('URL:', 'https://example.com');
+
+            try {
+                const categoryLinks = data.links.filter(l => l.category_id === categoryId);
+                const maxOrder = categoryLinks.length > 0 
+                    ? Math.max(...categoryLinks.map(l => l.order_index)) 
+                    : 0;
+
+                const { data: newLink, error } = await supabase
+                    .from('quick_links')
+                    .insert({
+                        category_id: categoryId,
+                        title,
+                        subtitle,
+                        url,
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                data.links.push(newLink);
+                renderCategories();
+                showToast('Link added!');
+            } catch (error) {
+                console.error('Error adding link:', error);
+                showToast('Error adding link', true);
+            }
+        }
+
+        async function deleteLink(id) {
+            try {
+                const { error } = await supabase
+                    .from('quick_links')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                data.links = data.links.filter(l => l.id !== id);
+                renderCategories();
+                showToast('Link deleted');
+            } catch (error) {
+                console.error('Error deleting link:', error);
+                showToast('Error deleting link', true);
+            }
+        }
+
+        async function editLink(id, field) {
+            const link = data.links.find(l => l.id === id);
+            const newValue = prompt(`Edit ${field}:`, link[field]);
+            if (newValue === null) return;
+
+            try {
+                const { error } = await supabase
+                    .from('quick_links')
+                    .update({ [field]: newValue })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                link[field] = newValue;
+                renderCategories();
+                showToast('Updated!');
+            } catch (error) {
+                console.error('Error updating link:', error);
+                showToast('Error updating link', true);
+            }
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categories-container');
+            
+            if (data.categories.length === 0) {
+                container.innerHTML = '<div class="empty-state">No categories yet. Click "Add Category" to get started.</div>';
+                return;
+            }
+
+            container.innerHTML = data.categories.map(category => {
+                const categoryLinks = data.links
+                    .filter(l => l.category_id === category.id)
+                    .sort((a, b) => a.order_index - b.order_index);
+
+                return `
+                    <div class="category-card">
+                        <div class="category-header">
+                            <div class="reorder-buttons">
+                                <button class="reorder-btn">↑</button>
+                                <button class="reorder-btn">↓</button>
+                            </div>
+                            <div class="category-name" onclick="editCategory('${category.id}')">
+                                ${category.name}
+                            </div>
+                            <button class="delete-btn" onclick="deleteCategory('${category.id}')">×</button>
+                        </div>
+                        <div class="links-container">
+                            ${categoryLinks.length === 0 
+                                ? '<div class="empty-state">No links yet. Click "Add Link" to get started.</div>'
+                                : categoryLinks.map(link => `
+                                    <div class="link-item">
+                                        <div class="link-reorder">
+                                            <button class="link-reorder-btn">↑</button>
+                                            <button class="link-reorder-btn">↓</button>
+                                        </div>
+                                        <div class="link-content">
+                                            <div class="link-field link-title" onclick="editLink('${link.id}', 'title')">
+                                                ${link.title}
+                                            </div>
+                                            <div class="link-field link-subtitle" onclick="editLink('${link.id}', 'subtitle')">
+                                                ${link.subtitle}
+                                            </div>
+                                            <div class="link-field link-url" onclick="editLink('${link.id}', 'url')">
+                                                ${link.url}
+                                            </div>
+                                        </div>
+                                        <button class="delete-btn" onclick="deleteLink('${link.id}')">×</button>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                        <button class="button-outline" onclick="addLink('${category.id}')">+ Add Link</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Expose functions to global scope
+        window.addStudio = addStudio;
+        window.deleteStudio = deleteStudio;
+        window.editStudio = editStudio;
+        window.addCategory = addCategory;
+        window.deleteCategory = deleteCategory;
+        window.editCategory = editCategory;
+        window.addLink = addLink;
+        window.deleteLink = deleteLink;
+        window.editLink = editLink;
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>

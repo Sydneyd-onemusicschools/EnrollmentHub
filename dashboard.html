@@ -175,6 +175,15 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
         }
 
         .button {
@@ -580,7 +589,12 @@
                     <!-- Shoutouts -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">🎉 Shoutouts</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Shoutouts
+                            </h3>
                             <button class="button button-small" onclick="openAddShoutout()">+ Add Shoutout</button>
                         </div>
                         <div id="shoutoutsList" class="items-list"></div>
@@ -589,7 +603,13 @@
                     <!-- Announcements -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">📢 Announcements</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 11l18-5v12L3 14v-3z"></path>
+                                    <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
+                                </svg>
+                                Announcements
+                            </h3>
                             <button class="button button-small" onclick="openAddAnnouncement()">+ Add Announcement</button>
                         </div>
                         <div id="announcementsList" class="items-list"></div>
@@ -598,7 +618,13 @@
                     <!-- Promos -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">🎁 Promos</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                                </svg>
+                                Promos
+                            </h3>
                             <button class="button button-small" onclick="openAddPromo()">+ Add Promo</button>
                         </div>
                         <div id="promosList" class="items-list"></div>
@@ -610,7 +636,13 @@
                     <!-- Reminders & Training -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">📚 Reminders & Training</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                                Reminders & Training
+                            </h3>
                             <button class="button button-small" onclick="openAddReminder()">+ Add Reminder</button>
                         </div>
                         <div id="remindersList" class="items-list"></div>
@@ -619,7 +651,14 @@
                     <!-- Team Goals -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">🎯 Team Goals</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <circle cx="12" cy="12" r="6"></circle>
+                                    <circle cx="12" cy="12" r="2"></circle>
+                                </svg>
+                                Team Goals
+                            </h3>
                             <button class="button button-small" onclick="openEditTeamGoals()">Edit Goals</button>
                         </div>
                         <div id="teamGoalsDisplay"></div>
@@ -630,7 +669,15 @@
                 <div id="weekly-schedule" class="tab-content">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">📅 Weekly Schedule</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Weekly Schedule
+                            </h3>
                         </div>
                         
                         <div class="schedule-tabs">
@@ -655,7 +702,13 @@
                 <div id="individual-goals" class="tab-content">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">📊 Individual Goals</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                                Individual Goals
+                            </h3>
                         </div>
                         <div id="individualGoalsList"></div>
                     </div>
@@ -665,7 +718,16 @@
                 <div id="notes" class="tab-content">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">📝 Notes</h3>
+                            <h3 class="card-title">
+                                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                Notes
+                            </h3>
                             <button class="button button-small" onclick="openAddNote()">+ Add Note</button>
                         </div>
                         <div id="notesList" class="items-list"></div>
@@ -1035,6 +1097,45 @@
 
         // Similar functions for Announcements, Reminders, Promos, Notes...
         // (Implementation continues...)
+
+        // Reminders Functions (placeholder - coming next!)
+        function renderReminders() {
+            const container = document.getElementById('remindersList');
+            container.innerHTML = '<p style="color: #9ca3af;">Reminders section coming soon...</p>';
+        }
+
+        // Promos Functions (placeholder - coming next!)
+        function renderPromos() {
+            const container = document.getElementById('promosList');
+            container.innerHTML = '<p style="color: #9ca3af;">Promos section coming soon...</p>';
+        }
+
+        // Team Goals Functions (placeholder - coming next!)
+        function renderTeamGoals() {
+            const container = document.getElementById('teamGoalsDisplay');
+            container.innerHTML = '<p style="color: #9ca3af;">Team Goals section coming soon...</p>';
+        }
+
+        // Schedule Functions (placeholder - coming next!)
+        function renderSchedule() {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'overall'];
+            days.forEach(day => {
+                const container = document.getElementById('schedule-' + day);
+                container.innerHTML = '<p style="color: #9ca3af;">Schedule section coming soon...</p>';
+            });
+        }
+
+        // Individual Goals Functions (placeholder - coming next!)
+        function renderIndividualGoals() {
+            const container = document.getElementById('individualGoalsList');
+            container.innerHTML = '<p style="color: #9ca3af;">Individual Goals section coming soon...</p>';
+        }
+
+        // Notes Functions (placeholder - coming next!)
+        function renderNotes() {
+            const container = document.getElementById('notesList');
+            container.innerHTML = '<p style="color: #9ca3af;">Notes section coming soon...</p>';
+        }
 
         loadData();
     </script>

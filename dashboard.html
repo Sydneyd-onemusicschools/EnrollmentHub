@@ -932,15 +932,21 @@
                 return;
             }
             console.log('Rendering shoutouts:', shoutouts); // DEBUG
-            container.innerHTML = shoutouts.map(item => `
-                <div class="item">
-                    <div class="item-content">${item.content}</div>
-                    <div class="item-actions">
-                        <button class="button button-secondary button-small" onclick="editShoutout('${item.id}')">Edit</button>
-                        <button class="button button-secondary button-small" onclick="deleteShoutout('${item.id}')">Delete</button>
+            
+            // Build HTML string differently to preserve tags
+            let html = '';
+            shoutouts.forEach(item => {
+                html += `
+                    <div class="item">
+                        <div class="item-content">TEST: <b>This should be bold</b> and ${item.content}</div>
+                        <div class="item-actions">
+                            <button class="button button-secondary button-small" onclick="editShoutout('${item.id}')">Edit</button>
+                            <button class="button button-secondary button-small" onclick="deleteShoutout('${item.id}')">Delete</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            });
+            container.innerHTML = html;
         }
 
         window.openAddShoutout = function() {

@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Dashboard</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-subtext {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            color: #1a1a1a;
+        }
+
+        .tab.active {
+            color: #ff6b6b;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .button-secondary {
+            background: #f5f5f5;
+            color: #1a1a1a;
+            box-shadow: none;
+        }
+
+        .button-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .button-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Rich Text Editor */
+        .rich-editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem 0.75rem;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .toolbar-btn.active {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .rich-editor {
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            min-height: 100px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .rich-editor:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Items List */
+        .items-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .item {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .star-icon {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star-icon:hover {
+            transform: scale(1.2);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .close-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: flex-end;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 10001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        /* Schedule specific styles */
+        .schedule-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .schedule-tab {
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .schedule-tab:hover {
+            background: #e5e7eb;
+        }
+
+        .schedule-tab.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+
+        .schedule-content {
+            display: none;
+        }
+
+        .schedule-content.active {
+            display: block;
+        }
+
+        .team-member-schedule {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .team-member-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Individual Goals specific */
+        .goals-member {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .goals-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .goals-section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .goals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="container">
+            <div id="loading" class="loading">Loading dashboard...</div>
+
+            <div id="mainView" style="display: none;">
+                <div class="header">
+                    <h1>Enrollment Hub</h1>
+                    <h2>Dashboard</h2>
+                    <p>Your team's command center</p>
+                </div>
+
+                <!-- Stats Cards (Always Visible) -->
+                <div class="stats-grid" id="statsCards"></div>
+
+                <!-- Main Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('team-updates')">Team Updates</button>
+                    <button class="tab" onclick="switchTab('goals-training')">Goals & Training</button>
+                    <button class="tab" onclick="switchTab('weekly-schedule')">Weekly Schedule</button>
+                    <button class="tab" onclick="switchTab('individual-goals')">Individual Goals</button>
+                    <button class="tab" onclick="switchTab('notes')">Notes</button>
+                </div>
+
+                <!-- Tab 1: Team Updates -->
+                <div id="team-updates" class="tab-content active">
+                    <!-- Shoutouts -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🎉 Shoutouts</h3>
+                            <button class="button button-small" onclick="openAddShoutout()">+ Add Shoutout</button>
+                        </div>
+                        <div id="shoutoutsList" class="items-list"></div>
+                    </div>
+
+                    <!-- Announcements -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📢 Announcements</h3>
+                            <button class="button button-small" onclick="openAddAnnouncement()">+ Add Announcement</button>
+                        </div>
+                        <div id="announcementsList" class="items-list"></div>
+                    </div>
+
+                    <!-- Promos -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🎁 Promos</h3>
+                            <button class="button button-small" onclick="openAddPromo()">+ Add Promo</button>
+                        </div>
+                        <div id="promosList" class="items-list"></div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Goals & Training -->
+                <div id="goals-training" class="tab-content">
+                    <!-- Reminders & Training -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📚 Reminders & Training</h3>
+                            <button class="button button-small" onclick="openAddReminder()">+ Add Reminder</button>
+                        </div>
+                        <div id="remindersList" class="items-list"></div>
+                    </div>
+
+                    <!-- Team Goals -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🎯 Team Goals</h3>
+                            <button class="button button-small" onclick="openEditTeamGoals()">Edit Goals</button>
+                        </div>
+                        <div id="teamGoalsDisplay"></div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Weekly Schedule -->
+                <div id="weekly-schedule" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📅 Weekly Schedule</h3>
+                        </div>
+                        
+                        <div class="schedule-tabs">
+                            <button class="schedule-tab active" onclick="switchScheduleDay('monday')">Monday</button>
+                            <button class="schedule-tab" onclick="switchScheduleDay('tuesday')">Tuesday</button>
+                            <button class="schedule-tab" onclick="switchScheduleDay('wednesday')">Wednesday</button>
+                            <button class="schedule-tab" onclick="switchScheduleDay('thursday')">Thursday</button>
+                            <button class="schedule-tab" onclick="switchScheduleDay('friday')">Friday</button>
+                            <button class="schedule-tab" onclick="switchScheduleDay('overall')">Overall</button>
+                        </div>
+
+                        <div id="schedule-monday" class="schedule-content active"></div>
+                        <div id="schedule-tuesday" class="schedule-content"></div>
+                        <div id="schedule-wednesday" class="schedule-content"></div>
+                        <div id="schedule-thursday" class="schedule-content"></div>
+                        <div id="schedule-friday" class="schedule-content"></div>
+                        <div id="schedule-overall" class="schedule-content"></div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Individual Goals -->
+                <div id="individual-goals" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📊 Individual Goals</h3>
+                        </div>
+                        <div id="individualGoalsList"></div>
+                    </div>
+                </div>
+
+                <!-- Tab 5: Notes -->
+                <div id="notes" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📝 Notes</h3>
+                            <button class="button button-small" onclick="openAddNote()">+ Add Note</button>
+                        </div>
+                        <div id="notesList" class="items-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals will go here -->
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let stats = [];
+        let shoutouts = [];
+        let announcements = [];
+        let reminders = [];
+        let promos = [];
+        let teamGoals = null;
+        let scheduleItems = [];
+        let individualGoals = [];
+        let notes = [];
+        let teamMembers = [];
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            else toast.classList.add('error');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
+        async function loadData() {
+            try {
+                const [
+                    statsResult,
+                    shoutoutsResult,
+                    announcementsResult,
+                    remindersResult,
+                    promosResult,
+                    teamGoalsResult,
+                    scheduleResult,
+                    goalsResult,
+                    notesResult,
+                    membersResult
+                ] = await Promise.all([
+                    supabase.from('dashboard_stats').select('*').order('order_index'),
+                    supabase.from('dashboard_shoutouts').select('*').order('order_index'),
+                    supabase.from('dashboard_announcements').select('*').order('order_index'),
+                    supabase.from('dashboard_reminders').select('*').order('order_index'),
+                    supabase.from('dashboard_promos').select('*').order('order_index'),
+                    supabase.from('dashboard_team_goals').select('*').limit(1).single(),
+                    supabase.from('dashboard_schedule_items').select('*'),
+                    supabase.from('dashboard_individual_goals').select('*'),
+                    supabase.from('dashboard_notes').select('*').order('order_index'),
+                    supabase.from('team_members').select('*').eq('status', 'active').order('first_name')
+                ]);
+
+                stats = statsResult.data || [];
+                shoutouts = shoutoutsResult.data || [];
+                announcements = announcementsResult.data || [];
+                reminders = remindersResult.data || [];
+                promos = promosResult.data || [];
+                teamGoals = teamGoalsResult.data || null;
+                scheduleItems = scheduleResult.data || [];
+                individualGoals = goalsResult.data || [];
+                notes = notesResult.data || [];
+                teamMembers = membersResult.data || [];
+
+                renderAll();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('mainView').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading dashboard', false);
+            }
+        }
+
+        function renderAll() {
+            renderStats();
+            renderShoutouts();
+            renderAnnouncements();
+            renderReminders();
+            renderPromos();
+            renderTeamGoals();
+            renderSchedule();
+            renderIndividualGoals();
+            renderNotes();
+        }
+
+        // Tab Switching
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Schedule Day Switching
+        window.switchScheduleDay = function(day) {
+            document.querySelectorAll('.schedule-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.schedule-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('schedule-' + day).classList.add('active');
+        }
+
+        // Stats Functions
+        function renderStats() {
+            const container = document.getElementById('statsCards');
+            container.innerHTML = stats.map(stat => `
+                <div class="stat-card" onclick="editStat('${stat.id}')">
+                    <div class="stat-title">${stat.title}</div>
+                    <div class="stat-number">${stat.number_value}</div>
+                    <div class="stat-subtext">${stat.subtext || ''}</div>
+                </div>
+            `).join('');
+        }
+
+        window.editStat = function(id) {
+            const stat = stats.find(s => s.id === id);
+            const title = prompt('Title:', stat.title);
+            const numberValue = prompt('Number:', stat.number_value);
+            const subtext = prompt('Subtext:', stat.subtext);
+            
+            if (title && numberValue) {
+                updateStat(id, { title, number_value: numberValue, subtext });
+            }
+        }
+
+        async function updateStat(id, data) {
+            try {
+                const { error } = await supabase
+                    .from('dashboard_stats')
+                    .update(data)
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const stat = stats.find(s => s.id === id);
+                Object.assign(stat, data);
+                renderStats();
+                showToast('Stat updated!', true);
+            } catch (error) {
+                console.error('Error updating stat:', error);
+                showToast('Error updating stat', false);
+            }
+        }
+
+        // Shoutouts Functions
+        function renderShoutouts() {
+            const container = document.getElementById('shoutoutsList');
+            if (shoutouts.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af;">No shoutouts yet</p>';
+                return;
+            }
+            container.innerHTML = shoutouts.map(item => `
+                <div class="item">
+                    <div class="item-content" innerHTML>${item.content}</div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="editShoutout('${item.id}')">Edit</button>
+                        <button class="button button-secondary button-small" onclick="deleteShoutout('${item.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openAddShoutout = function() {
+            const content = prompt('Enter shoutout (use <b>text</b> for bold):');
+            if (content) {
+                addShoutout(content);
+            }
+        }
+
+        async function addShoutout(content) {
+            try {
+                const maxOrder = shoutouts.length > 0 ? Math.max(...shoutouts.map(i => i.order_index)) : 0;
+                const { data, error } = await supabase
+                    .from('dashboard_shoutouts')
+                    .insert({ content, order_index: maxOrder + 1 })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                shoutouts.push(data);
+                renderShoutouts();
+                showToast('Shoutout added!', true);
+            } catch (error) {
+                console.error('Error adding shoutout:', error);
+                showToast('Error adding shoutout', false);
+            }
+        }
+
+        window.editShoutout = function(id) {
+            const item = shoutouts.find(s => s.id === id);
+            const content = prompt('Edit shoutout (use <b>text</b> for bold):', item.content.replace(/<b>/g, '').replace(/<\/b>/g, ''));
+            if (content) {
+                updateShoutout(id, content);
+            }
+        }
+
+        async function updateShoutout(id, content) {
+            try {
+                const { error } = await supabase
+                    .from('dashboard_shoutouts')
+                    .update({ content })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const item = shoutouts.find(s => s.id === id);
+                item.content = content;
+                renderShoutouts();
+                showToast('Shoutout updated!', true);
+            } catch (error) {
+                console.error('Error updating shoutout:', error);
+                showToast('Error updating shoutout', false);
+            }
+        }
+
+        window.deleteShoutout = async function(id) {
+            if (!confirm('Delete this shoutout?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('dashboard_shoutouts')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                shoutouts = shoutouts.filter(s => s.id !== id);
+                renderShoutouts();
+                showToast('Shoutout deleted', true);
+            } catch (error) {
+                console.error('Error deleting shoutout:', error);
+                showToast('Error deleting shoutout', false);
+            }
+        }
+
+        // Announcements Functions
+        function renderAnnouncements() {
+            const container = document.getElementById('announcementsList');
+            if (announcements.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af;">No announcements yet</p>';
+                return;
+            }
+            container.innerHTML = announcements.map(item => `
+                <div class="item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${item.is_starred ? '#fbbf24' : '#d1d5db'}" class="star-icon" onclick="toggleStarAnnouncement('${item.id}')">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <div class="item-content">${item.content}</div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="editAnnouncement('${item.id}')">Edit</button>
+                        <button class="button button-secondary button-small" onclick="deleteAnnouncement('${item.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openAddAnnouncement = function() {
+            const content = prompt('Enter announcement (use <b>text</b> for bold):');
+            if (content) {
+                addAnnouncement(content);
+            }
+        }
+
+        async function addAnnouncement(content) {
+            try {
+                const maxOrder = announcements.length > 0 ? Math.max(...announcements.map(i => i.order_index)) : 0;
+                const { data, error } = await supabase
+                    .from('dashboard_announcements')
+                    .insert({ content, is_starred: false, order_index: maxOrder + 1 })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                announcements.push(data);
+                renderAnnouncements();
+                showToast('Announcement added!', true);
+            } catch (error) {
+                console.error('Error adding announcement:', error);
+                showToast('Error adding announcement', false);
+            }
+        }
+
+        window.editAnnouncement = function(id) {
+            const item = announcements.find(a => a.id === id);
+            const content = prompt('Edit announcement (use <b>text</b> for bold):', item.content.replace(/<b>/g, '').replace(/<\/b>/g, ''));
+            if (content) {
+                updateAnnouncement(id, content);
+            }
+        }
+
+        async function updateAnnouncement(id, content) {
+            try {
+                const { error } = await supabase
+                    .from('dashboard_announcements')
+                    .update({ content })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const item = announcements.find(a => a.id === id);
+                item.content = content;
+                renderAnnouncements();
+                showToast('Announcement updated!', true);
+            } catch (error) {
+                console.error('Error updating announcement:', error);
+                showToast('Error updating announcement', false);
+            }
+        }
+
+        window.toggleStarAnnouncement = async function(id) {
+            try {
+                const item = announcements.find(a => a.id === id);
+                const newStarred = !item.is_starred;
+
+                const { error } = await supabase
+                    .from('dashboard_announcements')
+                    .update({ is_starred: newStarred })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                item.is_starred = newStarred;
+                renderAnnouncements();
+                showToast(newStarred ? 'Starred!' : 'Unstarred', true);
+            } catch (error) {
+                console.error('Error toggling star:', error);
+                showToast('Error updating star', false);
+            }
+        }
+
+        window.deleteAnnouncement = async function(id) {
+            if (!confirm('Delete this announcement?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('dashboard_announcements')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                announcements = announcements.filter(a => a.id !== id);
+                renderAnnouncements();
+                showToast('Announcement deleted', true);
+            } catch (error) {
+                console.error('Error deleting announcement:', error);
+                showToast('Error deleting announcement', false);
+            }
+        }
+
+        // Similar functions for Announcements, Reminders, Promos, Notes...
+        // (Implementation continues...)
+
+        loadData();
+    </script>
+</body>
+</html>

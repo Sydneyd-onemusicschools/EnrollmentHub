@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Teacher Selling Points</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        #sidebar-container {
+            /* Sidebar placeholder */
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .teacher-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .teacher-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .teacher-card.inactive {
+            opacity: 0.6;
+        }
+
+        .teacher-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .teacher-location {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .teacher-instruments {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #9ca3af;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        /* Edit Page Styles */
+        .edit-page {
+            display: none;
+        }
+
+        .edit-page.active {
+            display: block;
+        }
+
+        .edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .back-button {
+            background: #f5f5f5;
+            color: #6b7280;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+        }
+
+        .edit-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 0;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1a1a1a;
+            cursor: pointer;
+        }
+
+        .list-item {
+            background: #fafafa;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1.5px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .list-item:hover {
+            background: white;
+            border-color: #f0f0f0;
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .remove-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .remove-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-item-btn {
+            background: transparent;
+            border: 2px dashed #e5e7eb;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .add-item-btn:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.03);
+        }
+
+        .save-footer {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .instrument-card {
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .instrument-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .teachers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .edit-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .button, .back-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.35rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <div id="loading" class="loading">Loading...</div>
+
+            <!-- List View -->
+            <div id="listView" class="list-view" style="display: none;">
+                <div class="header">
+                    <h1>Enrollment Hub</h1>
+                    <h2>Teacher Selling Points</h2>
+                    <p>Manage teacher profiles and instrument specialties</p>
+                </div>
+
+                <div class="search-section">
+                    <input type="text" id="searchBar" class="search-bar" placeholder="Search by brand, state, or city..." oninput="filterTeachers()">
+                </div>
+
+                <div class="section-header">
+                    <h3>Teachers</h3>
+                    <button class="button" onclick="createNewTeacher()">+ Add Teacher</button>
+                </div>
+
+                <div id="teachersGrid" class="teachers-grid"></div>
+            </div>
+
+            <!-- Edit View -->
+            <div id="editView" class="edit-page">
+                <div class="edit-header">
+                    <button class="back-button" onclick="backToList()">← Back to Teachers</button>
+                    <h2 id="editTitle" style="font-size: 2rem; font-weight: 700; color: #1a1a1a;">Edit Teacher</h2>
+                </div>
+
+                <!-- Section 1: Basic Information -->
+                <div class="edit-section">
+                    <h3 class="section-title">Basic Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Brand</label>
+                            <input type="text" id="brand" class="form-input" placeholder="e.g., Main Music School">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State</label>
+                            <input type="text" id="state" class="form-input" placeholder="e.g., Utah">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <select id="gender" class="form-select">
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Non-binary">Non-binary</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="status" class="form-select">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Education & Preferences -->
+                <div class="edit-section">
+                    <h3 class="section-title">Education & Preferences</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="formalEducation" class="checkbox">
+                        <label for="formalEducation" class="checkbox-label">Formal Music Education</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Language(s) They Can Teach In</label>
+                        <input type="text" id="languages" class="form-input" placeholder="e.g., English, Spanish">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="specialNeeds" class="checkbox">
+                        <label for="specialNeeds" class="checkbox-label">Willing to Teach Students with Special Needs</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="onlineWilling" class="checkbox">
+                        <label for="onlineWilling" class="checkbox-label">Willing to Teach Online/Virtual Lessons</label>
+                    </div>
+                </div>
+
+                <!-- Section 3: Cities -->
+                <div class="edit-section">
+                    <h3 class="section-title">Cities</h3>
+                    <div id="citiesList"></div>
+                    <button class="add-item-btn" onclick="addCity()">+ Add City</button>
+                </div>
+
+                <!-- Section 4: Instruments -->
+                <div class="edit-section">
+                    <h3 class="section-title">Instruments & Specialties</h3>
+                    <div id="instrumentsList"></div>
+                    <button class="add-item-btn" onclick="addInstrument()">+ Add Instrument</button>
+                </div>
+
+                <!-- Section 5: Teaching Strengths -->
+                <div class="edit-section">
+                    <h3 class="section-title">Teaching Strengths</h3>
+                    <div class="form-group">
+                        <label class="form-label">Strength 1</label>
+                        <input type="text" id="strength1" class="form-input" placeholder="First teaching strength">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Strength 2</label>
+                        <input type="text" id="strength2" class="form-input" placeholder="Second teaching strength">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Strength 3</label>
+                        <input type="text" id="strength3" class="form-input" placeholder="Third teaching strength">
+                    </div>
+                </div>
+
+                <!-- Section 6: Additional Notes -->
+                <div class="edit-section">
+                    <h3 class="section-title">Additional Notes</h3>
+                    <div class="form-group">
+                        <textarea id="additionalNotes" class="form-textarea" placeholder="Any additional information about this teacher..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Save Footer -->
+                <div class="save-footer">
+                    <button class="back-button" onclick="backToList()">Cancel</button>
+                    <button class="button" style="background: #ef4444; margin-left: auto;" onclick="deleteTeacher()">Delete Teacher</button>
+                    <button class="button" onclick="saveTeacher()">Save Teacher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let teachers = [];
+        let cities = [];
+        let instruments = [];
+        let currentTeacherId = null;
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            else toast.classList.add('error');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
+        async function loadData() {
+            try {
+                const [teachersResult, citiesResult, instrumentsResult] = await Promise.all([
+                    supabase.from('teachers').select('*').order('brand'),
+                    supabase.from('teacher_cities').select('*').order('order_index'),
+                    supabase.from('teacher_instruments').select('*').order('order_index')
+                ]);
+
+                if (teachersResult.error) throw teachersResult.error;
+                if (citiesResult.error) throw citiesResult.error;
+                if (instrumentsResult.error) throw instrumentsResult.error;
+
+                teachers = teachersResult.data || [];
+                cities = citiesResult.data || [];
+                instruments = instrumentsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('listView').style.display = 'block';
+
+                renderTeachers();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading data', false);
+            }
+        }
+
+        function renderTeachers(filtered = null) {
+            const grid = document.getElementById('teachersGrid');
+            const list = filtered || teachers;
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><p>No teachers found</p></div>';
+                return;
+            }
+
+            grid.innerHTML = list.map(teacher => {
+                const teacherCities = cities.filter(c => c.teacher_id === teacher.id).map(c => c.city);
+                const teacherInstruments = instruments.filter(i => i.teacher_id === teacher.id).map(i => i.instrument);
+
+                return `
+                    <div class="teacher-card ${teacher.status}" onclick="editTeacher('${teacher.id}')">
+                        <div class="teacher-brand">${teacher.brand}</div>
+                        <div class="teacher-location">${teacherCities.join(', ') || 'No cities'} • ${teacher.state || 'No state'}</div>
+                        <div class="teacher-instruments">Instruments: ${teacherInstruments.join(', ') || 'None listed'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.filterTeachers = function() {
+            const search = document.getElementById('searchBar').value.toLowerCase();
+            if (!search) {
+                renderTeachers();
+                return;
+            }
+
+            const filtered = teachers.filter(t => {
+                const teacherCities = cities.filter(c => c.teacher_id === t.id).map(c => c.city.toLowerCase());
+                return t.brand.toLowerCase().includes(search) ||
+                       (t.state || '').toLowerCase().includes(search) ||
+                       teacherCities.some(city => city.includes(search));
+            });
+            renderTeachers(filtered);
+        }
+
+        window.createNewTeacher = async function() {
+            try {
+                const { data, error } = await supabase
+                    .from('teachers')
+                    .insert({
+                        brand: 'New Teacher',
+                        state: '',
+                        gender: '',
+                        formal_music_education: false,
+                        languages: '',
+                        special_needs_willing: false,
+                        online_willing: false,
+                        teaching_strength_1: '',
+                        teaching_strength_2: '',
+                        teaching_strength_3: '',
+                        additional_notes: '',
+                        status: 'active'
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                teachers.push(data);
+                editTeacher(data.id);
+            } catch (error) {
+                console.error('Error creating teacher:', error);
+                showToast('Error creating teacher', false);
+            }
+        }
+
+        window.editTeacher = async function(id) {
+            currentTeacherId = id;
+            const teacher = teachers.find(t => t.id === id);
+
+            document.getElementById('editTitle').textContent = teacher.brand || 'New Teacher';
+            document.getElementById('brand').value = teacher.brand || '';
+            document.getElementById('state').value = teacher.state || '';
+            document.getElementById('gender').value = teacher.gender || '';
+            document.getElementById('status').value = teacher.status || 'active';
+            document.getElementById('formalEducation').checked = teacher.formal_music_education || false;
+            document.getElementById('languages').value = teacher.languages || '';
+            document.getElementById('specialNeeds').checked = teacher.special_needs_willing || false;
+            document.getElementById('onlineWilling').checked = teacher.online_willing || false;
+            document.getElementById('strength1').value = teacher.teaching_strength_1 || '';
+            document.getElementById('strength2').value = teacher.teaching_strength_2 || '';
+            document.getElementById('strength3').value = teacher.teaching_strength_3 || '';
+            document.getElementById('additionalNotes').value = teacher.additional_notes || '';
+
+            const teacherCities = cities.filter(c => c.teacher_id === id);
+            const teacherInstruments = instruments.filter(i => i.teacher_id === id);
+
+            renderCities(teacherCities);
+            renderInstruments(teacherInstruments);
+
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('editView').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        window.backToList = function() {
+            document.getElementById('editView').classList.remove('active');
+            document.getElementById('listView').style.display = 'block';
+            loadData();
+            window.scrollTo(0, 0);
+        }
+
+        window.saveTeacher = async function() {
+            const teacher = teachers.find(t => t.id === currentTeacherId);
+            
+            const teacherData = {
+                brand: document.getElementById('brand').value,
+                state: document.getElementById('state').value,
+                gender: document.getElementById('gender').value,
+                status: document.getElementById('status').value,
+                formal_music_education: document.getElementById('formalEducation').checked,
+                languages: document.getElementById('languages').value,
+                special_needs_willing: document.getElementById('specialNeeds').checked,
+                online_willing: document.getElementById('onlineWilling').checked,
+                teaching_strength_1: document.getElementById('strength1').value,
+                teaching_strength_2: document.getElementById('strength2').value,
+                teaching_strength_3: document.getElementById('strength3').value,
+                additional_notes: document.getElementById('additionalNotes').value
+            };
+
+            try {
+                const { error } = await supabase
+                    .from('teachers')
+                    .update(teacherData)
+                    .eq('id', currentTeacherId);
+
+                if (error) throw error;
+
+                Object.assign(teacher, teacherData);
+                showToast('Teacher saved!', true);
+                backToList();
+            } catch (error) {
+                console.error('Error saving teacher:', error);
+                showToast('Error saving teacher', false);
+            }
+        }
+
+        window.deleteTeacher = async function() {
+            if (!confirm('Are you sure you want to delete this teacher? This will also delete all associated cities and instruments. This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('teachers')
+                    .delete()
+                    .eq('id', currentTeacherId);
+
+                if (error) throw error;
+
+                teachers = teachers.filter(t => t.id !== currentTeacherId);
+                cities = cities.filter(c => c.teacher_id !== currentTeacherId);
+                instruments = instruments.filter(i => i.teacher_id !== currentTeacherId);
+
+                showToast('Teacher deleted', true);
+                backToList();
+            } catch (error) {
+                console.error('Error deleting teacher:', error);
+                showToast('Error deleting teacher', false);
+            }
+        }
+
+        // Cities Functions
+        function renderCities(teacherCities) {
+            const container = document.getElementById('citiesList');
+            container.innerHTML = teacherCities.map(city => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <input type="text" class="form-input" value="${city.city}" onchange="updateCity('${city.id}', this.value)" placeholder="City name">
+                        <button class="remove-btn" onclick="removeCity('${city.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addCity = async function() {
+            try {
+                const teacherCities = cities.filter(c => c.teacher_id === currentTeacherId);
+                const maxOrder = teacherCities.length > 0 
+                    ? Math.max(...teacherCities.map(c => c.order_index)) 
+                    : 0;
+
+                const { data, error } = await supabase
+                    .from('teacher_cities')
+                    .insert({
+                        teacher_id: currentTeacherId,
+                        city: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                cities.push(data);
+                renderCities(cities.filter(c => c.teacher_id === currentTeacherId));
+            } catch (error) {
+                console.error('Error adding city:', error);
+                showToast('Error adding city', false);
+            }
+        }
+
+        window.updateCity = async function(id, value) {
+            try {
+                const { error } = await supabase
+                    .from('teacher_cities')
+                    .update({ city: value })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const city = cities.find(c => c.id === id);
+                city.city = value;
+            } catch (error) {
+                console.error('Error updating city:', error);
+            }
+        }
+
+        window.removeCity = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('teacher_cities')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                cities = cities.filter(c => c.id !== id);
+                renderCities(cities.filter(c => c.teacher_id === currentTeacherId));
+                showToast('City removed', true);
+            } catch (error) {
+                console.error('Error removing city:', error);
+                showToast('Error removing city', false);
+            }
+        }
+
+        // Instruments Functions
+        function renderInstruments(teacherInstruments) {
+            const container = document.getElementById('instrumentsList');
+            container.innerHTML = teacherInstruments.map(inst => `
+                <div class="instrument-card">
+                    <div class="list-item-header">
+                        <div class="instrument-header">${inst.instrument || 'New Instrument'}</div>
+                        <button class="remove-btn" onclick="removeInstrument('${inst.id}')">Remove</button>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Instrument</label>
+                            <input type="text" class="form-input" value="${inst.instrument || ''}" onchange="updateInstrument('${inst.id}', 'instrument', this.value)" placeholder="e.g., Piano">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teacher Level</label>
+                            <select class="form-select" onchange="updateInstrument('${inst.id}', 'teacher_level', this.value)">
+                                <option value="">Select level</option>
+                                <option value="beginner" ${inst.teacher_level === 'beginner' ? 'selected' : ''}>Beginner</option>
+                                <option value="intermediate" ${inst.teacher_level === 'intermediate' ? 'selected' : ''}>Intermediate</option>
+                                <option value="advanced" ${inst.teacher_level === 'advanced' ? 'selected' : ''}>Advanced</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Youngest Age Preference</label>
+                            <input type="number" class="form-input" value="${inst.youngest_age_preference || ''}" onchange="updateInstrument('${inst.id}', 'youngest_age_preference', this.value)" placeholder="e.g., 5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Year Started Teaching</label>
+                            <input type="number" class="form-input" value="${inst.year_started || ''}" onchange="updateInstrument('${inst.id}', 'year_started', this.value)" placeholder="e.g., 2010">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Notable Achievements or Credentials</label>
+                        <textarea class="form-textarea" onchange="updateInstrument('${inst.id}', 'achievements_credentials', this.value)" placeholder="Education, certifications, awards...">${inst.achievements_credentials || ''}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Genre(s) Specific to Instrument</label>
+                        <input type="text" class="form-input" value="${inst.genres || ''}" onchange="updateInstrument('${inst.id}', 'genres', this.value)" placeholder="e.g., Classical, Jazz, Rock">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-textarea" onchange="updateInstrument('${inst.id}', 'notes', this.value)" placeholder="Any additional notes about teaching this instrument...">${inst.notes || ''}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addInstrument = async function() {
+            try {
+                const teacherInstruments = instruments.filter(i => i.teacher_id === currentTeacherId);
+                const maxOrder = teacherInstruments.length > 0 
+                    ? Math.max(...teacherInstruments.map(i => i.order_index)) 
+                    : 0;
+
+                const { data, error } = await supabase
+                    .from('teacher_instruments')
+                    .insert({
+                        teacher_id: currentTeacherId,
+                        instrument: '',
+                        teacher_level: '',
+                        youngest_age_preference: null,
+                        achievements_credentials: '',
+                        year_started: null,
+                        genres: '',
+                        notes: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                instruments.push(data);
+                renderInstruments(instruments.filter(i => i.teacher_id === currentTeacherId));
+            } catch (error) {
+                console.error('Error adding instrument:', error);
+                showToast('Error adding instrument', false);
+            }
+        }
+
+        window.updateInstrument = async function(id, field, value) {
+            try {
+                const updateData = {};
+                updateData[field] = value === '' ? null : value;
+
+                const { error } = await supabase
+                    .from('teacher_instruments')
+                    .update(updateData)
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const instrument = instruments.find(i => i.id === id);
+                instrument[field] = value;
+                
+                // Re-render to update header if instrument name changed
+                if (field === 'instrument') {
+                    renderInstruments(instruments.filter(i => i.teacher_id === currentTeacherId));
+                }
+            } catch (error) {
+                console.error('Error updating instrument:', error);
+            }
+        }
+
+        window.removeInstrument = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('teacher_instruments')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                instruments = instruments.filter(i => i.id !== id);
+                renderInstruments(instruments.filter(i => i.teacher_id === currentTeacherId));
+                showToast('Instrument removed', true);
+            } catch (error) {
+                console.error('Error removing instrument:', error);
+                showToast('Error removing instrument', false);
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

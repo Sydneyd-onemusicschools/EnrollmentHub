@@ -738,6 +738,43 @@
     </div>
 
     <!-- Modals will go here -->
+    
+    <!-- Notes Modal -->
+    <div id="notesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="notesModalTitle">Add Note</h3>
+                <button class="close-btn" onclick="closeNotesModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Header</label>
+                <input type="text" id="noteHeader" class="form-input" placeholder="e.g., Important Updates">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Subtitle (Optional)</label>
+                <input type="text" id="noteSubtitle" class="form-input" placeholder="e.g., Week of Jan 1-5">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Notes (use &lt;b&gt;text&lt;/b&gt; for bold)</label>
+                <textarea id="noteNotes" class="form-textarea" placeholder="Enter notes here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Link (Optional)</label>
+                <input type="url" id="noteLink" class="form-input" placeholder="https://...">
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeNotesModal()">Cancel</button>
+                <button id="deleteNoteBtn" class="button" style="background: #ef4444; margin-right: auto; display: none;" onclick="deleteNote()">Delete</button>
+                <button class="button" onclick="saveNote()">Save Note</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast"></div>
 
     <script type="module">
@@ -1104,10 +1141,96 @@
             container.innerHTML = '<p style="color: #9ca3af;">Reminders section coming soon...</p>';
         }
 
-        // Promos Functions (placeholder - coming next!)
+        // Promos Functions
         function renderPromos() {
             const container = document.getElementById('promosList');
-            container.innerHTML = '<p style="color: #9ca3af;">Promos section coming soon...</p>';
+            if (promos.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af;">No promos yet</p>';
+                return;
+            }
+            container.innerHTML = promos.map(item => `
+                <div class="item">
+                    <div class="item-content">${item.content}</div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="editPromo('${item.id}')">Edit</button>
+                        <button class="button button-secondary button-small" onclick="deletePromo('${item.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openAddPromo = function() {
+            const content = prompt('Enter promo (use <b>text</b> for bold):');
+            if (content) {
+                addPromo(content);
+            }
+        }
+
+        async function addPromo(content) {
+            try {
+                const maxOrder = promos.length > 0 ? Math.max(...promos.map(i => i.order_index)) : 0;
+                const { data, error } = await supabase
+                    .from('dashboard_promos')
+                    .insert({ content, order_index: maxOrder + 1 })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                promos.push(data);
+                renderPromos();
+                showToast('Promo added!', true);
+            } catch (error) {
+                console.error('Error adding promo:', error);
+                showToast('Error adding promo', false);
+            }
+        }
+
+        window.editPromo = function(id) {
+            const item = promos.find(p => p.id === id);
+            const content = prompt('Edit promo (use <b>text</b> for bold):', item.content.replace(/<b>/g, '').replace(/<\/b>/g, ''));
+            if (content) {
+                updatePromo(id, content);
+            }
+        }
+
+        async function updatePromo(id, content) {
+            try {
+                const { error } = await supabase
+                    .from('dashboard_promos')
+                    .update({ content })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const item = promos.find(p => p.id === id);
+                item.content = content;
+                renderPromos();
+                showToast('Promo updated!', true);
+            } catch (error) {
+                console.error('Error updating promo:', error);
+                showToast('Error updating promo', false);
+            }
+        }
+
+        window.deletePromo = async function(id) {
+            if (!confirm('Delete this promo?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('dashboard_promos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                promos = promos.filter(p => p.id !== id);
+                renderPromos();
+                showToast('Promo deleted', true);
+            } catch (error) {
+                console.error('Error deleting promo:', error);
+                showToast('Error deleting promo', false);
+            }
         }
 
         // Team Goals Functions (placeholder - coming next!)
@@ -1131,10 +1254,131 @@
             container.innerHTML = '<p style="color: #9ca3af;">Individual Goals section coming soon...</p>';
         }
 
-        // Notes Functions (placeholder - coming next!)
+        // Notes Functions
+        let currentNoteId = null;
+
         function renderNotes() {
             const container = document.getElementById('notesList');
-            container.innerHTML = '<p style="color: #9ca3af;">Notes section coming soon...</p>';
+            if (notes.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af;">No notes yet</p>';
+                return;
+            }
+            container.innerHTML = notes.map(item => `
+                <div class="item">
+                    <div class="item-content" style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.25rem;">${item.header}</div>
+                        ${item.subtitle ? `<div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">${item.subtitle}</div>` : ''}
+                        <div style="margin-bottom: 0.5rem;">${item.notes || ''}</div>
+                        ${item.link ? `<a href="${item.link}" target="_blank" style="color: #ff6b6b; text-decoration: none; font-size: 0.875rem;">View Link →</a>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="openEditNote('${item.id}')">Edit</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openAddNote = function() {
+            currentNoteId = null;
+            document.getElementById('notesModalTitle').textContent = 'Add Note';
+            document.getElementById('deleteNoteBtn').style.display = 'none';
+            
+            document.getElementById('noteHeader').value = '';
+            document.getElementById('noteSubtitle').value = '';
+            document.getElementById('noteNotes').value = '';
+            document.getElementById('noteLink').value = '';
+            
+            document.getElementById('notesModal').classList.add('active');
+        }
+
+        window.openEditNote = function(id) {
+            currentNoteId = id;
+            const item = notes.find(n => n.id === id);
+            
+            document.getElementById('notesModalTitle').textContent = 'Edit Note';
+            document.getElementById('deleteNoteBtn').style.display = 'block';
+            
+            document.getElementById('noteHeader').value = item.header || '';
+            document.getElementById('noteSubtitle').value = item.subtitle || '';
+            document.getElementById('noteNotes').value = item.notes || '';
+            document.getElementById('noteLink').value = item.link || '';
+            
+            document.getElementById('notesModal').classList.add('active');
+        }
+
+        window.closeNotesModal = function() {
+            document.getElementById('notesModal').classList.remove('active');
+            currentNoteId = null;
+        }
+
+        window.saveNote = async function() {
+            const noteData = {
+                header: document.getElementById('noteHeader').value,
+                subtitle: document.getElementById('noteSubtitle').value,
+                notes: document.getElementById('noteNotes').value,
+                link: document.getElementById('noteLink').value
+            };
+
+            if (!noteData.header) {
+                showToast('Header is required', false);
+                return;
+            }
+
+            try {
+                if (currentNoteId) {
+                    // Update existing note
+                    const { error } = await supabase
+                        .from('dashboard_notes')
+                        .update(noteData)
+                        .eq('id', currentNoteId);
+
+                    if (error) throw error;
+
+                    const item = notes.find(n => n.id === currentNoteId);
+                    Object.assign(item, noteData);
+                    showToast('Note updated!', true);
+                } else {
+                    // Create new note
+                    const maxOrder = notes.length > 0 ? Math.max(...notes.map(i => i.order_index)) : 0;
+                    const { data, error } = await supabase
+                        .from('dashboard_notes')
+                        .insert({ ...noteData, order_index: maxOrder + 1 })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    notes.push(data);
+                    showToast('Note added!', true);
+                }
+
+                closeNotesModal();
+                renderNotes();
+            } catch (error) {
+                console.error('Error saving note:', error);
+                showToast('Error saving note', false);
+            }
+        }
+
+        window.deleteNote = async function() {
+            if (!confirm('Delete this note?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('dashboard_notes')
+                    .delete()
+                    .eq('id', currentNoteId);
+
+                if (error) throw error;
+
+                notes = notes.filter(n => n.id !== currentNoteId);
+                closeNotesModal();
+                renderNotes();
+                showToast('Note deleted', true);
+            } catch (error) {
+                console.error('Error deleting note:', error);
+                showToast('Error deleting note', false);
+            }
         }
 
         loadData();

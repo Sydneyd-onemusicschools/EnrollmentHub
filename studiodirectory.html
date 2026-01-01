@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Hub - Studio Directory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
+        }
+
+        #sidebar-container {
+            /* Sidebar placeholder */
+        }
+
+        .main-wrapper {
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.04em;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .studios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .studio-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .studio-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .studio-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .studio-location {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .studio-director {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #9ca3af;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        /* Edit Page Styles */
+        .edit-page {
+            display: none;
+        }
+
+        .edit-page.active {
+            display: block;
+        }
+
+        .edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .back-button {
+            background: #f5f5f5;
+            color: #6b7280;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+        }
+
+        .edit-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: #e5e7eb;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #ff6b6b;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(28px);
+        }
+
+        .toggle-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .list-item {
+            background: #fafafa;
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1.5px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .list-item:hover {
+            background: white;
+            border-color: #f0f0f0;
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .remove-btn {
+            background: #fee2e2;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .remove-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-item-btn {
+            background: transparent;
+            border: 2px dashed #e5e7eb;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .add-item-btn:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.03);
+        }
+
+        .save-footer {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .rich-text-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .toolbar-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 700;
+            font-family: serif;
+        }
+
+        .toolbar-btn:hover {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .rich-text-editor {
+            min-height: 80px;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            outline: none;
+            background: white;
+            line-height: 1.6;
+        }
+
+        .rich-text-editor:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .rich-text-editor:empty:before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .studios-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .edit-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .button, .back-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.35rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <div id="loading" class="loading">Loading...</div>
+
+            <!-- List View -->
+            <div id="listView" class="list-view" style="display: none;">
+                <div class="header">
+                    <h1>Enrollment Hub</h1>
+                    <h2>Studio Directory</h2>
+                    <p>Manage all studio locations and information</p>
+                </div>
+
+                <div class="search-section">
+                    <input type="text" id="searchBar" class="search-bar" placeholder="Search by brand, state, or city..." oninput="filterStudios()">
+                </div>
+
+                <div class="section-header">
+                    <h3>Studios</h3>
+                    <button class="button" onclick="createNewStudio()">+ Add Studio</button>
+                </div>
+
+                <div id="studiosGrid" class="studios-grid"></div>
+            </div>
+
+            <!-- Edit View -->
+            <div id="editView" class="edit-page">
+                <div class="edit-header">
+                    <button class="back-button" onclick="backToList()">← Back to Studios</button>
+                    <h2 id="editTitle" style="font-size: 2rem; font-weight: 700; color: #1a1a1a;">Edit Studio</h2>
+                </div>
+
+                <!-- Section 1: Basic Information -->
+                <div class="edit-section">
+                    <h3 class="section-title">Basic Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Brand</label>
+                            <input type="text" id="brand" class="form-input" placeholder="e.g., Main Music School">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State</label>
+                            <input type="text" id="state" class="form-input" placeholder="e.g., Utah">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" id="city" class="form-input" placeholder="e.g., Salt Lake City">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Time Zone</label>
+                            <input type="text" id="timeZone" class="form-input" placeholder="e.g., America/Denver">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input type="text" id="address" class="form-input" placeholder="Full studio address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" id="phoneNumber" class="form-input" placeholder="(555) 123-4567">
+                    </div>
+                </div>
+
+                <!-- Section 2: Key People -->
+                <div class="edit-section">
+                    <h3 class="section-title">Key People</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Studio Director Name</label>
+                            <input type="text" id="directorName" class="form-input" placeholder="Director name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Director Email</label>
+                            <input type="email" id="directorEmail" class="form-input" placeholder="director@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Admin Name</label>
+                            <input type="text" id="adminName" class="form-input" placeholder="Admin name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Admin Email</label>
+                            <input type="email" id="adminEmail" class="form-input" placeholder="admin@example.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Pricing -->
+                <div class="edit-section">
+                    <h3 class="section-title">Pricing</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">30-Min Lesson (Monthly Rate)</label>
+                            <input type="text" id="monthlyRate" class="form-input" placeholder="$30">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">45-Min Lesson</label>
+                            <input type="text" id="price45" class="form-input" placeholder="$45">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">60-Min Lesson</label>
+                            <input type="text" id="price60" class="form-input" placeholder="$60">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Annual Fee</label>
+                            <input type="text" id="annualFee" class="form-input" placeholder="$50">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Instruments -->
+                <div class="edit-section">
+                    <h3 class="section-title">Instruments Offered</h3>
+                    <div id="instrumentsList"></div>
+                    <button class="add-item-btn" onclick="addInstrument()">+ Add Instrument</button>
+                </div>
+
+                <!-- Section 5: Programs -->
+                <div class="edit-section">
+                    <h3 class="section-title">Programs</h3>
+                    <div class="toggle-container">
+                        <div id="programsToggle" class="toggle-switch" onclick="togglePrograms()">
+                            <div class="toggle-slider"></div>
+                        </div>
+                        <span class="toggle-label">Programs Available</span>
+                    </div>
+                    <div id="programsSection" style="display: none;">
+                        <div id="programsList"></div>
+                        <button class="add-item-btn" onclick="addProgram()">+ Add Program</button>
+                    </div>
+                </div>
+
+                <!-- Section 6: Practical Information -->
+                <div class="edit-section">
+                    <h3 class="section-title">Practical Information</h3>
+                    <div class="form-group">
+                        <label class="form-label">Parking Instructions</label>
+                        <textarea id="parking" class="form-textarea" placeholder="Parking information..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instrument Rentals - Instructions</label>
+                        <textarea id="rentalInfo" class="form-textarea" placeholder="Rental information..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instrument Rentals - Link (Optional)</label>
+                        <input type="text" id="rentalLink" class="form-input" placeholder="https://...">
+                    </div>
+                </div>
+
+                <!-- Section 7: Quick Links -->
+                <div class="edit-section">
+                    <h3 class="section-title">Quick Links</h3>
+                    <div id="linksList"></div>
+                    <button class="add-item-btn" onclick="addLink()">+ Add Link</button>
+                </div>
+
+                <!-- Section 8: Notes & Custom Sections -->
+                <div class="edit-section">
+                    <h3 class="section-title">Notes & Custom Sections</h3>
+                    <div class="form-group">
+                        <label class="form-label">General Notes</label>
+                        <div class="rich-text-toolbar">
+                            <button class="toolbar-btn" onclick="formatGeneralNotes('bold')" type="button"><b>B</b></button>
+                            <button class="toolbar-btn" onclick="formatGeneralNotes('italic')" type="button"><i>I</i></button>
+                        </div>
+                        <div id="generalNotes" class="rich-text-editor" contenteditable="true" data-placeholder="General notes about this studio..."></div>
+                    </div>
+                    <h4 style="font-size: 1.1rem; font-weight: 600; margin: 2rem 0 1rem; color: #1a1a1a;">Custom Sections</h4>
+                    <div id="sectionsList"></div>
+                    <button class="add-item-btn" onclick="addSection()">+ Add Custom Section</button>
+                </div>
+
+                <!-- Save Footer -->
+                <div class="save-footer">
+                    <button class="back-button" onclick="backToList()">Cancel</button>
+                    <button class="button" onclick="saveStudio()">Save Studio</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let studios = [];
+        let instruments = [];
+        let programs = [];
+        let links = [];
+        let sections = [];
+        let currentStudioId = null;
+
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
+        async function loadData() {
+            try {
+                const [studiosResult, instrumentsResult, programsResult, linksResult, sectionsResult] = await Promise.all([
+                    supabase.from('studios').select('*').order('brand'),
+                    supabase.from('studio_instruments').select('*').order('order_index'),
+                    supabase.from('studio_programs').select('*').order('order_index'),
+                    supabase.from('studio_links').select('*').order('order_index'),
+                    supabase.from('studio_sections').select('*').order('order_index')
+                ]);
+
+                if (studiosResult.error) throw studiosResult.error;
+                if (instrumentsResult.error) throw instrumentsResult.error;
+                if (programsResult.error) throw programsResult.error;
+                if (linksResult.error) throw linksResult.error;
+                if (sectionsResult.error) throw sectionsResult.error;
+
+                studios = studiosResult.data || [];
+                instruments = instrumentsResult.data || [];
+                programs = programsResult.data || [];
+                links = linksResult.data || [];
+                sections = sectionsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('listView').style.display = 'block';
+
+                renderStudios();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Error loading data', false);
+            }
+        }
+
+        function renderStudios(filtered = null) {
+            const grid = document.getElementById('studiosGrid');
+            const list = filtered || studios;
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><p>No studios found</p></div>';
+                return;
+            }
+
+            grid.innerHTML = list.map(studio => `
+                <div class="studio-card" onclick="editStudio('${studio.id}')">
+                    <div class="studio-brand">${studio.brand}</div>
+                    <div class="studio-location">${studio.city}, ${studio.state}</div>
+                    <div class="studio-director">Director: ${studio.director_name || 'Not set'}</div>
+                </div>
+            `).join('');
+        }
+
+        window.filterStudios = function() {
+            const search = document.getElementById('searchBar').value.toLowerCase();
+            if (!search) {
+                renderStudios();
+                return;
+            }
+
+            const filtered = studios.filter(s =>
+                s.brand.toLowerCase().includes(search) ||
+                (s.state || '').toLowerCase().includes(search) ||
+                (s.city || '').toLowerCase().includes(search)
+            );
+            renderStudios(filtered);
+        }
+
+        window.createNewStudio = async function() {
+            try {
+                const { data, error } = await supabase
+                    .from('studios')
+                    .insert({
+                        brand: 'New Studio',
+                        state: '',
+                        city: '',
+                        time_zone: '',
+                        address: '',
+                        phone_number: '',
+                        director_name: '',
+                        director_email: '',
+                        admin_name: '',
+                        admin_email: '',
+                        monthly_rate: '',
+                        price_45: '',
+                        price_60: '',
+                        annual_fee: '',
+                        programs_enabled: false,
+                        parking: '',
+                        rental_info: '',
+                        rental_link: '',
+                        general_notes: ''
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                studios.push(data);
+                editStudio(data.id);
+            } catch (error) {
+                console.error('Error creating studio:', error);
+                showToast('Error creating studio', false);
+            }
+        }
+
+        window.editStudio = async function(id) {
+            currentStudioId = id;
+            const studio = studios.find(s => s.id === id);
+
+            document.getElementById('editTitle').textContent = studio.brand || 'New Studio';
+            document.getElementById('brand').value = studio.brand || '';
+            document.getElementById('state').value = studio.state || '';
+            document.getElementById('city').value = studio.city || '';
+            document.getElementById('timeZone').value = studio.time_zone || '';
+            document.getElementById('address').value = studio.address || '';
+            document.getElementById('phoneNumber').value = studio.phone_number || '';
+            document.getElementById('directorName').value = studio.director_name || '';
+            document.getElementById('directorEmail').value = studio.director_email || '';
+            document.getElementById('adminName').value = studio.admin_name || '';
+            document.getElementById('adminEmail').value = studio.admin_email || '';
+            document.getElementById('monthlyRate').value = studio.monthly_rate || '';
+            document.getElementById('price45').value = studio.price_45 || '';
+            document.getElementById('price60').value = studio.price_60 || '';
+            document.getElementById('annualFee').value = studio.annual_fee || '';
+            document.getElementById('parking').value = studio.parking || '';
+            document.getElementById('rentalInfo').value = studio.rental_info || '';
+            document.getElementById('rentalLink').value = studio.rental_link || '';
+            document.getElementById('generalNotes').innerHTML = studio.general_notes || '';
+
+            const programsToggle = document.getElementById('programsToggle');
+            if (studio.programs_enabled) {
+                programsToggle.classList.add('active');
+                document.getElementById('programsSection').style.display = 'block';
+            } else {
+                programsToggle.classList.remove('active');
+                document.getElementById('programsSection').style.display = 'none';
+            }
+
+            const studioInstruments = instruments.filter(i => i.studio_id === id);
+            const studioPrograms = programs.filter(p => p.studio_id === id);
+            const studioLinks = links.filter(l => l.studio_id === id);
+            const studioSections = sections.filter(s => s.studio_id === id);
+
+            renderInstruments(studioInstruments);
+            renderPrograms(studioPrograms);
+            renderLinks(studioLinks);
+            renderSections(studioSections);
+
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('editView').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        window.backToList = function() {
+            document.getElementById('editView').classList.remove('active');
+            document.getElementById('listView').style.display = 'block';
+            loadData();
+            window.scrollTo(0, 0);
+        }
+
+        window.saveStudio = async function() {
+            const studio = studios.find(s => s.id === currentStudioId);
+            
+            const studioData = {
+                brand: document.getElementById('brand').value,
+                state: document.getElementById('state').value,
+                city: document.getElementById('city').value,
+                time_zone: document.getElementById('timeZone').value,
+                address: document.getElementById('address').value,
+                phone_number: document.getElementById('phoneNumber').value,
+                director_name: document.getElementById('directorName').value,
+                director_email: document.getElementById('directorEmail').value,
+                admin_name: document.getElementById('adminName').value,
+                admin_email: document.getElementById('adminEmail').value,
+                monthly_rate: document.getElementById('monthlyRate').value,
+                price_45: document.getElementById('price45').value,
+                price_60: document.getElementById('price60').value,
+                annual_fee: document.getElementById('annualFee').value,
+                parking: document.getElementById('parking').value,
+                rental_info: document.getElementById('rentalInfo').value,
+                rental_link: document.getElementById('rentalLink').value,
+                general_notes: document.getElementById('generalNotes').innerHTML,
+                programs_enabled: studio.programs_enabled
+            };
+
+            try {
+                const { error } = await supabase
+                    .from('studios')
+                    .update(studioData)
+                    .eq('id', currentStudioId);
+
+                if (error) throw error;
+
+                Object.assign(studio, studioData);
+                showToast('Studio saved!', true);
+                backToList();
+            } catch (error) {
+                console.error('Error saving studio:', error);
+                showToast('Error saving studio', false);
+            }
+        }
+
+        window.togglePrograms = async function() {
+            const toggle = document.getElementById('programsToggle');
+            const section = document.getElementById('programsSection');
+            const studio = studios.find(s => s.id === currentStudioId);
+
+            studio.programs_enabled = !studio.programs_enabled;
+            
+            try {
+                const { error } = await supabase
+                    .from('studios')
+                    .update({ programs_enabled: studio.programs_enabled })
+                    .eq('id', currentStudioId);
+
+                if (error) throw error;
+
+                if (studio.programs_enabled) {
+                    toggle.classList.add('active');
+                    section.style.display = 'block';
+                } else {
+                    toggle.classList.remove('active');
+                    section.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error updating programs toggle:', error);
+                showToast('Error updating programs', false);
+            }
+        }
+
+        // Instruments Functions
+        function renderInstruments(studioInstruments) {
+            const container = document.getElementById('instrumentsList');
+            container.innerHTML = studioInstruments.map(inst => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <input type="text" class="form-input" value="${inst.name}" onchange="updateInstrument('${inst.id}', this.value)" placeholder="Instrument name">
+                        <button class="remove-btn" onclick="removeInstrument('${inst.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addInstrument = async function() {
+            try {
+                const studioInstruments = instruments.filter(i => i.studio_id === currentStudioId);
+                const maxOrder = studioInstruments.length > 0 
+                    ? Math.max(...studioInstruments.map(i => i.order_index)) 
+                    : 0;
+
+                const { data, error } = await supabase
+                    .from('studio_instruments')
+                    .insert({
+                        studio_id: currentStudioId,
+                        name: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                instruments.push(data);
+                renderInstruments(instruments.filter(i => i.studio_id === currentStudioId));
+            } catch (error) {
+                console.error('Error adding instrument:', error);
+                showToast('Error adding instrument', false);
+            }
+        }
+
+        window.updateInstrument = async function(id, value) {
+            try {
+                const { error } = await supabase
+                    .from('studio_instruments')
+                    .update({ name: value })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const instrument = instruments.find(i => i.id === id);
+                instrument.name = value;
+            } catch (error) {
+                console.error('Error updating instrument:', error);
+            }
+        }
+
+        window.removeInstrument = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('studio_instruments')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                instruments = instruments.filter(i => i.id !== id);
+                renderInstruments(instruments.filter(i => i.studio_id === currentStudioId));
+                showToast('Instrument removed', true);
+            } catch (error) {
+                console.error('Error removing instrument:', error);
+                showToast('Error removing instrument', false);
+            }
+        }
+
+        // Programs Functions
+        function renderPrograms(studioPrograms) {
+            const container = document.getElementById('programsList');
+            container.innerHTML = studioPrograms.map((prog, localIndex) => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <div style="flex: 1;">
+                            <div class="form-group">
+                                <label class="form-label">Program Name</label>
+                                <input type="text" class="form-input" value="${prog.name}" onchange="updateProgram('${prog.id}', 'name', this.value)" placeholder="Program name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <div class="rich-text-toolbar">
+                                    <button class="toolbar-btn" onclick="formatProgramDesc('${prog.id}', 'bold')" type="button"><b>B</b></button>
+                                    <button class="toolbar-btn" onclick="formatProgramDesc('${prog.id}', 'italic')" type="button"><i>I</i></button>
+                                </div>
+                                <div id="programDesc${prog.id}" class="rich-text-editor" contenteditable="true" data-placeholder="Short description..." oninput="updateProgram('${prog.id}', 'description', this.innerHTML)">${prog.description || ''}</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Link</label>
+                                <input type="text" class="form-input" value="${prog.link || ''}" onchange="updateProgram('${prog.id}', 'link', this.value)" placeholder="https://...">
+                            </div>
+                        </div>
+                        <button class="remove-btn" onclick="removeProgram('${prog.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addProgram = async function() {
+            try {
+                const studioPrograms = programs.filter(p => p.studio_id === currentStudioId);
+                const maxOrder = studioPrograms.length > 0 
+                    ? Math.max(...studioPrograms.map(p => p.order_index)) 
+                    : 0;
+
+                const { data, error } = await supabase
+                    .from('studio_programs')
+                    .insert({
+                        studio_id: currentStudioId,
+                        name: '',
+                        description: '',
+                        link: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                programs.push(data);
+                renderPrograms(programs.filter(p => p.studio_id === currentStudioId));
+            } catch (error) {
+                console.error('Error adding program:', error);
+                showToast('Error adding program', false);
+            }
+        }
+
+        window.updateProgram = async function(id, field, value) {
+            try {
+                const { error } = await supabase
+                    .from('studio_programs')
+                    .update({ [field]: value })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const program = programs.find(p => p.id === id);
+                program[field] = value;
+            } catch (error) {
+                console.error('Error updating program:', error);
+            }
+        }
+
+        window.removeProgram = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('studio_programs')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                programs = programs.filter(p => p.id !== id);
+                renderPrograms(programs.filter(p => p.studio_id === currentStudioId));
+                showToast('Program removed', true);
+            } catch (error) {
+                console.error('Error removing program:', error);
+                showToast('Error removing program', false);
+            }
+        }
+
+        // Links Functions
+        function renderLinks(studioLinks) {
+            const container = document.getElementById('linksList');
+            container.innerHTML = studioLinks.map(link => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <div style="flex: 1;">
+                            <div class="form-group">
+                                <label class="form-label">Header</label>
+                                <input type="text" class="form-input" value="${link.header}" onchange="updateLink('${link.id}', 'header', this.value)" placeholder="Link header">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subheader</label>
+                                <input type="text" class="form-input" value="${link.subheader || ''}" onchange="updateLink('${link.id}', 'subheader', this.value)" placeholder="Link subheader">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">URL</label>
+                                <input type="text" class="form-input" value="${link.url}" onchange="updateLink('${link.id}', 'url', this.value)" placeholder="https://...">
+                            </div>
+                        </div>
+                        <button class="remove-btn" onclick="removeLink('${link.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addLink = async function() {
+            try {
+                const studioLinks = links.filter(l => l.studio_id === currentStudioId);
+                const maxOrder = studioLinks.length > 0 
+                    ? Math.max(...studioLinks.map(l => l.order_index)) 
+                    : 0;
+
+                const { data, error } = await supabase
+                    .from('studio_links')
+                    .insert({
+                        studio_id: currentStudioId,
+                        header: '',
+                        subheader: '',
+                        url: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                links.push(data);
+                renderLinks(links.filter(l => l.studio_id === currentStudioId));
+            } catch (error) {
+                console.error('Error adding link:', error);
+                showToast('Error adding link', false);
+            }
+        }
+
+        window.updateLink = async function(id, field, value) {
+            try {
+                const { error } = await supabase
+                    .from('studio_links')
+                    .update({ [field]: value })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const link = links.find(l => l.id === id);
+                link[field] = value;
+            } catch (error) {
+                console.error('Error updating link:', error);
+            }
+        }
+
+        window.removeLink = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('studio_links')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                links = links.filter(l => l.id !== id);
+                renderLinks(links.filter(l => l.studio_id === currentStudioId));
+                showToast('Link removed', true);
+            } catch (error) {
+                console.error('Error removing link:', error);
+                showToast('Error removing link', false);
+            }
+        }
+
+        // Sections Functions
+        function renderSections(studioSections) {
+            const container = document.getElementById('sectionsList');
+            container.innerHTML = studioSections.map(section => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <div style="flex: 1;">
+                            <div class="form-group">
+                                <label class="form-label">Header</label>
+                                <input type="text" class="form-input" value="${section.header}" onchange="updateSection('${section.id}', 'header', this.value)" placeholder="Section header">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subheader</label>
+                                <input type="text" class="form-input" value="${section.subheader || ''}" onchange="updateSection('${section.id}', 'subheader', this.value)" placeholder="Section subheader">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notes</label>
+                                <div class="rich-text-toolbar">
+                                    <button class="toolbar-btn" onclick="formatSectionNotes('${section.id}', 'bold')" type="button"><b>B</b></button>
+                                    <button class="toolbar-btn" onclick="formatSectionNotes('${section.id}', 'italic')" type="button"><i>I</i></button>
+                                </div>
+                                <div id="sectionNotes${section.id}" class="rich-text-editor" contenteditable="true" data-placeholder="Section notes..." oninput="updateSection('${section.id}', 'notes', this.innerHTML)">${section.notes || ''}</div>
+                            </div>
+                        </div>
+                        <button class="remove-btn" onclick="removeSection('${section.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addSection = async function() {
+            try {
+                const studioSections = sections.filter(s => s.studio_id === currentStudioId);
+                const maxOrder = studioSections.length > 0 
+                    ? Math.max(...studioSections.map(s => s.order_index)) 
+                    : 0;
+
+                const { data, error } = await supabase
+                    .from('studio_sections')
+                    .insert({
+                        studio_id: currentStudioId,
+                        header: '',
+                        subheader: '',
+                        notes: '',
+                        order_index: maxOrder + 1
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                sections.push(data);
+                renderSections(sections.filter(s => s.studio_id === currentStudioId));
+            } catch (error) {
+                console.error('Error adding section:', error);
+                showToast('Error adding section', false);
+            }
+        }
+
+        window.updateSection = async function(id, field, value) {
+            try {
+                const { error } = await supabase
+                    .from('studio_sections')
+                    .update({ [field]: value })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                const section = sections.find(s => s.id === id);
+                section[field] = value;
+            } catch (error) {
+                console.error('Error updating section:', error);
+            }
+        }
+
+        window.removeSection = async function(id) {
+            try {
+                const { error } = await supabase
+                    .from('studio_sections')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                sections = sections.filter(s => s.id !== id);
+                renderSections(sections.filter(s => s.studio_id === currentStudioId));
+                showToast('Section removed', true);
+            } catch (error) {
+                console.error('Error removing section:', error);
+                showToast('Error removing section', false);
+            }
+        }
+
+        // Rich text formatting
+        window.formatGeneralNotes = function(command) {
+            document.getElementById('generalNotes').focus();
+            document.execCommand(command, false, null);
+        }
+
+        window.formatProgramDesc = function(id, command) {
+            const editor = document.getElementById(`programDesc${id}`);
+            editor.focus();
+            document.execCommand(command, false, null);
+        }
+
+        window.formatSectionNotes = function(id, command) {
+            const editor = document.getElementById(`sectionNotes${id}`);
+            editor.focus();
+            document.execCommand(command, false, null);
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

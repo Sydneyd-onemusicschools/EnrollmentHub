@@ -931,22 +931,30 @@
                 container.innerHTML = '<p style="color: #9ca3af;">No shoutouts yet</p>';
                 return;
             }
-            console.log('Rendering shoutouts:', shoutouts); // DEBUG
             
-            // Build HTML string differently to preserve tags
-            let html = '';
+            // Clear container
+            container.innerHTML = '';
+            
+            // Build each item using DOM methods to preserve HTML
             shoutouts.forEach(item => {
-                html += `
-                    <div class="item">
-                        <div class="item-content">TEST: <b>This should be bold</b> and ${item.content}</div>
-                        <div class="item-actions">
-                            <button class="button button-secondary button-small" onclick="editShoutout('${item.id}')">Edit</button>
-                            <button class="button button-secondary button-small" onclick="deleteShoutout('${item.id}')">Delete</button>
-                        </div>
-                    </div>
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'item-content';
+                contentDiv.innerHTML = item.content; // This preserves HTML!
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'item-actions';
+                actionsDiv.innerHTML = `
+                    <button class="button button-secondary button-small" onclick="editShoutout('${item.id}')">Edit</button>
+                    <button class="button button-secondary button-small" onclick="deleteShoutout('${item.id}')">Delete</button>
                 `;
+                
+                itemDiv.appendChild(contentDiv);
+                itemDiv.appendChild(actionsDiv);
+                container.appendChild(itemDiv);
             });
-            container.innerHTML = html;
         }
 
         window.openAddShoutout = function() {
@@ -1030,18 +1038,41 @@
                 container.innerHTML = '<p style="color: #9ca3af;">No announcements yet</p>';
                 return;
             }
-            container.innerHTML = announcements.map(item => `
-                <div class="item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${item.is_starred ? '#fbbf24' : '#d1d5db'}" class="star-icon" onclick="toggleStarAnnouncement('${item.id}')">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <div class="item-content">${item.content}</div>
-                    <div class="item-actions">
-                        <button class="button button-secondary button-small" onclick="editAnnouncement('${item.id}')">Edit</button>
-                        <button class="button button-secondary button-small" onclick="deleteAnnouncement('${item.id}')">Delete</button>
-                    </div>
-                </div>
-            `).join('');
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Build each item using DOM methods to preserve HTML
+            announcements.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                
+                // Star icon
+                const starSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                starSvg.setAttribute('viewBox', '0 0 24 24');
+                starSvg.setAttribute('fill', item.is_starred ? '#fbbf24' : '#d1d5db');
+                starSvg.className = 'star-icon';
+                starSvg.onclick = () => window.toggleStarAnnouncement(item.id);
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z');
+                starSvg.appendChild(path);
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'item-content';
+                contentDiv.innerHTML = item.content; // This preserves HTML!
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'item-actions';
+                actionsDiv.innerHTML = `
+                    <button class="button button-secondary button-small" onclick="editAnnouncement('${item.id}')">Edit</button>
+                    <button class="button button-secondary button-small" onclick="deleteAnnouncement('${item.id}')">Delete</button>
+                `;
+                
+                itemDiv.appendChild(starSvg);
+                itemDiv.appendChild(contentDiv);
+                itemDiv.appendChild(actionsDiv);
+                container.appendChild(itemDiv);
+            });
         }
 
         window.openAddAnnouncement = function() {
@@ -1155,15 +1186,30 @@
                 container.innerHTML = '<p style="color: #9ca3af;">No promos yet</p>';
                 return;
             }
-            container.innerHTML = promos.map(item => `
-                <div class="item">
-                    <div class="item-content">${item.content}</div>
-                    <div class="item-actions">
-                        <button class="button button-secondary button-small" onclick="editPromo('${item.id}')">Edit</button>
-                        <button class="button button-secondary button-small" onclick="deletePromo('${item.id}')">Delete</button>
-                    </div>
-                </div>
-            `).join('');
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Build each item using DOM methods to preserve HTML
+            promos.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'item-content';
+                contentDiv.innerHTML = item.content; // This preserves HTML!
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'item-actions';
+                actionsDiv.innerHTML = `
+                    <button class="button button-secondary button-small" onclick="editPromo('${item.id}')">Edit</button>
+                    <button class="button button-secondary button-small" onclick="deletePromo('${item.id}')">Delete</button>
+                `;
+                
+                itemDiv.appendChild(contentDiv);
+                itemDiv.appendChild(actionsDiv);
+                container.appendChild(itemDiv);
+            });
         }
 
         window.openAddPromo = function() {
@@ -1270,19 +1316,66 @@
                 container.innerHTML = '<p style="color: #9ca3af;">No notes yet</p>';
                 return;
             }
-            container.innerHTML = notes.map(item => `
-                <div class="item">
-                    <div class="item-content" style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.25rem;">${item.header}</div>
-                        ${item.subtitle ? `<div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">${item.subtitle}</div>` : ''}
-                        <div style="margin-bottom: 0.5rem;">${item.notes || ''}</div>
-                        ${item.link ? `<a href="${item.link}" target="_blank" style="color: #ff6b6b; text-decoration: none; font-size: 0.875rem;">View Link →</a>` : ''}
-                    </div>
-                    <div class="item-actions">
-                        <button class="button button-secondary button-small" onclick="openEditNote('${item.id}')">Edit</button>
-                    </div>
-                </div>
-            `).join('');
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Build each item using DOM methods to preserve HTML
+            notes.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.style.flex = '1';
+                
+                // Header
+                const headerDiv = document.createElement('div');
+                headerDiv.style.fontWeight = '700';
+                headerDiv.style.fontSize = '1.125rem';
+                headerDiv.style.marginBottom = '0.25rem';
+                headerDiv.textContent = item.header;
+                contentDiv.appendChild(headerDiv);
+                
+                // Subtitle (if exists)
+                if (item.subtitle) {
+                    const subtitleDiv = document.createElement('div');
+                    subtitleDiv.style.color = '#6b7280';
+                    subtitleDiv.style.fontSize = '0.875rem';
+                    subtitleDiv.style.marginBottom = '0.5rem';
+                    subtitleDiv.textContent = item.subtitle;
+                    contentDiv.appendChild(subtitleDiv);
+                }
+                
+                // Notes with HTML
+                if (item.notes) {
+                    const notesDiv = document.createElement('div');
+                    notesDiv.style.marginBottom = '0.5rem';
+                    notesDiv.innerHTML = item.notes; // This preserves HTML!
+                    contentDiv.appendChild(notesDiv);
+                }
+                
+                // Link (if exists)
+                if (item.link) {
+                    const linkA = document.createElement('a');
+                    linkA.href = item.link;
+                    linkA.target = '_blank';
+                    linkA.style.color = '#ff6b6b';
+                    linkA.style.textDecoration = 'none';
+                    linkA.style.fontSize = '0.875rem';
+                    linkA.textContent = 'View Link →';
+                    contentDiv.appendChild(linkA);
+                }
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'item-actions';
+                actionsDiv.innerHTML = `
+                    <button class="button button-secondary button-small" onclick="openEditNote('${item.id}')">Edit</button>
+                `;
+                
+                itemDiv.appendChild(contentDiv);
+                itemDiv.appendChild(actionsDiv);
+                container.appendChild(itemDiv);
+            });
         }
 
         window.openAddNote = function() {

@@ -133,24 +133,38 @@
 
     // Adjust main content margin for sidebar
     function adjustMainContent() {
+        // Find the first non-sidebar element in body
+        const bodyChildren = Array.from(document.body.children);
+        const mainContent = bodyChildren.find(el => 
+            !el.classList.contains('sidebar') && 
+            !el.classList.contains('hamburger')
+        );
+        
+        if (mainContent) {
+            mainContent.style.marginLeft = '280px';
+            mainContent.style.transition = 'margin-left 0.3s ease';
+            
+            // Update on sidebar collapse
+            const observer = new MutationObserver(() => {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.classList.contains('collapsed')) {
+                    mainContent.style.marginLeft = '80px';
+                } else {
+                    mainContent.style.marginLeft = '280px';
+                }
+            });
+            
+            observer.observe(document.getElementById('sidebar'), {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        }
+        
+        // Mobile responsive
         const style = document.createElement('style');
         style.textContent = `
-            body {
-                display: flex;
-            }
-            .main-wrapper, .container, main, #app, .content {
-                margin-left: 280px;
-                transition: margin-left 0.3s ease;
-            }
-            .sidebar.collapsed ~ .main-wrapper,
-            .sidebar.collapsed ~ .container,
-            .sidebar.collapsed ~ main,
-            .sidebar.collapsed ~ #app,
-            .sidebar.collapsed ~ .content {
-                margin-left: 80px;
-            }
             @media (max-width: 768px) {
-                .main-wrapper, .container, main, #app, .content {
+                body > *:not(.sidebar):not(.hamburger) {
                     margin-left: 0 !important;
                 }
             }

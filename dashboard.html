@@ -880,6 +880,56 @@
             </div>
         </div>
     </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="scheduleModalTitle">Edit Schedule</h3>
+                <button class="close-btn" onclick="closeScheduleModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Lunch Time</label>
+                <input type="text" id="scheduleLunch" class="form-input" placeholder="e.g., 12:00 PM - 1:00 PM">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Hours</label>
+                <input type="text" id="scheduleHours" class="form-input" placeholder="e.g., 9:00 AM - 5:00 PM">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Work Mode</label>
+                <select id="scheduleWorkMode" class="form-select">
+                    <option value="">Select work mode</option>
+                    <option value="remote">Remote</option>
+                    <option value="hybrid">Hybrid</option>
+                    <option value="in-office">In-Office</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea id="scheduleNotes" class="form-textarea" placeholder="Any notes for this day..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Meetings</label>
+                <textarea id="scheduleMeetings" class="form-textarea" placeholder="List meetings..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Meeting Link (Optional)</label>
+                <input type="url" id="scheduleMeetingLink" class="form-input" placeholder="https://...">
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeScheduleModal()">Cancel</button>
+                <button class="button" onclick="saveSchedule()">Save Schedule</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Notes Modal -->
     <div id="notesModal" class="modal">
@@ -1699,13 +1749,203 @@
             }
         }
 
-        // Schedule Functions (placeholder - coming next!)
+        // Schedule Functions
+        let currentScheduleDay = null;
+        let currentScheduleMemberId = null;
+
         function renderSchedule() {
-            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'overall'];
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+            
             days.forEach(day => {
                 const container = document.getElementById('schedule-' + day);
-                container.innerHTML = '<p style="color: #9ca3af;">Schedule section coming soon...</p>';
+                
+                if (teamMembers.length === 0) {
+                    container.innerHTML = '<p style="color: #9ca3af;">No active team members</p>';
+                    return;
+                }
+                
+                let html = '';
+                teamMembers.forEach(member => {
+                    const schedule = scheduleItems.find(s => s.team_member_id === member.id && s.weekday === day);
+                    
+                    html += `
+                        <div class="team-member-schedule">
+                            <div class="team-member-name">${member.first_name} ${member.last_name}</div>
+                            <div class="schedule-grid">
+                                <div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Lunch</div>
+                                    <div style="font-size: 0.875rem;">${schedule?.lunch_time || 'Not set'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Hours</div>
+                                    <div style="font-size: 0.875rem;">${schedule?.hours || 'Not set'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Work Mode</div>
+                                    <div style="font-size: 0.875rem;">${schedule?.work_mode ? formatWorkMode(schedule.work_mode) : 'Not set'}</div>
+                                </div>
+                            </div>
+                            ${schedule?.notes ? `<div style="margin-top: 0.5rem; font-size: 0.875rem;"><strong>Notes:</strong> ${schedule.notes}</div>` : ''}
+                            ${schedule?.meetings ? `<div style="margin-top: 0.5rem; font-size: 0.875rem;"><strong>Meetings:</strong> ${schedule.meetings}</div>` : ''}
+                            ${schedule?.meeting_link ? `<div style="margin-top: 0.5rem;"><a href="${schedule.meeting_link}" target="_blank" style="color: #ff6b6b; text-decoration: none; font-size: 0.875rem;">View Meeting Link →</a></div>` : ''}
+                            <button class="button button-small" style="margin-top: 1rem;" onclick="openEditSchedule('${member.id}', '${day}')">Edit Schedule</button>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
             });
+            
+            // Render Overall tab
+            renderOverallSchedule();
+        }
+
+        function formatWorkMode(mode) {
+            if (!mode) return '';
+            return mode.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
+        }
+
+        function renderOverallSchedule() {
+            const container = document.getElementById('schedule-overall');
+            container.innerHTML = `
+                <div style="background: #f9fafb; border-radius: 12px; padding: 1.5rem;">
+                    <p style="color: #6b7280; margin-bottom: 1rem;">Use this section for team-wide events, notes, or information that applies to everyone.</p>
+                    <textarea id="overallScheduleNotes" class="form-textarea" placeholder="Enter team-wide notes, events, meetings..." style="min-height: 200px;"></textarea>
+                    <button class="button" style="margin-top: 1rem;" onclick="saveOverallSchedule()">Save Team Notes</button>
+                </div>
+            `;
+            
+            // Load existing overall notes if any
+            const overallItem = scheduleItems.find(s => s.weekday === 'overall');
+            if (overallItem && overallItem.notes) {
+                document.getElementById('overallScheduleNotes').value = overallItem.notes;
+            }
+        }
+
+        window.openEditSchedule = function(memberId, day) {
+            currentScheduleMemberId = memberId;
+            currentScheduleDay = day;
+            
+            const member = teamMembers.find(m => m.id === memberId);
+            const schedule = scheduleItems.find(s => s.team_member_id === memberId && s.weekday === day);
+            
+            document.getElementById('scheduleModalTitle').textContent = `${member.first_name} ${member.last_name} - ${day.charAt(0).toUpperCase() + day.slice(1)}`;
+            
+            document.getElementById('scheduleLunch').value = schedule?.lunch_time || '';
+            document.getElementById('scheduleHours').value = schedule?.hours || '';
+            document.getElementById('scheduleWorkMode').value = schedule?.work_mode || '';
+            document.getElementById('scheduleNotes').value = schedule?.notes || '';
+            document.getElementById('scheduleMeetings').value = schedule?.meetings || '';
+            document.getElementById('scheduleMeetingLink').value = schedule?.meeting_link || '';
+            
+            document.getElementById('scheduleModal').classList.add('active');
+        }
+
+        window.closeScheduleModal = function() {
+            document.getElementById('scheduleModal').classList.remove('active');
+            currentScheduleMemberId = null;
+            currentScheduleDay = null;
+        }
+
+        window.saveSchedule = async function() {
+            const scheduleData = {
+                team_member_id: currentScheduleMemberId,
+                weekday: currentScheduleDay,
+                lunch_time: document.getElementById('scheduleLunch').value,
+                hours: document.getElementById('scheduleHours').value,
+                work_mode: document.getElementById('scheduleWorkMode').value,
+                notes: document.getElementById('scheduleNotes').value,
+                meetings: document.getElementById('scheduleMeetings').value,
+                meeting_link: document.getElementById('scheduleMeetingLink').value
+            };
+
+            try {
+                const existing = scheduleItems.find(s => s.team_member_id === currentScheduleMemberId && s.weekday === currentScheduleDay);
+                
+                if (existing) {
+                    // Update
+                    const { error } = await supabase
+                        .from('dashboard_schedule_items')
+                        .update(scheduleData)
+                        .eq('id', existing.id);
+                    
+                    if (error) throw error;
+                    
+                    Object.assign(existing, scheduleData);
+                } else {
+                    // Insert
+                    const { data, error } = await supabase
+                        .from('dashboard_schedule_items')
+                        .insert(scheduleData)
+                        .select()
+                        .single();
+                    
+                    if (error) throw error;
+                    
+                    scheduleItems.push(data);
+                }
+                
+                closeScheduleModal();
+                renderSchedule();
+                showToast('Schedule saved!', true);
+            } catch (error) {
+                console.error('Error saving schedule:', error);
+                showToast('Error saving schedule', false);
+            }
+        }
+
+        window.saveOverallSchedule = async function() {
+            const notes = document.getElementById('overallScheduleNotes').value;
+            
+            try {
+                const existing = scheduleItems.find(s => s.weekday === 'overall');
+                
+                // For overall, we'll use the first team member's ID as a placeholder
+                // This is a workaround since the schema requires team_member_id
+                const placeholderId = teamMembers.length > 0 ? teamMembers[0].id : null;
+                
+                if (!placeholderId) {
+                    showToast('Need at least one team member', false);
+                    return;
+                }
+                
+                const scheduleData = {
+                    team_member_id: placeholderId,
+                    weekday: 'overall',
+                    notes: notes,
+                    lunch_time: null,
+                    hours: null,
+                    work_mode: null,
+                    meetings: null,
+                    meeting_link: null
+                };
+                
+                if (existing) {
+                    const { error } = await supabase
+                        .from('dashboard_schedule_items')
+                        .update({ notes: notes })
+                        .eq('id', existing.id);
+                    
+                    if (error) throw error;
+                    
+                    existing.notes = notes;
+                } else {
+                    const { data, error } = await supabase
+                        .from('dashboard_schedule_items')
+                        .insert(scheduleData)
+                        .select()
+                        .single();
+                    
+                    if (error) throw error;
+                    
+                    scheduleItems.push(data);
+                }
+                
+                showToast('Team notes saved!', true);
+            } catch (error) {
+                console.error('Error saving team notes:', error);
+                showToast('Error saving team notes', false);
+            }
         }
 
         // Individual Goals Functions (placeholder - coming next!)

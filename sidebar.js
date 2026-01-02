@@ -133,50 +133,27 @@
 
     // Adjust main content margin for sidebar
     function adjustMainContent() {
-        // Find the first non-sidebar element in body
-        const bodyChildren = Array.from(document.body.children);
-        const mainContent = bodyChildren.find(el => 
-            !el.classList.contains('sidebar') && 
-            !el.classList.contains('hamburger')
-        );
-        
-        if (mainContent) {
-            mainContent.style.marginLeft = '280px';
-            mainContent.style.paddingLeft = '0';  // Remove any left padding
-            mainContent.style.transition = 'margin-left 0.3s ease';
-            
-            // Update on sidebar collapse
-            const observer = new MutationObserver(() => {
-                const sidebar = document.getElementById('sidebar');
-                if (sidebar.classList.contains('collapsed')) {
-                    mainContent.style.marginLeft = '80px';
-                } else {
-                    mainContent.style.marginLeft = '280px';
-                }
-            });
-            
-            observer.observe(document.getElementById('sidebar'), {
-                attributes: true,
-                attributeFilter: ['class']
-            });
-        }
-        
-        // Add global style to prevent double padding
+        // Add global style - NO left padding, sidebar margin only
         const style = document.createElement('style');
         style.textContent = `
             body {
                 padding: 0;
                 margin: 0;
             }
-            .main-wrapper, main, .content, #app {
-                padding-left: 2rem !important;  /* Small spacing from sidebar */
+            body > *:not(.sidebar):not(.hamburger) {
+                margin-left: 280px;
+                transition: margin-left 0.3s ease;
+            }
+            .sidebar.collapsed ~ *:not(.hamburger) {
+                margin-left: 80px;
+            }
+            /* Force remove any left padding that causes double spacing */
+            .main-wrapper, main, .content, #app, .container {
+                padding-left: 0 !important;
             }
             @media (max-width: 768px) {
                 body > *:not(.sidebar):not(.hamburger) {
                     margin-left: 0 !important;
-                }
-                .main-wrapper, main, .content, #app {
-                    padding-left: 2rem !important;
                 }
             }
         `;

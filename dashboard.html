@@ -739,6 +739,78 @@
 
     <!-- Modals will go here -->
     
+    <!-- Shoutouts Modal -->
+    <div id="shoutoutsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="shoutoutsModalTitle">Add Shoutout</h3>
+                <button class="close-btn" onclick="closeShoutoutsModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shoutout Content</label>
+                <div class="rich-editor-toolbar">
+                    <button type="button" class="toolbar-btn" onclick="toggleBold('shoutoutEditor')">B</button>
+                </div>
+                <div id="shoutoutEditor" class="rich-editor" contenteditable="true"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeShoutoutsModal()">Cancel</button>
+                <button id="deleteShoutoutBtn" class="button" style="background: #ef4444; margin-right: auto; display: none;" onclick="deleteShoutoutFromModal()">Delete</button>
+                <button class="button" onclick="saveShoutout()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcements Modal -->
+    <div id="announcementsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="announcementsModalTitle">Add Announcement</h3>
+                <button class="close-btn" onclick="closeAnnouncementsModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Announcement Content</label>
+                <div class="rich-editor-toolbar">
+                    <button type="button" class="toolbar-btn" onclick="toggleBold('announcementEditor')">B</button>
+                </div>
+                <div id="announcementEditor" class="rich-editor" contenteditable="true"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeAnnouncementsModal()">Cancel</button>
+                <button id="deleteAnnouncementBtn" class="button" style="background: #ef4444; margin-right: auto; display: none;" onclick="deleteAnnouncementFromModal()">Delete</button>
+                <button class="button" onclick="saveAnnouncement()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promos Modal -->
+    <div id="promosModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="promosModalTitle">Add Promo</h3>
+                <button class="close-btn" onclick="closePromosModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Promo Content</label>
+                <div class="rich-editor-toolbar">
+                    <button type="button" class="toolbar-btn" onclick="toggleBold('promoEditor')">B</button>
+                </div>
+                <div id="promoEditor" class="rich-editor" contenteditable="true"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closePromosModal()">Cancel</button>
+                <button id="deletePromoBtn" class="button" style="background: #ef4444; margin-right: auto; display: none;" onclick="deletePromoFromModal()">Delete</button>
+                <button class="button" onclick="savePromo()">Save</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Notes Modal -->
     <div id="notesModal" class="modal">
         <div class="modal-content">
@@ -758,8 +830,11 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Notes (use &lt;b&gt;text&lt;/b&gt; for bold)</label>
-                <textarea id="noteNotes" class="form-textarea" placeholder="Enter notes here..."></textarea>
+                <label class="form-label">Notes</label>
+                <div class="rich-editor-toolbar">
+                    <button type="button" class="toolbar-btn" onclick="toggleBold('noteNotesEditor')">B</button>
+                </div>
+                <div id="noteNotesEditor" class="rich-editor" contenteditable="true"></div>
             </div>
 
             <div class="form-group">
@@ -795,6 +870,13 @@
         let individualGoals = [];
         let notes = [];
         let teamMembers = [];
+
+        // Rich Text Editor Functions
+        window.toggleBold = function(editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand('bold', false, null);
+        }
 
         function showToast(message, isSuccess = false) {
             const toast = document.getElementById('toast');
@@ -925,104 +1007,103 @@
         }
 
         // Shoutouts Functions
+        let currentShoutoutId = null;
+
         function renderShoutouts() {
             const container = document.getElementById('shoutoutsList');
             if (shoutouts.length === 0) {
                 container.innerHTML = '<p style="color: #9ca3af;">No shoutouts yet</p>';
                 return;
             }
-            
-            // Clear container
-            container.innerHTML = '';
-            
-            // Build each item using DOM methods to preserve HTML
-            shoutouts.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'item';
-                
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'item-content';
-                contentDiv.innerHTML = item.content; // This preserves HTML!
-                
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'item-actions';
-                actionsDiv.innerHTML = `
-                    <button class="button button-secondary button-small" onclick="editShoutout('${item.id}')">Edit</button>
-                    <button class="button button-secondary button-small" onclick="deleteShoutout('${item.id}')">Delete</button>
-                `;
-                
-                itemDiv.appendChild(contentDiv);
-                itemDiv.appendChild(actionsDiv);
-                container.appendChild(itemDiv);
-            });
+            container.innerHTML = shoutouts.map(item => `
+                <div class="item">
+                    <div class="item-content">${item.content}</div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="openEditShoutout('${item.id}')">Edit</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         window.openAddShoutout = function() {
-            const content = prompt('Enter shoutout (use <b>text</b> for bold):');
-            if (content) {
-                addShoutout(content);
-            }
+            currentShoutoutId = null;
+            document.getElementById('shoutoutsModalTitle').textContent = 'Add Shoutout';
+            document.getElementById('deleteShoutoutBtn').style.display = 'none';
+            document.getElementById('shoutoutEditor').innerHTML = '';
+            document.getElementById('shoutoutsModal').classList.add('active');
         }
 
-        async function addShoutout(content) {
-            try {
-                const maxOrder = shoutouts.length > 0 ? Math.max(...shoutouts.map(i => i.order_index)) : 0;
-                const { data, error } = await supabase
-                    .from('dashboard_shoutouts')
-                    .insert({ content, order_index: maxOrder + 1 })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                shoutouts.push(data);
-                renderShoutouts();
-                showToast('Shoutout added!', true);
-            } catch (error) {
-                console.error('Error adding shoutout:', error);
-                showToast('Error adding shoutout', false);
-            }
-        }
-
-        window.editShoutout = function(id) {
+        window.openEditShoutout = function(id) {
+            currentShoutoutId = id;
             const item = shoutouts.find(s => s.id === id);
-            const content = prompt('Edit shoutout (use <b>text</b> for bold):', item.content);
-            if (content) {
-                updateShoutout(id, content);
-            }
+            document.getElementById('shoutoutsModalTitle').textContent = 'Edit Shoutout';
+            document.getElementById('deleteShoutoutBtn').style.display = 'block';
+            document.getElementById('shoutoutEditor').innerHTML = item.content;
+            document.getElementById('shoutoutsModal').classList.add('active');
         }
 
-        async function updateShoutout(id, content) {
+        window.closeShoutoutsModal = function() {
+            document.getElementById('shoutoutsModal').classList.remove('active');
+            currentShoutoutId = null;
+        }
+
+        window.saveShoutout = async function() {
+            const content = document.getElementById('shoutoutEditor').innerHTML.trim();
+            
+            if (!content) {
+                showToast('Content is required', false);
+                return;
+            }
+
             try {
-                const { error } = await supabase
-                    .from('dashboard_shoutouts')
-                    .update({ content })
-                    .eq('id', id);
+                if (currentShoutoutId) {
+                    // Update existing
+                    const { error } = await supabase
+                        .from('dashboard_shoutouts')
+                        .update({ content })
+                        .eq('id', currentShoutoutId);
 
-                if (error) throw error;
+                    if (error) throw error;
 
-                const item = shoutouts.find(s => s.id === id);
-                item.content = content;
+                    const item = shoutouts.find(s => s.id === currentShoutoutId);
+                    item.content = content;
+                    showToast('Shoutout updated!', true);
+                } else {
+                    // Create new
+                    const maxOrder = shoutouts.length > 0 ? Math.max(...shoutouts.map(i => i.order_index)) : 0;
+                    const { data, error } = await supabase
+                        .from('dashboard_shoutouts')
+                        .insert({ content, order_index: maxOrder + 1 })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    shoutouts.push(data);
+                    showToast('Shoutout added!', true);
+                }
+
+                closeShoutoutsModal();
                 renderShoutouts();
-                showToast('Shoutout updated!', true);
             } catch (error) {
-                console.error('Error updating shoutout:', error);
-                showToast('Error updating shoutout', false);
+                console.error('Error saving shoutout:', error);
+                showToast('Error saving shoutout', false);
             }
         }
 
-        window.deleteShoutout = async function(id) {
+        window.deleteShoutoutFromModal = async function() {
             if (!confirm('Delete this shoutout?')) return;
 
             try {
                 const { error } = await supabase
                     .from('dashboard_shoutouts')
                     .delete()
-                    .eq('id', id);
+                    .eq('id', currentShoutoutId);
 
                 if (error) throw error;
 
-                shoutouts = shoutouts.filter(s => s.id !== id);
+                shoutouts = shoutouts.filter(s => s.id !== currentShoutoutId);
+                closeShoutoutsModal();
                 renderShoutouts();
                 showToast('Shoutout deleted', true);
             } catch (error) {
@@ -1032,100 +1113,90 @@
         }
 
         // Announcements Functions
+        let currentAnnouncementId = null;
+
         function renderAnnouncements() {
             const container = document.getElementById('announcementsList');
             if (announcements.length === 0) {
                 container.innerHTML = '<p style="color: #9ca3af;">No announcements yet</p>';
                 return;
             }
-            
-            // Clear container
-            container.innerHTML = '';
-            
-            // Build each item using DOM methods to preserve HTML
-            announcements.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'item';
-                
-                // Star icon
-                const starSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                starSvg.setAttribute('viewBox', '0 0 24 24');
-                starSvg.setAttribute('fill', item.is_starred ? '#fbbf24' : '#d1d5db');
-                starSvg.setAttribute('class', 'star-icon'); // FIX: Use setAttribute for SVG
-                starSvg.onclick = () => window.toggleStarAnnouncement(item.id);
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z');
-                starSvg.appendChild(path);
-                
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'item-content';
-                contentDiv.innerHTML = item.content; // This preserves HTML!
-                
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'item-actions';
-                actionsDiv.innerHTML = `
-                    <button class="button button-secondary button-small" onclick="editAnnouncement('${item.id}')">Edit</button>
-                    <button class="button button-secondary button-small" onclick="deleteAnnouncement('${item.id}')">Delete</button>
-                `;
-                
-                itemDiv.appendChild(starSvg);
-                itemDiv.appendChild(contentDiv);
-                itemDiv.appendChild(actionsDiv);
-                container.appendChild(itemDiv);
-            });
+            container.innerHTML = announcements.map(item => `
+                <div class="item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${item.is_starred ? '#fbbf24' : '#d1d5db'}" class="star-icon" onclick="toggleStarAnnouncement('${item.id}')">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <div class="item-content">${item.content}</div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="openEditAnnouncement('${item.id}')">Edit</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         window.openAddAnnouncement = function() {
-            const content = prompt('Enter announcement (use <b>text</b> for bold):');
-            if (content) {
-                addAnnouncement(content);
-            }
+            currentAnnouncementId = null;
+            document.getElementById('announcementsModalTitle').textContent = 'Add Announcement';
+            document.getElementById('deleteAnnouncementBtn').style.display = 'none';
+            document.getElementById('announcementEditor').innerHTML = '';
+            document.getElementById('announcementsModal').classList.add('active');
         }
 
-        async function addAnnouncement(content) {
-            try {
-                const maxOrder = announcements.length > 0 ? Math.max(...announcements.map(i => i.order_index)) : 0;
-                const { data, error } = await supabase
-                    .from('dashboard_announcements')
-                    .insert({ content, is_starred: false, order_index: maxOrder + 1 })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                announcements.push(data);
-                renderAnnouncements();
-                showToast('Announcement added!', true);
-            } catch (error) {
-                console.error('Error adding announcement:', error);
-                showToast('Error adding announcement', false);
-            }
-        }
-
-        window.editAnnouncement = function(id) {
+        window.openEditAnnouncement = function(id) {
+            currentAnnouncementId = id;
             const item = announcements.find(a => a.id === id);
-            const content = prompt('Edit announcement (use <b>text</b> for bold):', item.content);
-            if (content) {
-                updateAnnouncement(id, content);
-            }
+            document.getElementById('announcementsModalTitle').textContent = 'Edit Announcement';
+            document.getElementById('deleteAnnouncementBtn').style.display = 'block';
+            document.getElementById('announcementEditor').innerHTML = item.content;
+            document.getElementById('announcementsModal').classList.add('active');
         }
 
-        async function updateAnnouncement(id, content) {
+        window.closeAnnouncementsModal = function() {
+            document.getElementById('announcementsModal').classList.remove('active');
+            currentAnnouncementId = null;
+        }
+
+        window.saveAnnouncement = async function() {
+            const content = document.getElementById('announcementEditor').innerHTML.trim();
+            
+            if (!content) {
+                showToast('Content is required', false);
+                return;
+            }
+
             try {
-                const { error } = await supabase
-                    .from('dashboard_announcements')
-                    .update({ content })
-                    .eq('id', id);
+                if (currentAnnouncementId) {
+                    // Update existing
+                    const { error } = await supabase
+                        .from('dashboard_announcements')
+                        .update({ content })
+                        .eq('id', currentAnnouncementId);
 
-                if (error) throw error;
+                    if (error) throw error;
 
-                const item = announcements.find(a => a.id === id);
-                item.content = content;
+                    const item = announcements.find(a => a.id === currentAnnouncementId);
+                    item.content = content;
+                    showToast('Announcement updated!', true);
+                } else {
+                    // Create new
+                    const maxOrder = announcements.length > 0 ? Math.max(...announcements.map(i => i.order_index)) : 0;
+                    const { data, error } = await supabase
+                        .from('dashboard_announcements')
+                        .insert({ content, is_starred: false, order_index: maxOrder + 1 })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    announcements.push(data);
+                    showToast('Announcement added!', true);
+                }
+
+                closeAnnouncementsModal();
                 renderAnnouncements();
-                showToast('Announcement updated!', true);
             } catch (error) {
-                console.error('Error updating announcement:', error);
-                showToast('Error updating announcement', false);
+                console.error('Error saving announcement:', error);
+                showToast('Error saving announcement', false);
             }
         }
 
@@ -1150,18 +1221,19 @@
             }
         }
 
-        window.deleteAnnouncement = async function(id) {
+        window.deleteAnnouncementFromModal = async function() {
             if (!confirm('Delete this announcement?')) return;
 
             try {
                 const { error } = await supabase
                     .from('dashboard_announcements')
                     .delete()
-                    .eq('id', id);
+                    .eq('id', currentAnnouncementId);
 
                 if (error) throw error;
 
-                announcements = announcements.filter(a => a.id !== id);
+                announcements = announcements.filter(a => a.id !== currentAnnouncementId);
+                closeAnnouncementsModal();
                 renderAnnouncements();
                 showToast('Announcement deleted', true);
             } catch (error) {
@@ -1180,104 +1252,103 @@
         }
 
         // Promos Functions
+        let currentPromoId = null;
+
         function renderPromos() {
             const container = document.getElementById('promosList');
             if (promos.length === 0) {
                 container.innerHTML = '<p style="color: #9ca3af;">No promos yet</p>';
                 return;
             }
-            
-            // Clear container
-            container.innerHTML = '';
-            
-            // Build each item using DOM methods to preserve HTML
-            promos.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'item';
-                
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'item-content';
-                contentDiv.innerHTML = item.content; // This preserves HTML!
-                
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'item-actions';
-                actionsDiv.innerHTML = `
-                    <button class="button button-secondary button-small" onclick="editPromo('${item.id}')">Edit</button>
-                    <button class="button button-secondary button-small" onclick="deletePromo('${item.id}')">Delete</button>
-                `;
-                
-                itemDiv.appendChild(contentDiv);
-                itemDiv.appendChild(actionsDiv);
-                container.appendChild(itemDiv);
-            });
+            container.innerHTML = promos.map(item => `
+                <div class="item">
+                    <div class="item-content">${item.content}</div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="openEditPromo('${item.id}')">Edit</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         window.openAddPromo = function() {
-            const content = prompt('Enter promo (use <b>text</b> for bold):');
-            if (content) {
-                addPromo(content);
-            }
+            currentPromoId = null;
+            document.getElementById('promosModalTitle').textContent = 'Add Promo';
+            document.getElementById('deletePromoBtn').style.display = 'none';
+            document.getElementById('promoEditor').innerHTML = '';
+            document.getElementById('promosModal').classList.add('active');
         }
 
-        async function addPromo(content) {
-            try {
-                const maxOrder = promos.length > 0 ? Math.max(...promos.map(i => i.order_index)) : 0;
-                const { data, error } = await supabase
-                    .from('dashboard_promos')
-                    .insert({ content, order_index: maxOrder + 1 })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                promos.push(data);
-                renderPromos();
-                showToast('Promo added!', true);
-            } catch (error) {
-                console.error('Error adding promo:', error);
-                showToast('Error adding promo', false);
-            }
-        }
-
-        window.editPromo = function(id) {
+        window.openEditPromo = function(id) {
+            currentPromoId = id;
             const item = promos.find(p => p.id === id);
-            const content = prompt('Edit promo (use <b>text</b> for bold):', item.content);
-            if (content) {
-                updatePromo(id, content);
-            }
+            document.getElementById('promosModalTitle').textContent = 'Edit Promo';
+            document.getElementById('deletePromoBtn').style.display = 'block';
+            document.getElementById('promoEditor').innerHTML = item.content;
+            document.getElementById('promosModal').classList.add('active');
         }
 
-        async function updatePromo(id, content) {
+        window.closePromosModal = function() {
+            document.getElementById('promosModal').classList.remove('active');
+            currentPromoId = null;
+        }
+
+        window.savePromo = async function() {
+            const content = document.getElementById('promoEditor').innerHTML.trim();
+            
+            if (!content) {
+                showToast('Content is required', false);
+                return;
+            }
+
             try {
-                const { error } = await supabase
-                    .from('dashboard_promos')
-                    .update({ content })
-                    .eq('id', id);
+                if (currentPromoId) {
+                    // Update existing
+                    const { error } = await supabase
+                        .from('dashboard_promos')
+                        .update({ content })
+                        .eq('id', currentPromoId);
 
-                if (error) throw error;
+                    if (error) throw error;
 
-                const item = promos.find(p => p.id === id);
-                item.content = content;
+                    const item = promos.find(p => p.id === currentPromoId);
+                    item.content = content;
+                    showToast('Promo updated!', true);
+                } else {
+                    // Create new
+                    const maxOrder = promos.length > 0 ? Math.max(...promos.map(i => i.order_index)) : 0;
+                    const { data, error } = await supabase
+                        .from('dashboard_promos')
+                        .insert({ content, order_index: maxOrder + 1 })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    promos.push(data);
+                    showToast('Promo added!', true);
+                }
+
+                closePromosModal();
                 renderPromos();
-                showToast('Promo updated!', true);
             } catch (error) {
-                console.error('Error updating promo:', error);
-                showToast('Error updating promo', false);
+                console.error('Error saving promo:', error);
+                showToast('Error saving promo', false);
             }
         }
 
-        window.deletePromo = async function(id) {
+        window.deletePromoFromModal = async function() {
             if (!confirm('Delete this promo?')) return;
 
             try {
                 const { error } = await supabase
                     .from('dashboard_promos')
                     .delete()
-                    .eq('id', id);
+                    .eq('id', currentPromoId);
 
                 if (error) throw error;
 
-                promos = promos.filter(p => p.id !== id);
+                promos = promos.filter(p => p.id !== currentPromoId);
+                closePromosModal();
                 renderPromos();
                 showToast('Promo deleted', true);
             } catch (error) {
@@ -1316,66 +1387,19 @@
                 container.innerHTML = '<p style="color: #9ca3af;">No notes yet</p>';
                 return;
             }
-            
-            // Clear container
-            container.innerHTML = '';
-            
-            // Build each item using DOM methods to preserve HTML
-            notes.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'item';
-                
-                const contentDiv = document.createElement('div');
-                contentDiv.style.flex = '1';
-                
-                // Header
-                const headerDiv = document.createElement('div');
-                headerDiv.style.fontWeight = '700';
-                headerDiv.style.fontSize = '1.125rem';
-                headerDiv.style.marginBottom = '0.25rem';
-                headerDiv.textContent = item.header;
-                contentDiv.appendChild(headerDiv);
-                
-                // Subtitle (if exists)
-                if (item.subtitle) {
-                    const subtitleDiv = document.createElement('div');
-                    subtitleDiv.style.color = '#6b7280';
-                    subtitleDiv.style.fontSize = '0.875rem';
-                    subtitleDiv.style.marginBottom = '0.5rem';
-                    subtitleDiv.textContent = item.subtitle;
-                    contentDiv.appendChild(subtitleDiv);
-                }
-                
-                // Notes with HTML
-                if (item.notes) {
-                    const notesDiv = document.createElement('div');
-                    notesDiv.style.marginBottom = '0.5rem';
-                    notesDiv.innerHTML = item.notes; // This preserves HTML!
-                    contentDiv.appendChild(notesDiv);
-                }
-                
-                // Link (if exists)
-                if (item.link) {
-                    const linkA = document.createElement('a');
-                    linkA.href = item.link;
-                    linkA.target = '_blank';
-                    linkA.style.color = '#ff6b6b';
-                    linkA.style.textDecoration = 'none';
-                    linkA.style.fontSize = '0.875rem';
-                    linkA.textContent = 'View Link →';
-                    contentDiv.appendChild(linkA);
-                }
-                
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'item-actions';
-                actionsDiv.innerHTML = `
-                    <button class="button button-secondary button-small" onclick="openEditNote('${item.id}')">Edit</button>
-                `;
-                
-                itemDiv.appendChild(contentDiv);
-                itemDiv.appendChild(actionsDiv);
-                container.appendChild(itemDiv);
-            });
+            container.innerHTML = notes.map(item => `
+                <div class="item">
+                    <div class="item-content" style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: 0.25rem;">${item.header}</div>
+                        ${item.subtitle ? `<div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">${item.subtitle}</div>` : ''}
+                        <div style="margin-bottom: 0.5rem;">${item.notes || ''}</div>
+                        ${item.link ? `<a href="${item.link}" target="_blank" style="color: #ff6b6b; text-decoration: none; font-size: 0.875rem;">View Link →</a>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="openEditNote('${item.id}')">Edit</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         window.openAddNote = function() {
@@ -1385,7 +1409,7 @@
             
             document.getElementById('noteHeader').value = '';
             document.getElementById('noteSubtitle').value = '';
-            document.getElementById('noteNotes').value = '';
+            document.getElementById('noteNotesEditor').innerHTML = '';
             document.getElementById('noteLink').value = '';
             
             document.getElementById('notesModal').classList.add('active');
@@ -1400,7 +1424,7 @@
             
             document.getElementById('noteHeader').value = item.header || '';
             document.getElementById('noteSubtitle').value = item.subtitle || '';
-            document.getElementById('noteNotes').value = item.notes || '';
+            document.getElementById('noteNotesEditor').innerHTML = item.notes || '';
             document.getElementById('noteLink').value = item.link || '';
             
             document.getElementById('notesModal').classList.add('active');
@@ -1415,7 +1439,7 @@
             const noteData = {
                 header: document.getElementById('noteHeader').value,
                 subtitle: document.getElementById('noteSubtitle').value,
-                notes: document.getElementById('noteNotes').value,
+                notes: document.getElementById('noteNotesEditor').innerHTML.trim(),
                 link: document.getElementById('noteLink').value
             };
 

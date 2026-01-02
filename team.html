@@ -980,11 +980,13 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const supabaseUrl = 'https://njfqgdtslonqsqjfakfd.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qZnFnZHRzbG9ucXNxamZha2ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2MDA0OTQsImV4cCI6MjA1MjE3NjQ5NH0.HYNlqMFjVoKkBWWaGG7fzs3u-0Cx8jzW00zIaxfUz-0';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Sidebar Functions
         function toggleSidebar() {

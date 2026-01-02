@@ -810,6 +810,75 @@
             </div>
         </div>
     </div>
+
+    <!-- Reminders Modal -->
+    <div id="remindersModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="remindersModalTitle">Add Reminder</h3>
+                <button class="close-btn" onclick="closeRemindersModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Reminder Content</label>
+                <div class="rich-editor-toolbar">
+                    <button type="button" class="toolbar-btn" onclick="toggleBold('reminderEditor')">B</button>
+                </div>
+                <div id="reminderEditor" class="rich-editor" contenteditable="true"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Link (Optional)</label>
+                <input type="url" id="reminderLink" class="form-input" placeholder="https://...">
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeRemindersModal()">Cancel</button>
+                <button id="deleteReminderBtn" class="button" style="background: #ef4444; margin-right: auto; display: none;" onclick="deleteReminderFromModal()">Delete</button>
+                <button class="button" onclick="saveReminder()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Goals Modal -->
+    <div id="teamGoalsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Team Goals</h3>
+                <button class="close-btn" onclick="closeTeamGoalsModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" id="teamGoalTitle" class="form-input" placeholder="e.g., Q1 Enrollment Goals">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Month/Period</label>
+                <input type="text" id="teamGoalMonth" class="form-input" placeholder="e.g., January 2026 or Q1 2026">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Month's Target #</label>
+                <input type="number" id="teamGoalTarget" class="form-input" placeholder="e.g., 100">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Current Count</label>
+                <input type="number" id="teamGoalCurrent" class="form-input" placeholder="e.g., 67">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Team Reward</label>
+                <input type="text" id="teamGoalReward" class="form-input" placeholder="e.g., Pizza party + $500 team bonus">
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeTeamGoalsModal()">Cancel</button>
+                <button class="button" onclick="saveTeamGoals()">Save Goals</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Notes Modal -->
     <div id="notesModal" class="modal">
@@ -1245,10 +1314,118 @@
         // Similar functions for Announcements, Reminders, Promos, Notes...
         // (Implementation continues...)
 
-        // Reminders Functions (placeholder - coming next!)
+        // Reminders Functions
+        let currentReminderId = null;
+
         function renderReminders() {
             const container = document.getElementById('remindersList');
-            container.innerHTML = '<p style="color: #9ca3af;">Reminders section coming soon...</p>';
+            if (reminders.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af;">No reminders yet</p>';
+                return;
+            }
+            container.innerHTML = reminders.map(item => `
+                <div class="item">
+                    <div class="item-content" style="flex: 1;">
+                        <div>${item.content}</div>
+                        ${item.link ? `<a href="${item.link}" target="_blank" style="color: #ff6b6b; text-decoration: none; font-size: 0.875rem; margin-top: 0.5rem; display: inline-block;">View Link →</a>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="button button-secondary button-small" onclick="openEditReminder('${item.id}')">Edit</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openAddReminder = function() {
+            currentReminderId = null;
+            document.getElementById('remindersModalTitle').textContent = 'Add Reminder';
+            document.getElementById('deleteReminderBtn').style.display = 'none';
+            document.getElementById('reminderEditor').innerHTML = '';
+            document.getElementById('reminderLink').value = '';
+            document.getElementById('remindersModal').classList.add('active');
+        }
+
+        window.openEditReminder = function(id) {
+            currentReminderId = id;
+            const item = reminders.find(r => r.id === id);
+            document.getElementById('remindersModalTitle').textContent = 'Edit Reminder';
+            document.getElementById('deleteReminderBtn').style.display = 'block';
+            document.getElementById('reminderEditor').innerHTML = item.content;
+            document.getElementById('reminderLink').value = item.link || '';
+            document.getElementById('remindersModal').classList.add('active');
+        }
+
+        window.closeRemindersModal = function() {
+            document.getElementById('remindersModal').classList.remove('active');
+            currentReminderId = null;
+        }
+
+        window.saveReminder = async function() {
+            const reminderData = {
+                content: document.getElementById('reminderEditor').innerHTML.trim(),
+                link: document.getElementById('reminderLink').value
+            };
+            
+            if (!reminderData.content) {
+                showToast('Content is required', false);
+                return;
+            }
+
+            try {
+                if (currentReminderId) {
+                    // Update existing
+                    const { error } = await supabase
+                        .from('dashboard_reminders')
+                        .update(reminderData)
+                        .eq('id', currentReminderId);
+
+                    if (error) throw error;
+
+                    const item = reminders.find(r => r.id === currentReminderId);
+                    Object.assign(item, reminderData);
+                    showToast('Reminder updated!', true);
+                } else {
+                    // Create new
+                    const maxOrder = reminders.length > 0 ? Math.max(...reminders.map(i => i.order_index)) : 0;
+                    const { data, error } = await supabase
+                        .from('dashboard_reminders')
+                        .insert({ ...reminderData, order_index: maxOrder + 1 })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    reminders.push(data);
+                    showToast('Reminder added!', true);
+                }
+
+                closeRemindersModal();
+                renderReminders();
+            } catch (error) {
+                console.error('Error saving reminder:', error);
+                showToast('Error saving reminder', false);
+            }
+        }
+
+        window.deleteReminderFromModal = async function() {
+            if (!confirm('Delete this reminder?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('dashboard_reminders')
+                    .delete()
+                    .eq('id', currentReminderId);
+
+                if (error) throw error;
+
+                reminders = reminders.filter(r => r.id !== currentReminderId);
+                closeRemindersModal();
+                renderReminders();
+                showToast('Reminder deleted', true);
+            } catch (error) {
+                console.error('Error deleting reminder:', error);
+                showToast('Error deleting reminder', false);
+            }
         }
 
         // Promos Functions
@@ -1357,10 +1534,117 @@
             }
         }
 
-        // Team Goals Functions (placeholder - coming next!)
+        // Team Goals Functions
         function renderTeamGoals() {
             const container = document.getElementById('teamGoalsDisplay');
-            container.innerHTML = '<p style="color: #9ca3af;">Team Goals section coming soon...</p>';
+            if (!teamGoals) {
+                container.innerHTML = '<p style="color: #9ca3af;">No team goals set yet. Click "Edit Goals" to set them!</p>';
+                return;
+            }
+            
+            const progress = teamGoals.month_target > 0 
+                ? Math.round((teamGoals.current_count / teamGoals.month_target) * 100) 
+                : 0;
+            
+            container.innerHTML = `
+                <div style="background: #f9fafb; border-radius: 12px; padding: 1.5rem;">
+                    ${teamGoals.title ? `<div style="font-size: 1.25rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.5rem;">${teamGoals.title}</div>` : ''}
+                    ${teamGoals.month_year ? `<div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem;">${teamGoals.month_year}</div>` : ''}
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Target</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #1a1a1a;">${teamGoals.month_target}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Current</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #ff6b6b;">${teamGoals.current_count}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Progress</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #10b981;">${progress}%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                        <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem;">🎁 Team Reward</div>
+                        <div style="font-size: 1.125rem; font-weight: 600; color: #1a1a1a;">${teamGoals.team_reward || 'Not set'}</div>
+                    </div>
+                    
+                    <div style="background: #e5e7eb; border-radius: 8px; height: 8px; margin-top: 1rem; overflow: hidden;">
+                        <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); height: 100%; width: ${progress}%; transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.openEditTeamGoals = function() {
+            if (teamGoals) {
+                document.getElementById('teamGoalTitle').value = teamGoals.title || '';
+                document.getElementById('teamGoalMonth').value = teamGoals.month_year || '';
+                document.getElementById('teamGoalTarget').value = teamGoals.month_target;
+                document.getElementById('teamGoalCurrent').value = teamGoals.current_count;
+                document.getElementById('teamGoalReward').value = teamGoals.team_reward || '';
+            } else {
+                document.getElementById('teamGoalTitle').value = '';
+                document.getElementById('teamGoalMonth').value = '';
+                document.getElementById('teamGoalTarget').value = '';
+                document.getElementById('teamGoalCurrent').value = '';
+                document.getElementById('teamGoalReward').value = '';
+            }
+            document.getElementById('teamGoalsModal').classList.add('active');
+        }
+
+        window.closeTeamGoalsModal = function() {
+            document.getElementById('teamGoalsModal').classList.remove('active');
+        }
+
+        window.saveTeamGoals = async function() {
+            const goalData = {
+                title: document.getElementById('teamGoalTitle').value,
+                month_year: document.getElementById('teamGoalMonth').value,
+                month_target: parseInt(document.getElementById('teamGoalTarget').value) || 0,
+                current_count: parseInt(document.getElementById('teamGoalCurrent').value) || 0,
+                team_reward: document.getElementById('teamGoalReward').value
+            };
+
+            if (goalData.month_target <= 0) {
+                showToast('Target must be greater than 0', false);
+                return;
+            }
+
+            try {
+                if (teamGoals && teamGoals.id) {
+                    // Update existing
+                    const { error } = await supabase
+                        .from('dashboard_team_goals')
+                        .update(goalData)
+                        .eq('id', teamGoals.id);
+
+                    if (error) throw error;
+
+                    Object.assign(teamGoals, goalData);
+                    showToast('Team goals updated!', true);
+                } else {
+                    // Create new
+                    const { data, error } = await supabase
+                        .from('dashboard_team_goals')
+                        .insert(goalData)
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    teamGoals = data;
+                    showToast('Team goals set!', true);
+                }
+
+                closeTeamGoalsModal();
+                renderTeamGoals();
+            } catch (error) {
+                console.error('Error saving team goals:', error);
+                showToast('Error saving team goals', false);
+            }
         }
 
         // Schedule Functions (placeholder - coming next!)

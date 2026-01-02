@@ -659,7 +659,7 @@
                                 </svg>
                                 Team Goals
                             </h3>
-                            <button class="button button-small" onclick="openEditTeamGoals()">Edit Goals</button>
+                            <button class="button button-small" onclick="openAddTeamGoal()">+ Add Goal</button>
                         </div>
                         <div id="teamGoalsDisplay"></div>
                     </div>
@@ -875,7 +875,8 @@
 
             <div class="modal-footer">
                 <button class="button button-secondary" onclick="closeTeamGoalsModal()">Cancel</button>
-                <button class="button" onclick="saveTeamGoals()">Save Goals</button>
+                <button id="deleteTeamGoalBtn" class="button" style="background: #ef4444; margin-right: auto; display: none;" onclick="deleteTeamGoalFromModal()">Delete</button>
+                <button class="button" onclick="saveTeamGoals()">Save Goal</button>
             </div>
         </div>
     </div>
@@ -934,7 +935,7 @@
         let announcements = [];
         let reminders = [];
         let promos = [];
-        let teamGoals = null;
+        let teamGoals = []; // Changed to array for multiple goals
         let scheduleItems = [];
         let individualGoals = [];
         let notes = [];
@@ -975,7 +976,7 @@
                     supabase.from('dashboard_announcements').select('*').order('order_index'),
                     supabase.from('dashboard_reminders').select('*').order('order_index'),
                     supabase.from('dashboard_promos').select('*').order('order_index'),
-                    supabase.from('dashboard_team_goals').select('*').limit(1).single(),
+                    supabase.from('dashboard_team_goals').select('*').order('created_at', { ascending: false }),
                     supabase.from('dashboard_schedule_items').select('*'),
                     supabase.from('dashboard_individual_goals').select('*'),
                     supabase.from('dashboard_notes').select('*').order('order_index'),
@@ -987,7 +988,7 @@
                 announcements = announcementsResult.data || [];
                 reminders = remindersResult.data || [];
                 promos = promosResult.data || [];
-                teamGoals = teamGoalsResult.data || null;
+                teamGoals = teamGoalsResult.data || [];
                 scheduleItems = scheduleResult.data || [];
                 individualGoals = goalsResult.data || [];
                 notes = notesResult.data || [];
@@ -1535,68 +1536,88 @@
         }
 
         // Team Goals Functions
+        let currentTeamGoalId = null;
+
         function renderTeamGoals() {
             const container = document.getElementById('teamGoalsDisplay');
-            if (!teamGoals) {
-                container.innerHTML = '<p style="color: #9ca3af;">No team goals set yet. Click "Edit Goals" to set them!</p>';
+            if (teamGoals.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af;">No team goals yet</p>';
                 return;
             }
             
-            const progress = teamGoals.month_target > 0 
-                ? Math.round((teamGoals.current_count / teamGoals.month_target) * 100) 
-                : 0;
-            
-            container.innerHTML = `
-                <div style="background: #f9fafb; border-radius: 12px; padding: 1.5rem;">
-                    ${teamGoals.title ? `<div style="font-size: 1.25rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.5rem;">${teamGoals.title}</div>` : ''}
-                    ${teamGoals.month_year ? `<div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem;">${teamGoals.month_year}</div>` : ''}
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1rem;">
-                        <div>
-                            <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Target</div>
-                            <div style="font-size: 2rem; font-weight: 800; color: #1a1a1a;">${teamGoals.month_target}</div>
+            container.innerHTML = teamGoals.map(goal => {
+                const progress = goal.month_target > 0 
+                    ? Math.round((goal.current_count / goal.month_target) * 100) 
+                    : 0;
+                
+                return `
+                    <div style="background: #f9fafb; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                ${goal.title ? `<div style="font-size: 1.25rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem;">${goal.title}</div>` : ''}
+                                ${goal.month_year ? `<div style="font-size: 0.875rem; color: #6b7280;">${goal.month_year}</div>` : ''}
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="button button-secondary button-small" onclick="openEditTeamGoal('${goal.id}')">Edit</button>
+                            </div>
                         </div>
-                        <div>
-                            <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Current</div>
-                            <div style="font-size: 2rem; font-weight: 800; color: #ff6b6b;">${teamGoals.current_count}</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Target</div>
+                                <div style="font-size: 1.5rem; font-weight: 800; color: #1a1a1a;">${goal.month_target}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Current</div>
+                                <div style="font-size: 1.5rem; font-weight: 800; color: #ff6b6b;">${goal.current_count}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Progress</div>
+                                <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;">${progress}%</div>
+                            </div>
                         </div>
-                        <div>
-                            <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Progress</div>
-                            <div style="font-size: 2rem; font-weight: 800; color: #10b981;">${progress}%</div>
+                        
+                        ${goal.team_reward ? `
+                            <div style="background: white; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
+                                <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">🎁 Team Reward</div>
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #1a1a1a;">${goal.team_reward}</div>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="background: #e5e7eb; border-radius: 8px; height: 6px; overflow: hidden;">
+                            <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); height: 100%; width: ${progress}%; transition: width 0.3s ease;"></div>
                         </div>
                     </div>
-                    
-                    <div style="background: white; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
-                        <div style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem;">🎁 Team Reward</div>
-                        <div style="font-size: 1.125rem; font-weight: 600; color: #1a1a1a;">${teamGoals.team_reward || 'Not set'}</div>
-                    </div>
-                    
-                    <div style="background: #e5e7eb; border-radius: 8px; height: 8px; margin-top: 1rem; overflow: hidden;">
-                        <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); height: 100%; width: ${progress}%; transition: width 0.3s ease;"></div>
-                    </div>
-                </div>
-            `;
+                `;
+            }).join('');
         }
 
-        window.openEditTeamGoals = function() {
-            if (teamGoals) {
-                document.getElementById('teamGoalTitle').value = teamGoals.title || '';
-                document.getElementById('teamGoalMonth').value = teamGoals.month_year || '';
-                document.getElementById('teamGoalTarget').value = teamGoals.month_target;
-                document.getElementById('teamGoalCurrent').value = teamGoals.current_count;
-                document.getElementById('teamGoalReward').value = teamGoals.team_reward || '';
-            } else {
-                document.getElementById('teamGoalTitle').value = '';
-                document.getElementById('teamGoalMonth').value = '';
-                document.getElementById('teamGoalTarget').value = '';
-                document.getElementById('teamGoalCurrent').value = '';
-                document.getElementById('teamGoalReward').value = '';
-            }
+        window.openAddTeamGoal = function() {
+            currentTeamGoalId = null;
+            document.getElementById('teamGoalTitle').value = '';
+            document.getElementById('teamGoalMonth').value = '';
+            document.getElementById('teamGoalTarget').value = '';
+            document.getElementById('teamGoalCurrent').value = '';
+            document.getElementById('teamGoalReward').value = '';
+            document.getElementById('deleteTeamGoalBtn').style.display = 'none';
+            document.getElementById('teamGoalsModal').classList.add('active');
+        }
+
+        window.openEditTeamGoal = function(id) {
+            currentTeamGoalId = id;
+            const goal = teamGoals.find(g => g.id === id);
+            document.getElementById('teamGoalTitle').value = goal.title || '';
+            document.getElementById('teamGoalMonth').value = goal.month_year || '';
+            document.getElementById('teamGoalTarget').value = goal.month_target;
+            document.getElementById('teamGoalCurrent').value = goal.current_count;
+            document.getElementById('teamGoalReward').value = goal.team_reward || '';
+            document.getElementById('deleteTeamGoalBtn').style.display = 'block';
             document.getElementById('teamGoalsModal').classList.add('active');
         }
 
         window.closeTeamGoalsModal = function() {
             document.getElementById('teamGoalsModal').classList.remove('active');
+            currentTeamGoalId = null;
         }
 
         window.saveTeamGoals = async function() {
@@ -1614,17 +1635,18 @@
             }
 
             try {
-                if (teamGoals && teamGoals.id) {
+                if (currentTeamGoalId) {
                     // Update existing
                     const { error } = await supabase
                         .from('dashboard_team_goals')
                         .update(goalData)
-                        .eq('id', teamGoals.id);
+                        .eq('id', currentTeamGoalId);
 
                     if (error) throw error;
 
-                    Object.assign(teamGoals, goalData);
-                    showToast('Team goals updated!', true);
+                    const goal = teamGoals.find(g => g.id === currentTeamGoalId);
+                    Object.assign(goal, goalData);
+                    showToast('Team goal updated!', true);
                 } else {
                     // Create new
                     const { data, error } = await supabase
@@ -1635,15 +1657,36 @@
 
                     if (error) throw error;
 
-                    teamGoals = data;
-                    showToast('Team goals set!', true);
+                    teamGoals.unshift(data); // Add to beginning
+                    showToast('Team goal added!', true);
                 }
 
                 closeTeamGoalsModal();
                 renderTeamGoals();
             } catch (error) {
-                console.error('Error saving team goals:', error);
-                showToast('Error saving team goals', false);
+                console.error('Error saving team goal:', error);
+                showToast('Error saving team goal', false);
+            }
+        }
+
+        window.deleteTeamGoalFromModal = async function() {
+            if (!confirm('Delete this team goal?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('dashboard_team_goals')
+                    .delete()
+                    .eq('id', currentTeamGoalId);
+
+                if (error) throw error;
+
+                teamGoals = teamGoals.filter(g => g.id !== currentTeamGoalId);
+                closeTeamGoalsModal();
+                renderTeamGoals();
+                showToast('Team goal deleted', true);
+            } catch (error) {
+                console.error('Error deleting team goal:', error);
+                showToast('Error deleting team goal', false);
             }
         }
 

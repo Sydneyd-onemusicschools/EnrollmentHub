@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,265 +23,15 @@
             padding: 0;
             -webkit-font-smoothing: antialiased;
             color: #1a1a1a;
-            display: flex;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #ff6b6b 0%, #ee5a6f 100%);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 0;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .sidebar-header {
-            padding: 0 2rem 2rem 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-header {
-            padding: 0 1rem 1rem 1rem;
-        }
-
-        .sidebar-logo {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: white;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-logo {
-            font-size: 1.25rem;
-        }
-
-        .sidebar-subtitle {
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.9);
-            text-align: center;
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-subtitle {
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .sidebar-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: -15px;
-            width: 30px;
-            height: 30px;
-            background: white;
-            border: 2px solid #ff6b6b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .sidebar-toggle svg {
-            width: 16px;
-            height: 16px;
-            stroke: #ff6b6b;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-toggle svg {
-            transform: rotate(180deg);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 2rem 0;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
-            white-space: nowrap;
-        }
-
-        .sidebar.collapsed .sidebar-link {
-            padding: 1rem;
-            justify-content: center;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-left-color: white;
-        }
-
-        .sidebar-link.active {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border-left-color: white;
-            font-weight: 700;
-        }
-
-        .sidebar-link svg {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            margin-right: 1rem;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-link svg {
-            margin-right: 0;
-        }
-
-        .sidebar-link-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-link-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .sidebar-footer {
-            padding: 1rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .sidebar.collapsed .sidebar-footer {
-            padding: 1rem;
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .sidebar.collapsed .logout-btn {
-            padding: 0.75rem 0.5rem;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .logout-btn svg {
-            min-width: 18px;
-        }
-
-        .logout-btn-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .logout-btn-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .hamburger {
-            display: none;
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            z-index: 999;
-            background: white;
-            border: 2px solid #ff6b6b;
-            border-radius: 12px;
-            padding: 0.75rem;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .hamburger svg {
-            width: 24px;
-            height: 24px;
-            stroke: #ff6b6b;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .main-wrapper {
-                margin-left: 0 !important;
-            }
+        #sidebar-container {
+            /* Sidebar placeholder */
         }
 
         .main-wrapper {
-            margin-left: 280px;
             padding: 3rem 2rem;
             width: 100%;
-            transition: margin-left 0.3s ease;
-        }
-
-        .sidebar.collapsed ~ .main-wrapper {
-            margin-left: 80px;
         }
 
         .container {
@@ -509,15 +260,17 @@
         .modal {
             background: white;
             border-radius: 24px;
-            max-width: 600px;
+            max-width: 800px;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-height: 85vh;
+            overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
         }
 
         .modal-header {
-            padding: 2rem;
+            padding: 2rem 2rem 1.5rem;
             border-bottom: 1px solid #f0f0f0;
         }
 
@@ -527,128 +280,35 @@
             color: #1a1a1a;
         }
 
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #1a1a1a;
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.875rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .modal-footer {
-            padding: 1.5rem 2rem;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        .button-secondary {
-            background: #f5f5f5;
-            color: #1a1a1a;
-        }
-
-        .button-secondary:hover {
-            background: #e5e5e5;
-        }
-
-        .button-danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .button-danger:hover {
-            background: #dc2626;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            display: none;
-            align-items: center;
-            gap: 0.75rem;
-            z-index: 2000;
-            font-weight: 600;
-        }
-
-        .toast.show {
-            display: flex;
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .tabs {
+        .modal-tabs {
             display: flex;
             gap: 0.5rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #f0f0f0;
+            padding: 0 2rem;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .tab {
+        .modal-tab {
             padding: 1rem 1.5rem;
-            background: none;
+            background: transparent;
             border: none;
-            font-size: 1rem;
-            font-weight: 600;
             color: #6b7280;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        .tab.active {
+        .modal-tab.active {
             color: #ff6b6b;
             border-bottom-color: #ff6b6b;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
         }
 
         .tab-content {
@@ -659,326 +319,401 @@
             display: block;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .time-input-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .time-input-group .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
         .log-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1.5rem;
         }
 
         .log-table th {
             text-align: left;
             padding: 0.75rem;
-            font-weight: 600;
+            background: #fafafa;
+            font-size: 0.8rem;
+            font-weight: 700;
             color: #6b7280;
-            border-bottom: 2px solid #f0f0f0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .log-table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #f5f5f5;
+            padding: 0.875rem 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+
+        .log-table tr:hover {
+            background: #fafafa;
         }
 
         .delete-log-btn {
-            padding: 0.375rem 0.875rem;
-            background: #fee;
-            color: #ef4444;
+            background: #fee2e2;
             border: none;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            color: #ef4444;
             cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 600;
         }
 
         .delete-log-btn:hover {
-            background: #fdd;
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .modal-btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: #f5f5f5;
+            color: #6b7280;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-btn.save {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+        }
+
+        .modal-btn.save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(-8px);
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
         }
 
         .no-logs {
             text-align: center;
             padding: 2rem;
             color: #9ca3af;
+            font-size: 0.95rem;
         }
 
-        .log-form {
-            background: #f9fafb;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            display: none;
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.25rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                margin: 1rem;
+                max-height: 90vh;
+            }
+
+            .modal-tabs {
+                overflow-x: auto;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .log-table {
+                font-size: 0.875rem;
+            }
+
+            .log-table th,
+            .log-table td {
+                padding: 0.5rem;
+            }
         }
 
-        .log-form.show {
-            display: block;
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header h2 {
+                font-size: 1.35rem;
+            }
         }
 
-        .log-form-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-
-        .time-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-toggle" onclick="toggleSidebar()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-        </div>
-        
-        <div class="sidebar-header">
-            <div class="sidebar-logo">Enrollment Hub</div>
-            <div class="sidebar-subtitle">One Music Schools</div>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <a href="dashboard.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-                <span class="sidebar-link-text">Dashboard</span>
-            </a>
-            
-            <a href="team.html" class="sidebar-link active">
-                <svg viewBox="0 0 24 24">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                <span class="sidebar-link-text">Team</span>
-            </a>
-            
-            <a href="schedule.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span class="sidebar-link-text">Schedule</span>
-            </a>
-            
-            <a href="quotas.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24">
-                    <line x1="12" y1="20" x2="12" y2="10"></line>
-                    <line x1="18" y1="20" x2="18" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="16"></line>
-                </svg>
-                <span class="sidebar-link-text">Quotas</span>
-            </a>
-            
-            <a href="calculator.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24">
-                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                    <line x1="8" y1="6" x2="16" y2="6"></line>
-                    <line x1="8" y1="10" x2="16" y2="10"></line>
-                    <line x1="8" y1="14" x2="16" y2="14"></line>
-                    <line x1="8" y1="18" x2="12" y2="18"></line>
-                </svg>
-                <span class="sidebar-link-text">Calculator</span>
-            </a>
-            
-            <a href="notes.html" class="sidebar-link">
-                <svg viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <span class="sidebar-link-text">Notes</span>
-            </a>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <button class="logout-btn" onclick="logout()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                <span class="logout-btn-text">Logout</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Mobile Hamburger -->
-    <div class="hamburger" onclick="toggleMobileSidebar()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-    </div>
-
+    <div id="sidebar-container"></div>
+    
     <div class="main-wrapper">
         <div class="container">
             <div class="header">
-                <h1>Team</h1>
-                <p>Manage your team members</p>
+                <h1>Enrollment Hub</h1>
+                <h2>Team</h2>
+                <p>Manage team members and track time off</p>
             </div>
 
-            <div class="section-header">
-                <h2>Team Members</h2>
-                <button class="button" onclick="openAddMember()">+ Add Team Member</button>
-            </div>
+            <div id="loading" class="loading">Loading...</div>
 
-            <div id="teamList" class="loading">Loading team members...</div>
+            <div id="content" style="display: none;">
+                <div class="section-header">
+                    <h2>Team Members</h2>
+                    <button class="button" onclick="openTeamModal()">+ Add Team Member</button>
+                </div>
+
+                <div id="team-grid" class="team-grid"></div>
+            </div>
         </div>
     </div>
 
     <!-- Team Member Modal -->
-    <div class="modal-overlay" id="teamModal">
+    <div id="teamModal" class="modal-overlay">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" id="teamModalTitle">Add Team Member</h2>
+                <h3 class="modal-title" id="modalTitle">Team Member</h3>
             </div>
+            
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="info">Info</button>
+                <button class="modal-tab" data-tab="hours">Hours Log</button>
+                <button class="modal-tab" data-tab="wfh">WFH Days</button>
+            </div>
+
             <div class="modal-body">
-                <div class="tabs">
-                    <button class="tab active" onclick="switchTab('info')">Basic Info</button>
-                    <button class="tab" onclick="switchTab('time')">Time Off</button>
-                </div>
-
-                <div class="tab-content active" id="infoTab">
-                    <div class="form-row">
+                <!-- Tab 1: Info -->
+                <div class="tab-content active" data-tab="info">
+                    <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label">First Name *</label>
-                            <input type="text" class="form-input" id="firstName" required>
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="firstName" class="form-input" placeholder="First name">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Last Name *</label>
-                            <input type="text" class="form-input" id="lastName" required>
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="lastName" class="form-input" placeholder="Last name">
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Phone</label>
-                        <input type="tel" class="form-input" id="phone">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Email *</label>
-                        <input type="email" class="form-input" id="email" required>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" id="phone" class="form-input" placeholder="(555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="email@example.com">
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <input type="password" class="form-input" id="password">
+                        <input type="password" id="password" class="form-input" placeholder="Enter password">
                     </div>
 
-                    <div class="form-row">
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Role</label>
-                            <select class="form-select" id="role">
+                            <select id="role" class="form-select">
                                 <option value="team">Team Member</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Status</label>
-                            <select class="form-select" id="status">
+                            <select id="status" class="form-select">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="form-row">
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Yearly Hours</label>
-                            <input type="number" step="0.5" class="form-input" id="yearlyHours" placeholder="0">
+                            <input type="number" id="yearlyHours" class="form-input" placeholder="80" step="0.5">
                         </div>
                         <div class="form-group">
                             <label class="form-label">WFH Days</label>
-                            <input type="number" step="0.5" class="form-input" id="wfhDays" placeholder="0">
+                            <input type="number" id="wfhDays" class="form-input" placeholder="12" step="0.5">
                         </div>
                     </div>
                 </div>
 
-                <div class="tab-content" id="timeTab">
-                    <h3 style="margin-bottom: 1rem;">Time Off Hours</h3>
+                <!-- Tab 2: Hours Log -->
+                <div class="tab-content" data-tab="hours">
+                    <button class="button" onclick="showLogHoursForm()">+ Log Time Off</button>
                     
-                    <div class="log-form" id="logHoursForm">
+                    <div id="logHoursForm" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #fafafa; border-radius: 12px;">
                         <div class="form-group">
                             <label class="form-label">Date</label>
-                            <input type="date" class="form-input" id="hoursDate">
+                            <input type="date" id="hoursDate" class="form-input">
                         </div>
-                        
-                        <div class="time-inputs">
+                        <div class="time-input-group">
                             <div class="form-group">
                                 <label class="form-label">Hours</label>
-                                <input type="number" step="0.5" min="0" class="form-input" id="hoursAmount" placeholder="0">
+                                <input type="number" id="hoursAmount" class="form-input" placeholder="2" min="0">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Minutes</label>
-                                <input type="number" min="0" max="59" class="form-input" id="minutesAmount" placeholder="0">
+                                <input type="number" id="minutesAmount" class="form-input" placeholder="30" min="0" max="59">
                             </div>
                         </div>
-                        
                         <div class="form-group">
-                            <label class="form-label">Reason (optional)</label>
-                            <input type="text" class="form-input" id="hoursReason">
+                            <label class="form-label">Reason</label>
+                            <input type="text" id="hoursReason" class="form-input" placeholder="e.g., Doctor appointment">
                         </div>
-                        
-                        <div class="log-form-actions">
-                            <button class="button" onclick="saveHoursLog()">Save</button>
-                            <button class="button button-secondary" onclick="hideLogHoursForm()">Cancel</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="modal-btn save" onclick="saveHoursLog()">Save</button>
+                            <button class="modal-btn cancel" onclick="hideLogHoursForm()">Cancel</button>
                         </div>
                     </div>
-                    
-                    <button class="button" onclick="showLogHoursForm()" style="margin-bottom: 1rem;">+ Log Time Off</button>
-                    
-                    <div id="hoursLogTable"></div>
 
-                    <h3 style="margin: 2rem 0 1rem;">Work From Home Days</h3>
+                    <div id="hoursLogTable"></div>
+                </div>
+
+                <!-- Tab 3: WFH Days -->
+                <div class="tab-content" data-tab="wfh">
+                    <button class="button" onclick="showLogWFHForm()">+ Log WFH Day</button>
                     
-                    <div class="log-form" id="logWFHForm">
+                    <div id="logWFHForm" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #fafafa; border-radius: 12px;">
                         <div class="form-group">
                             <label class="form-label">Date</label>
-                            <input type="date" class="form-input" id="wfhDate">
+                            <input type="date" id="wfhDate" class="form-input">
                         </div>
-                        
                         <div class="form-group">
                             <label class="form-label">Days Used</label>
-                            <input type="number" step="0.5" min="0" class="form-input" id="wfhDaysUsed" placeholder="0.5">
+                            <input type="number" id="wfhDaysUsed" class="form-input" placeholder="1" step="0.5" min="0">
                         </div>
-                        
                         <div class="form-group">
-                            <label class="form-label">Reason (optional)</label>
-                            <input type="text" class="form-input" id="wfhReason">
+                            <label class="form-label">Reason</label>
+                            <input type="text" id="wfhReason" class="form-input" placeholder="e.g., Working from home">
                         </div>
-                        
-                        <div class="log-form-actions">
-                            <button class="button" onclick="saveWFHLog()">Save</button>
-                            <button class="button button-secondary" onclick="hideLogWFHForm()">Cancel</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="modal-btn save" onclick="saveWFHLog()">Save</button>
+                            <button class="modal-btn cancel" onclick="hideLogWFHForm()">Cancel</button>
                         </div>
                     </div>
-                    
-                    <button class="button" onclick="showLogWFHForm()" style="margin-bottom: 1rem;">+ Log WFH Day</button>
-                    
+
                     <div id="wfhLogTable"></div>
                 </div>
             </div>
+
             <div class="modal-footer">
-                <button class="button button-danger" id="deleteMemberBtn" onclick="deleteMember()" style="display: none;">Delete</button>
-                <button class="button button-secondary" onclick="closeTeamModal()">Cancel</button>
-                <button class="button" onclick="saveMember()">Save</button>
+                <button class="modal-btn cancel" onclick="closeTeamModal()">Close</button>
+                <button class="modal-btn save" onclick="saveTeamMember()">Save Changes</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
+    <div id="toast" class="toast"></div>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
@@ -988,103 +723,80 @@
         
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Sidebar Functions
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        }
-
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mobile-open');
-        }
-
-        function loadSidebarState() {
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                document.getElementById('sidebar').classList.add('collapsed');
-            }
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'index.html';
-            }
-        }
-
-        // Toast Function
-        function showToast(message, isSuccess) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast show ' + (isSuccess ? 'success' : 'error');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // Tab Switching
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.add('active');
-        }
-
-        // Team Management
         let teamMembers = [];
         let timeLogs = [];
         let currentMemberId = null;
 
+        function showToast(message, isSuccess = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (isSuccess) toast.classList.add('success');
+            setTimeout(() => toast.className = 'toast', 2000);
+        }
+
         async function loadData() {
             try {
-                const [membersRes, logsRes] = await Promise.all([
-                    supabase.from('team_members').select('*').order('first_name'),
+                const [membersResult, logsResult] = await Promise.all([
+                    supabase.from('team_members').select('*').order('created_at'),
                     supabase.from('time_off_logs').select('*').order('log_date', { ascending: false })
                 ]);
 
-                if (membersRes.error) throw membersRes.error;
-                if (logsRes.error) throw logsRes.error;
+                if (membersResult.error) throw membersResult.error;
+                if (logsResult.error) throw logsResult.error;
 
-                teamMembers = membersRes.data || [];
-                timeLogs = logsRes.data || [];
+                teamMembers = membersResult.data || [];
+                timeLogs = logsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
                 renderTeam();
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('teamList').innerHTML = '<div class="empty-state">Error loading team members</div>';
+                showToast('Error loading data', false);
+            }
+        }
+
+        function calculateRemaining(memberId, type) {
+            const member = teamMembers.find(m => m.id === memberId);
+            if (!member) return 0;
+
+            const logs = timeLogs.filter(l => l.team_member_id === memberId && l.log_type === type);
+            
+            if (type === 'hours') {
+                const totalUsed = logs.reduce((sum, log) => {
+                    const hours = parseFloat(log.hours || 0);
+                    const minutes = parseFloat(log.minutes || 0) / 60;
+                    return sum + hours + minutes;
+                }, 0);
+                return Math.max(0, parseFloat(member.yearly_hours || 0) - totalUsed);
+            } else {
+                const totalUsed = logs.reduce((sum, log) => sum + parseFloat(log.days || 0), 0);
+                return Math.max(0, parseFloat(member.wfh_days || 0) - totalUsed);
             }
         }
 
         function renderTeam() {
-            const container = document.getElementById('teamList');
+            const grid = document.getElementById('team-grid');
             
             if (teamMembers.length === 0) {
-                container.innerHTML = '<div class="empty-state">No team members yet. Click "Add Team Member" to get started.</div>';
+                grid.innerHTML = '<div class="empty-state"><p>No team members yet. Click "Add Team Member" to get started.</p></div>';
                 return;
             }
 
-            container.className = 'team-grid';
-            container.innerHTML = teamMembers.map(member => {
-                const memberLogs = timeLogs.filter(l => l.team_member_id === member.id);
-                const hoursLogs = memberLogs.filter(l => l.log_type === 'hours');
-                const wfhLogs = memberLogs.filter(l => l.log_type === 'wfh');
-                
-                const totalHours = hoursLogs.reduce((sum, log) => {
-                    return sum + (parseFloat(log.hours || 0) + (parseInt(log.minutes || 0) / 60));
-                }, 0);
-                
-                const totalWFH = wfhLogs.reduce((sum, log) => sum + parseFloat(log.days || 0), 0);
-                
-                const remainingHours = (member.yearly_hours || 0) - totalHours;
-                const remainingWFH = (member.wfh_days || 0) - totalWFH;
+            grid.innerHTML = teamMembers.map(member => {
+                const remainingHours = calculateRemaining(member.id, 'hours');
+                const remainingWFH = calculateRemaining(member.id, 'wfh');
 
                 return `
-                    <div class="team-card ${member.status === 'inactive' ? 'inactive' : ''}" onclick="openEditMember('${member.id}')">
+                    <div class="team-card ${member.status}" onclick="openTeamModal('${member.id}')">
                         <div class="team-header">
                             <div>
                                 <div class="team-name">${member.first_name} ${member.last_name}</div>
-                                <div class="team-email">${member.email}</div>
+                                <div class="team-email">${member.email || 'No email'}</div>
                             </div>
-                            <div class="role-badge ${member.role}">${member.role}</div>
+                            <span class="role-badge ${member.role}">${member.role}</span>
                         </div>
                         
                         <div class="team-stats">
@@ -1093,13 +805,13 @@
                                 <div class="stat-value">${remainingHours.toFixed(1)} <span class="stat-unit">hrs</span></div>
                             </div>
                             <div class="stat-box">
-                                <div class="stat-label">WFH Days Left</div>
+                                <div class="stat-label">WFH Days</div>
                                 <div class="stat-value">${remainingWFH.toFixed(1)} <span class="stat-unit">days</span></div>
                             </div>
                         </div>
-                        
+
                         <div class="status-indicator">
-                            <div class="status-dot ${member.status}"></div>
+                            <span class="status-dot ${member.status}"></span>
                             ${member.status === 'active' ? 'Active' : 'Inactive'}
                         </div>
                     </div>
@@ -1107,79 +819,86 @@
             }).join('');
         }
 
-        window.openAddMember = function() {
-            currentMemberId = null;
-            document.getElementById('teamModalTitle').textContent = 'Add Team Member';
-            document.getElementById('deleteMemberBtn').style.display = 'none';
-            
-            document.getElementById('firstName').value = '';
-            document.getElementById('lastName').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('role').value = 'team';
-            document.getElementById('status').value = 'active';
-            document.getElementById('yearlyHours').value = '';
-            document.getElementById('wfhDays').value = '';
-            
-            switchTab('info');
-            document.getElementById('teamModal').classList.add('active');
-        }
-
-        window.openEditMember = function(memberId) {
+        window.openTeamModal = function(memberId = null) {
             currentMemberId = memberId;
-            const member = teamMembers.find(m => m.id === memberId);
-            
-            document.getElementById('teamModalTitle').textContent = 'Edit Team Member';
-            document.getElementById('deleteMemberBtn').style.display = 'block';
-            
-            document.getElementById('firstName').value = member.first_name || '';
-            document.getElementById('lastName').value = member.last_name || '';
-            document.getElementById('phone').value = member.phone || '';
-            document.getElementById('email').value = member.email || '';
-            document.getElementById('password').value = '';
-            document.getElementById('role').value = member.role || 'team';
-            document.getElementById('status').value = member.status || 'active';
-            document.getElementById('yearlyHours').value = member.yearly_hours || '';
-            document.getElementById('wfhDays').value = member.wfh_days || '';
-            
-            loadHoursLog();
-            loadWFHLog();
-            
+            const modal = document.getElementById('teamModal');
+            const modalTitle = document.getElementById('modalTitle');
+
+            // Switch to info tab
             switchTab('info');
-            document.getElementById('teamModal').classList.add('active');
+
+            if (memberId) {
+                const member = teamMembers.find(m => m.id === memberId);
+                modalTitle.textContent = `${member.first_name} ${member.last_name}`;
+                
+                document.getElementById('firstName').value = member.first_name;
+                document.getElementById('lastName').value = member.last_name;
+                document.getElementById('phone').value = member.phone || '';
+                document.getElementById('email').value = member.email || '';
+                document.getElementById('password').value = member.password || '';
+                document.getElementById('role').value = member.role;
+                document.getElementById('status').value = member.status;
+                document.getElementById('yearlyHours').value = member.yearly_hours || 0;
+                document.getElementById('wfhDays').value = member.wfh_days || 0;
+
+                loadHoursLog();
+                loadWFHLog();
+            } else {
+                modalTitle.textContent = 'New Team Member';
+                document.getElementById('firstName').value = '';
+                document.getElementById('lastName').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('role').value = 'team';
+                document.getElementById('status').value = 'active';
+                document.getElementById('yearlyHours').value = '';
+                document.getElementById('wfhDays').value = '';
+            }
+
+            modal.classList.add('active');
         }
 
         window.closeTeamModal = function() {
             document.getElementById('teamModal').classList.remove('active');
             currentMemberId = null;
+            hideLogHoursForm();
+            hideLogWFHForm();
         }
 
-        window.deleteMember = async function() {
-            if (!confirm('Delete this team member? This will also delete all their time logs.')) return;
+        function switchTab(tabName) {
+            document.querySelectorAll('.modal-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
 
-            try {
-                await supabase.from('time_off_logs').delete().eq('team_member_id', currentMemberId);
-                
-                const { error } = await supabase.from('team_members').delete().eq('id', currentMemberId);
-                if (error) throw error;
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.dataset.tab === tabName) {
+                    content.classList.add('active');
+                }
+            });
+        }
 
-                teamMembers = teamMembers.filter(m => m.id !== currentMemberId);
-                timeLogs = timeLogs.filter(l => l.team_member_id !== currentMemberId);
-                
-                closeTeamModal();
-                renderTeam();
-                showToast('Team member deleted', true);
-            } catch (error) {
-                console.error('Error deleting member:', error);
-                showToast('Error deleting member', false);
+        // Tab switching
+        document.querySelectorAll('.modal-tab').forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+        });
+
+        window.saveTeamMember = async function() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+
+            if (!firstName || !lastName) {
+                alert('Please enter first and last name');
+                return;
             }
-        }
 
-        window.saveMember = async function() {
             const memberData = {
-                first_name: document.getElementById('firstName').value.trim(),
-                last_name: document.getElementById('lastName').value.trim(),
+                first_name: firstName,
+                last_name: lastName,
                 phone: document.getElementById('phone').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 password: document.getElementById('password').value.trim(),
@@ -1427,7 +1146,6 @@
             }
         }
 
-        loadSidebarState();
         loadData();
 
         document.getElementById('teamModal').addEventListener('click', (e) => {

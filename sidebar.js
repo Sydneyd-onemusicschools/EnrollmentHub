@@ -133,7 +133,7 @@
 
     // Adjust main content margin for sidebar
     function adjustMainContent() {
-        // Add global style - NO left padding, sidebar margin only
+        // Add global style that FORCES proper spacing
         const style = document.createElement('style');
         style.textContent = `
             body {
@@ -141,19 +141,36 @@
                 margin: 0;
             }
             body > *:not(.sidebar):not(.hamburger) {
-                margin-left: 280px;
+                margin-left: 280px !important;
                 transition: margin-left 0.3s ease;
             }
             .sidebar.collapsed ~ *:not(.hamburger) {
-                margin-left: 80px;
+                margin-left: 80px !important;
             }
-            /* Force remove any left padding that causes double spacing */
-            .main-wrapper, main, .content, #app, .container {
+            /* FORCE remove ALL left padding - content touches sidebar */
+            body > *:not(.sidebar):not(.hamburger),
+            .main-wrapper,
+            main,
+            .content,
+            #app {
+                padding-left: 0 !important;  /* NO gap - content starts right at sidebar */
+            }
+            /* Also fix any containers inside */
+            .main-wrapper .container,
+            main .container,
+            .content .container {
                 padding-left: 0 !important;
             }
             @media (max-width: 768px) {
                 body > *:not(.sidebar):not(.hamburger) {
                     margin-left: 0 !important;
+                }
+                body > *:not(.sidebar):not(.hamburger),
+                .main-wrapper,
+                main,
+                .content,
+                #app {
+                    padding-left: 2rem !important;  /* Small padding on mobile */
                 }
             }
         `;

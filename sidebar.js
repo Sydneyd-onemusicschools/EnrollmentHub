@@ -142,6 +142,7 @@
         
         if (mainContent) {
             mainContent.style.marginLeft = '280px';
+            mainContent.style.paddingLeft = '0';  // Remove any left padding
             mainContent.style.transition = 'margin-left 0.3s ease';
             
             // Update on sidebar collapse
@@ -160,12 +161,22 @@
             });
         }
         
-        // Mobile responsive
+        // Add global style to prevent double padding
         const style = document.createElement('style');
         style.textContent = `
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            .main-wrapper, main, .content, #app {
+                padding-left: 2rem !important;  /* Small spacing from sidebar */
+            }
             @media (max-width: 768px) {
                 body > *:not(.sidebar):not(.hamburger) {
                     margin-left: 0 !important;
+                }
+                .main-wrapper, main, .content, #app {
+                    padding-left: 2rem !important;
                 }
             }
         `;

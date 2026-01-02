@@ -19,11 +19,156 @@
             padding: 0;
             -webkit-font-smoothing: antialiased;
             color: #1a1a1a;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #ff6b6b 0%, #ee5a6f 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 2rem 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .sidebar-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-left-color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-link svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 1rem;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: white;
+            margin: 5px 0;
+            transition: 0.3s;
         }
 
         .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
             padding: 3rem 2rem;
-            width: 100%;
+            width: calc(100% - 280px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+                padding-top: 5rem;
+            }
         }
 
         .container {
@@ -561,6 +706,63 @@
     </style>
 </head>
 <body>
+    <!-- Hamburger Menu -->
+    <button class="hamburger" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Enrollment Hub</div>
+            <div class="sidebar-subtitle">One Music Schools</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link active">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a>
+            <a href="team.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Team Management
+            </a>
+            <a href="studios.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Studio Directory
+            </a>
+            <a href="teacher.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                Teacher Selling Points
+            </a>
+            <a href="programs.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                Programs
+            </a>
+            <a href="training.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                Training Hub
+            </a>
+            <a href="policies.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Policies
+            </a>
+            <a href="calendar.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Calendar
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Logout
+            </button>
+        </div>
+    </div>
+
     <div class="main-wrapper">
         <div class="container">
             <div id="loading" class="loading">Loading dashboard...</div>
@@ -937,6 +1139,59 @@
             </div>
         </div>
     </div>
+
+    <!-- Individual Goals Modal -->
+    <div id="individualGoalsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="individualGoalsModalTitle">Edit Goals</h3>
+                <button class="close-btn" onclick="closeIndividualGoalsModal()">×</button>
+            </div>
+
+            <div id="currentMonthFields" style="display: none;">
+                <h4 style="margin-bottom: 1rem; font-weight: 700;">Current Month Progress</h4>
+                <div class="form-group">
+                    <label class="form-label">Current Progress</label>
+                    <input type="number" id="goalCurrentProgress" class="form-input" placeholder="0">
+                </div>
+            </div>
+
+            <div id="lastMonthFields" style="display: none;">
+                <h4 style="margin-bottom: 1rem; font-weight: 700;">Last Month Final Results</h4>
+                <div class="form-group">
+                    <label class="form-label">Final Count</label>
+                    <input type="number" id="goalFinalCount" class="form-input" placeholder="0">
+                </div>
+            </div>
+
+            <h4 style="margin-bottom: 1rem; margin-top: 1.5rem; font-weight: 700;">Goals</h4>
+            
+            <div class="form-group">
+                <label class="form-label">Quota Goal</label>
+                <input type="number" id="goalQuota" class="form-input" placeholder="0">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bronze Goal</label>
+                <input type="number" id="goalBronze" class="form-input" placeholder="0">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Silver Goal</label>
+                <input type="number" id="goalSilver" class="form-input" placeholder="0">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Gold Goal</label>
+                <input type="number" id="goalGold" class="form-input" placeholder="0">
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary" onclick="closeIndividualGoalsModal()">Cancel</button>
+                <button class="button" onclick="saveIndividualGoal()">Save Goals</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Notes Modal -->
     <div id="notesModal" class="modal">
@@ -1003,6 +1258,20 @@
             const editor = document.getElementById(editorId);
             editor.focus();
             document.execCommand('bold', false, null);
+        }
+
+        // Sidebar Functions
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        window.logout = function() {
+            // Placeholder for logout functionality
+            if (confirm('Are you sure you want to logout?')) {
+                // Will implement actual logout when login system is built
+                alert('Logout functionality will be implemented with the login system');
+            }
         }
 
         function showToast(message, isSuccess = false) {
@@ -2161,10 +2430,216 @@
             }
         }
 
-        // Individual Goals Functions (placeholder - coming next!)
+        // Individual Goals Functions
+        let currentGoalMemberId = null;
+        let currentGoalType = null;
+
         function renderIndividualGoals() {
             const container = document.getElementById('individualGoalsList');
-            container.innerHTML = '<p style="color: #9ca3af;">Individual Goals section coming soon...</p>';
+            
+            if (teamMembers.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af;">No active team members</p>';
+                return;
+            }
+
+            const currentMonthYear = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            let html = '';
+            teamMembers.forEach(member => {
+                const currentGoal = individualGoals.find(g => g.team_member_id === member.id && g.goal_type === 'current_month');
+                const lastGoal = individualGoals.find(g => g.team_member_id === member.id && g.goal_type === 'last_month');
+                const nextGoal = individualGoals.find(g => g.team_member_id === member.id && g.goal_type === 'next_month');
+                
+                html += `
+                    <div class="goals-member">
+                        <div class="team-member-name">${member.first_name} ${member.last_name}</div>
+                        
+                        <!-- Current Month Goals -->
+                        <div class="goals-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="goals-section-title">Current Month Goals</div>
+                                <button class="button button-secondary button-small" onclick="openEditIndividualGoal('${member.id}', 'current_month')">Edit</button>
+                            </div>
+                            ${currentGoal ? `
+                                <div class="goals-grid">
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Current Progress</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700; color: #ff6b6b;">${currentGoal.current_progress || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Quota</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${currentGoal.quota_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Bronze</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${currentGoal.bronze_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Silver</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${currentGoal.silver_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Gold</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${currentGoal.gold_goal || 0}</div>
+                                    </div>
+                                </div>
+                            ` : '<p style="color: #9ca3af; font-size: 0.875rem;">Not set</p>'}
+                        </div>
+                        
+                        <!-- Last Month Final Results -->
+                        <div class="goals-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="goals-section-title">Last Month (Final Results)</div>
+                                <button class="button button-secondary button-small" onclick="openEditIndividualGoal('${member.id}', 'last_month')">Edit</button>
+                            </div>
+                            ${lastGoal ? `
+                                <div class="goals-grid">
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Final Count</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700; color: #10b981;">${lastGoal.final_count || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Quota</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${lastGoal.quota_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Bronze</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${lastGoal.bronze_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Silver</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${lastGoal.silver_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Gold</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${lastGoal.gold_goal || 0}</div>
+                                    </div>
+                                </div>
+                            ` : '<p style="color: #9ca3af; font-size: 0.875rem;">Not set</p>'}
+                        </div>
+                        
+                        <!-- Next Month Goals Only -->
+                        <div class="goals-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="goals-section-title">Next Month (Goals Only)</div>
+                                <button class="button button-secondary button-small" onclick="openEditIndividualGoal('${member.id}', 'next_month')">Edit</button>
+                            </div>
+                            ${nextGoal ? `
+                                <div class="goals-grid">
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Quota</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${nextGoal.quota_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Bronze</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${nextGoal.bronze_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Silver</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${nextGoal.silver_goal || 0}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Gold</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700;">${nextGoal.gold_goal || 0}</div>
+                                    </div>
+                                </div>
+                            ` : '<p style="color: #9ca3af; font-size: 0.875rem;">Not set</p>'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        window.openEditIndividualGoal = function(memberId, goalType) {
+            currentGoalMemberId = memberId;
+            currentGoalType = goalType;
+            
+            const member = teamMembers.find(m => m.id === memberId);
+            const goal = individualGoals.find(g => g.team_member_id === memberId && g.goal_type === goalType);
+            
+            const titles = {
+                'current_month': 'Current Month',
+                'last_month': 'Last Month',
+                'next_month': 'Next Month'
+            };
+            
+            document.getElementById('individualGoalsModalTitle').textContent = `${member.first_name} ${member.last_name} - ${titles[goalType]}`;
+            
+            // Show/hide appropriate fields
+            document.getElementById('currentMonthFields').style.display = goalType === 'current_month' ? 'block' : 'none';
+            document.getElementById('lastMonthFields').style.display = goalType === 'last_month' ? 'block' : 'none';
+            
+            // Set values
+            if (goalType === 'current_month') {
+                document.getElementById('goalCurrentProgress').value = goal?.current_progress || '';
+            } else if (goalType === 'last_month') {
+                document.getElementById('goalFinalCount').value = goal?.final_count || '';
+            }
+            
+            document.getElementById('goalQuota').value = goal?.quota_goal || '';
+            document.getElementById('goalBronze').value = goal?.bronze_goal || '';
+            document.getElementById('goalSilver').value = goal?.silver_goal || '';
+            document.getElementById('goalGold').value = goal?.gold_goal || '';
+            
+            document.getElementById('individualGoalsModal').classList.add('active');
+        }
+
+        window.closeIndividualGoalsModal = function() {
+            document.getElementById('individualGoalsModal').classList.remove('active');
+            currentGoalMemberId = null;
+            currentGoalType = null;
+        }
+
+        window.saveIndividualGoal = async function() {
+            const monthYear = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            const goalData = {
+                team_member_id: currentGoalMemberId,
+                goal_type: currentGoalType,
+                month_year: monthYear,
+                quota_goal: parseInt(document.getElementById('goalQuota').value) || 0,
+                bronze_goal: parseInt(document.getElementById('goalBronze').value) || 0,
+                silver_goal: parseInt(document.getElementById('goalSilver').value) || 0,
+                gold_goal: parseInt(document.getElementById('goalGold').value) || 0,
+                current_progress: currentGoalType === 'current_month' ? parseInt(document.getElementById('goalCurrentProgress').value) || 0 : null,
+                final_count: currentGoalType === 'last_month' ? parseInt(document.getElementById('goalFinalCount').value) || 0 : null
+            };
+
+            try {
+                const existing = individualGoals.find(g => g.team_member_id === currentGoalMemberId && g.goal_type === currentGoalType);
+                
+                if (existing) {
+                    // Update
+                    const { error } = await supabase
+                        .from('dashboard_individual_goals')
+                        .update(goalData)
+                        .eq('id', existing.id);
+                    
+                    if (error) throw error;
+                    
+                    Object.assign(existing, goalData);
+                } else {
+                    // Insert
+                    const { data, error } = await supabase
+                        .from('dashboard_individual_goals')
+                        .insert(goalData)
+                        .select()
+                        .single();
+                    
+                    if (error) throw error;
+                    
+                    individualGoals.push(data);
+                }
+                
+                closeIndividualGoalsModal();
+                renderIndividualGoals();
+                showToast('Goals saved!', true);
+            } catch (error) {
+                console.error('Error saving goals:', error);
+                showToast('Error saving goals', false);
+            }
         }
 
         // Notes Functions

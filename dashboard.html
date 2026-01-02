@@ -1051,7 +1051,7 @@
                 const starSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 starSvg.setAttribute('viewBox', '0 0 24 24');
                 starSvg.setAttribute('fill', item.is_starred ? '#fbbf24' : '#d1d5db');
-                starSvg.className = 'star-icon';
+                starSvg.setAttribute('class', 'star-icon'); // FIX: Use setAttribute for SVG
                 starSvg.onclick = () => window.toggleStarAnnouncement(item.id);
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z');

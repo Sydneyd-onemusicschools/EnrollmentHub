@@ -674,8 +674,9 @@
         let supabaseClient;
         try {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client initialized');
         } catch (error) {
-            console.error('Error initializing Supabase:', error);
+            console.error('❌ Error initializing Supabase:', error);
         }
 
         let allCategories = [];
@@ -683,6 +684,7 @@
 
         // ========== LOAD DATA FROM SUPABASE ==========
         async function loadStudioInfo() {
+            console.log('🏢 Loading studio info...');
             try {
                 const { data, error } = await supabaseClient
                     .from('studios')
@@ -691,48 +693,63 @@
                     .limit(1)
                     .single();
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Studio info error:', error);
+                    throw error;
+                }
 
+                console.log('✅ Studio data loaded:', data);
                 if (data) {
                     displayStudioInfo(data);
                 }
             } catch (error) {
-                console.error('Error loading studio info:', error);
+                console.error('❌ Error loading studio info:', error.message);
             }
         }
 
         async function loadCategories() {
+            console.log('📁 Loading categories...');
             try {
                 const { data, error } = await supabaseClient
                     .from('categories')
                     .select('*')
                     .order('order_index');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Categories error:', error);
+                    throw error;
+                }
 
+                console.log('✅ Categories loaded:', data);
                 allCategories = data || [];
                 await loadQuickLinks();
             } catch (error) {
-                console.error('Error loading categories:', error);
-                document.getElementById('loading').innerHTML = '<p style="color: #ef4444;">Error loading data. Please refresh the page.</p>';
+                console.error('❌ Error loading categories:', error.message);
+                document.getElementById('loading').innerHTML = `<p style="color: #ef4444;">Error: ${error.message}</p>`;
             }
         }
 
         async function loadQuickLinks() {
+            console.log('🔗 Loading quick links...');
             try {
                 const { data, error } = await supabaseClient
                     .from('quick_links')
                     .select('*')
                     .order('category_id, order_index');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Quick links error:', error);
+                    throw error;
+                }
 
+                console.log('✅ Quick links loaded:', data);
                 allLinks = data || [];
+                console.log(`📊 Rendering ${allCategories.length} categories with ${allLinks.length} links`);
                 renderCategories();
                 document.getElementById('loading').style.display = 'none';
             } catch (error) {
-                console.error('Error loading quick links:', error);
-                document.getElementById('loading').innerHTML = '<p style="color: #ef4444;">Error loading data. Please refresh the page.</p>';
+                console.error('❌ Error loading quick links:', error.message);
+                document.getElementById('loading').innerHTML = `<p style="color: #ef4444;">Error: ${error.message}</p>`;
             }
         }
 
@@ -819,13 +836,25 @@
 
         // ========== RENDER CATEGORIES ==========
         function renderCategories() {
+            console.log('🎨 Rendering categories...');
             const container = document.getElementById('sections-container');
             container.innerHTML = '';
+
+            if (allCategories.length === 0) {
+                console.log('⚠️ No categories to display');
+                container.innerHTML = '<p style="text-align: center; color: #86868b; padding: 40px;">No categories found. Please add categories in Supabase.</p>';
+                return;
+            }
 
             allCategories.forEach(category => {
                 const categoryLinks = allLinks.filter(link => link.category_id === category.id);
                 
-                if (categoryLinks.length === 0) return; // Skip empty categories
+                console.log(`📂 Category "${category.name}" has ${categoryLinks.length} links`);
+                
+                if (categoryLinks.length === 0) {
+                    console.log(`⏭️ Skipping empty category: ${category.name}`);
+                    return; // Skip empty categories
+                }
 
                 const section = document.createElement('div');
                 section.className = 'section';
@@ -849,6 +878,7 @@
                 container.appendChild(section);
             });
 
+            console.log('✅ Categories rendered successfully');
             initializeSearch();
         }
 

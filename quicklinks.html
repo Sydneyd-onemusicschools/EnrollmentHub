@@ -749,6 +749,36 @@
             }
         }
 
+        async function reorderStudio(id, direction) {
+            const index = data.studios.findIndex(s => s.id === id);
+            if (direction === 'up' && index === 0) return;
+            if (direction === 'down' && index === data.studios.length - 1) return;
+
+            const swapIndex = direction === 'up' ? index - 1 : index + 1;
+            
+            // Swap order_index values
+            const currentOrder = data.studios[index].order_index;
+            const swapOrder = data.studios[swapIndex].order_index;
+
+            try {
+                await Promise.all([
+                    supabase.from('studios').update({ order_index: swapOrder }).eq('id', data.studios[index].id),
+                    supabase.from('studios').update({ order_index: currentOrder }).eq('id', data.studios[swapIndex].id)
+                ]);
+
+                data.studios[index].order_index = swapOrder;
+                data.studios[swapIndex].order_index = currentOrder;
+                
+                // Re-sort the array
+                data.studios.sort((a, b) => a.order_index - b.order_index);
+                renderStudios();
+                showToast('Order updated!');
+            } catch (error) {
+                console.error('Error reordering studio:', error);
+                showToast('Error reordering studio', true);
+            }
+        }
+
         function renderStudios() {
             const container = document.getElementById('studios-container');
             
@@ -761,8 +791,8 @@
                 <div class="studio-card">
                     <div class="studio-header">
                         <div class="reorder-buttons">
-                            <button class="reorder-btn">↑</button>
-                            <button class="reorder-btn">↓</button>
+                            <button class="reorder-btn" onclick="reorderStudio('${studio.id}', 'up')" ${index === 0 ? 'disabled' : ''}>↑</button>
+                            <button class="reorder-btn" onclick="reorderStudio('${studio.id}', 'down')" ${index === data.studios.length - 1 ? 'disabled' : ''}>↓</button>
                         </div>
                         <div class="studio-name" onclick="editStudio('${studio.id}', 'brand')">
                             ${studio.brand}
@@ -927,6 +957,66 @@
             }
         }
 
+        async function reorderCategory(id, direction) {
+            const index = data.categories.findIndex(c => c.id === id);
+            if (direction === 'up' && index === 0) return;
+            if (direction === 'down' && index === data.categories.length - 1) return;
+
+            const swapIndex = direction === 'up' ? index - 1 : index + 1;
+            
+            const currentOrder = data.categories[index].order_index;
+            const swapOrder = data.categories[swapIndex].order_index;
+
+            try {
+                await Promise.all([
+                    supabase.from('categories').update({ order_index: swapOrder }).eq('id', data.categories[index].id),
+                    supabase.from('categories').update({ order_index: currentOrder }).eq('id', data.categories[swapIndex].id)
+                ]);
+
+                data.categories[index].order_index = swapOrder;
+                data.categories[swapIndex].order_index = currentOrder;
+                
+                data.categories.sort((a, b) => a.order_index - b.order_index);
+                renderCategories();
+                showToast('Order updated!');
+            } catch (error) {
+                console.error('Error reordering category:', error);
+                showToast('Error reordering category', true);
+            }
+        }
+
+        async function reorderLink(id, direction) {
+            const link = data.links.find(l => l.id === id);
+            const categoryLinks = data.links
+                .filter(l => l.category_id === link.category_id)
+                .sort((a, b) => a.order_index - b.order_index);
+            
+            const index = categoryLinks.findIndex(l => l.id === id);
+            if (direction === 'up' && index === 0) return;
+            if (direction === 'down' && index === categoryLinks.length - 1) return;
+
+            const swapIndex = direction === 'up' ? index - 1 : index + 1;
+            
+            const currentOrder = categoryLinks[index].order_index;
+            const swapOrder = categoryLinks[swapIndex].order_index;
+
+            try {
+                await Promise.all([
+                    supabase.from('quick_links').update({ order_index: swapOrder }).eq('id', categoryLinks[index].id),
+                    supabase.from('quick_links').update({ order_index: currentOrder }).eq('id', categoryLinks[swapIndex].id)
+                ]);
+
+                categoryLinks[index].order_index = swapOrder;
+                categoryLinks[swapIndex].order_index = currentOrder;
+                
+                renderCategories();
+                showToast('Order updated!');
+            } catch (error) {
+                console.error('Error reordering link:', error);
+                showToast('Error reordering link', true);
+            }
+        }
+
         async function editLink(id, field) {
             const link = data.links.find(l => l.id === id);
             const newValue = prompt(`Edit ${field}:`, link[field]);
@@ -957,7 +1047,7 @@
                 return;
             }
 
-            container.innerHTML = data.categories.map(category => {
+            container.innerHTML = data.categories.map((category, catIndex) => {
                 const categoryLinks = data.links
                     .filter(l => l.category_id === category.id)
                     .sort((a, b) => a.order_index - b.order_index);
@@ -966,8 +1056,8 @@
                     <div class="category-card">
                         <div class="category-header">
                             <div class="reorder-buttons">
-                                <button class="reorder-btn">↑</button>
-                                <button class="reorder-btn">↓</button>
+                                <button class="reorder-btn" onclick="reorderCategory('${category.id}', 'up')" ${catIndex === 0 ? 'disabled' : ''}>↑</button>
+                                <button class="reorder-btn" onclick="reorderCategory('${category.id}', 'down')" ${catIndex === data.categories.length - 1 ? 'disabled' : ''}>↓</button>
                             </div>
                             <div class="category-name" onclick="editCategory('${category.id}')">
                                 ${category.name}
@@ -977,11 +1067,11 @@
                         <div class="links-container">
                             ${categoryLinks.length === 0 
                                 ? '<div class="empty-state">No links yet. Click "Add Link" to get started.</div>'
-                                : categoryLinks.map(link => `
+                                : categoryLinks.map((link, linkIndex) => `
                                     <div class="link-item">
                                         <div class="link-reorder">
-                                            <button class="link-reorder-btn">↑</button>
-                                            <button class="link-reorder-btn">↓</button>
+                                            <button class="link-reorder-btn" onclick="reorderLink('${link.id}', 'up')" ${linkIndex === 0 ? 'disabled' : ''}>↑</button>
+                                            <button class="link-reorder-btn" onclick="reorderLink('${link.id}', 'down')" ${linkIndex === categoryLinks.length - 1 ? 'disabled' : ''}>↓</button>
                                         </div>
                                         <div class="link-content">
                                             <div class="link-field link-title" onclick="editLink('${link.id}', 'title')">
@@ -1009,12 +1099,15 @@
         window.addStudio = addStudio;
         window.deleteStudio = deleteStudio;
         window.editStudio = editStudio;
+        window.reorderStudio = reorderStudio;
         window.addCategory = addCategory;
         window.deleteCategory = deleteCategory;
         window.editCategory = editCategory;
+        window.reorderCategory = reorderCategory;
         window.addLink = addLink;
         window.deleteLink = deleteLink;
         window.editLink = editLink;
+        window.reorderLink = reorderLink;
 
         // Initialize
         loadData();

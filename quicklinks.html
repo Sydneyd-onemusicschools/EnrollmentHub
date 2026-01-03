@@ -198,8 +198,8 @@
             letter-spacing: -0.01em;
         }
 
-        .studio-brand:hover,
-        .category-brand:hover {
+        .studio-name:hover,
+        .category-name:hover {
             background: #fafafa;
         }
 
@@ -636,9 +636,9 @@
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.classBrand = 'toast show';
+            toast.className = 'toast show';
             if (isError) toast.classList.add('error');
-            setTimeout(() => toast.classBrand = 'toast', 3000);
+            setTimeout(() => toast.className = 'toast', 3000);
         }
 
         // Load all data from Supabase
@@ -671,7 +671,7 @@
 
         // Studio functions
         async function addStudio() {
-            const name = prompt('Studio brand:', 'New Studio');
+            const name = prompt('Studio name:', 'New Studio');
             if (!name) return;
 
             try {
@@ -682,7 +682,7 @@
                 const { data: newStudio, error } = await supabase
                     .from('studios')
                     .insert({
-                        name,
+                        brand: name,
                         state: '',
                         monthly_rate: '',
                         annual_fee: '',
@@ -764,7 +764,7 @@
                             <button class="reorder-btn">↑</button>
                             <button class="reorder-btn">↓</button>
                         </div>
-                        <div class="studio-name" onclick="editStudio('${studio.id}', 'name')">
+                        <div class="studio-name" onclick="editStudio('${studio.id}', 'brand')">
                             ${studio.brand}
                         </div>
                         <button class="delete-btn" onclick="deleteStudio('${studio.id}')">×</button>
@@ -801,7 +801,7 @@
 
         // Category functions
         async function addCategory() {
-            const name = prompt('Category brand:', 'New Category');
+            const name = prompt('Category name:', 'New Category');
             if (!name) return;
 
             try {
@@ -852,18 +852,18 @@
 
         async function editCategory(id) {
             const category = data.categories.find(c => c.id === id);
-            const newBrand = prompt('Category brand:', category.name);
-            if (!newBrand) return;
+            const newName = prompt('Category name:', category.name);
+            if (!newName) return;
 
             try {
                 const { error } = await supabase
                     .from('categories')
-                    .update({ brand: newBrand })
+                    .update({ name: newName })
                     .eq('id', id);
 
                 if (error) throw error;
 
-                category.name = newBrand;
+                category.name = newName;
                 renderCategories();
                 showToast('Updated!');
             } catch (error) {

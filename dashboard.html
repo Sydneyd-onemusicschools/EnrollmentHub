@@ -3075,5 +3075,56 @@
         loadData();
     </script>
 >>>>>>> be204cdfa44e3093ea93afbd0de6d74cebb0a3f3
+    <script>
+// Sidebar toggle functionality
+const sidebar = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebarToggle');
+const hamburger = document.getElementById('hamburger');
+const overlay = document.getElementById('sidebarOverlay');
+
+// Toggle collapse on desktop
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    });
+}
+
+// Toggle mobile menu
+if (hamburger) {
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+    });
+}
+
+// Close on overlay click
+if (overlay) {
+    overlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+    });
+}
+
+// Load saved state
+const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+if (isCollapsed && sidebar) {
+    sidebar.classList.add('collapsed');
+}
+
+// Logout function
+async function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
+            localStorage.clear();
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('Error logging out. Please try again.');
+        }
+    }
+}
+</script>
+</body>
 </body>
 </html>

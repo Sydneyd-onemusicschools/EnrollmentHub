@@ -669,7 +669,14 @@
         // ========== SUPABASE CONFIGURATION ==========
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Create Supabase client
+        let supabaseClient;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (error) {
+            console.error('Error initializing Supabase:', error);
+        }
 
         let allCategories = [];
         let allLinks = [];
@@ -677,7 +684,7 @@
         // ========== LOAD DATA FROM SUPABASE ==========
         async function loadStudioInfo() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('studios')
                     .select('*')
                     .order('order_index')
@@ -696,7 +703,7 @@
 
         async function loadCategories() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('categories')
                     .select('*')
                     .order('order_index');
@@ -713,7 +720,7 @@
 
         async function loadQuickLinks() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('quick_links')
                     .select('*')
                     .order('category_id, order_index');

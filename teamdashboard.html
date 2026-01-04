@@ -314,17 +314,17 @@
         }
 
         .stat-card.gradient-1 {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
             border: none;
         }
 
         .stat-card.gradient-2 {
-            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+            background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
             border: none;
         }
 
         .stat-card.gradient-3 {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            background: linear-gradient(135deg, #b2ebf2 0%, #80deea 100%);
             border: none;
         }
 
@@ -618,6 +618,21 @@
             margin-top: 1rem;
         }
 
+        /* Schedule Items */
+        .schedule-day {
+            background: var(--gray-50);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .schedule-day-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
         /* Note Card */
         .note-card {
             background: var(--white);
@@ -880,12 +895,9 @@
                             </div>
                             <h2 class="card-title">Weekly Schedule</h2>
                         </div>
-                        <span class="card-badge">Coming Soon</span>
+                        <span class="card-badge">This Week</span>
                     </div>
-                    <div class="empty-state">
-                        <i class="far fa-calendar"></i>
-                        <p>Schedule feature coming soon</p>
-                    </div>
+                    <div id="scheduleList"></div>
                 </div>
             </div>
 
@@ -904,9 +916,8 @@
                         <i class="fas fa-user-check" style="color: var(--primary);"></i>
                         Individual Goals
                     </h2>
-                    <div class="empty-state">
-                        <i class="fas fa-chart-line"></i>
-                        <p>Individual goals feature coming soon</p>
+                    <div class="content-card">
+                        <div id="individualGoalsList"></div>
                     </div>
                 </div>
             </div>
@@ -990,7 +1001,9 @@
                     loadShoutouts(),
                     loadPromos(),
                     loadReminders(),
-                    loadNotes()
+                    loadNotes(),
+                    loadSchedule(),
+                    loadIndividualGoals()
                 ]);
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -1165,6 +1178,87 @@
                     ${note.link ? `<a href="${note.link}" class="item-link" target="_blank"><span>Learn More</span><i class="fas fa-external-link-alt"></i></a>` : ''}
                 </div>
             `).join('');
+        }
+
+        async function loadSchedule() {
+            const { data, error } = await supabaseClient
+                .from('dashboard_schedule_items')
+                .select('*, team_members(first_name, last_name)')
+                .order('weekday');
+
+            const container = document.getElementById('scheduleList');
+            if (error || !data || data.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No schedule available</p></div>';
+                return;
+            }
+
+            const weekdayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'overall'];
+            const sortedData = data.sort((a, b) => 
+                weekdayOrder.indexOf(a.weekday) - weekdayOrder.indexOf(b.weekday)
+            );
+
+            container.innerHTML = sortedData.map(schedule => {
+                const memberName = schedule.team_members 
+                    ? `${schedule.team_members.first_name} ${schedule.team_members.last_name}`
+                    : 'Unknown';
+                
+                return `
+                    <div class="content-item">
+                        <span class="bullet"></span>
+                        <div class="content-text">
+                            <strong>${schedule.weekday.charAt(0).toUpperCase() + schedule.weekday.slice(1)}</strong> - ${memberName}
+                            ${schedule.hours ? `<br><span style="color: var(--text-light);">Hours: ${schedule.hours}</span>` : ''}
+                            ${schedule.lunch_time ? `<br><span style="color: var(--text-light);">Lunch: ${schedule.lunch_time}</span>` : ''}
+                            ${schedule.work_mode ? `<br><span style="color: var(--text-light);">Mode: ${schedule.work_mode}</span>` : ''}
+                            ${schedule.meetings ? `<br><span style="color: var(--text-light);">Meetings: ${schedule.meetings}</span>` : ''}
+                            ${schedule.meeting_link ? `<br><a href="${schedule.meeting_link}" class="item-link" target="_blank"><span>Join Meeting</span><i class="fas fa-external-link-alt"></i></a>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadIndividualGoals() {
+            const { data, error } = await supabaseClient
+                .from('dashboard_individual_goals')
+                .select('*, team_members(first_name, last_name)')
+                .eq('goal_type', 'current_month')
+                .order('team_members(first_name)');
+
+            const container = document.getElementById('individualGoalsList');
+            if (error || !data || data.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No individual goals available</p></div>';
+                return;
+            }
+
+            container.innerHTML = data.map(goal => {
+                const memberName = goal.team_members 
+                    ? `${goal.team_members.first_name} ${goal.team_members.last_name}`
+                    : 'Unknown';
+                const progress = goal.current_progress || 0;
+                const target = goal.quota_goal || 0;
+                const percentage = target > 0 ? Math.min((progress / target) * 100, 100) : 0;
+                
+                return `
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span><strong>${memberName}</strong></span>
+                            <span>${progress} / ${target}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        ${goal.bronze_goal || goal.silver_goal || goal.gold_goal ? `
+                            <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">
+                                Goals: 
+                                ${goal.bronze_goal ? `🥉 ${goal.bronze_goal}` : ''}
+                                ${goal.silver_goal ? `🥈 ${goal.silver_goal}` : ''}
+                                ${goal.gold_goal ? `🥇 ${goal.gold_goal}` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
         }
     </script>
 </body>

@@ -618,7 +618,56 @@
             margin-top: 1rem;
         }
 
-        /* Schedule Items */
+        /* Sub Tabs */
+        .sub-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sub-tab {
+            padding: 0.625rem 1rem;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sub-tab:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
+        .sub-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .sub-tab-content {
+            display: none;
+        }
+
+        .sub-tab-content.active {
+            display: block;
+        }
+
+        .goals-header-banner {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
         .schedule-day {
             background: var(--gray-50);
             border-left: 3px solid var(--primary);
@@ -897,7 +946,18 @@
                         </div>
                         <span class="card-badge">This Week</span>
                     </div>
-                    <div id="scheduleList"></div>
+                    <div class="sub-tabs" id="scheduleDayTabs">
+                        <button class="sub-tab active" data-day="monday">Monday</button>
+                        <button class="sub-tab" data-day="tuesday">Tuesday</button>
+                        <button class="sub-tab" data-day="wednesday">Wednesday</button>
+                        <button class="sub-tab" data-day="thursday">Thursday</button>
+                        <button class="sub-tab" data-day="friday">Friday</button>
+                    </div>
+                    <div id="mondaySchedule" class="sub-tab-content active"></div>
+                    <div id="tuesdaySchedule" class="sub-tab-content"></div>
+                    <div id="wednesdaySchedule" class="sub-tab-content"></div>
+                    <div id="thursdaySchedule" class="sub-tab-content"></div>
+                    <div id="fridaySchedule" class="sub-tab-content"></div>
                 </div>
             </div>
 
@@ -917,7 +977,14 @@
                         Individual Goals
                     </h2>
                     <div class="content-card">
-                        <div id="individualGoalsList"></div>
+                        <div class="sub-tabs" id="goalMonthTabs">
+                            <button class="sub-tab" data-month="last">Last Month</button>
+                            <button class="sub-tab active" data-month="current">Current Month</button>
+                            <button class="sub-tab" data-month="next">Next Month</button>
+                        </div>
+                        <div id="lastMonthGoals" class="sub-tab-content"></div>
+                        <div id="currentMonthGoals" class="sub-tab-content active"></div>
+                        <div id="nextMonthGoals" class="sub-tab-content"></div>
                     </div>
                 </div>
             </div>
@@ -988,6 +1055,36 @@
                     
                     tab.classList.add('active');
                     document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+            // Setup schedule day tabs
+            const scheduleDayTabs = document.querySelectorAll('#scheduleDayTabs .sub-tab');
+            scheduleDayTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const day = tab.dataset.day;
+                    scheduleDayTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.querySelectorAll('#schedule .sub-tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${day}Schedule`).classList.add('active');
+                });
+            });
+
+            // Setup goal month tabs
+            const goalMonthTabs = document.querySelectorAll('#goalMonthTabs .sub-tab');
+            goalMonthTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const month = tab.dataset.month;
+                    goalMonthTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.getElementById('lastMonthGoals').classList.remove('active');
+                    document.getElementById('currentMonthGoals').classList.remove('active');
+                    document.getElementById('nextMonthGoals').classList.remove('active');
+                    document.getElementById(`${month}MonthGoals`).classList.add('active');
                 });
             });
         }
@@ -1186,79 +1283,179 @@
                 .select('*, team_members(first_name, last_name)')
                 .order('weekday');
 
-            const container = document.getElementById('scheduleList');
-            if (error || !data || data.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p>No schedule available</p></div>';
+            if (error) {
+                console.error('Error loading schedule:', error);
                 return;
             }
 
-            const weekdayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'overall'];
-            const sortedData = data.sort((a, b) => 
-                weekdayOrder.indexOf(a.weekday) - weekdayOrder.indexOf(b.weekday)
-            );
-
-            container.innerHTML = sortedData.map(schedule => {
-                const memberName = schedule.team_members 
-                    ? `${schedule.team_members.first_name} ${schedule.team_members.last_name}`
-                    : 'Unknown';
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+            
+            days.forEach(day => {
+                const container = document.getElementById(`${day}Schedule`);
+                const dayData = data.filter(s => s.weekday === day);
                 
-                return `
-                    <div class="content-item">
-                        <span class="bullet"></span>
-                        <div class="content-text">
-                            <strong>${schedule.weekday.charAt(0).toUpperCase() + schedule.weekday.slice(1)}</strong> - ${memberName}
-                            ${schedule.hours ? `<br><span style="color: var(--text-light);">Hours: ${schedule.hours}</span>` : ''}
-                            ${schedule.lunch_time ? `<br><span style="color: var(--text-light);">Lunch: ${schedule.lunch_time}</span>` : ''}
-                            ${schedule.work_mode ? `<br><span style="color: var(--text-light);">Mode: ${schedule.work_mode}</span>` : ''}
-                            ${schedule.meetings ? `<br><span style="color: var(--text-light);">Meetings: ${schedule.meetings}</span>` : ''}
-                            ${schedule.meeting_link ? `<br><a href="${schedule.meeting_link}" class="item-link" target="_blank"><span>Join Meeting</span><i class="fas fa-external-link-alt"></i></a>` : ''}
+                if (dayData.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No schedule for this day</p></div>';
+                    return;
+                }
+
+                container.innerHTML = dayData.map(schedule => {
+                    const memberName = schedule.team_members 
+                        ? `${schedule.team_members.first_name} ${schedule.team_members.last_name}`
+                        : 'Unknown';
+                    
+                    return `
+                        <div class="content-item">
+                            <span class="bullet"></span>
+                            <div class="content-text">
+                                <strong>${memberName}</strong>
+                                ${schedule.hours ? `<br><span style="color: var(--text-light);">Hours: ${schedule.hours}</span>` : ''}
+                                ${schedule.lunch_time ? `<br><span style="color: var(--text-light);">Lunch: ${schedule.lunch_time}</span>` : ''}
+                                ${schedule.work_mode ? `<br><span style="color: var(--text-light);">Mode: ${schedule.work_mode}</span>` : ''}
+                                ${schedule.meetings ? `<br><span style="color: var(--text-light);">Meetings: ${schedule.meetings}</span>` : ''}
+                                ${schedule.notes ? `<br><span style="color: var(--text-light);">${schedule.notes}</span>` : ''}
+                                ${schedule.meeting_link ? `<br><a href="${schedule.meeting_link}" class="item-link" target="_blank"><span>Join Meeting</span><i class="fas fa-external-link-alt"></i></a>` : ''}
+                            </div>
                         </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            });
         }
 
         async function loadIndividualGoals() {
+            // Load all goal types
             const { data, error } = await supabaseClient
                 .from('dashboard_individual_goals')
                 .select('*, team_members(first_name, last_name)')
-                .eq('goal_type', 'current_month')
                 .order('team_members(first_name)');
 
-            const container = document.getElementById('individualGoalsList');
-            if (error || !data || data.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p>No individual goals available</p></div>';
+            if (error) {
+                console.error('Error loading individual goals:', error);
                 return;
             }
 
-            container.innerHTML = data.map(goal => {
-                const memberName = goal.team_members 
-                    ? `${goal.team_members.first_name} ${goal.team_members.last_name}`
-                    : 'Unknown';
-                const progress = goal.current_progress || 0;
-                const target = goal.quota_goal || 0;
-                const percentage = target > 0 ? Math.min((progress / target) * 100, 100) : 0;
-                
-                return `
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span><strong>${memberName}</strong></span>
-                            <span>${progress} / ${target}</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${percentage}%"></div>
-                        </div>
-                        ${goal.bronze_goal || goal.silver_goal || goal.gold_goal ? `
-                            <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">
-                                Goals: 
-                                ${goal.bronze_goal ? `🥉 ${goal.bronze_goal}` : ''}
-                                ${goal.silver_goal ? `🥈 ${goal.silver_goal}` : ''}
-                                ${goal.gold_goal ? `🥇 ${goal.gold_goal}` : ''}
+            // Current Month
+            const currentGoals = data.filter(g => g.goal_type === 'current_month');
+            const currentContainer = document.getElementById('currentMonthGoals');
+            if (currentGoals.length === 0) {
+                currentContainer.innerHTML = '<div class="empty-state"><p>No current month goals</p></div>';
+            } else {
+                currentContainer.innerHTML = currentGoals.map(goal => {
+                    const memberName = goal.team_members 
+                        ? `${goal.team_members.first_name} ${goal.team_members.last_name}`
+                        : 'Unknown';
+                    const progress = goal.current_progress || 0;
+                    const target = goal.quota_goal || 0;
+                    const percentage = target > 0 ? Math.min((progress / target) * 100, 100) : 0;
+                    
+                    return `
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span><strong>${memberName}</strong></span>
+                                <span>${progress} / ${target}</span>
                             </div>
-                        ` : ''}
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                            ${goal.bronze_goal || goal.silver_goal || goal.gold_goal ? `
+                                <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">
+                                    Goals: 
+                                    ${goal.bronze_goal ? `🥉 ${goal.bronze_goal}` : ''}
+                                    ${goal.silver_goal ? `🥈 ${goal.silver_goal}` : ''}
+                                    ${goal.gold_goal ? `🥇 ${goal.gold_goal}` : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Last Month
+            const lastGoals = data.filter(g => g.goal_type === 'last_month');
+            const lastContainer = document.getElementById('lastMonthGoals');
+            if (lastGoals.length === 0) {
+                lastContainer.innerHTML = '<div class="empty-state"><p>No last month data</p></div>';
+            } else {
+                // Determine status for each person
+                lastContainer.innerHTML = lastGoals.map(goal => {
+                    const memberName = goal.team_members 
+                        ? `${goal.team_members.first_name} ${goal.team_members.last_name}`
+                        : 'Unknown';
+                    const finalCount = goal.final_count || 0;
+                    
+                    // Determine status
+                    let status = 'No Status';
+                    let statusColor = '#9CA3AF';
+                    
+                    if (goal.gold_goal && finalCount >= goal.gold_goal) {
+                        status = '🥇 Gold';
+                        statusColor = '#FFD700';
+                    } else if (goal.silver_goal && finalCount >= goal.silver_goal) {
+                        status = '🥈 Silver';
+                        statusColor = '#C0C0C0';
+                    } else if (goal.bronze_goal && finalCount >= goal.bronze_goal) {
+                        status = '🥉 Bronze';
+                        statusColor = '#CD7F32';
+                    } else if (goal.quota_goal && finalCount >= goal.quota_goal) {
+                        status = '✓ Quota';
+                        statusColor = '#10B981';
+                    }
+                    
+                    return `
+                        <div style="margin-bottom: 1.5rem;">
+                            <div class="goals-header-banner" style="background: ${statusColor};">
+                                ${memberName} - ${status}
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span><strong>Final Count</strong></span>
+                                    <span>${finalCount}</span>
+                                </div>
+                                ${goal.quota_goal || goal.bronze_goal || goal.silver_goal || goal.gold_goal ? `
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                        Targets: 
+                                        ${goal.quota_goal ? `Quota: ${goal.quota_goal}` : ''}
+                                        ${goal.bronze_goal ? ` | 🥉 ${goal.bronze_goal}` : ''}
+                                        ${goal.silver_goal ? ` | 🥈 ${goal.silver_goal}` : ''}
+                                        ${goal.gold_goal ? ` | 🥇 ${goal.gold_goal}` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Next Month
+            const nextGoals = data.filter(g => g.goal_type === 'next_month');
+            const nextContainer = document.getElementById('nextMonthGoals');
+            if (nextGoals.length === 0) {
+                nextContainer.innerHTML = '<div class="empty-state"><p>No next month goals set</p></div>';
+            } else {
+                nextContainer.innerHTML = `
+                    <div class="goals-header-banner">
+                        <i class="fas fa-info-circle"></i> Subject to Change
                     </div>
-                `;
-            }).join('');
+                ` + nextGoals.map(goal => {
+                    const memberName = goal.team_members 
+                        ? `${goal.team_members.first_name} ${goal.team_members.last_name}`
+                        : 'Unknown';
+                    
+                    return `
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span><strong>${memberName}</strong></span>
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                ${goal.quota_goal ? `Quota: ${goal.quota_goal}` : ''}
+                                ${goal.bronze_goal ? ` | 🥉 ${goal.bronze_goal}` : ''}
+                                ${goal.silver_goal ? ` | 🥈 ${goal.silver_goal}` : ''}
+                                ${goal.gold_goal ? ` | 🥇 ${goal.gold_goal}` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
         }
     </script>
 </body>

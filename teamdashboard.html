@@ -682,6 +682,35 @@
             margin-bottom: 0.5rem;
         }
 
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .medal-icon {
+            font-size: 1rem;
+            margin-right: 0.25rem;
+        }
+
+        .medal-bronze {
+            color: #CD7F32;
+        }
+
+        .medal-silver {
+            color: #C0C0C0;
+        }
+
+        .medal-gold {
+            color: #FFD700;
+        }
+
         /* Note Card */
         .note-card {
             background: var(--white);

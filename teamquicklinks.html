@@ -869,7 +869,16 @@
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            document.getElementById(`category-${categoryId}`).classList.add('active');
+            const activeContent = document.getElementById(`category-${categoryId}`);
+            activeContent.classList.add('active');
+            
+            // Smooth scroll to the category content
+            const offset = 120; // Offset for fixed elements
+            const elementPosition = activeContent.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+                top: elementPosition - offset,
+                behavior: 'smooth'
+            });
         }
 
         // Setup Search

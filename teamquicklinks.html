@@ -250,7 +250,7 @@
 
         /* Header */
         .page-header {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .page-title {
@@ -268,6 +268,21 @@
             color: var(--text-secondary);
             font-size: 1.0625rem;
             font-weight: 400;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tabs-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
 
         /* Studio Snapshot Section */
@@ -340,6 +355,11 @@
             padding: 1.5rem;
             transition: all 0.3s ease;
             box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .studio-card:hover {
@@ -352,12 +372,6 @@
             font-size: 1.125rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .studio-location {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
             margin-bottom: 1rem;
         }
 
@@ -370,7 +384,7 @@
         .studio-detail {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.625rem;
             font-size: 0.875rem;
             color: var(--text-secondary);
         }
@@ -378,6 +392,7 @@
         .studio-detail i {
             color: var(--primary);
             width: 16px;
+            flex-shrink: 0;
         }
 
         .studio-detail-value {
@@ -385,19 +400,22 @@
             font-weight: 600;
         }
 
-        /* Tabs */
-        .tabs-container {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-md);
+        .studio-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-100);
+            color: var(--primary);
+            font-size: 1rem;
+            opacity: 0.7;
+            transition: all 0.2s ease;
         }
 
-        .tabs-row {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
+        .studio-card:hover .studio-arrow {
+            opacity: 1;
+            transform: translateX(4px);
         }
 
         .tab {
@@ -585,43 +603,43 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="teamdashboard.html" class="sidebar-link">
+            <a href="dashboard.html" class="sidebar-link">
                 <i class="fas fa-th-large"></i>
                 <span class="sidebar-link-text">Dashboard</span>
             </a>
-            <a href="teamquicklinks.html" class="sidebar-link active">
+            <a href="quicklinks.html" class="sidebar-link active">
                 <i class="fas fa-link"></i>
                 <span class="sidebar-link-text">Quick Links</span>
             </a>
-            <a href="teamsnippets.html" class="sidebar-link">
+            <a href="snippets.html" class="sidebar-link">
                 <i class="fas fa-clipboard"></i>
                 <span class="sidebar-link-text">Snippets</span>
             </a>
-            <a href="teamprofile.html" class="sidebar-link">
+            <a href="team.html" class="sidebar-link">
                 <i class="fas fa-users"></i>
-                <span class="sidebar-link-text">Profiles</span>
+                <span class="sidebar-link-text">Team Management</span>
             </a>
-            <a href="teamstudios.html" class="sidebar-link">
+            <a href="studios.html" class="sidebar-link">
                 <i class="fas fa-map-marker-alt"></i>
                 <span class="sidebar-link-text">Studio Directory</span>
             </a>
-            <a href="teamteacher.html" class="sidebar-link">
+            <a href="teacher.html" class="sidebar-link">
                 <i class="fas fa-book-open"></i>
                 <span class="sidebar-link-text">Teacher Selling Points</span>
             </a>
-            <a href="teamprograms.html" class="sidebar-link">
+            <a href="programs.html" class="sidebar-link">
                 <i class="fas fa-star"></i>
                 <span class="sidebar-link-text">Programs</span>
             </a>
-            <a href="teamtraining.html" class="sidebar-link">
+            <a href="training.html" class="sidebar-link">
                 <i class="fas fa-graduation-cap"></i>
                 <span class="sidebar-link-text">Training Hub</span>
             </a>
-            <a href="teampolicies.html" class="sidebar-link">
+            <a href="policies.html" class="sidebar-link">
                 <i class="fas fa-file-alt"></i>
                 <span class="sidebar-link-text">Policies</span>
             </a>
-            <a href="teamcalendar.html" class="sidebar-link">
+            <a href="calendar.html" class="sidebar-link">
                 <i class="far fa-calendar-alt"></i>
                 <span class="sidebar-link-text">Calendar</span>
             </a>
@@ -642,6 +660,11 @@
             </div>
 
             <div id="content" style="display: none;">
+                <!-- Category Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs-row" id="categoryTabs"></div>
+                </div>
+
                 <!-- Studio Snapshot -->
                 <div class="studio-section">
                     <div class="section-header">
@@ -655,11 +678,6 @@
                         <input type="text" id="studioSearch" class="search-bar" placeholder="Search studios...">
                     </div>
                     <div id="studiosGrid" class="studios-grid"></div>
-                </div>
-
-                <!-- Category Tabs -->
-                <div class="tabs-container">
-                    <div class="tabs-row" id="categoryTabs"></div>
                 </div>
 
                 <!-- Tab Contents -->
@@ -748,27 +766,43 @@
                 return;
             }
 
-            container.innerHTML = studios.map(studio => `
-                <div class="studio-card">
-                    <div class="studio-name">${studio.brand || 'Unnamed Studio'}</div>
-                    <div class="studio-location">${studio.city ? `${studio.city}, ` : ''}${studio.state || 'N/A'}</div>
-                    <div class="studio-details">
-                        <div class="studio-detail">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span class="studio-detail-value">${studio.monthly_rate || 'N/A'}</span>
-                            <span>/mo</span>
-                        </div>
-                        <div class="studio-detail">
-                            <i class="fas fa-calendar-check"></i>
-                            <span class="studio-detail-value">${studio.annual_fee || 'N/A'}</span>
-                            <span>/yr</span>
-                        </div>
-                        <div class="studio-detail">
-                            <i class="fas fa-phone"></i>
-                            <span class="studio-detail-value">${studio.phone_number || 'N/A'}</span>
+            // Get unique studios by brand name
+            const uniqueStudios = [];
+            const seenBrands = new Set();
+            
+            studios.forEach(studio => {
+                const brand = studio.brand || 'Unnamed Studio';
+                if (!seenBrands.has(brand)) {
+                    seenBrands.add(brand);
+                    uniqueStudios.push(studio);
+                }
+            });
+
+            container.innerHTML = uniqueStudios.map(studio => `
+                <a href="https://sydneyd-onemusicschools.github.io/EnrollmentHub/teamstudios.html" class="studio-card">
+                    <div>
+                        <div class="studio-name">${studio.brand || 'Unnamed Studio'}</div>
+                        <div class="studio-details">
+                            <div class="studio-detail">
+                                <i class="fas fa-phone"></i>
+                                <span class="studio-detail-value">${studio.phone_number || 'N/A'}</span>
+                            </div>
+                            <div class="studio-detail">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span class="studio-detail-value">${studio.monthly_rate || 'N/A'}</span>
+                                <span>/mo</span>
+                            </div>
+                            <div class="studio-detail">
+                                <i class="fas fa-calendar-check"></i>
+                                <span class="studio-detail-value">${studio.annual_fee || 'N/A'}</span>
+                                <span>/yr</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="studio-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
             `).join('');
         }
 
@@ -852,9 +886,9 @@
                 const filtered = allStudios.filter(studio => {
                     return (
                         (studio.brand || '').toLowerCase().includes(searchTerm) ||
-                        (studio.state || '').toLowerCase().includes(searchTerm) ||
-                        (studio.city || '').toLowerCase().includes(searchTerm) ||
-                        (studio.phone_number || '').toLowerCase().includes(searchTerm)
+                        (studio.phone_number || '').toLowerCase().includes(searchTerm) ||
+                        (studio.monthly_rate || '').toLowerCase().includes(searchTerm) ||
+                        (studio.annual_fee || '').toLowerCase().includes(searchTerm)
                     );
                 });
                 renderStudios(filtered);

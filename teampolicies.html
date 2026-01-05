@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policies - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #FA8072;
+            --primary-light: #FFB4A2;
+            --accent: #FF6B9D;
+            --accent-light: #FFB6C1;
+            --secondary: #FF6B9D;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --white: #FFFFFF;
+            --background: #F8F9FA;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - EXACT MATCH TO DASHBOARD */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #FA8072 0%, #FF6B9D 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 0 1rem 1rem 1rem;
+        }
+
+        .sidebar-logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            font-size: 1.25rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .sidebar-subtitle {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle i {
+            color: var(--primary);
+            font-size: 0.875rem;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 2rem 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            font-size: 0.9375rem;
+        }
+
+        .sidebar.collapsed .sidebar-link {
+            padding: 1rem;
+            justify-content: center;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .sidebar-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-left-color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            min-width: 20px;
+            margin-right: 1rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .sidebar-link i {
+            margin-right: 0;
+        }
+
+        .sidebar-link-text {
+            transition: all 0.3s ease;
+            opacity: 1;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-link-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: white;
+            margin: 5px 0;
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            padding: 3rem;
+            width: calc(100% - 280px);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed ~ .main-wrapper {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.0625rem;
+            font-weight: 400;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tabs-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--gray-50);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(250, 128, 114, 0.3);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .category-header {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Policy Cards */
+        .policies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .policy-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .policy-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(250, 128, 114, 0.05) 0%, rgba(255, 107, 157, 0.05) 100%);
+        }
+
+        .policy-card-title {
+            font-size: 1.0625rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .policy-card-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .policy-card:hover .policy-card-arrow {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            transform: translateX(2px);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 0 24px 24px 0;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .modal::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 2rem;
+            border-radius: 24px 24px 0 0;
+            color: white;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .modal-notes {
+            font-size: 1rem;
+            opacity: 0.95;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .policy-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .policy-section {
+            background: var(--gray-50);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1rem 1rem 1.5rem;
+            border-radius: 8px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .section-content {
+            flex: 1;
+        }
+
+        .section-text {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .section-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-link:hover {
+            text-decoration: underline;
+        }
+
+        .section-bullets {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        .bullet-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.625rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .bullet-icon {
+            color: var(--primary);
+            font-size: 0.5rem;
+            margin-top: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1.125rem;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem;
+                padding-top: 5rem;
+            }
+
+            .sidebar.collapsed ~ .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .policies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                max-height: 90vh;
+                margin: 1rem;
+            }
+
+            .modal-overlay {
+                padding: 0;
+            }
+
+            .modal-header {
+                padding: 1.5rem;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+                padding-right: 2rem;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Menu -->
+    <button class="hamburger" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Enrollment Hub</div>
+            <div class="sidebar-subtitle">One Music Schools</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span class="sidebar-link-text">Dashboard</span>
+            </a>
+            <a href="quicklinks.html" class="sidebar-link">
+                <i class="fas fa-link"></i>
+                <span class="sidebar-link-text">Quick Links</span>
+            </a>
+            <a href="snippets.html" class="sidebar-link">
+                <i class="fas fa-clipboard"></i>
+                <span class="sidebar-link-text">Snippets</span>
+            </a>
+            <a href="team.html" class="sidebar-link">
+                <i class="fas fa-users"></i>
+                <span class="sidebar-link-text">Team Management</span>
+            </a>
+            <a href="studios.html" class="sidebar-link">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="sidebar-link-text">Studio Directory</span>
+            </a>
+            <a href="teacher.html" class="sidebar-link">
+                <i class="fas fa-book-open"></i>
+                <span class="sidebar-link-text">Teacher Selling Points</span>
+            </a>
+            <a href="programs.html" class="sidebar-link">
+                <i class="fas fa-star"></i>
+                <span class="sidebar-link-text">Programs</span>
+            </a>
+            <a href="training.html" class="sidebar-link">
+                <i class="fas fa-graduation-cap"></i>
+                <span class="sidebar-link-text">Training Hub</span>
+            </a>
+            <a href="policies.html" class="sidebar-link active">
+                <i class="fas fa-file-alt"></i>
+                <span class="sidebar-link-text">Policies</span>
+            </a>
+            <a href="calendar.html" class="sidebar-link">
+                <i class="far fa-calendar-alt"></i>
+                <span class="sidebar-link-text">Calendar</span>
+            </a>
+            <a href="profile.html" class="sidebar-link">
+                <i class="fas fa-user"></i>
+                <span class="sidebar-link-text">My Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div class="page-header">
+                <h1 class="page-title">Policies</h1>
+                <p class="page-subtitle">Review company policies and guidelines</p>
+            </div>
+
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
+                Loading policies...
+            </div>
+
+            <div id="content" style="display: none;">
+                <!-- Category Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs-row" id="categoryTabs"></div>
+                </div>
+
+                <!-- Tab Contents -->
+                <div id="tabContents"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-notes" id="modalNotes"></div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        let supabaseClient;
+        let categories = [];
+        let policies = [];
+        let sections = [];
+        let bullets = [];
+        let activeCategory = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            loadSidebarState();
+            loadData();
+        });
+
+        // Sidebar Functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        function loadSidebarState() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                document.getElementById('sidebar').classList.add('collapsed');
+            }
+        }
+
+        // Load Data
+        async function loadData() {
+            try {
+                const [categoriesResult, policiesResult, sectionsResult, bulletsResult] = await Promise.all([
+                    supabaseClient.from('policy_categories').select('*').order('order_index'),
+                    supabaseClient.from('policies').select('*').eq('status', 'active').order('order_index'),
+                    supabaseClient.from('policy_sections').select('*').order('order_index'),
+                    supabaseClient.from('policy_section_bullets').select('*').order('order_index')
+                ]);
+
+                if (categoriesResult.error) throw categoriesResult.error;
+                if (policiesResult.error) throw policiesResult.error;
+                if (sectionsResult.error) throw sectionsResult.error;
+                if (bulletsResult.error) throw bulletsResult.error;
+
+                categories = categoriesResult.data || [];
+                policies = policiesResult.data || [];
+                sections = sectionsResult.data || [];
+                bullets = bulletsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                if (categories.length > 0) {
+                    activeCategory = categories[0].id;
+                }
+
+                renderTabs();
+                renderTabContents();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <p style="color: red;">Error loading policies. Please refresh the page.</p>
+                `;
+            }
+        }
+
+        // Render Tabs
+        function renderTabs() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            
+            const tabsHTML = categories.map(category => `
+                <button class="tab ${activeCategory === category.id ? 'active' : ''}" 
+                        onclick="switchCategory('${category.id}')">
+                    ${category.name}
+                </button>
+            `).join('');
+
+            tabsContainer.innerHTML = tabsHTML;
+        }
+
+        // Render Tab Contents
+        function renderTabContents() {
+            const contentsContainer = document.getElementById('tabContents');
+            
+            const contentsHTML = categories.map(category => {
+                const categoryPolicies = policies.filter(p => p.category_id === category.id);
+                
+                return `
+                    <div class="tab-content ${activeCategory === category.id ? 'active' : ''}" id="category-${category.id}">
+                        <div class="category-header">
+                            <h2 class="category-title">${category.name}</h2>
+                        </div>
+
+                        ${categoryPolicies.length === 0 ? `
+                            <div class="empty-state">
+                                <i class="fas fa-file-alt"></i>
+                                <p>No policies in this category</p>
+                            </div>
+                        ` : `
+                            <div class="policies-grid">
+                                ${categoryPolicies.map(policy => renderPolicyCard(policy)).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+
+            contentsContainer.innerHTML = contentsHTML;
+        }
+
+        // Render Policy Card
+        function renderPolicyCard(policy) {
+            return `
+                <div class="policy-card" onclick="openModal('${policy.id}')">
+                    <div class="policy-card-title">${policy.title}</div>
+                    <div class="policy-card-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Section
+        function renderSection(section) {
+            const sectionBullets = bullets.filter(b => b.policy_section_id === section.id);
+
+            return `
+                <div class="policy-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="section-content">
+                            <div class="section-text">${section.section_text}</div>
+                            ${section.link ? `
+                                <a href="${section.link}" target="_blank" class="section-link">
+                                    View More
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            ` : ''}
+                            ${sectionBullets.length > 0 ? `
+                                <ul class="section-bullets">
+                                    ${sectionBullets.map(bullet => `
+                                        <li class="bullet-item">
+                                            <i class="fas fa-circle bullet-icon"></i>
+                                            <span>${bullet.bullet_text}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Switch Category Tab
+        function switchCategory(categoryId) {
+            activeCategory = categoryId;
+            renderTabs();
+            
+            // Show/hide tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`category-${categoryId}`).classList.add('active');
+        }
+
+        // Open Modal
+        function openModal(policyId) {
+            const policy = policies.find(p => p.id === policyId);
+            if (!policy) return;
+
+            const policySections = sections.filter(s => s.policy_id === policy.id);
+
+            // Set modal content
+            document.getElementById('modalTitle').textContent = policy.title;
+            document.getElementById('modalNotes').textContent = policy.notes || '';
+            document.getElementById('modalNotes').style.display = policy.notes ? 'block' : 'none';
+
+            // Render sections in modal body
+            const modalBody = document.getElementById('modalBody');
+            if (policySections.length > 0) {
+                modalBody.innerHTML = `
+                    <div class="policy-sections">
+                        ${policySections.map(section => renderSection(section)).join('')}
+                    </div>
+                `;
+            } else {
+                modalBody.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-alt"></i>
+                        <p>No details available for this policy</p>
+                    </div>
+                `;
+            }
+
+            // Show modal
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.closest('.modal-close')) {
+                return;
+            }
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #FA8072;
+            --primary-light: #FFB4A2;
+            --accent: #FF6B9D;
+            --accent-light: #FFB6C1;
+            --secondary: #FF6B9D;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --white: #FFFFFF;
+            --background: #F8F9FA;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - EXACT MATCH TO DASHBOARD */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #FA8072 0%, #FF6B9D 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 0 1rem 1rem 1rem;
+        }
+
+        .sidebar-logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            font-size: 1.25rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .sidebar-subtitle {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle i {
+            color: var(--primary);
+            font-size: 0.875rem;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 2rem 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            font-size: 0.9375rem;
+        }
+
+        .sidebar.collapsed .sidebar-link {
+            padding: 1rem;
+            justify-content: center;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .sidebar-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-left-color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            min-width: 20px;
+            margin-right: 1rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .sidebar-link i {
+            margin-right: 0;
+        }
+
+        .sidebar-link-text {
+            transition: all 0.3s ease;
+            opacity: 1;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-link-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: white;
+            margin: 5px 0;
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            padding: 3rem;
+            width: calc(100% - 280px);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed ~ .main-wrapper {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.0625rem;
+            font-weight: 400;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-container {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.125rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-300);
+            border-radius: 4px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-label {
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Instrument Checkboxes Special Section */
+        .instruments-section {
+            grid-column: 1 / -1;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .instruments-label {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .instruments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .clear-filters-btn {
+            padding: 0.875rem 1.5rem;
+            background: var(--gray-100);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clear-filters-btn:hover {
+            background: var(--gray-200);
+            color: var(--text-primary);
+        }
+
+        .results-count {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        /* Teacher Cards */
+        .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .teacher-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .teacher-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .teacher-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .teacher-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .teacher-studio {
+            font-size: 0.9375rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .teacher-location {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .teacher-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            background: var(--gray-100);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .badge.primary {
+            background: linear-gradient(135deg, rgba(250, 128, 114, 0.1) 0%, rgba(255, 107, 157, 0.1) 100%);
+            color: var(--primary);
+            border: 1px solid rgba(250, 128, 114, 0.3);
+        }
+
+        .teacher-instruments {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .instrument-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .instrument-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.625rem;
+            flex-shrink: 0;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 0 24px 24px 0;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 2rem;
+            border-radius: 24px 24px 0 0;
+            color: white;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            font-size: 1.125rem;
+            opacity: 0.95;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-section-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .modal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .modal-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .modal-info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .modal-info-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .instrument-detail-card {
+            background: var(--gray-50);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1rem 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .instrument-detail-title {
+            font-size: 1.0625rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .instrument-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem;
+                padding-top: 5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .instruments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .teachers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Menu -->
+    <button class="hamburger" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Enrollment Hub</div>
+            <div class="sidebar-subtitle">One Music Schools</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span class="sidebar-link-text">Dashboard</span>
+            </a>
+            <a href="quicklinks.html" class="sidebar-link">
+                <i class="fas fa-link"></i>
+                <span class="sidebar-link-text">Quick Links</span>
+            </a>
+            <a href="snippets.html" class="sidebar-link">
+                <i class="fas fa-clipboard"></i>
+                <span class="sidebar-link-text">Snippets</span>
+            </a>
+            <a href="team.html" class="sidebar-link">
+                <i class="fas fa-users"></i>
+                <span class="sidebar-link-text">Team Management</span>
+            </a>
+            <a href="studios.html" class="sidebar-link">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="sidebar-link-text">Studio Directory</span>
+            </a>
+            <a href="teacher.html" class="sidebar-link active">
+                <i class="fas fa-book-open"></i>
+                <span class="sidebar-link-text">Teacher Selling Points</span>
+            </a>
+            <a href="programs.html" class="sidebar-link">
+                <i class="fas fa-star"></i>
+                <span class="sidebar-link-text">Programs</span>
+            </a>
+            <a href="training.html" class="sidebar-link">
+                <i class="fas fa-graduation-cap"></i>
+                <span class="sidebar-link-text">Training Hub</span>
+            </a>
+            <a href="policies.html" class="sidebar-link">
+                <i class="fas fa-file-alt"></i>
+                <span class="sidebar-link-text">Policies</span>
+            </a>
+            <a href="calendar.html" class="sidebar-link">
+                <i class="far fa-calendar-alt"></i>
+                <span class="sidebar-link-text">Calendar</span>
+            </a>
+            <a href="profile.html" class="sidebar-link">
+                <i class="fas fa-user"></i>
+                <span class="sidebar-link-text">My Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div class="page-header">
+                <h1 class="page-title">Teacher Selling Points</h1>
+                <p class="page-subtitle">Find the perfect teacher for your students</p>
+            </div>
+
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
+                Loading teachers...
+            </div>
+
+            <div id="content" style="display: none;">
+                <!-- Filters Section -->
+                <div class="filters-section">
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchBar" class="search-bar" placeholder="Search teachers by name...">
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label">Studio</label>
+                            <select id="studioFilter" class="filter-select">
+                                <option value="">All Studios</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">State</label>
+                            <select id="stateFilter" class="filter-select">
+                                <option value="">All States</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">City</label>
+                            <select id="cityFilter" class="filter-select">
+                                <option value="">All Cities</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Gender</label>
+                            <select id="genderFilter" class="filter-select">
+                                <option value="">All Genders</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Non-binary">Non-binary</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Teacher Level</label>
+                            <select id="levelFilter" class="filter-select">
+                                <option value="">All Levels</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Min Age Taught</label>
+                            <select id="ageFilter" class="filter-select">
+                                <option value="">Any Age</option>
+                                <option value="3">3+</option>
+                                <option value="5">5+</option>
+                                <option value="7">7+</option>
+                                <option value="10">10+</option>
+                                <option value="12">12+</option>
+                                <option value="15">15+</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="formalEducationFilter" class="checkbox-input">
+                                <label for="formalEducationFilter" class="checkbox-label">Formal Music Education</label>
+                            </div>
+                        </div>
+
+                        <!-- Instruments Section -->
+                        <div class="instruments-section">
+                            <label class="instruments-label">Instruments (Select multiple - teachers must teach ALL selected)</label>
+                            <div class="instruments-grid" id="instrumentsGrid"></div>
+                        </div>
+                    </div>
+
+                    <button class="clear-filters-btn" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Clear All Filters
+                    </button>
+                </div>
+
+                <div class="results-count" id="resultsCount"></div>
+
+                <!-- Teachers Grid -->
+                <div id="teachersGrid" class="teachers-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-subtitle" id="modalSubtitle"></div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        let supabaseClient;
+        let allTeachers = [];
+        let teacherCities = [];
+        let teacherLanguages = [];
+        let teacherInstruments = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            loadSidebarState();
+            loadData();
+        });
+
+        // Sidebar Functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        function loadSidebarState() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                document.getElementById('sidebar').classList.add('collapsed');
+            }
+        }
+
+        // Load Data
+        async function loadData() {
+            try {
+                const [teachersResult, citiesResult, languagesResult, instrumentsResult] = await Promise.all([
+                    supabaseClient.from('teachers').select('*').eq('status', 'active').order('first_name'),
+                    supabaseClient.from('teacher_cities').select('*'),
+                    supabaseClient.from('teacher_languages').select('*'),
+                    supabaseClient.from('teacher_instruments').select('*')
+                ]);
+
+                if (teachersResult.error) throw teachersResult.error;
+                if (citiesResult.error) throw citiesResult.error;
+                if (languagesResult.error) throw languagesResult.error;
+                if (instrumentsResult.error) throw instrumentsResult.error;
+
+                allTeachers = teachersResult.data || [];
+                teacherCities = citiesResult.data || [];
+                teacherLanguages = languagesResult.data || [];
+                teacherInstruments = instrumentsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                populateFilters();
+                renderTeachers(allTeachers);
+                setupEventListeners();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <p style="color: red;">Error loading teachers. Please refresh the page.</p>
+                `;
+            }
+        }
+
+        // Populate Filters
+        function populateFilters() {
+            // Studio filter
+            const studios = [...new Set(allTeachers.map(t => t.brand).filter(Boolean))].sort();
+            const studioFilter = document.getElementById('studioFilter');
+            studios.forEach(studio => {
+                const option = document.createElement('option');
+                option.value = studio;
+                option.textContent = studio;
+                studioFilter.appendChild(option);
+            });
+
+            // State filter
+            const states = [...new Set(allTeachers.map(t => t.state).filter(Boolean))].sort();
+            const stateFilter = document.getElementById('stateFilter');
+            states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                stateFilter.appendChild(option);
+            });
+
+            // City filter
+            const cities = [...new Set(teacherCities.map(c => c.city).filter(Boolean))].sort();
+            const cityFilter = document.getElementById('cityFilter');
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                cityFilter.appendChild(option);
+            });
+
+            // Instruments checkboxes
+            const instruments = [...new Set(teacherInstruments.map(i => i.instrument).filter(Boolean))].sort();
+            const instrumentsGrid = document.getElementById('instrumentsGrid');
+            instruments.forEach(instrument => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-group';
+                div.innerHTML = `
+                    <input type="checkbox" id="instrument-${instrument}" class="checkbox-input instrument-checkbox" value="${instrument}">
+                    <label for="instrument-${instrument}" class="checkbox-label">${instrument}</label>
+                `;
+                instrumentsGrid.appendChild(div);
+            });
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            document.getElementById('searchBar').addEventListener('input', applyFilters);
+            document.getElementById('studioFilter').addEventListener('change', applyFilters);
+            document.getElementById('stateFilter').addEventListener('change', applyFilters);
+            document.getElementById('cityFilter').addEventListener('change', applyFilters);
+            document.getElementById('genderFilter').addEventListener('change', applyFilters);
+            document.getElementById('levelFilter').addEventListener('change', applyFilters);
+            document.getElementById('ageFilter').addEventListener('change', applyFilters);
+            document.getElementById('formalEducationFilter').addEventListener('change', applyFilters);
+
+            // Instrument checkboxes
+            document.querySelectorAll('.instrument-checkbox').forEach(cb => {
+                cb.addEventListener('change', applyFilters);
+            });
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const studioFilter = document.getElementById('studioFilter').value;
+            const stateFilter = document.getElementById('stateFilter').value;
+            const cityFilter = document.getElementById('cityFilter').value;
+            const genderFilter = document.getElementById('genderFilter').value;
+            const levelFilter = document.getElementById('levelFilter').value;
+            const ageFilter = parseInt(document.getElementById('ageFilter').value) || 0;
+            const formalEducation = document.getElementById('formalEducationFilter').checked;
+
+            // Get selected instruments
+            const selectedInstruments = Array.from(document.querySelectorAll('.instrument-checkbox:checked'))
+                .map(cb => cb.value);
+
+            const filtered = allTeachers.filter(teacher => {
+                // Search
+                const matchesSearch = !searchTerm || 
+                    `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchTerm);
+
+                // Studio
+                const matchesStudio = !studioFilter || teacher.brand === studioFilter;
+
+                // State
+                const matchesState = !stateFilter || teacher.state === stateFilter;
+
+                // City
+                const teacherCitiesList = teacherCities.filter(c => c.teacher_id === teacher.id).map(c => c.city);
+                const matchesCity = !cityFilter || teacherCitiesList.includes(cityFilter);
+
+                // Gender
+                const matchesGender = !genderFilter || teacher.gender === genderFilter;
+
+                // Formal Education
+                const matchesFormalEducation = !formalEducation || teacher.formal_music_education === true;
+
+                // Instruments (AND logic - teacher must teach ALL selected instruments)
+                let matchesInstruments = true;
+                if (selectedInstruments.length > 0) {
+                    const teacherInstrumentsList = teacherInstruments
+                        .filter(i => i.teacher_id === teacher.id)
+                        .map(i => i.instrument);
+                    matchesInstruments = selectedInstruments.every(inst => teacherInstrumentsList.includes(inst));
+                }
+
+                // Level (at least one instrument at this level)
+                let matchesLevel = true;
+                if (levelFilter) {
+                    const teacherLevels = teacherInstruments
+                        .filter(i => i.teacher_id === teacher.id)
+                        .map(i => i.teacher_level);
+                    matchesLevel = teacherLevels.includes(levelFilter);
+                }
+
+                // Age (at least one instrument with youngest_age_preference <= filter)
+                let matchesAge = true;
+                if (ageFilter > 0) {
+                    const teacherAges = teacherInstruments
+                        .filter(i => i.teacher_id === teacher.id && i.youngest_age_preference)
+                        .map(i => i.youngest_age_preference);
+                    matchesAge = teacherAges.some(age => age <= ageFilter);
+                }
+
+                return matchesSearch && matchesStudio && matchesState && matchesCity && 
+                       matchesGender && matchesFormalEducation && matchesInstruments && 
+                       matchesLevel && matchesAge;
+            });
+
+            renderTeachers(filtered);
+        }
+
+        // Clear Filters
+        function clearFilters() {
+            document.getElementById('searchBar').value = '';
+            document.getElementById('studioFilter').value = '';
+            document.getElementById('stateFilter').value = '';
+            document.getElementById('cityFilter').value = '';
+            document.getElementById('genderFilter').value = '';
+            document.getElementById('levelFilter').value = '';
+            document.getElementById('ageFilter').value = '';
+            document.getElementById('formalEducationFilter').checked = false;
+            document.querySelectorAll('.instrument-checkbox').forEach(cb => cb.checked = false);
+            
+            renderTeachers(allTeachers);
+        }
+
+        // Render Teachers
+        function renderTeachers(teachers) {
+            const container = document.getElementById('teachersGrid');
+            const resultsCount = document.getElementById('resultsCount');
+
+            resultsCount.textContent = `Showing ${teachers.length} teacher${teachers.length !== 1 ? 's' : ''}`;
+
+            if (teachers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-user-friends"></i>
+                        <p>No teachers found matching your filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = teachers.map(teacher => {
+                const teacherCitiesList = teacherCities.filter(c => c.teacher_id === teacher.id);
+                const teacherInstrumentsList = teacherInstruments.filter(i => i.teacher_id === teacher.id);
+
+                return `
+                    <div class="teacher-card" onclick="openModal('${teacher.id}')">
+                        <div class="teacher-header">
+                            <div class="teacher-name">${teacher.first_name} ${teacher.last_name}</div>
+                            <div class="teacher-studio">${teacher.brand || 'N/A'}</div>
+                            ${teacher.state ? `
+                                <div class="teacher-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${teacher.state}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="teacher-badges">
+                            ${teacher.gender ? `<span class="badge">${teacher.gender}</span>` : ''}
+                            ${teacher.formal_music_education ? `<span class="badge primary">Formal Education</span>` : ''}
+                            ${teacher.year_started_at_studio ? `<span class="badge">Since ${teacher.year_started_at_studio}</span>` : ''}
+                        </div>
+
+                        <div class="teacher-instruments">
+                            ${teacherInstrumentsList.slice(0, 3).map(inst => `
+                                <div class="instrument-item">
+                                    <div class="instrument-icon">
+                                        <i class="fas fa-music"></i>
+                                    </div>
+                                    <strong>${inst.instrument}</strong>
+                                    ${inst.teacher_level ? `- ${inst.teacher_level}` : ''}
+                                </div>
+                            `).join('')}
+                            ${teacherInstrumentsList.length > 3 ? `
+                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                    +${teacherInstrumentsList.length - 3} more
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Open Modal
+        function openModal(teacherId) {
+            const teacher = allTeachers.find(t => t.id === teacherId);
+            if (!teacher) return;
+
+            const cities = teacherCities.filter(c => c.teacher_id === teacher.id);
+            const languages = teacherLanguages.filter(l => l.teacher_id === teacher.id);
+            const instruments = teacherInstruments.filter(i => i.teacher_id === teacher.id);
+
+            // Set modal header
+            document.getElementById('modalTitle').textContent = `${teacher.first_name} ${teacher.last_name}`;
+            document.getElementById('modalSubtitle').textContent = teacher.brand || '';
+
+            // Build modal body
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <!-- Basic Info -->
+                <div class="modal-section">
+                    <div class="modal-section-title">
+                        <div class="modal-section-icon"><i class="fas fa-info-circle"></i></div>
+                        Basic Information
+                    </div>
+                    <div class="modal-info-grid">
+                        ${teacher.gender ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">Gender</div>
+                                <div class="modal-info-value">${teacher.gender}</div>
+                            </div>
+                        ` : ''}
+                        ${teacher.state ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">State</div>
+                                <div class="modal-info-value">${teacher.state}</div>
+                            </div>
+                        ` : ''}
+                        ${teacher.year_started_at_studio ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">Started at Studio</div>
+                                <div class="modal-info-value">${teacher.year_started_at_studio}</div>
+                            </div>
+                        ` : ''}
+                        <div class="modal-info-item">
+                            <div class="modal-info-label">Formal Education</div>
+                            <div class="modal-info-value">${teacher.formal_music_education ? 'Yes' : 'No'}</div>
+                        </div>
+                        ${teacher.special_needs_willing ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">Special Needs</div>
+                                <div class="modal-info-value">Willing</div>
+                            </div>
+                        ` : ''}
+                        ${teacher.online_willing ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">Online Lessons</div>
+                                <div class="modal-info-value">Available</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                ${teacher.formal_education_details ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-graduation-cap"></i></div>
+                            Education Details
+                        </div>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">${teacher.formal_education_details}</p>
+                    </div>
+                ` : ''}
+
+                ${cities.length > 0 ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            Cities
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${cities.map(c => `<span class="badge">${c.city}</span>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${languages.length > 0 ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-language"></i></div>
+                            Languages
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${languages.map(l => `<span class="badge primary">${l.language}</span>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${teacher.teaching_strength_1 || teacher.teaching_strength_2 || teacher.teaching_strength_3 ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-star"></i></div>
+                            Teaching Strengths
+                        </div>
+                        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                            ${teacher.teaching_strength_1 ? `
+                                <li style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-check-circle" style="color: var(--primary);"></i>
+                                    ${teacher.teaching_strength_1}
+                                </li>
+                            ` : ''}
+                            ${teacher.teaching_strength_2 ? `
+                                <li style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-check-circle" style="color: var(--primary);"></i>
+                                    ${teacher.teaching_strength_2}
+                                </li>
+                            ` : ''}
+                            ${teacher.teaching_strength_3 ? `
+                                <li style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-check-circle" style="color: var(--primary);"></i>
+                                    ${teacher.teaching_strength_3}
+                                </li>
+                            ` : ''}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                ${instruments.length > 0 ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-music"></i></div>
+                            Instruments & Details
+                        </div>
+                        ${instruments.map(inst => `
+                            <div class="instrument-detail-card">
+                                <div class="instrument-detail-title">${inst.instrument}</div>
+                                <div class="instrument-detail-grid">
+                                    ${inst.teacher_level ? `
+                                        <div class="modal-info-item">
+                                            <div class="modal-info-label">Level</div>
+                                            <div class="modal-info-value">${inst.teacher_level}</div>
+                                        </div>
+                                    ` : ''}
+                                    ${inst.youngest_age_preference ? `
+                                        <div class="modal-info-item">
+                                            <div class="modal-info-label">Youngest Age</div>
+                                            <div class="modal-info-value">${inst.youngest_age_preference}+</div>
+                                        </div>
+                                    ` : ''}
+                                    ${inst.year_started ? `
+                                        <div class="modal-info-item">
+                                            <div class="modal-info-label">Started Playing</div>
+                                            <div class="modal-info-value">${inst.year_started}</div>
+                                        </div>
+                                    ` : ''}
+                                    ${inst.genres ? `
+                                        <div class="modal-info-item">
+                                            <div class="modal-info-label">Genres</div>
+                                            <div class="modal-info-value">${inst.genres}</div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                ${inst.achievements_credentials ? `
+                                    <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
+                                        <strong>Achievements:</strong> ${inst.achievements_credentials}
+                                    </p>
+                                ` : ''}
+                                ${inst.notes ? `
+                                    <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
+                                        ${inst.notes}
+                                    </p>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${teacher.additional_notes ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-sticky-note"></i></div>
+                            Additional Notes
+                        </div>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">${teacher.additional_notes}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            // Show modal
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.closest('.modal-close')) {
+                return;
+            }
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

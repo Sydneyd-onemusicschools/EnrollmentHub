@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #FA8072;
+            --primary-light: #FFB4A2;
+            --accent: #FF6B9D;
+            --accent-light: #FFB6C1;
+            --secondary: #FF6B9D;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --white: #FFFFFF;
+            --background: #F8F9FA;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - EXACT MATCH TO DASHBOARD */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #FA8072 0%, #FF6B9D 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 0 1rem 1rem 1rem;
+        }
+
+        .sidebar-logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            font-size: 1.25rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .sidebar-subtitle {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle i {
+            color: var(--primary);
+            font-size: 0.875rem;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 2rem 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            font-size: 0.9375rem;
+        }
+
+        .sidebar.collapsed .sidebar-link {
+            padding: 1rem;
+            justify-content: center;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .sidebar-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-left-color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            min-width: 20px;
+            margin-right: 1rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .sidebar-link i {
+            margin-right: 0;
+        }
+
+        .sidebar-link-text {
+            transition: all 0.3s ease;
+            opacity: 1;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-link-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: white;
+            margin: 5px 0;
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            padding: 3rem;
+            width: calc(100% - 280px);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed ~ .main-wrapper {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.0625rem;
+            font-weight: 400;
+        }
+
+        /* Member Selection */
+        .member-select-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .select-label {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .member-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 1.0625rem;
+            color: var(--text-primary);
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .member-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        }
+
+        /* Profile Content */
+        .profile-content {
+            display: none;
+        }
+
+        .profile-content.active {
+            display: block;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.125rem;
+            opacity: 0.95;
+        }
+
+        .balance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .balance-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--gray-100);
+            transition: all 0.3s ease;
+        }
+
+        .balance-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .balance-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .balance-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .balance-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .balance-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .stat-value.remaining {
+            color: var(--primary);
+        }
+
+        .progress-bar-container {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .progress-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 12px;
+            transition: width 0.6s ease;
+        }
+
+        .progress-percentage {
+            font-size: 0.875rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+
+        /* Policy Link Section */
+        .policy-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .policy-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(250, 128, 114, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .policy-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .policy-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .policy-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.0625rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
+            text-decoration: none;
+        }
+
+        .policy-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(250, 128, 114, 0.4);
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1.125rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem;
+                padding-top: 5rem;
+            }
+
+            .sidebar.collapsed ~ .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .balance-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Menu -->
+    <button class="hamburger" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Enrollment Hub</div>
+            <div class="sidebar-subtitle">One Music Schools</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span class="sidebar-link-text">Dashboard</span>
+            </a>
+            <a href="quicklinks.html" class="sidebar-link">
+                <i class="fas fa-link"></i>
+                <span class="sidebar-link-text">Quick Links</span>
+            </a>
+            <a href="snippets.html" class="sidebar-link">
+                <i class="fas fa-clipboard"></i>
+                <span class="sidebar-link-text">Snippets</span>
+            </a>
+            <a href="team.html" class="sidebar-link">
+                <i class="fas fa-users"></i>
+                <span class="sidebar-link-text">Team Management</span>
+            </a>
+            <a href="studios.html" class="sidebar-link">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="sidebar-link-text">Studio Directory</span>
+            </a>
+            <a href="teacher.html" class="sidebar-link">
+                <i class="fas fa-book-open"></i>
+                <span class="sidebar-link-text">Teacher Selling Points</span>
+            </a>
+            <a href="programs.html" class="sidebar-link">
+                <i class="fas fa-star"></i>
+                <span class="sidebar-link-text">Programs</span>
+            </a>
+            <a href="training.html" class="sidebar-link">
+                <i class="fas fa-graduation-cap"></i>
+                <span class="sidebar-link-text">Training Hub</span>
+            </a>
+            <a href="policies.html" class="sidebar-link">
+                <i class="fas fa-file-alt"></i>
+                <span class="sidebar-link-text">Policies</span>
+            </a>
+            <a href="calendar.html" class="sidebar-link">
+                <i class="far fa-calendar-alt"></i>
+                <span class="sidebar-link-text">Calendar</span>
+            </a>
+            <a href="profile.html" class="sidebar-link active">
+                <i class="fas fa-user"></i>
+                <span class="sidebar-link-text">My Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Header -->
+            <div class="page-header">
+                <h1 class="page-title">My Profile</h1>
+                <p class="page-subtitle">View your time off balance and work from home days</p>
+            </div>
+
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
+                Loading profile...
+            </div>
+
+            <div id="content" style="display: none;">
+                <!-- Member Selection -->
+                <div class="member-select-section">
+                    <label class="select-label">Select Team Member</label>
+                    <select id="memberSelect" class="member-select">
+                        <option value="">Choose your name...</option>
+                    </select>
+                </div>
+
+                <!-- Profile Content -->
+                <div id="profileContent" class="profile-content">
+                    <!-- Welcome Card -->
+                    <div class="welcome-card">
+                        <div class="welcome-title" id="welcomeName">Welcome!</div>
+                        <div class="welcome-subtitle">Here's an overview of your time off and work from home balance</div>
+                    </div>
+
+                    <!-- Balance Cards -->
+                    <div class="balance-cards">
+                        <!-- Time Off Card -->
+                        <div class="balance-card">
+                            <div class="balance-header">
+                                <div class="balance-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="balance-title">Time Off Hours</div>
+                            </div>
+                            <div class="balance-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Yearly Hours</span>
+                                    <span class="stat-value" id="totalHours">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Hours Used</span>
+                                    <span class="stat-value" id="usedHours">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Hours Remaining</span>
+                                    <span class="stat-value remaining" id="remainingHours">--</span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-label">Usage</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="hoursProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-percentage" id="hoursPercentage">0%</div>
+                            </div>
+                        </div>
+
+                        <!-- WFH Card -->
+                        <div class="balance-card">
+                            <div class="balance-header">
+                                <div class="balance-icon">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="balance-title">Work From Home</div>
+                            </div>
+                            <div class="balance-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Yearly Days</span>
+                                    <span class="stat-value" id="totalWfh">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Days Used</span>
+                                    <span class="stat-value" id="usedWfh">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Days Remaining</span>
+                                    <span class="stat-value remaining" id="remainingWfh">--</span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-label">Usage</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="wfhProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-percentage" id="wfhPercentage">0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Policy Link Section -->
+                    <div class="policy-section">
+                        <div class="policy-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="policy-title">Need More Information?</h3>
+                        <p class="policy-description">
+                            Learn more about our time off policies, how to request time off, and guidelines for working from home.
+                        </p>
+                        <a href="https://sydneyd-onemusicschools.github.io/EnrollmentHub/teampolicies.html" target="_blank" class="policy-link-btn">
+                            View Policies
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        let supabaseClient;
+        let allMembers = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            loadSidebarState();
+            loadData();
+        });
+
+        // Sidebar Functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        function loadSidebarState() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                document.getElementById('sidebar').classList.add('collapsed');
+            }
+        }
+
+        // Load Data
+        async function loadData() {
+            try {
+                const { data: members, error } = await supabaseClient
+                    .from('team_members')
+                    .select('*')
+                    .eq('status', 'active')
+                    .order('first_name');
+
+                if (error) throw error;
+
+                allMembers = members || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                populateMemberSelect();
+                setupEventListeners();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <p style="color: red;">Error loading profile. Please refresh the page.</p>
+                `;
+            }
+        }
+
+        // Populate Member Select
+        function populateMemberSelect() {
+            const select = document.getElementById('memberSelect');
+            
+            allMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = `${member.first_name} ${member.last_name}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            document.getElementById('memberSelect').addEventListener('change', function() {
+                const memberId = this.value;
+                if (memberId) {
+                    loadMemberProfile(memberId);
+                } else {
+                    document.getElementById('profileContent').classList.remove('active');
+                }
+            });
+        }
+
+        // Load Member Profile
+        async function loadMemberProfile(memberId) {
+            try {
+                // Get member details
+                const member = allMembers.find(m => m.id === memberId);
+                if (!member) return;
+
+                // Get time off logs
+                const { data: logs, error } = await supabaseClient
+                    .from('time_off_logs')
+                    .select('*')
+                    .eq('team_member_id', memberId);
+
+                if (error) throw error;
+
+                // Calculate totals
+                const hoursLogs = logs.filter(l => l.log_type === 'hours');
+                const wfhLogs = logs.filter(l => l.log_type === 'wfh');
+
+                let usedHours = 0;
+                hoursLogs.forEach(log => {
+                    if (log.hours) usedHours += parseFloat(log.hours);
+                    if (log.minutes) usedHours += parseFloat(log.minutes) / 60;
+                });
+
+                let usedWfh = 0;
+                wfhLogs.forEach(log => {
+                    if (log.days) usedWfh += parseFloat(log.days);
+                });
+
+                const totalHours = parseFloat(member.yearly_hours) || 0;
+                const totalWfh = parseFloat(member.wfh_days) || 0;
+                const remainingHours = totalHours - usedHours;
+                const remainingWfh = totalWfh - usedWfh;
+
+                // Update UI
+                document.getElementById('welcomeName').textContent = `Welcome, ${member.first_name}!`;
+                
+                // Hours
+                document.getElementById('totalHours').textContent = totalHours.toFixed(1);
+                document.getElementById('usedHours').textContent = usedHours.toFixed(1);
+                document.getElementById('remainingHours').textContent = Math.max(0, remainingHours).toFixed(1);
+                
+                const hoursPercent = totalHours > 0 ? (usedHours / totalHours * 100) : 0;
+                document.getElementById('hoursProgress').style.width = `${Math.min(hoursPercent, 100)}%`;
+                document.getElementById('hoursPercentage').textContent = `${Math.min(hoursPercent, 100).toFixed(0)}% used`;
+
+                // WFH
+                document.getElementById('totalWfh').textContent = totalWfh.toFixed(1);
+                document.getElementById('usedWfh').textContent = usedWfh.toFixed(1);
+                document.getElementById('remainingWfh').textContent = Math.max(0, remainingWfh).toFixed(1);
+                
+                const wfhPercent = totalWfh > 0 ? (usedWfh / totalWfh * 100) : 0;
+                document.getElementById('wfhProgress').style.width = `${Math.min(wfhPercent, 100)}%`;
+                document.getElementById('wfhPercentage').textContent = `${Math.min(wfhPercent, 100).toFixed(0)}% used`;
+
+                // Show profile
+                document.getElementById('profileContent').classList.add('active');
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+    </script>
+</body>
+</html>

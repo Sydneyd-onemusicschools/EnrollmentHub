@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Directory - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            /* Salmon/Coral Color Scheme - EXACT MATCH TO DASHBOARD */
+            --primary: #FA8072;
+            --primary-light: #FFB4A2;
+            --primary-dark: #E96E5D;
+            --secondary: #FF6B9D;
+            --secondary-light: #FFB6C1;
+            --accent: #FFA07A;
+            --accent-light: #FFCBA4;
+            
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --text-light: #A0AEC0;
+            --white: #FFFFFF;
+            
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
+            
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR - EXACT MATCH TO DASHBOARD */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .sidebar.collapsed .logo-section {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .toggle-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        .sidebar.collapsed .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .toggle-icon {
+            transition: transform var(--transition-speed) ease;
+            font-size: 1rem;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 1rem 0;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 2px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: calc(100% - 1.5rem);
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-text {
+            white-space: nowrap;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 0.875rem;
+        }
+
+        .sidebar-footer {
+            padding: 0.5rem 0 1rem 0;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .logout-btn {
+            color: var(--secondary) !important;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 107, 157, 0.1) !important;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem 2.5rem;
+            transition: margin-left var(--transition-speed) ease;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Filters Section - Compact */
+        .filters-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-container {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-select {
+            padding: 0.625rem 0.875rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        }
+
+        .clear-filters-btn {
+            padding: 0.75rem 1.25rem;
+            background: var(--gray-100);
+            border: none;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .clear-filters-btn:hover {
+            background: var(--gray-200);
+            color: var(--text-primary);
+        }
+
+        .results-count {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        /* Studio Cards - Compact */
+        .studios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .studio-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .studio-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .studio-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .studio-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .studio-location {
+            font-size: 0.875rem;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .studio-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        .studio-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .studio-info-item i {
+            color: var(--primary);
+            width: 14px;
+            font-size: 0.75rem;
+        }
+
+        .studio-info-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 0 20px 20px 0;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1.75rem;
+            border-radius: 20px 20px 0 0;
+            color: white;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            padding-right: 2.5rem;
+        }
+
+        .modal-subtitle {
+            font-size: 1rem;
+            opacity: 0.95;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.125rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 1.75rem;
+        }
+
+        .modal-section {
+            margin-bottom: 1.75rem;
+        }
+
+        .modal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-section-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8125rem;
+        }
+
+        .modal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .modal-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .modal-info-label {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .modal-info-value {
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: var(--gray-50);
+            border-left: 3px solid var(--primary);
+            padding: 0.875rem 0.875rem 0.875rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 0.875rem;
+        }
+
+        .info-box:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.875rem;
+        }
+
+        .programs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.875rem;
+        }
+
+        .program-item {
+            background: var(--gray-50);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .program-name {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .program-link-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .program-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(250, 128, 114, 0.4);
+        }
+
+        .instruments-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .instrument-tag {
+            padding: 0.375rem 0.875rem;
+            background: linear-gradient(135deg, rgba(250, 128, 114, 0.1) 0%, rgba(255, 107, 157, 0.1) 100%);
+            border: 1px solid rgba(250, 128, 114, 0.3);
+            border-radius: 10px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .link-item {
+            background: var(--gray-50);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .link-header {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.9375rem;
+        }
+
+        .link-subheader {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .link-url {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .link-url:hover {
+            text-decoration: underline;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gray-300);
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar:not(.collapsed) {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .sidebar.collapsed ~ .main-content {
+                margin-left: 0;
+            }
+
+            .filters-row {
+                grid-template-columns: 1fr;
+            }
+
+            .studios-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                margin: 1rem;
+            }
+
+            .modal-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-header {
+                padding: 1.5rem;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar - EXACT MATCH TO DASHBOARD -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-section">
+                <div class="logo-icon">EH</div>
+                <span class="logo-text">Enrollment Hub</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn">
+                <span class="toggle-icon">‹</span>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="teamdashboard.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            
+            <a href="teamquicklinks.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-link"></i></span>
+                <span class="nav-text">Quick Links</span>
+            </a>
+            
+            <a href="teamstudio-directory.html" class="nav-item active">
+                <span class="nav-icon"><i class="fas fa-building"></i></span>
+                <span class="nav-text">Studio Directory</span>
+            </a>
+            
+            <a href="teamsnippets.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                <span class="nav-text">Snippets</span>
+            </a>
+            
+            <a href="teamteacher-selling-points.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-star"></i></span>
+                <span class="nav-text">Selling Points</span>
+            </a>
+            
+            <a href="teamprograms.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
+                <span class="nav-text">Programs</span>
+            </a>
+            
+            <a href="teamcalendar.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-calendar-alt"></i></span>
+                <span class="nav-text">Calendar</span>
+            </a>
+            
+            <a href="teamtraining-hub.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-book-open"></i></span>
+                <span class="nav-text">Training Hub</span>
+            </a>
+            
+            <a href="teampolicies.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-file-alt"></i></span>
+                <span class="nav-text">Policies</span>
+            </a>
+            
+            <a href="teamprofile.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-user"></i></span>
+                <span class="nav-text">Profiles</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button id="logoutBtn" class="nav-item logout-btn">
+                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span class="nav-text">Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Studio Directory</h1>
+            <p>Browse all studio locations and details</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
+            Loading studios...
+        </div>
+
+        <div id="content" style="display: none;">
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchBar" class="search-bar" placeholder="Search studios...">
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Studio</label>
+                        <select id="studioFilter" class="filter-select">
+                            <option value="">All Studios</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">State</label>
+                        <select id="stateFilter" class="filter-select">
+                            <option value="">All States</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">City</label>
+                        <select id="cityFilter" class="filter-select">
+                            <option value="">All Cities</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="clear-filters-btn" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Clear All Filters
+                </button>
+            </div>
+
+            <div class="results-count" id="resultsCount"></div>
+
+            <!-- Studios Grid -->
+            <div id="studiosGrid" class="studios-grid"></div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-subtitle" id="modalSubtitle"></div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        
+        let supabaseClient;
+        let allStudios = [];
+        let studioInstruments = [];
+        let studioPrograms = [];
+        let studioLinks = [];
+        let studioSections = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            setupSidebar();
+            loadData();
+        });
+
+        function setupSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                    overlay.classList.add('active');
+                } else {
+                    overlay.classList.remove('active');
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+
+        // Load Data
+        async function loadData() {
+            try {
+                const [studiosResult, instrumentsResult, programsResult, linksResult, sectionsResult] = await Promise.all([
+                    supabaseClient.from('studios').select('*').order('brand'),
+                    supabaseClient.from('studio_instruments').select('*'),
+                    supabaseClient.from('studio_programs').select('*').eq('status', 'active'),
+                    supabaseClient.from('studio_links').select('*'),
+                    supabaseClient.from('studio_sections').select('*')
+                ]);
+
+                if (studiosResult.error) throw studiosResult.error;
+                if (instrumentsResult.error) throw instrumentsResult.error;
+                if (programsResult.error) throw programsResult.error;
+                if (linksResult.error) throw linksResult.error;
+                if (sectionsResult.error) throw sectionsResult.error;
+
+                allStudios = studiosResult.data || [];
+                studioInstruments = instrumentsResult.data || [];
+                studioPrograms = programsResult.data || [];
+                studioLinks = linksResult.data || [];
+                studioSections = sectionsResult.data || [];
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                populateFilters();
+                renderStudios(allStudios);
+                setupEventListeners();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <p style="color: red;">Error loading studios. Please refresh the page.</p>
+                `;
+            }
+        }
+
+        // Populate Filters
+        function populateFilters() {
+            // Studio filter
+            const brands = [...new Set(allStudios.map(s => s.brand).filter(Boolean))].sort();
+            const studioFilter = document.getElementById('studioFilter');
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand;
+                option.textContent = brand;
+                studioFilter.appendChild(option);
+            });
+
+            // State filter
+            const states = [...new Set(allStudios.map(s => s.state).filter(Boolean))].sort();
+            const stateFilter = document.getElementById('stateFilter');
+            states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                stateFilter.appendChild(option);
+            });
+
+            // City filter
+            const cities = [...new Set(allStudios.map(s => s.city).filter(Boolean))].sort();
+            const cityFilter = document.getElementById('cityFilter');
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                cityFilter.appendChild(option);
+            });
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            document.getElementById('searchBar').addEventListener('input', applyFilters);
+            document.getElementById('studioFilter').addEventListener('change', applyFilters);
+            document.getElementById('stateFilter').addEventListener('change', applyFilters);
+            document.getElementById('cityFilter').addEventListener('change', applyFilters);
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const studioFilter = document.getElementById('studioFilter').value;
+            const stateFilter = document.getElementById('stateFilter').value;
+            const cityFilter = document.getElementById('cityFilter').value;
+
+            const filtered = allStudios.filter(studio => {
+                const matchesSearch = !searchTerm || 
+                    studio.brand?.toLowerCase().includes(searchTerm) ||
+                    studio.city?.toLowerCase().includes(searchTerm) ||
+                    studio.state?.toLowerCase().includes(searchTerm) ||
+                    studio.address?.toLowerCase().includes(searchTerm);
+
+                const matchesStudio = !studioFilter || studio.brand === studioFilter;
+                const matchesState = !stateFilter || studio.state === stateFilter;
+                const matchesCity = !cityFilter || studio.city === cityFilter;
+
+                return matchesSearch && matchesStudio && matchesState && matchesCity;
+            });
+
+            renderStudios(filtered);
+        }
+
+        // Clear Filters
+        function clearFilters() {
+            document.getElementById('searchBar').value = '';
+            document.getElementById('studioFilter').value = '';
+            document.getElementById('stateFilter').value = '';
+            document.getElementById('cityFilter').value = '';
+            
+            renderStudios(allStudios);
+        }
+
+        // Render Studios
+        function renderStudios(studios) {
+            const container = document.getElementById('studiosGrid');
+            const resultsCount = document.getElementById('resultsCount');
+
+            resultsCount.textContent = `Showing ${studios.length} studio${studios.length !== 1 ? 's' : ''}`;
+
+            if (studios.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-building"></i>
+                        <p>No studios found matching your filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = studios.map(studio => `
+                <div class="studio-card" onclick="openModal('${studio.id}')">
+                    <div class="studio-header">
+                        <div class="studio-name">${studio.brand || 'Unnamed Studio'}</div>
+                        <div class="studio-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${studio.city ? `${studio.city}, ` : ''}${studio.state || 'N/A'}
+                        </div>
+                    </div>
+
+                    <div class="studio-info">
+                        ${studio.address ? `
+                            <div class="studio-info-item">
+                                <i class="fas fa-map-pin"></i>
+                                <span class="studio-info-value">${studio.address}</span>
+                            </div>
+                        ` : ''}
+                        ${studio.phone_number ? `
+                            <div class="studio-info-item">
+                                <i class="fas fa-phone"></i>
+                                <span class="studio-info-value">${studio.phone_number}</span>
+                            </div>
+                        ` : ''}
+                        ${studio.director_name ? `
+                            <div class="studio-info-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span class="studio-info-value">${studio.director_name}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open Modal
+        function openModal(studioId) {
+            const studio = allStudios.find(s => s.id === studioId);
+            if (!studio) return;
+
+            const instruments = studioInstruments.filter(i => i.studio_id === studio.id);
+            const programs = studioPrograms.filter(p => p.studio_id === studio.id);
+            const links = studioLinks.filter(l => l.studio_id === studio.id);
+            const sections = studioSections.filter(s => s.studio_id === studio.id);
+
+            // Set modal header
+            document.getElementById('modalTitle').textContent = studio.brand || 'Studio';
+            document.getElementById('modalSubtitle').innerHTML = `
+                <i class="fas fa-map-marker-alt"></i>
+                ${studio.city ? `${studio.city}, ` : ''}${studio.state || 'N/A'}
+            `;
+
+            // Build modal body
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <!-- Basic Info -->
+                <div class="modal-section">
+                    <div class="modal-section-title">
+                        <div class="modal-section-icon"><i class="fas fa-info-circle"></i></div>
+                        Basic Information
+                    </div>
+                    <div class="modal-info-grid">
+                        ${studio.address ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">Address</div>
+                                <div class="modal-info-value">${studio.address}</div>
+                            </div>
+                        ` : ''}
+                        ${studio.phone_number ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">Phone</div>
+                                <div class="modal-info-value">${studio.phone_number}</div>
+                            </div>
+                        ` : ''}
+                        ${studio.time_zone ? `
+                            <div class="modal-info-item">
+                                <div class="modal-info-label">Time Zone</div>
+                                <div class="modal-info-value">${studio.time_zone}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                ${studio.director_name || studio.admin_name ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-users"></i></div>
+                            Contact Information
+                        </div>
+                        <div class="modal-info-grid">
+                            ${studio.director_name ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">Director</div>
+                                    <div class="modal-info-value">${studio.director_name}</div>
+                                </div>
+                            ` : ''}
+                            ${studio.director_email ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">Director Email</div>
+                                    <div class="modal-info-value">${studio.director_email}</div>
+                                </div>
+                            ` : ''}
+                            ${studio.admin_name ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">Admin</div>
+                                    <div class="modal-info-value">${studio.admin_name}</div>
+                                </div>
+                            ` : ''}
+                            ${studio.admin_email ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">Admin Email</div>
+                                    <div class="modal-info-value">${studio.admin_email}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Pricing -->
+                ${studio.monthly_rate || studio.price_45 || studio.price_60 || studio.annual_fee ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-dollar-sign"></i></div>
+                            Pricing
+                        </div>
+                        <div class="modal-info-grid">
+                            ${studio.monthly_rate ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">Monthly Rate</div>
+                                    <div class="modal-info-value">${studio.monthly_rate}</div>
+                                </div>
+                            ` : ''}
+                            ${studio.price_45 ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">45-Min Lesson</div>
+                                    <div class="modal-info-value">${studio.price_45}</div>
+                                </div>
+                            ` : ''}
+                            ${studio.price_60 ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">60-Min Lesson</div>
+                                    <div class="modal-info-value">${studio.price_60}</div>
+                                </div>
+                            ` : ''}
+                            ${studio.annual_fee ? `
+                                <div class="modal-info-item">
+                                    <div class="modal-info-label">Annual Fee</div>
+                                    <div class="modal-info-value">${studio.annual_fee}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Instruments -->
+                ${instruments.length > 0 ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-music"></i></div>
+                            Instruments Offered
+                        </div>
+                        <div class="instruments-tags">
+                            ${instruments.map(inst => `
+                                <span class="instrument-tag">${inst.name}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Programs -->
+                <div class="modal-section">
+                    <div class="modal-section-title">
+                        <div class="modal-section-icon"><i class="fas fa-graduation-cap"></i></div>
+                        Programs Available
+                    </div>
+                    ${programs.length > 0 ? `
+                        <div class="programs-list">
+                            ${programs.map(program => `
+                                <div class="program-item">
+                                    <div class="program-name">${program.name}</div>
+                                    ${program.link ? `
+                                        <a href="${program.link}" target="_blank" class="program-link-btn">
+                                            View Details
+                                            <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">No programs currently available</p>
+                    `}
+                </div>
+
+                <!-- Important Links -->
+                ${links.length > 0 ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-link"></i></div>
+                            Important Links
+                        </div>
+                        <div class="links-list">
+                            ${links.map(link => `
+                                <div class="link-item">
+                                    <div class="link-header">${link.header}</div>
+                                    ${link.subheader ? `<div class="link-subheader">${link.subheader}</div>` : ''}
+                                    <a href="${link.url}" target="_blank" class="link-url">
+                                        Visit Link
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Additional Sections -->
+                ${sections.length > 0 ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-clipboard-list"></i></div>
+                            Additional Information
+                        </div>
+                        ${sections.map(section => `
+                            <div class="info-box">
+                                <strong style="display: block; margin-bottom: 0.5rem; color: var(--text-primary); font-size: 0.9375rem;">${section.header}</strong>
+                                ${section.subheader ? `<em style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.8125rem;">${section.subheader}</em>` : ''}
+                                ${section.notes ? `<p>${section.notes}</p>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                <!-- Parking & Rental -->
+                ${studio.parking || studio.rental_info ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-parking"></i></div>
+                            Facilities
+                        </div>
+                        ${studio.parking ? `
+                            <div class="info-box">
+                                <strong style="display: block; margin-bottom: 0.5rem; color: var(--text-primary); font-size: 0.9375rem;">Parking</strong>
+                                <p>${studio.parking}</p>
+                            </div>
+                        ` : ''}
+                        ${studio.rental_info ? `
+                            <div class="info-box">
+                                <strong style="display: block; margin-bottom: 0.5rem; color: var(--text-primary); font-size: 0.9375rem;">Instrument Rentals</strong>
+                                <p>${studio.rental_info}</p>
+                                ${studio.rental_link ? `
+                                    <a href="${studio.rental_link}" target="_blank" class="link-url" style="margin-top: 0.5rem; display: inline-flex;">
+                                        Rental Information
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
+
+                <!-- General Notes -->
+                ${studio.general_notes ? `
+                    <div class="modal-section">
+                        <div class="modal-section-title">
+                            <div class="modal-section-icon"><i class="fas fa-sticky-note"></i></div>
+                            General Notes
+                        </div>
+                        <div class="info-box">
+                            <p>${studio.general_notes}</p>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            // Show modal
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.closest('.modal-close')) {
+                return;
+            }
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

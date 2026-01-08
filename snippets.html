@@ -1,1074 +1,1071 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enrollment Hub - Snippets</title>
+    <title>Admin Snippets - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #60A5FA;
+            --primary-light: #93C5FD;
+            --primary-dark: #3B82F6;
+            --accent: #38BDF8;
+            --accent-light: #7DD3FC;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --text-light: #A0AEC0;
+            --white: #FFFFFF;
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --transition-speed: 0.3s;
         }
 
-        html, body {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+            color: var(--text-primary);
             overflow-x: hidden;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-            background: #fafafa;
-            min-height: 100vh;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            color: #1a1a1a;
-            display: flex;
-        }
-
-        /* Sidebar Styles */
+        /* SIDEBAR */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #ff6b6b 0%, #ee5a6f 100%);
-            height: 100vh;
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
-            padding: 2rem 0;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: all 0.3s ease;
         }
 
-        .sidebar.collapsed {
-            width: 80px;
-        }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-header {
-            padding: 0 2rem 2rem 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
         }
 
-        .sidebar.collapsed .sidebar-header {
-            padding: 0 1rem 1rem 1rem;
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar-logo {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: white;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-        }
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
 
-        .sidebar.collapsed .sidebar-logo {
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.25rem;
-        }
-
-        .sidebar-subtitle {
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.9);
-            text-align: center;
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-subtitle {
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .sidebar-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: -15px;
-            width: 30px;
-            height: 30px;
-            background: white;
-            border: 2px solid #ff6b6b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .sidebar-toggle svg {
-            width: 16px;
-            height: 16px;
-            stroke: #ff6b6b;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-toggle svg {
-            transform: rotate(180deg);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 2rem 0;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
-            white-space: nowrap;
-        }
-
-        .sidebar.collapsed .sidebar-link {
-            padding: 1rem;
-            justify-content: center;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-left-color: white;
-        }
-
-        .sidebar-link.active {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border-left-color: white;
+            flex-shrink: 0;
+            color: var(--white);
             font-weight: 700;
         }
 
-        .sidebar-link svg {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            margin-right: 1rem;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            transition: all 0.3s ease;
-        }
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
 
-        .sidebar.collapsed .sidebar-link svg {
-            margin-right: 0;
-        }
-
-        .sidebar-link-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-link-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .sidebar-footer {
-            padding: 1rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .sidebar.collapsed .sidebar-footer {
-            padding: 1rem;
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.2);
+        .admin-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
-        .sidebar.collapsed .logout-btn {
-            padding: 0.75rem 0.5rem;
-        }
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
 
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
 
-        .logout-btn svg {
-            min-width: 18px;
-        }
-
-        .logout-btn-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .logout-btn-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .hamburger {
-            display: none;
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            z-index: 1001;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: none;
+            background: transparent;
+            width: calc(100% - 1.5rem);
+            font-size: 0.9375rem;
+            font-weight: 500;
         }
 
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: white;
-            margin: 5px 0;
-            transition: 0.3s;
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
 
-        .main-wrapper {
-            margin-left: 280px;
-            flex: 1;
-            padding: 3rem 2rem;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
-        }
+        .nav-icon { font-size: 1.25rem; flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--danger) !important; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.1) !important; }
 
-        .sidebar.collapsed ~ .main-wrapper {
-            margin-left: 80px;
-            width: calc(100% - 80px);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .sidebar.collapsed {
-                width: 280px;
-            }
-
-            .sidebar-toggle {
-                display: none;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-                width: 100%;
-                padding-top: 5rem;
-            }
-
-            .sidebar.collapsed ~ .main-wrapper {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease;
         }
 
-        .header {
-            margin-bottom: 4rem;
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem 2.5rem;
+            transition: margin-left var(--transition-speed) ease;
         }
 
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.04em;
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
-        .header h2 {
+        .page-header-left h1 {
             font-size: 2rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
             letter-spacing: -0.02em;
         }
 
-        .header p {
-            color: #6b7280;
-            font-size: 1.125rem;
-            font-weight: 400;
+        .page-header-left p { color: var(--text-secondary); font-size: 1rem; }
+        .page-header-actions { display: flex; gap: 0.75rem; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4); }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1.5px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #DC2626; }
+        .btn-icon-only { width: 40px; padding: 0.5rem; justify-content: center; }
+        .btn-icon-only i { color: var(--text-secondary); }
+        .btn-icon-only:hover i { color: var(--text-primary); }
+        .btn-small { padding: 0.5rem 0.875rem; font-size: 0.8125rem; }
+
+        /* Main Section */
+        .section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
         }
 
         .section-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
-            margin-top: 4rem;
-        }
-
-        .section-header:first-of-type {
-            margin-top: 0;
-        }
-
-        .section-header h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            letter-spacing: -0.02em;
-        }
-
-        .button {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            padding: 0.875rem 1.75rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
-        }
-
-        .button:active {
-            transform: translateY(0);
-        }
-
-        .category-card {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
+            justify-content: space-between;
             margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .category-card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border-color: rgba(0, 0, 0, 0.06);
-        }
-
-        .category-header {
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #f0f0f0;
+            gap: 0.5rem;
         }
 
-        .category-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            flex: 1;
-            cursor: pointer;
-            padding: 0.5rem 0.75rem;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            letter-spacing: -0.01em;
+        .section-title i { color: var(--primary); }
+
+        .section-actions { display: flex; gap: 0.75rem; }
+
+        /* Category Tabs */
+        .tabs-container {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
         }
 
-        .category-name:hover {
-            background: #fafafa;
+        .tabs {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        .delete-btn {
-            background: #fee2e2;
+        .tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.25rem;
+            background: transparent;
             border: none;
-            color: #ef4444;
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 1.25rem;
-            padding: 0;
-            border-radius: 10px;
-            opacity: 0;
             transition: all 0.2s ease;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover { color: var(--text-primary); }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-count {
+            background: var(--gray-200);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        .tab.active .tab-count {
+            background: rgba(96, 165, 250, 0.2);
+            color: var(--primary);
+        }
+
+        .tab-actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .add-category-btn {
+            padding: 0.5rem 0.875rem;
+            background: transparent;
+            border: 1.5px dashed var(--gray-300);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .add-category-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(96, 165, 250, 0.05);
+        }
+
+        .manage-categories-btn {
             width: 36px;
             height: 36px;
-            display: flex;
+            padding: 0;
+            background: var(--gray-100);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            line-height: 1;
-            font-weight: 600;
         }
 
-        .delete-btn:hover {
-            background: #ef4444;
-            color: white;
+        .manage-categories-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(96, 165, 250, 0.05);
         }
 
-        .category-card:hover .delete-btn,
-        .snippet-card:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .snippets-container {
+        /* Snippets Grid */
+        .snippets-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
         }
 
         .snippet-card {
-            background: #fafafa;
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1.5px solid transparent;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
             transition: all 0.2s ease;
-            position: relative;
         }
 
-        .snippet-card:hover {
-            background: white;
-            border-color: #f0f0f0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
+        .snippet-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-md); }
 
-        .snippet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .snippet-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.35rem;
-            flex: 1;
-        }
-
-        .snippet-subheading {
-            font-size: 0.95rem;
-            color: #6b7280;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .snippet-content {
-            color: #1a1a1a;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .snippet-content p {
-            margin-bottom: 0.75rem;
-        }
-
-        .snippet-content p:last-child {
-            margin-bottom: 0;
-        }
-
-        .snippet-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .snippet-btn {
-            background: #f5f5f5;
-            border: none;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            font-weight: 600;
-        }
-
-        .snippet-btn:hover {
-            background: #ff6b6b;
+        .snippet-card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1rem 1.25rem;
             color: white;
         }
 
-        .snippet-btn.copy-btn:hover {
-            background: #10b981;
+        .snippet-card-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .snippet-card-subheading { font-size: 0.8125rem; opacity: 0.9; }
+
+        .snippet-card-body { padding: 1.25rem; }
+
+        .snippet-preview {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-height: 80px;
+            overflow: hidden;
+            margin-bottom: 1rem;
         }
 
-        .button-outline {
+        .snippet-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            background: transparent;
-            border: 2px dashed #e5e7eb;
-            border-radius: 14px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
             padding: 1rem;
-            color: #9ca3af;
-            font-size: 0.95rem;
-            font-weight: 600;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            color: var(--text-secondary);
+            border-radius: 8px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s ease;
-            margin-top: 1.5rem;
         }
 
-        .button-outline:hover {
-            border-color: #ff6b6b;
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.03);
+        .modal-close:hover { background: var(--gray-200); }
+
+        .modal-body { padding: 1.5rem; }
+
+        /* Manage Categories List */
+        .manage-categories-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .empty-state {
-            color: #9ca3af;
-            font-size: 0.95rem;
+        .manage-category-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .manage-category-item:hover {
+            border-color: var(--primary-light);
+        }
+
+        .manage-category-order {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-200);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .manage-category-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .manage-category-name {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+        }
+
+        .manage-category-name-input {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            border: none;
+            background: transparent;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .manage-category-name-input:focus {
+            outline: none;
+            background: var(--white);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .manage-category-count {
+            background: var(--gray-200);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.625rem;
+            border-radius: 10px;
+        }
+
+        .manage-category-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .manage-category-actions button {
+            width: 32px;
+            height: 32px;
+            border: 1.5px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .manage-category-actions button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .manage-category-actions button.delete-btn:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .manage-category-actions button.save-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        .manage-category-actions button.save-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .manage-empty-state {
             text-align: center;
-            padding: 3rem 1rem;
-            font-weight: 400;
+            padding: 2rem;
+            color: var(--text-secondary);
         }
+
+        .manage-empty-state i {
+            font-size: 2.5rem;
+            color: var(--gray-300);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+        /* Paragraphs Section */
+        .paragraphs-section {
+            background: var(--gray-50);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .paragraphs-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .paragraphs-title { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
+
+        .paragraph-item {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .paragraph-item:last-child { margin-bottom: 0; }
+
+        .paragraph-number {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 0.5rem;
+        }
+
+        .paragraph-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--white);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .paragraph-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .remove-paragraph-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .remove-paragraph-btn:hover { background: var(--danger); color: white; }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 0.75rem; }
+        .empty-state p { font-size: 1rem; margin-bottom: 1rem; }
 
         .loading {
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 400px;
-            color: #9ca3af;
-            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
         }
 
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 2rem;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 24px;
-            max-width: 700px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            padding: 2rem 2rem 1.5rem;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .modal-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1a1a1a;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.75rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            color: #1a1a1a;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        }
-
-        .paragraphs-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .paragraph-item {
-            background: #fafafa;
-            border-radius: 12px;
-            padding: 1rem;
-            border: 1.5px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .paragraph-item:focus-within {
-            background: white;
-            border-color: #ff6b6b;
-        }
-
-        .paragraph-toolbar {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .toolbar-btn {
-            background: white;
-            border: 1px solid #e5e7eb;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            font-weight: 700;
-            font-family: serif;
-        }
-
-        .toolbar-btn:hover {
-            background: #ff6b6b;
-            color: white;
-            border-color: #ff6b6b;
-        }
-
-        .toolbar-btn.active {
-            background: #ff6b6b;
-            color: white;
-            border-color: #ff6b6b;
-        }
-
-        .paragraph-editor {
-            min-height: 100px;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            background: white;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #1a1a1a;
-            outline: none;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
-        }
-
-        .paragraph-editor:focus {
-            border-color: #ff6b6b;
-        }
-
-        .paragraph-editor:empty:before {
-            content: 'Type your text here... Press Enter for new lines';
-            color: #9ca3af;
-        }
-
-        .remove-paragraph-btn {
-            background: #fee2e2;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            margin-left: auto;
-        }
-
-        .remove-paragraph-btn:hover {
-            background: #ef4444;
-            color: white;
-        }
-
-        .add-paragraph-btn {
-            background: #f5f5f5;
-            border: 2px dashed #e5e7eb;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 0.95rem;
-            padding: 0.875rem;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            width: 100%;
-        }
-
-        .add-paragraph-btn:hover {
-            border-color: #ff6b6b;
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.03);
-        }
-
-        .modal-footer {
-            padding: 1.5rem 2rem 2rem;
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .modal-btn {
-            padding: 0.875rem 1.75rem;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-        }
-
-        .modal-btn.cancel {
-            background: #f5f5f5;
-            color: #6b7280;
-        }
-
-        .modal-btn.cancel:hover {
-            background: #e5e7eb;
-        }
-
-        .modal-btn.save {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
-        }
-
-        .modal-btn.save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
-        }
-
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: #1a1a1a;
-            color: white;
+            background: white;
+            border-radius: 12px;
             padding: 1rem 1.5rem;
-            border-radius: 14px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 3000;
+            transform: translateY(100px);
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            font-size: 0.95rem;
-            z-index: 1001;
+            transition: all 0.3s ease;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateY(-8px);
-        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast-icon { font-size: 1.25rem; }
+        .toast.success .toast-icon { color: var(--success); }
+        .toast.error .toast-icon { color: var(--danger); }
+        .toast-message { font-size: 0.9375rem; color: var(--text-primary); font-weight: 500; }
 
-        .toast.success {
-            background: #10b981;
-        }
-
-        .toast.error {
-            background: #ef4444;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .main-wrapper {
-                padding: 1.5rem 1rem;
-            }
-
-            .header h1 {
-                font-size: 2.25rem;
-            }
-
-            .header h2 {
-                font-size: 1.5rem;
-            }
-
-            .category-card {
-                padding: 1.5rem;
-            }
-
-            .snippets-container {
-                grid-template-columns: 1fr;
-            }
-
-            .modal {
-                margin: 1rem;
-                max-height: 90vh;
-            }
-
-            .modal-header,
-            .modal-body,
-            .modal-footer {
-                padding: 1.5rem;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1rem;
-            }
-
-            .button {
-                width: 100%;
-            }
-
-            .delete-btn {
-                opacity: 1;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .header h2 {
-                font-size: 1.35rem;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .snippets-grid { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; gap: 1rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .tabs { gap: 0.125rem; }
+            .tab { padding: 0.625rem 0.875rem; font-size: 0.8125rem; }
+            .add-category-btn { padding: 0.5rem 0.625rem; font-size: 0.8125rem; }
+            .manage-categories-btn { width: 32px; height: 32px; }
+            .manage-category-item { flex-wrap: wrap; }
+            .manage-category-info { flex: 1 1 100%; margin-top: 0.5rem; order: 2; }
+            .manage-category-actions { order: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Hamburger Menu -->
-    <button class="hamburger" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <!-- Collapse/Expand Toggle Button -->
-        <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-        </button>
-
+    <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo">Enrollment Hub</div>
-            <div class="sidebar-subtitle">One Music Schools</div>
+            <div class="logo-section">
+                <div class="logo-icon">EH</div>
+                <span class="logo-text">Admin<span class="admin-badge">Admin</span></span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn">
+                <span class="toggle-icon">‹</span>
+            </button>
         </div>
 
         <nav class="sidebar-nav">
-            <a href="dashboard.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                <span class="sidebar-link-text">Dashboard</span>
+            <a href="admindashboard.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                <span class="nav-text">Dashboard</span>
             </a>
-            <a href="quicklinks.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                <span class="sidebar-link-text">Quick Links</span>
+            <a href="adminquicklinks.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-link"></i></span>
+                <span class="nav-text">Quick Links</span>
             </a>
-            <a href="snippets.html" class="sidebar-link active">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-                <span class="sidebar-link-text">Snippets</span>
+            <a href="adminstudio-directory.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-building"></i></span>
+                <span class="nav-text">Studio Directory</span>
             </a>
-            <a href="team.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                <span class="sidebar-link-text">Team Management</span>
+            <a href="adminteacher-directory.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span class="nav-text">Teacher Directory</span>
             </a>
-            <a href="studios.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span class="sidebar-link-text">Studio Directory</span>
+            <a href="adminsnippets.html" class="nav-item active">
+                <span class="nav-icon"><i class="fas fa-clipboard"></i></span>
+                <span class="nav-text">Snippets</span>
             </a>
-            <a href="teacher.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                <span class="sidebar-link-text">Teacher Selling Points</span>
+            <a href="adminmap.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
+                <span class="nav-text">Map</span>
             </a>
-            <a href="programs.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                <span class="sidebar-link-text">Programs</span>
+            <a href="adminprograms.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
+                <span class="nav-text">Programs</span>
             </a>
-            <a href="training.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                <span class="sidebar-link-text">Training Hub</span>
+            <a href="admintraining-hub.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-book-open"></i></span>
+                <span class="nav-text">Training Hub</span>
             </a>
-            <a href="policies.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                <span class="sidebar-link-text">Policies</span>
+            <a href="adminpolicies.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-file-alt"></i></span>
+                <span class="nav-text">Policies</span>
             </a>
-            <a href="calendar.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span class="sidebar-link-text">Calendar</span>
+            <a href="adminprofiles.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-user"></i></span>
+                <span class="nav-text">Profiles</span>
+            </a>
+            <a href="admindirectors.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
+                <span class="nav-text">DirectorsPage</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <button class="logout-btn" onclick="logout()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                <span class="logout-btn-text">Logout</span>
+            <button id="logoutBtn" class="nav-item logout-btn">
+                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span class="nav-text">Logout</span>
             </button>
         </div>
     </div>
-    
-    <div class="main-wrapper">
-        <div class="container">
-            <div class="header">
-                <h1>Enrollment Hub</h1>
-                <h2>Snippets</h2>
-                <p>Save and organize reusable text snippets with formatting</p>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Snippets Management</h1>
+                <p>Manage reusable text snippets organized by category</p>
             </div>
-
-            <div id="loading" class="loading">Loading...</div>
-
-            <div id="content" style="display: none;">
-                <!-- Categories Section -->
-                <div class="section-header">
-                    <h2>Categories</h2>
-                    <button class="button" onclick="addCategory()">+ Add Category</button>
-                </div>
-
-                <div id="categories-container"></div>
+            <div class="page-header-actions">
+                <button class="btn btn-secondary" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Edit Modal -->
-    <div id="editModal" class="modal-overlay">
-        <div class="modal">
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading...
+        </div>
+
+        <div id="content" class="section" style="display: none;">
+            <!-- Section Header -->
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard"></i> Snippets
+                </h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary btn-small" onclick="openSnippetModal()" id="addSnippetBtn" style="display: none;">
+                        <i class="fas fa-plus"></i> Add Snippet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="tabs-container">
+                <div class="tabs" id="categoryTabs"></div>
+            </div>
+
+            <!-- Snippets Grid -->
+            <div id="snippetsGrid" class="snippets-grid">
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <i class="fas fa-folder-plus"></i>
+                    <p>No categories yet. Create one to get started!</p>
+                    <button class="btn btn-primary" onclick="openCategoryModal()">
+                        <i class="fas fa-plus"></i> Add Category
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Category Modal (Quick Add) -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Edit Snippet</h3>
+                <h3 class="modal-title" id="categoryModalTitle">Add Category</h3>
+                <button class="modal-close" onclick="closeCategoryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Title</label>
-                    <input type="text" id="snippetTitle" class="form-input" placeholder="Enter snippet title">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Subheading (Optional)</label>
-                    <input type="text" id="snippetSubheading" class="form-input" placeholder="Enter subheading">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Paragraphs</label>
-                    <div id="paragraphsContainer" class="paragraphs-container"></div>
-                    <button class="add-paragraph-btn" onclick="addParagraphField()">+ Add Paragraph</button>
-                </div>
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="form-group">
+                        <label class="form-label">Category Name *</label>
+                        <input type="text" class="form-input" id="categoryName" required placeholder="e.g., Welcome Messages">
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
-                <button class="modal-btn save" onclick="saveSnippet()">Save Snippet</button>
+                <button class="btn btn-secondary" onclick="closeCategoryModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCategory()">
+                    <i class="fas fa-plus"></i> Add Category
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <!-- Manage Categories Modal -->
+    <div id="manageCategoriesModal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Categories</h3>
+                <button class="modal-close" onclick="closeManageCategoriesModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="manageCategoriesList" class="manage-categories-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeManageCategoriesModal()">Close</button>
+            </div>
+        </div>
+    </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    <!-- Snippet Modal -->
+    <div id="snippetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="snippetModalTitle">Add Snippet</h3>
+                <button class="modal-close" onclick="closeSnippetModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="snippetForm">
+                    <input type="hidden" id="snippetId">
+                    <div class="form-group">
+                        <label class="form-label">Title *</label>
+                        <input type="text" class="form-input" id="snippetTitle" required placeholder="e.g., New Student Welcome">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subheading</label>
+                        <input type="text" class="form-input" id="snippetSubheading" placeholder="Optional subheading text">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Index</label>
+                        <input type="number" class="form-input" id="snippetOrder" placeholder="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <div class="paragraphs-section">
+                            <div class="paragraphs-header">
+                                <span class="paragraphs-title">Paragraphs</span>
+                                <button type="button" class="btn btn-primary btn-small" onclick="addParagraph()">
+                                    <i class="fas fa-plus"></i> Add Paragraph
+                                </button>
+                            </div>
+                            <div id="paragraphsContainer"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSnippetModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSnippet()">
+                    <i class="fas fa-save"></i> Save Snippet
+                </button>
+            </div>
+        </div>
+    </div>
 
-        // Supabase configuration
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span class="toast-message"></span>
+    </div>
+
+    <script>
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-        
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
 
-        let data = {
-            categories: [],
-            snippets: []
-        };
+        let supabaseClient;
+        let categories = [];
+        let snippets = [];
+        let selectedCategoryId = null;
+        let currentParagraphs = [];
 
-        let currentEditingSnippet = null;
-        let currentCategoryId = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            setupSidebar();
+            loadData();
+        });
 
-        // Sidebar Functions
-        window.toggleSidebar = function() {
+        function setupSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                    overlay.classList.add('active');
+                } else {
+                    overlay.classList.remove('active');
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
         }
 
-        window.toggleSidebarCollapse = function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        }
-
-        function loadSidebarState() {
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                document.getElementById('sidebar').classList.add('collapsed');
-            }
-        }
-
-        window.logout = function() {
-            if (confirm('Are you sure you want to logout?')) {
-                alert('Logout functionality will be implemented with the login system');
-            }
-        }
-
-        function showToast(message, isSuccess = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast show';
-            if (isSuccess) toast.classList.add('success');
-            setTimeout(() => toast.className = 'toast', 2000);
-        }
-
-        // Load all data from Supabase
         async function loadData() {
             try {
                 const [categoriesResult, snippetsResult] = await Promise.all([
-                    supabase.from('snippet_categories').select('*').order('order_index'),
-                    supabase.from('snippets').select('*').order('order_index')
+                    supabaseClient.from('snippet_categories').select('*').order('order_index'),
+                    supabaseClient.from('snippets').select('*').order('order_index')
                 ]);
 
                 if (categoriesResult.error) throw categoriesResult.error;
                 if (snippetsResult.error) throw snippetsResult.error;
 
-                data.categories = categoriesResult.data || [];
-                data.snippets = snippetsResult.data || [];
+                categories = categoriesResult.data || [];
+                snippets = snippetsResult.data || [];
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
@@ -1076,325 +1073,408 @@
                 renderCategories();
             } catch (error) {
                 console.error('Error loading data:', error);
-                showToast('Error loading data. Please refresh.', false);
+                showToast('Error loading data', 'error');
             }
-        }
-
-        async function addCategory() {
-            const name = prompt('Category name:', 'New Category');
-            if (!name) return;
-
-            try {
-                const maxOrder = data.categories.length > 0 
-                    ? Math.max(...data.categories.map(c => c.order_index)) 
-                    : 0;
-
-                const { data: newCategory, error } = await supabase
-                    .from('snippet_categories')
-                    .insert({
-                        name,
-                        order_index: maxOrder + 1
-                    })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                data.categories.push(newCategory);
-                renderCategories();
-                showToast('Category added!', true);
-            } catch (error) {
-                console.error('Error adding category:', error);
-                showToast('Error adding category', false);
-            }
-        }
-
-        async function deleteCategory(id) {
-            if (!confirm('Delete this category and all its snippets?')) return;
-
-            try {
-                const { error } = await supabase
-                    .from('snippet_categories')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                data.categories = data.categories.filter(c => c.id !== id);
-                data.snippets = data.snippets.filter(s => s.category_id !== id);
-                renderCategories();
-                showToast('Category deleted', true);
-            } catch (error) {
-                console.error('Error deleting category:', error);
-                showToast('Error deleting category', false);
-            }
-        }
-
-        async function editCategoryName(id) {
-            const category = data.categories.find(c => c.id === id);
-            const newName = prompt('Category name:', category.name);
-            if (!newName) return;
-
-            try {
-                const { error } = await supabase
-                    .from('snippet_categories')
-                    .update({ name: newName })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                category.name = newName;
-                renderCategories();
-                showToast('Updated!', true);
-            } catch (error) {
-                console.error('Error updating category:', error);
-                showToast('Error updating category', false);
-            }
-        }
-
-        function openSnippetModal(categoryId, snippetId = null) {
-            currentCategoryId = categoryId;
-            currentEditingSnippet = snippetId;
-
-            const modal = document.getElementById('editModal');
-            const title = document.getElementById('snippetTitle');
-            const subheading = document.getElementById('snippetSubheading');
-            const modalTitle = document.getElementById('modalTitle');
-
-            if (snippetId) {
-                const snippet = data.snippets.find(s => s.id === snippetId);
-                modalTitle.textContent = 'Edit Snippet';
-                title.value = snippet.title;
-                subheading.value = snippet.subheading || '';
-                renderParagraphFields(snippet.paragraphs || []);
-            } else {
-                modalTitle.textContent = 'New Snippet';
-                title.value = '';
-                subheading.value = '';
-                renderParagraphFields(['']);
-            }
-
-            modal.classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('editModal').classList.remove('active');
-            currentEditingSnippet = null;
-            currentCategoryId = null;
-        }
-
-        function renderParagraphFields(paragraphs = ['']) {
-            const container = document.getElementById('paragraphsContainer');
-            container.innerHTML = paragraphs.map((p, index) => `
-                <div class="paragraph-item" data-index="${index}">
-                    <div class="paragraph-toolbar">
-                        <button class="toolbar-btn" onclick="formatText(${index}, 'bold')" title="Bold"><b>B</b></button>
-                        <button class="toolbar-btn" onclick="formatText(${index}, 'italic')" title="Italic"><i>I</i></button>
-                        ${paragraphs.length > 1 ? `<button class="remove-paragraph-btn" onclick="removeParagraphField(${index})">Remove</button>` : ''}
-                    </div>
-                    <div class="paragraph-editor" contenteditable="true" data-index="${index}">${p}</div>
-                </div>
-            `).join('');
-        }
-
-        window.formatText = function(index, format) {
-            const editor = document.querySelector(`.paragraph-editor[data-index="${index}"]`);
-            editor.focus();
-            
-            if (format === 'bold') {
-                document.execCommand('bold', false, null);
-            } else if (format === 'italic') {
-                document.execCommand('italic', false, null);
-            }
-        }
-
-        window.addParagraphField = function() {
-            const editors = document.querySelectorAll('.paragraph-editor');
-            const paragraphs = Array.from(editors).map(e => e.innerHTML);
-            paragraphs.push('');
-            renderParagraphFields(paragraphs);
-        }
-
-        window.removeParagraphField = function(index) {
-            const editors = document.querySelectorAll('.paragraph-editor');
-            const paragraphs = Array.from(editors).map(e => e.innerHTML);
-            paragraphs.splice(index, 1);
-            renderParagraphFields(paragraphs);
-        }
-
-        async function saveSnippet() {
-            const title = document.getElementById('snippetTitle').value.trim();
-            if (!title) {
-                alert('Please enter a title');
-                return;
-            }
-
-            const subheading = document.getElementById('snippetSubheading').value.trim();
-            const editors = document.querySelectorAll('.paragraph-editor');
-            const paragraphs = Array.from(editors)
-                .map(e => e.innerHTML.trim())
-                .filter(p => p);
-
-            if (paragraphs.length === 0) {
-                alert('Please add at least one paragraph');
-                return;
-            }
-
-            try {
-                if (currentEditingSnippet) {
-                    const { error } = await supabase
-                        .from('snippets')
-                        .update({
-                            title,
-                            subheading,
-                            paragraphs
-                        })
-                        .eq('id', currentEditingSnippet);
-
-                    if (error) throw error;
-
-                    const snippet = data.snippets.find(s => s.id === currentEditingSnippet);
-                    snippet.title = title;
-                    snippet.subheading = subheading;
-                    snippet.paragraphs = paragraphs;
-
-                    showToast('Snippet updated!', true);
-                } else {
-                    const categorySnippets = data.snippets.filter(s => s.category_id === currentCategoryId);
-                    const maxOrder = categorySnippets.length > 0 
-                        ? Math.max(...categorySnippets.map(s => s.order_index)) 
-                        : 0;
-
-                    const { data: newSnippet, error } = await supabase
-                        .from('snippets')
-                        .insert({
-                            category_id: currentCategoryId,
-                            title,
-                            subheading,
-                            paragraphs,
-                            order_index: maxOrder + 1
-                        })
-                        .select()
-                        .single();
-
-                    if (error) throw error;
-
-                    data.snippets.push(newSnippet);
-                    showToast('Snippet added!', true);
-                }
-
-                closeModal();
-                renderCategories();
-            } catch (error) {
-                console.error('Error saving snippet:', error);
-                showToast('Error saving snippet', false);
-            }
-        }
-
-        async function deleteSnippet(id) {
-            if (!confirm('Delete this snippet?')) return;
-
-            try {
-                const { error } = await supabase
-                    .from('snippets')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                data.snippets = data.snippets.filter(s => s.id !== id);
-                renderCategories();
-                showToast('Snippet deleted', true);
-            } catch (error) {
-                console.error('Error deleting snippet:', error);
-                showToast('Error deleting snippet', false);
-            }
-        }
-
-        function copySnippet(id) {
-            const snippet = data.snippets.find(s => s.id === id);
-            let text = snippet.title + '\n';
-            if (snippet.subheading) text += snippet.subheading + '\n';
-            text += '\n';
-            text += snippet.paragraphs.map(p => {
-                const temp = document.createElement('div');
-                temp.innerHTML = p;
-                return temp.textContent;
-            }).join('\n\n');
-
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Copied to clipboard!', true);
-            });
         }
 
         function renderCategories() {
-            const container = document.getElementById('categories-container');
-            
-            if (data.categories.length === 0) {
-                container.innerHTML = '<div class="empty-state">No categories yet. Click "Add Category" to get started.</div>';
+            const container = document.getElementById('categoryTabs');
+
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <button class="add-category-btn" onclick="openCategoryModal()">
+                        <i class="fas fa-plus"></i> Add Category
+                    </button>
+                `;
+                document.getElementById('addSnippetBtn').style.display = 'none';
+                renderSnippets();
                 return;
             }
 
-            container.innerHTML = data.categories.map(category => {
-                const categorySnippets = data.snippets.filter(s => s.category_id === category.id);
+            // Auto-select first category if none selected
+            if (!selectedCategoryId && categories.length > 0) {
+                selectedCategoryId = categories[0].id;
+            }
 
+            container.innerHTML = categories.map(cat => {
+                const count = snippets.filter(s => s.category_id === cat.id).length;
                 return `
-                    <div class="category-card">
-                        <div class="category-header">
-                            <div class="category-name" onclick="editCategoryName('${category.id}')">
-                                ${category.name}
+                    <button class="tab ${selectedCategoryId === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+                        ${cat.name}
+                        <span class="tab-count">${count}</span>
+                    </button>
+                `;
+            }).join('') + `
+                <div class="tab-actions-bar">
+                    <button class="add-category-btn" onclick="openCategoryModal()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                    <button class="manage-categories-btn" onclick="openManageCategoriesModal()" title="Manage Categories">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('addSnippetBtn').style.display = 'inline-flex';
+            renderSnippets();
+        }
+
+        function selectCategory(categoryId) {
+            selectedCategoryId = categoryId;
+            renderCategories();
+        }
+
+        function renderSnippets() {
+            const container = document.getElementById('snippetsGrid');
+
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-folder-plus"></i>
+                        <p>No categories yet. Create one to get started!</p>
+                        <button class="btn btn-primary" onclick="openCategoryModal()">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!selectedCategoryId) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-hand-pointer"></i>
+                        <p>Select a category to view snippets</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const categorySnippets = snippets.filter(s => s.category_id === selectedCategoryId);
+
+            if (categorySnippets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-clipboard"></i>
+                        <p>No snippets in this category</p>
+                        <button class="btn btn-primary" onclick="openSnippetModal()">
+                            <i class="fas fa-plus"></i> Add Snippet
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = categorySnippets.map(snippet => {
+                const previewText = snippet.paragraphs && snippet.paragraphs.length > 0 
+                    ? snippet.paragraphs[0].replace(/<[^>]*>/g, '').substring(0, 100) + '...'
+                    : 'No content';
+                return `
+                    <div class="snippet-card">
+                        <div class="snippet-card-header">
+                            <div class="snippet-card-title">${snippet.title}</div>
+                            ${snippet.subheading ? `<div class="snippet-card-subheading">${snippet.subheading}</div>` : ''}
+                        </div>
+                        <div class="snippet-card-body">
+                            <div class="snippet-preview">${previewText}</div>
+                            <div class="snippet-card-actions">
+                                <button class="btn btn-secondary btn-small" onclick="editSnippet('${snippet.id}')" style="flex: 1;">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteSnippet('${snippet.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
-                            <button class="delete-btn" onclick="deleteCategory('${category.id}')">×</button>
                         </div>
-                        <div class="snippets-container">
-                            ${categorySnippets.length === 0 
-                                ? '<div class="empty-state">No snippets yet. Click "Add Snippet" to get started.</div>'
-                                : categorySnippets.map(snippet => `
-                                    <div class="snippet-card">
-                                        <div class="snippet-header">
-                                            <div>
-                                                <div class="snippet-title">${snippet.title}</div>
-                                                ${snippet.subheading ? `<div class="snippet-subheading">${snippet.subheading}</div>` : ''}
-                                            </div>
-                                        </div>
-                                        <div class="snippet-content">
-                                            ${snippet.paragraphs.map(p => `<p>${p}</p>`).join('')}
-                                        </div>
-                                        <div class="snippet-actions">
-                                            <button class="snippet-btn copy-btn" onclick="copySnippet('${snippet.id}')">Copy</button>
-                                            <button class="snippet-btn" onclick="openSnippetModal('${category.id}', '${snippet.id}')">Edit</button>
-                                            <button class="snippet-btn" onclick="deleteSnippet('${snippet.id}')">Delete</button>
-                                        </div>
-                                    </div>
-                                `).join('')
-                            }
-                        </div>
-                        <button class="button-outline" onclick="openSnippetModal('${category.id}')">+ Add Snippet</button>
                     </div>
                 `;
             }).join('');
         }
 
-        // Expose functions to global scope
-        window.addCategory = addCategory;
-        window.deleteCategory = deleteCategory;
-        window.editCategoryName = editCategoryName;
-        window.openSnippetModal = openSnippetModal;
-        window.closeModal = closeModal;
-        window.saveSnippet = saveSnippet;
-        window.deleteSnippet = deleteSnippet;
-        window.copySnippet = copySnippet;
+        // ============ CATEGORY MODAL (Quick Add) ============
+        function openCategoryModal() {
+            document.getElementById('categoryModalTitle').textContent = 'Add Category';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryModal').classList.add('active');
+        }
 
-        // Load sidebar state and initialize
-        loadSidebarState();
-        loadData();
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+        }
 
-        // Close modal on overlay click
-        document.getElementById('editModal').addEventListener('click', (e) => {
-            if (e.target.id === 'editModal') {
-                closeModal();
+        async function saveCategory() {
+            const id = document.getElementById('categoryId').value;
+            const name = document.getElementById('categoryName').value.trim();
+            
+            if (!name) {
+                showToast('Please enter a category name', 'error');
+                return;
             }
-        });
+
+            const data = {
+                name: name,
+                order_index: id ? undefined : categories.length // New categories go at end
+            };
+
+            try {
+                if (id) {
+                    const result = await supabaseClient.from('snippet_categories').update({ name: name }).eq('id', id);
+                    if (result.error) throw result.error;
+                } else {
+                    const result = await supabaseClient.from('snippet_categories').insert([data]);
+                    if (result.error) throw result.error;
+                }
+
+                showToast(id ? 'Category updated!' : 'Category added!', 'success');
+                closeCategoryModal();
+                loadData();
+            } catch (error) {
+                console.error('Error saving category:', error);
+                showToast('Error saving category', 'error');
+            }
+        }
+
+        // ============ MANAGE CATEGORIES MODAL ============
+        function openManageCategoriesModal() {
+            renderManageCategories();
+            document.getElementById('manageCategoriesModal').classList.add('active');
+        }
+
+        function closeManageCategoriesModal() {
+            document.getElementById('manageCategoriesModal').classList.remove('active');
+        }
+
+        function renderManageCategories() {
+            const container = document.getElementById('manageCategoriesList');
+
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <div class="manage-empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No categories yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = categories.map((cat, index) => {
+                const count = snippets.filter(s => s.category_id === cat.id).length;
+                return `
+                    <div class="manage-category-item" data-id="${cat.id}">
+                        <span class="manage-category-order">${index + 1}</span>
+                        <div class="manage-category-info">
+                            <input type="text" class="manage-category-name-input" value="${cat.name}" id="cat-name-${cat.id}" onkeypress="handleCategoryNameKeypress(event, '${cat.id}')" />
+                            <span class="manage-category-count">${count} snippet${count !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="manage-category-actions">
+                            <button class="save-btn" onclick="updateCategoryName('${cat.id}')" title="Save">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="delete-btn" onclick="deleteCategory('${cat.id}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleCategoryNameKeypress(event, categoryId) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                updateCategoryName(categoryId);
+            }
+        }
+
+        async function updateCategoryName(categoryId) {
+            const input = document.getElementById(`cat-name-${categoryId}`);
+            const newName = input.value.trim();
+
+            if (!newName) {
+                showToast('Category name cannot be empty', 'error');
+                return;
+            }
+
+            try {
+                const result = await supabaseClient.from('snippet_categories').update({ name: newName }).eq('id', categoryId);
+                if (result.error) throw result.error;
+
+                showToast('Category updated!', 'success');
+                loadData();
+            } catch (error) {
+                console.error('Error updating category:', error);
+                showToast('Error updating category', 'error');
+            }
+        }
+
+        async function deleteCategory(categoryId) {
+            const categorySnippets = snippets.filter(s => s.category_id === categoryId);
+            const category = categories.find(c => c.id === categoryId);
+            
+            let message = `Delete "${category?.name || 'this category'}"?`;
+            if (categorySnippets.length > 0) {
+                message = `Delete "${category?.name}"? This will also delete ${categorySnippets.length} snippet${categorySnippets.length !== 1 ? 's' : ''}.`;
+            }
+            
+            if (!confirm(message)) return;
+
+            try {
+                const result = await supabaseClient.from('snippet_categories').delete().eq('id', categoryId);
+                if (result.error) throw result.error;
+
+                // If deleted category was selected, select another one
+                if (selectedCategoryId === categoryId) {
+                    const remainingCategories = categories.filter(c => c.id !== categoryId);
+                    selectedCategoryId = remainingCategories.length > 0 ? remainingCategories[0].id : null;
+                }
+
+                showToast('Category deleted!', 'success');
+                loadData();
+                renderManageCategories();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error deleting category', 'error');
+            }
+        }
+
+        // ============ SNIPPET MODAL ============
+        function openSnippetModal() {
+            if (!selectedCategoryId) {
+                showToast('Please select a category first', 'error');
+                return;
+            }
+
+            document.getElementById('snippetModalTitle').textContent = 'Add Snippet';
+            document.getElementById('snippetForm').reset();
+            document.getElementById('snippetId').value = '';
+            currentParagraphs = [''];
+            renderParagraphs();
+            document.getElementById('snippetModal').classList.add('active');
+        }
+
+        function editSnippet(snippetId) {
+            const snippet = snippets.find(s => s.id === snippetId);
+            if (!snippet) return;
+
+            document.getElementById('snippetModalTitle').textContent = 'Edit Snippet';
+            document.getElementById('snippetId').value = snippet.id;
+            document.getElementById('snippetTitle').value = snippet.title || '';
+            document.getElementById('snippetSubheading').value = snippet.subheading || '';
+            document.getElementById('snippetOrder').value = snippet.order_index || 0;
+
+            currentParagraphs = snippet.paragraphs && snippet.paragraphs.length > 0 
+                ? [...snippet.paragraphs] 
+                : [''];
+            renderParagraphs();
+
+            document.getElementById('snippetModal').classList.add('active');
+        }
+
+        function closeSnippetModal() {
+            document.getElementById('snippetModal').classList.remove('active');
+        }
+
+        // ============ PARAGRAPHS ============
+        function addParagraph() {
+            currentParagraphs.push('');
+            renderParagraphs();
+        }
+
+        function removeParagraph(index) {
+            if (currentParagraphs.length <= 1) {
+                showToast('At least one paragraph is required', 'error');
+                return;
+            }
+            currentParagraphs.splice(index, 1);
+            renderParagraphs();
+        }
+
+        function updateParagraph(index, value) {
+            currentParagraphs[index] = value;
+        }
+
+        function renderParagraphs() {
+            const container = document.getElementById('paragraphsContainer');
+
+            if (currentParagraphs.length === 0) {
+                currentParagraphs = [''];
+            }
+
+            container.innerHTML = currentParagraphs.map((p, index) => `
+                <div class="paragraph-item">
+                    <span class="paragraph-number">${index + 1}</span>
+                    <textarea class="paragraph-input" onchange="updateParagraph(${index}, this.value)" placeholder="Enter paragraph text... (HTML supported: <b>, <i>, etc.)">${p}</textarea>
+                    <button type="button" class="remove-paragraph-btn" onclick="removeParagraph(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function saveSnippet() {
+            const id = document.getElementById('snippetId').value;
+
+            // Get current paragraph values from inputs
+            const paragraphInputs = document.querySelectorAll('.paragraph-input');
+            const paragraphs = Array.from(paragraphInputs).map(input => input.value).filter(p => p.trim() !== '');
+
+            if (paragraphs.length === 0) {
+                showToast('At least one paragraph is required', 'error');
+                return;
+            }
+
+            const data = {
+                category_id: selectedCategoryId,
+                title: document.getElementById('snippetTitle').value,
+                subheading: document.getElementById('snippetSubheading').value || null,
+                order_index: parseInt(document.getElementById('snippetOrder').value) || 0,
+                paragraphs: paragraphs
+            };
+
+            try {
+                if (id) {
+                    const result = await supabaseClient.from('snippets').update(data).eq('id', id);
+                    if (result.error) throw result.error;
+                } else {
+                    const result = await supabaseClient.from('snippets').insert([data]);
+                    if (result.error) throw result.error;
+                }
+
+                showToast(id ? 'Snippet updated!' : 'Snippet added!', 'success');
+                closeSnippetModal();
+                loadData();
+            } catch (error) {
+                console.error('Error saving snippet:', error);
+                showToast('Error saving snippet', 'error');
+            }
+        }
+
+        async function deleteSnippet(snippetId) {
+            if (!confirm('Delete this snippet?')) return;
+
+            try {
+                const result = await supabaseClient.from('snippets').delete().eq('id', snippetId);
+                if (result.error) throw result.error;
+
+                showToast('Snippet deleted!', 'success');
+                loadData();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error deleting snippet', 'error');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toastIcon.className = type === 'success' ? 'fas fa-check-circle toast-icon' : 'fas fa-exclamation-circle toast-icon';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
     </script>
 </body>
 </html>

@@ -1,436 +1,956 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enrollment Hub - Studio Directory</title>
+    <title>Admin Studio Directory - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        :root {
+            /* Light Soft Blue Admin Color Scheme */
+            --primary: #60A5FA;
+            --primary-light: #93C5FD;
+            --primary-dark: #3B82F6;
+            --secondary: #8B5CF6;
+            --secondary-light: #A78BFA;
+            --accent: #38BDF8;
+            --accent-light: #7DD3FC;
+            
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --text-light: #A0AEC0;
+            --white: #FFFFFF;
+            
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
+            
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --transition-speed: 0.3s;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+            color: var(--text-primary);
             overflow-x: hidden;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-            background: #fafafa;
-            min-height: 100vh;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            color: #1a1a1a;
-            display: flex;
-        }
-
-        /* Sidebar Styles */
+        /* SIDEBAR */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #ff6b6b 0%, #ee5a6f 100%);
-            height: 100vh;
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
-            padding: 2rem 0;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: all 0.3s ease;
         }
 
         .sidebar.collapsed {
-            width: 80px;
+            width: var(--sidebar-collapsed);
         }
 
         .sidebar-header {
-            padding: 0 2rem 2rem 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
         }
 
-        .sidebar.collapsed .sidebar-header {
-            padding: 0 1rem 1rem 1rem;
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar-logo {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: white;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-logo {
-            font-size: 1.25rem;
-        }
-
-        .sidebar-subtitle {
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.9);
-            text-align: center;
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-subtitle {
+        .sidebar.collapsed .logo-section {
             opacity: 0;
-            height: 0;
-            overflow: hidden;
+            pointer-events: none;
         }
 
-        .sidebar-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: -15px;
-            width: 30px;
-            height: 30px;
-            background: white;
-            border: 2px solid #ff6b6b;
-            border-radius: 50%;
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        .toggle-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
         }
 
-        .sidebar-toggle svg {
-            width: 16px;
-            height: 16px;
-            stroke: #ff6b6b;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-toggle svg {
+        .sidebar.collapsed .toggle-icon {
             transform: rotate(180deg);
+        }
+
+        .toggle-icon {
+            transition: transform var(--transition-speed) ease;
+            font-size: 1rem;
         }
 
         .sidebar-nav {
             flex: 1;
-            padding: 2rem 0;
             overflow-y: auto;
-        }
-
-        .sidebar.collapsed .sidebar-nav {
+            overflow-x: hidden;
             padding: 1rem 0;
         }
 
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
-            white-space: nowrap;
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
         }
 
-        .sidebar.collapsed .sidebar-link {
-            padding: 1rem;
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 2px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: calc(100% - 1.5rem);
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
             justify-content: center;
         }
 
-        .sidebar-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-left-color: white;
+        .nav-text {
+            white-space: nowrap;
+            transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar-link.active {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border-left-color: white;
-            font-weight: 700;
-        }
-
-        .sidebar-link svg {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            margin-right: 1rem;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-link svg {
-            margin-right: 0;
-        }
-
-        .sidebar-link-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-link-text {
+        .sidebar.collapsed .nav-text {
             opacity: 0;
-            width: 0;
-            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 0.875rem;
         }
 
         .sidebar-footer {
-            padding: 1rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .sidebar.collapsed .sidebar-footer {
-            padding: 1rem;
+            padding: 0.5rem 0 1rem 0;
+            border-top: 1px solid var(--gray-200);
         }
 
         .logout-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .sidebar.collapsed .logout-btn {
-            padding: 0.75rem 0.5rem;
+            color: var(--danger) !important;
         }
 
         .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(239, 68, 68, 0.1) !important;
         }
 
-        .logout-btn svg {
-            min-width: 18px;
-        }
-
-        .logout-btn-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .logout-btn-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .hamburger {
-            display: none;
+        .sidebar-overlay {
             position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            z-index: 1001;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: white;
-            margin: 5px 0;
-            transition: 0.3s;
-        }
-
-        .main-wrapper {
-            margin-left: 280px;
-            flex: 1;
-            padding: 3rem 2rem;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed ~ .main-wrapper {
-            margin-left: 80px;
-            width: calc(100% - 80px);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .sidebar.collapsed {
-                width: 280px;
-            }
-
-            .sidebar-toggle {
-                display: none;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-                width: 100%;
-                padding-top: 5rem;
-            }
-
-            .sidebar.collapsed ~ .main-wrapper {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease;
         }
 
-        .header {
-            margin-bottom: 3rem;
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: all;
         }
 
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.04em;
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem 2.5rem;
+            transition: margin-left var(--transition-speed) ease;
         }
 
-        .header h2 {
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .page-header-left h1 {
             font-size: 2rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
             letter-spacing: -0.02em;
         }
 
-        .header p {
-            color: #6b7280;
-            font-size: 1.125rem;
-            font-weight: 400;
+        .page-header-left p {
+            color: var(--text-secondary);
+            font-size: 1rem;
         }
 
-        .search-section {
-            margin-bottom: 2rem;
+        .page-header-actions {
+            display: flex;
+            gap: 0.75rem;
         }
 
-        .search-bar {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            font-size: 1.05rem;
-            color: #1a1a1a;
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
             transition: all 0.2s ease;
-            font-family: inherit;
+            text-decoration: none;
         }
 
-        .search-bar:focus {
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1.5px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-icon-only {
+            width: 40px;
+            padding: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-icon-only i {
+            color: var(--text-secondary);
+        }
+
+        .btn-icon-only:hover i {
+            color: var(--text-primary);
+        }
+
+        .btn-small {
+            padding: 0.5rem 0.875rem;
+            font-size: 0.8125rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
             outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        /* Studios Grid */
+        .studios-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
         }
 
         .section-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .section-header h3 {
-            font-size: 1.5rem;
+        .section-title {
+            font-size: 1.25rem;
             font-weight: 700;
-            color: #1a1a1a;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
         }
 
-        .button {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            padding: 0.875rem 1.75rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        .section-title i {
+            color: var(--primary);
+            font-size: 1.125rem;
         }
 
         .studios-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
+        /* Studio Card */
         .studio-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1.5px solid rgba(0, 0, 0, 0.04);
-            transition: all 0.3s ease;
-            cursor: pointer;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
         }
 
         .studio-card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border-color: rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
         }
 
-        .studio-brand {
+        .studio-card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1.25rem;
+            color: white;
+            position: relative;
+        }
+
+        .studio-card-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 25, 50 50 T 100 50 L 100 100 L 0 100 Z' fill='white' opacity='0.1'/%3E%3C/svg%3E");
+            background-size: cover;
+            pointer-events: none;
+        }
+
+        .studio-card-brand {
+            font-size: 1.125rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .studio-card-location {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .studio-card-body {
+            padding: 1.25rem;
+        }
+
+        .studio-info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.875rem;
+        }
+
+        .studio-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .studio-info-row i {
+            color: var(--primary);
+            width: 16px;
+            text-align: center;
+        }
+
+        .studio-info-row span {
+            color: var(--text-secondary);
+        }
+
+        .studio-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .studio-badge {
+            padding: 0.25rem 0.625rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-info {
+            background: rgba(96, 165, 250, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .studio-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #1a1a1a;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--gray-200);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Modal Tabs */
+        .modal-tabs {
+            display: flex;
+            gap: 0.25rem;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .modal-tab {
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: -2px;
+        }
+
+        .modal-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .modal-tab-content {
+            display: none;
+        }
+
+        .modal-tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
 
-        .studio-location {
-            color: #6b7280;
-            font-size: 1rem;
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-label {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gray-300);
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Dynamic Lists */
+        .dynamic-list {
+            background: var(--gray-50);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .dynamic-list-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .dynamic-list-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .dynamic-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .dynamic-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--white);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .dynamic-item-content {
+            flex: 1;
+        }
+
+        .dynamic-item-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .dynamic-item input {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: var(--gray-50);
+        }
+
+        .dynamic-item input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .remove-item-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .remove-item-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Instruments Tags */
+        .instruments-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 10px;
+            min-height: 60px;
+        }
+
+        .instrument-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .instrument-tag button {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .instrument-tag button:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .add-instrument-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .add-instrument-row input {
+            flex: 1;
+            padding: 0.625rem 1rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .add-instrument-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Bold Toggle */
+        .bold-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .bold-toggle input {
+            accent-color: var(--primary);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gray-300);
             margin-bottom: 0.75rem;
         }
 
-        .studio-director {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            padding-top: 0.75rem;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #9ca3af;
+        .empty-state p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
         }
 
         .loading {
@@ -438,1272 +958,881 @@
             align-items: center;
             justify-content: center;
             min-height: 400px;
-            color: #9ca3af;
-            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
         }
 
-        /* Edit Page Styles */
-        .edit-page {
-            display: none;
-        }
-
-        .edit-page.active {
-            display: block;
-        }
-
-        .edit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-        }
-
-        .back-button {
-            background: #f5f5f5;
-            color: #6b7280;
-            border: none;
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .back-button:hover {
-            background: #e5e7eb;
-        }
-
-        .edit-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .section-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            color: #1a1a1a;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 32px;
-            background: #e5e7eb;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .toggle-switch.active {
-            background: #ff6b6b;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(28px);
-        }
-
-        .toggle-label {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .list-item {
-            background: #fafafa;
-            padding: 1.25rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            border: 1.5px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .list-item:hover {
-            background: white;
-            border-color: #f0f0f0;
-        }
-
-        .list-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .remove-btn {
-            background: #fee2e2;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            font-weight: 600;
-        }
-
-        .remove-btn:hover {
-            background: #ef4444;
-            color: white;
-        }
-
-        .add-item-btn {
-            background: transparent;
-            border: 2px dashed #e5e7eb;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 0.95rem;
-            padding: 1rem;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        .add-item-btn:hover {
-            border-color: #ff6b6b;
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.03);
-        }
-
-        .save-footer {
-            position: sticky;
-            bottom: 0;
-            background: white;
-            padding: 1.5rem 2rem;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-        }
-
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: #1a1a1a;
-            color: white;
+            background: white;
+            border-radius: 12px;
             padding: 1rem 1.5rem;
-            border-radius: 14px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 3000;
+            transform: translateY(100px);
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            font-size: 0.95rem;
-            z-index: 1001;
+            transition: all 0.3s ease;
         }
 
         .toast.show {
+            transform: translateY(0);
             opacity: 1;
-            transform: translateY(-8px);
         }
 
         .toast.success {
-            background: #10b981;
+            border-left: 4px solid var(--success);
         }
 
         .toast.error {
-            background: #ef4444;
+            border-left: 4px solid var(--danger);
         }
 
-        .rich-text-toolbar {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
+        .toast-icon {
+            font-size: 1.25rem;
         }
 
-        .toolbar-btn {
-            background: white;
-            border: 1px solid #e5e7eb;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            font-weight: 700;
-            font-family: serif;
+        .toast.success .toast-icon {
+            color: var(--success);
         }
 
-        .toolbar-btn:hover {
-            background: #ff6b6b;
-            color: white;
-            border-color: #ff6b6b;
+        .toast.error .toast-icon {
+            color: var(--danger);
         }
 
-        .rich-text-editor {
-            min-height: 80px;
-            padding: 0.875rem 1rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            color: #1a1a1a;
-            transition: all 0.2s ease;
-            font-family: inherit;
-            outline: none;
-            background: white;
-            line-height: 1.6;
+        .toast-message {
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
-        .rich-text-editor:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        }
-
-        .rich-text-editor:empty:before {
-            content: attr(data-placeholder);
-            color: #9ca3af;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .main-wrapper {
-                padding: 1.5rem 1rem;
+            .sidebar {
+                transform: translateX(-100%);
             }
-
-            .header h1 {
-                font-size: 2.25rem;
+            
+            .sidebar:not(.collapsed) {
+                transform: translateX(0);
             }
-
-            .header h2 {
-                font-size: 1.5rem;
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .sidebar.collapsed ~ .main-content {
+                margin-left: 0;
             }
 
             .studios-grid {
                 grid-template-columns: 1fr;
             }
 
-            .form-grid {
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .form-row, .form-row-3 {
                 grid-template-columns: 1fr;
             }
 
-            .edit-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+            .modal-tab {
+                padding: 0.625rem 0.75rem;
+                font-size: 0.75rem;
             }
-
-            .section-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .button, .back-button {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .header h2 {
-                font-size: 1.35rem;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
         }
     </style>
 </head>
 <body>
-    <!-- Hamburger Menu -->
-    <button class="hamburger" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <!-- Collapse/Expand Toggle Button -->
-        <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-        </button>
-
+    <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo">Enrollment Hub</div>
-            <div class="sidebar-subtitle">One Music Schools</div>
+            <div class="logo-section">
+                <div class="logo-icon">EH</div>
+                <span class="logo-text">Admin<span class="admin-badge">Admin</span></span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn">
+                <span class="toggle-icon">‹</span>
+            </button>
         </div>
 
         <nav class="sidebar-nav">
-            <a href="dashboard.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                <span class="sidebar-link-text">Dashboard</span>
+            <a href="admindashboard.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                <span class="nav-text">Dashboard</span>
             </a>
-            <a href="quicklinks.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                <span class="sidebar-link-text">Quick Links</span>
+            
+            <a href="adminquicklinks.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-link"></i></span>
+                <span class="nav-text">Quick Links</span>
             </a>
-            <a href="snippets.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-                <span class="sidebar-link-text">Snippets</span>
+            
+            <a href="adminstudio-directory.html" class="nav-item active">
+                <span class="nav-icon"><i class="fas fa-building"></i></span>
+                <span class="nav-text">Studio Directory</span>
             </a>
-            <a href="team.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                <span class="sidebar-link-text">Team Management</span>
+            
+            <a href="adminteacher-directory.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span class="nav-text">Teacher Directory</span>
             </a>
-            <a href="studios.html" class="sidebar-link active">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span class="sidebar-link-text">Studio Directory</span>
+
+            <a href="adminsnippets.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span class="nav-text">Snippets</span>
             </a>
-            <a href="teacher.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                <span class="sidebar-link-text">Teacher Selling Points</span>
+            
+            <a href="adminmap.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
+                <span class="nav-text">Map</span>
             </a>
-            <a href="programs.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                <span class="sidebar-link-text">Programs</span>
+            
+            <a href="adminprograms.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
+                <span class="nav-text">Programs</span>
             </a>
-            <a href="training.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                <span class="sidebar-link-text">Training Hub</span>
+            
+            <a href="admintraining-hub.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-book-open"></i></span>
+                <span class="nav-text">Training Hub</span>
             </a>
-            <a href="policies.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                <span class="sidebar-link-text">Policies</span>
+            
+            <a href="adminpolicies.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-file-alt"></i></span>
+                <span class="nav-text">Policies</span>
             </a>
-            <a href="calendar.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span class="sidebar-link-text">Calendar</span>
+            
+            <a href="adminprofiles.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-user"></i></span>
+                <span class="nav-text">Profiles</span>
+            </a>
+            
+            <a href="admindirectors.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
+                <span class="nav-text">DirectorsPage</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <button class="logout-btn" onclick="logout()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                <span class="logout-btn-text">Logout</span>
+            <button id="logoutBtn" class="nav-item logout-btn">
+                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span class="nav-text">Logout</span>
             </button>
         </div>
     </div>
-    
-    <div class="main-wrapper">
-        <div class="container">
-            <div id="loading" class="loading">Loading...</div>
 
-            <!-- List View -->
-            <div id="listView" class="list-view" style="display: none;">
-                <div class="header">
-                    <h1>Enrollment Hub</h1>
-                    <h2>Studio Directory</h2>
-                    <p>Manage all studio locations and information</p>
-                </div>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-                <div class="search-section">
-                    <input type="text" id="searchBar" class="search-bar" placeholder="Search by brand, state, or city..." oninput="filterStudios()">
-                </div>
-
-                <div class="section-header">
-                    <h3>Studios</h3>
-                    <button class="button" onclick="createNewStudio()">+ Add Studio</button>
-                </div>
-
-                <div id="studiosGrid" class="studios-grid"></div>
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Studio Directory Management</h1>
+                <p>Manage all studio information and details</p>
             </div>
+            <div class="page-header-actions">
+                <button class="btn btn-secondary" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                <button class="btn btn-primary" onclick="openStudioModal()">
+                    <i class="fas fa-plus"></i>
+                    Add Studio
+                </button>
+            </div>
+        </div>
 
-            <!-- Edit View -->
-            <div id="editView" class="edit-page">
-                <div class="edit-header">
-                    <button class="back-button" onclick="backToList()">← Back to Studios</button>
-                    <h2 id="editTitle" style="font-size: 2rem; font-weight: 700; color: #1a1a1a;">Edit Studio</h2>
-                </div>
+        <div class="search-section">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="studioSearch" class="search-input" placeholder="Search studios by name, city, or state...">
+            </div>
+        </div>
 
-                <!-- Section 1: Basic Information -->
-                <div class="edit-section">
-                    <h3 class="section-title">Basic Information</h3>
-                    <div class="form-grid">
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
+            Loading...
+        </div>
+
+        <div id="content" class="studios-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-building"></i>
+                    Studios
+                </h2>
+                <span id="studioCount" style="color: var(--text-secondary); font-size: 0.875rem;"></span>
+            </div>
+            <div id="studiosGrid" class="studios-grid"></div>
+        </div>
+    </main>
+
+    <!-- Studio Modal -->
+    <div id="studioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="studioModalTitle">Add Studio</h3>
+                <button class="modal-close" onclick="closeStudioModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="studioForm">
+                    <input type="hidden" id="studioId">
+                    
+                    <div class="modal-tabs">
+                        <button type="button" class="modal-tab active" data-modal-tab="basic">Basic Info</button>
+                        <button type="button" class="modal-tab" data-modal-tab="contact">Contact</button>
+                        <button type="button" class="modal-tab" data-modal-tab="pricing">Pricing</button>
+                        <button type="button" class="modal-tab" data-modal-tab="programs">Programs</button>
+                        <button type="button" class="modal-tab" data-modal-tab="rentals">Rentals</button>
+                        <button type="button" class="modal-tab" data-modal-tab="instruments">Instruments</button>
+                        <button type="button" class="modal-tab" data-modal-tab="links">Links</button>
+                    </div>
+
+                    <!-- Basic Info Tab -->
+                    <div id="basicTab" class="modal-tab-content active">
                         <div class="form-group">
-                            <label class="form-label">Brand</label>
-                            <input type="text" id="brand" class="form-input" placeholder="e.g., Main Music School">
+                            <label class="form-label">Studio Brand Name *</label>
+                            <input type="text" class="form-input" id="studioBrand" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-input" id="studioState" placeholder="e.g., California">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-input" id="studioCity" placeholder="e.g., Los Angeles">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">State</label>
-                            <input type="text" id="state" class="form-input" placeholder="e.g., Utah">
+                            <label class="form-label">Location / Address</label>
+                            <input type="text" class="form-input" id="studioAddress" placeholder="Full address">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">City</label>
-                            <input type="text" id="city" class="form-input" placeholder="e.g., Salt Lake City">
+                            <label class="form-label">Parking Details</label>
+                            <input type="text" class="form-input" id="studioParking" placeholder="e.g., Free street parking available">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Time Zone</label>
-                            <input type="text" id="timeZone" class="form-input" placeholder="e.g., America/Denver">
+                            <label class="form-label">General Notes / Description</label>
+                            <textarea class="form-textarea" id="studioDescription" placeholder="Studio description..."></textarea>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Address</label>
-                        <input type="text" id="address" class="form-input" placeholder="Full studio address">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" id="phoneNumber" class="form-input" placeholder="(555) 123-4567">
-                    </div>
-                </div>
 
-                <!-- Section 2: Key People -->
-                <div class="edit-section">
-                    <h3 class="section-title">Key People</h3>
-                    <div class="form-grid">
+                    <!-- Contact Tab -->
+                    <div id="contactTab" class="modal-tab-content">
                         <div class="form-group">
-                            <label class="form-label">Studio Director Name</label>
-                            <input type="text" id="directorName" class="form-input" placeholder="Director name">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" class="form-input" id="studioPhone" placeholder="(555) 555-5555">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Director Name</label>
+                                <input type="text" class="form-input" id="studioDirectorName" placeholder="Director's name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Director Email</label>
+                                <input type="email" class="form-input" id="studioDirectorEmail" placeholder="director@studio.com">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Admin Name</label>
+                                <input type="text" class="form-input" id="studioAdminName" placeholder="Admin's name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Admin Email</label>
+                                <input type="email" class="form-input" id="studioAdminEmail" placeholder="admin@studio.com">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Director Email</label>
-                            <input type="email" id="directorEmail" class="form-input" placeholder="director@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Admin Name</label>
-                            <input type="text" id="adminName" class="form-input" placeholder="Admin name">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Admin Email</label>
-                            <input type="email" id="adminEmail" class="form-input" placeholder="admin@example.com">
+                            <label class="form-label">Scheduling Link</label>
+                            <input type="url" class="form-input" id="studioSchedulingLink" placeholder="https://calendly.com/...">
                         </div>
                     </div>
-                </div>
 
-                <!-- Section 3: Pricing -->
-                <div class="edit-section">
-                    <h3 class="section-title">Pricing</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">30-Min Lesson (Monthly Rate)</label>
-                            <input type="text" id="monthlyRate" class="form-input" placeholder="$30">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">45-Min Lesson</label>
-                            <input type="text" id="price45" class="form-input" placeholder="$45">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">60-Min Lesson</label>
-                            <input type="text" id="price60" class="form-input" placeholder="$60">
+                    <!-- Pricing Tab -->
+                    <div id="pricingTab" class="modal-tab-content">
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label class="form-label">Monthly Rate (30-Min)</label>
+                                <input type="text" class="form-input" id="studioPrice30" placeholder="$0.00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">45-Min Price</label>
+                                <input type="text" class="form-input" id="studioPrice45" placeholder="$0.00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">60-Min Price</label>
+                                <input type="text" class="form-input" id="studioPrice60" placeholder="$0.00">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Annual Fee</label>
-                            <input type="text" id="annualFee" class="form-input" placeholder="$50">
+                            <input type="text" class="form-input" id="studioAnnualFee" placeholder="$0.00">
                         </div>
                     </div>
-                </div>
 
-                <!-- Section 4: Instruments -->
-                <div class="edit-section">
-                    <h3 class="section-title">Instruments Offered</h3>
-                    <div id="instrumentsList"></div>
-                    <button class="add-item-btn" onclick="addInstrument()">+ Add Instrument</button>
-                </div>
-
-                <!-- Section 5: Programs -->
-                <div class="edit-section">
-                    <h3 class="section-title">Programs</h3>
-                    <div class="toggle-container">
-                        <div id="programsToggle" class="toggle-switch" onclick="togglePrograms()">
-                            <div class="toggle-slider"></div>
+                    <!-- Programs Tab -->
+                    <div id="programsTab" class="modal-tab-content">
+                        <div class="toggle-group">
+                            <span class="toggle-label">Programs Available</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="studioPrograms">
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
-                        <span class="toggle-label">Programs Available</span>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Toggle on if this studio offers programs.
+                        </p>
                     </div>
-                    <div id="programsSection" style="display: none;">
-                        <div id="programsList"></div>
-                        <button class="add-item-btn" onclick="addProgram()">+ Add Program</button>
-                    </div>
-                </div>
 
-                <!-- Section 6: Practical Information -->
-                <div class="edit-section">
-                    <h3 class="section-title">Practical Information</h3>
-                    <div class="form-group">
-                        <label class="form-label">Parking Instructions</label>
-                        <textarea id="parking" class="form-textarea" placeholder="Parking information..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Instrument Rentals - Instructions</label>
-                        <textarea id="rentalInfo" class="form-textarea" placeholder="Rental information..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Instrument Rentals - Link (Optional)</label>
-                        <input type="text" id="rentalLink" class="form-input" placeholder="https://...">
-                    </div>
-                </div>
-
-                <!-- Section 7: Quick Links -->
-                <div class="edit-section">
-                    <h3 class="section-title">Quick Links</h3>
-                    <div id="linksList"></div>
-                    <button class="add-item-btn" onclick="addLink()">+ Add Link</button>
-                </div>
-
-                <!-- Section 8: Notes & Custom Sections -->
-                <div class="edit-section">
-                    <h3 class="section-title">Notes & Custom Sections</h3>
-                    <div class="form-group">
-                        <label class="form-label">General Notes</label>
-                        <div class="rich-text-toolbar">
-                            <button class="toolbar-btn" onclick="formatGeneralNotes('bold')" type="button"><b>B</b></button>
-                            <button class="toolbar-btn" onclick="formatGeneralNotes('italic')" type="button"><i>I</i></button>
+                    <!-- Rentals Tab -->
+                    <div id="rentalsTab" class="modal-tab-content">
+                        <div class="form-group">
+                            <label class="form-label">Rental Information</label>
+                            <textarea class="form-textarea" id="studioRentalInfo" placeholder="e.g., Instruments available for rent monthly"></textarea>
                         </div>
-                        <div id="generalNotes" class="rich-text-editor" contenteditable="true" data-placeholder="General notes about this studio..."></div>
+                        <div class="form-group">
+                            <label class="form-label">Rental Link</label>
+                            <input type="url" class="form-input" id="studioRentalLink" placeholder="https://...">
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Leave rental info empty if this studio does not offer rentals.
+                        </p>
                     </div>
-                    <h4 style="font-size: 1.1rem; font-weight: 600; margin: 2rem 0 1rem; color: #1a1a1a;">Custom Sections</h4>
-                    <div id="sectionsList"></div>
-                    <button class="add-item-btn" onclick="addSection()">+ Add Custom Section</button>
-                </div>
 
-                <!-- Save Footer -->
-                <div class="save-footer">
-                    <button class="back-button" onclick="backToList()">Cancel</button>
-                    <button class="button" style="background: #ef4444; margin-left: auto;" onclick="deleteStudio()">Delete Studio</button>
-                    <button class="button" onclick="saveStudio()">Save Studio</button>
-                </div>
+                    <!-- Instruments Tab -->
+                    <div id="instrumentsTab" class="modal-tab-content">
+                        <div class="form-label" style="margin-bottom: 0.75rem;">Instruments Offered</div>
+                        <div id="instrumentsContainer" class="instruments-container"></div>
+                        <div class="add-instrument-row">
+                            <input type="text" id="newInstrument" placeholder="Add instrument (e.g., Piano, Guitar)">
+                            <button type="button" class="btn btn-primary btn-small" onclick="addInstrument()">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Links Tab -->
+                    <div id="linksTab" class="modal-tab-content">
+                        <div class="dynamic-list">
+                            <div class="dynamic-list-header">
+                                <span class="dynamic-list-title">Custom Links</span>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="addLink()">
+                                    <i class="fas fa-plus"></i> Add Link
+                                </button>
+                            </div>
+                            <div id="linksList" class="dynamic-list-items"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeStudioModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveStudio()">
+                    <i class="fas fa-save"></i>
+                    Save Studio
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span class="toast-message"></span>
+    </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
+    <script>
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
         
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        let supabaseClient;
         let studios = [];
-        let instruments = [];
-        let programs = [];
-        let links = [];
-        let sections = [];
-        let currentStudioId = null;
+        let currentInstruments = []; // Array of {id, name, isNew}
+        let currentLinks = []; // Array of {id, header, subheader, url, isNew}
+        let deletedInstrumentIds = [];
+        let deletedLinkIds = [];
 
-        // Sidebar Functions
-        window.toggleSidebar = function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            setupSidebar();
+            setupModalTabs();
+            setupSearch();
+            setupInstrumentInput();
+            loadStudios();
+        });
+
+        function setupSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                    overlay.classList.add('active');
+                } else {
+                    overlay.classList.remove('active');
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
         }
 
-        window.toggleSidebarCollapse = function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        function setupModalTabs() {
+            document.querySelectorAll('.modal-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetId = tab.dataset.modalTab;
+                    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.modal-tab-content').forEach(tc => tc.classList.remove('active'));
+                    document.getElementById(`${targetId}Tab`).classList.add('active');
+                });
+            });
         }
 
-        function loadSidebarState() {
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                document.getElementById('sidebar').classList.add('collapsed');
-            }
+        function setupSearch() {
+            const searchInput = document.getElementById('studioSearch');
+            let searchTimeout;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const term = e.target.value.toLowerCase().trim();
+                    filterStudios(term);
+                }, 300);
+            });
         }
 
-        window.logout = function() {
-            if (confirm('Are you sure you want to logout?')) {
-                alert('Logout functionality will be implemented with the login system');
-            }
+        function setupInstrumentInput() {
+            const input = document.getElementById('newInstrument');
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addInstrument();
+                }
+            });
         }
 
-        function showToast(message, isSuccess = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast show';
-            if (isSuccess) toast.classList.add('success');
-            setTimeout(() => toast.className = 'toast', 2000);
-        }
-
-        async function loadData() {
-            try {
-                const [studiosResult, instrumentsResult, programsResult, linksResult, sectionsResult] = await Promise.all([
-                    supabase.from('studios').select('*').order('brand'),
-                    supabase.from('studio_instruments').select('*').order('order_index'),
-                    supabase.from('studio_programs').select('*').order('order_index'),
-                    supabase.from('studio_links').select('*').order('order_index'),
-                    supabase.from('studio_sections').select('*').order('order_index')
-                ]);
-
-                if (studiosResult.error) throw studiosResult.error;
-                if (instrumentsResult.error) throw instrumentsResult.error;
-                if (programsResult.error) throw programsResult.error;
-                if (linksResult.error) throw linksResult.error;
-                if (sectionsResult.error) throw sectionsResult.error;
-
-                studios = studiosResult.data || [];
-                instruments = instrumentsResult.data || [];
-                programs = programsResult.data || [];
-                links = linksResult.data || [];
-                sections = sectionsResult.data || [];
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('listView').style.display = 'block';
-
-                renderStudios();
-            } catch (error) {
-                console.error('Error loading data:', error);
-                showToast('Error loading data', false);
-            }
-        }
-
-        function renderStudios(filtered = null) {
-            const grid = document.getElementById('studiosGrid');
-            const list = filtered || studios;
-
-            if (list.length === 0) {
-                grid.innerHTML = '<div class="empty-state"><p>No studios found</p></div>';
+        function filterStudios(term) {
+            if (!term) {
+                renderStudios(studios);
                 return;
             }
-
-            grid.innerHTML = list.map(studio => `
-                <div class="studio-card" onclick="editStudio('${studio.id}')">
-                    <div class="studio-brand">${studio.brand}</div>
-                    <div class="studio-location">${studio.city}, ${studio.state}</div>
-                    <div class="studio-director">Director: ${studio.director_name || 'Not set'}</div>
-                </div>
-            `).join('');
-        }
-
-        window.filterStudios = function() {
-            const search = document.getElementById('searchBar').value.toLowerCase();
-            if (!search) {
-                renderStudios();
-                return;
-            }
-
-            const filtered = studios.filter(s =>
-                s.brand.toLowerCase().includes(search) ||
-                (s.state || '').toLowerCase().includes(search) ||
-                (s.city || '').toLowerCase().includes(search)
+            const filtered = studios.filter(s => 
+                (s.brand || '').toLowerCase().includes(term) ||
+                (s.city || '').toLowerCase().includes(term) ||
+                (s.state || '').toLowerCase().includes(term)
             );
             renderStudios(filtered);
         }
 
-        window.createNewStudio = async function() {
+        async function loadStudios() {
             try {
-                const { data, error } = await supabase
+                // Load studios with related data
+                const { data: studiosData, error: studiosError } = await supabaseClient
                     .from('studios')
-                    .insert({
-                        brand: 'New Studio',
-                        state: '',
-                        city: '',
-                        time_zone: '',
-                        address: '',
-                        phone_number: '',
-                        director_name: '',
-                        director_email: '',
-                        admin_name: '',
-                        admin_email: '',
-                        monthly_rate: '',
-                        price_45: '',
-                        price_60: '',
-                        annual_fee: '',
-                        programs_enabled: false,
-                        parking: '',
-                        rental_info: '',
-                        rental_link: '',
-                        general_notes: ''
-                    })
-                    .select()
-                    .single();
+                    .select('*')
+                    .order('brand');
 
-                if (error) throw error;
+                if (studiosError) throw studiosError;
 
-                studios.push(data);
-                editStudio(data.id);
+                // Load instruments for all studios
+                const { data: instrumentsData, error: instrumentsError } = await supabaseClient
+                    .from('studio_instruments')
+                    .select('*')
+                    .order('order_index');
+
+                if (instrumentsError) throw instrumentsError;
+
+                // Load links for all studios
+                const { data: linksData, error: linksError } = await supabaseClient
+                    .from('studio_links')
+                    .select('*')
+                    .order('order_index');
+
+                if (linksError) throw linksError;
+
+                // Attach instruments and links to studios
+                studios = (studiosData || []).map(studio => ({
+                    ...studio,
+                    instruments: (instrumentsData || []).filter(i => i.studio_id === studio.id),
+                    custom_links: (linksData || []).filter(l => l.studio_id === studio.id)
+                }));
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                renderStudios(studios);
             } catch (error) {
-                console.error('Error creating studio:', error);
-                showToast('Error creating studio', false);
+                console.error('Error loading studios:', error);
+                showToast('Error loading studios', 'error');
             }
         }
 
-        window.editStudio = async function(id) {
-            currentStudioId = id;
-            const studio = studios.find(s => s.id === id);
+        function renderStudios(studiosList) {
+            const container = document.getElementById('studiosGrid');
+            const countEl = document.getElementById('studioCount');
+            countEl.textContent = `${studiosList.length} studio${studiosList.length !== 1 ? 's' : ''}`;
 
-            document.getElementById('editTitle').textContent = studio.brand || 'New Studio';
-            document.getElementById('brand').value = studio.brand || '';
-            document.getElementById('state').value = studio.state || '';
-            document.getElementById('city').value = studio.city || '';
-            document.getElementById('timeZone').value = studio.time_zone || '';
-            document.getElementById('address').value = studio.address || '';
-            document.getElementById('phoneNumber').value = studio.phone_number || '';
-            document.getElementById('directorName').value = studio.director_name || '';
-            document.getElementById('directorEmail').value = studio.director_email || '';
-            document.getElementById('adminName').value = studio.admin_name || '';
-            document.getElementById('adminEmail').value = studio.admin_email || '';
-            document.getElementById('monthlyRate').value = studio.monthly_rate || '';
-            document.getElementById('price45').value = studio.price_45 || '';
-            document.getElementById('price60').value = studio.price_60 || '';
-            document.getElementById('annualFee').value = studio.annual_fee || '';
-            document.getElementById('parking').value = studio.parking || '';
-            document.getElementById('rentalInfo').value = studio.rental_info || '';
-            document.getElementById('rentalLink').value = studio.rental_link || '';
-            document.getElementById('generalNotes').innerHTML = studio.general_notes || '';
-
-            const programsToggle = document.getElementById('programsToggle');
-            if (studio.programs_enabled) {
-                programsToggle.classList.add('active');
-                document.getElementById('programsSection').style.display = 'block';
-            } else {
-                programsToggle.classList.remove('active');
-                document.getElementById('programsSection').style.display = 'none';
-            }
-
-            const studioInstruments = instruments.filter(i => i.studio_id === id);
-            const studioPrograms = programs.filter(p => p.studio_id === id);
-            const studioLinks = links.filter(l => l.studio_id === id);
-            const studioSections = sections.filter(s => s.studio_id === id);
-
-            renderInstruments(studioInstruments);
-            renderPrograms(studioPrograms);
-            renderLinks(studioLinks);
-            renderSections(studioSections);
-
-            document.getElementById('listView').style.display = 'none';
-            document.getElementById('editView').classList.add('active');
-            window.scrollTo(0, 0);
-        }
-
-        window.backToList = function() {
-            document.getElementById('editView').classList.remove('active');
-            document.getElementById('listView').style.display = 'block';
-            loadData();
-            window.scrollTo(0, 0);
-        }
-
-        window.saveStudio = async function() {
-            const studio = studios.find(s => s.id === currentStudioId);
-            
-            const studioData = {
-                brand: document.getElementById('brand').value,
-                state: document.getElementById('state').value,
-                city: document.getElementById('city').value,
-                time_zone: document.getElementById('timeZone').value,
-                address: document.getElementById('address').value,
-                phone_number: document.getElementById('phoneNumber').value,
-                director_name: document.getElementById('directorName').value,
-                director_email: document.getElementById('directorEmail').value,
-                admin_name: document.getElementById('adminName').value,
-                admin_email: document.getElementById('adminEmail').value,
-                monthly_rate: document.getElementById('monthlyRate').value,
-                price_45: document.getElementById('price45').value,
-                price_60: document.getElementById('price60').value,
-                annual_fee: document.getElementById('annualFee').value,
-                parking: document.getElementById('parking').value,
-                rental_info: document.getElementById('rentalInfo').value,
-                rental_link: document.getElementById('rentalLink').value,
-                general_notes: document.getElementById('generalNotes').innerHTML,
-                programs_enabled: studio.programs_enabled
-            };
-
-            try {
-                const { error } = await supabase
-                    .from('studios')
-                    .update(studioData)
-                    .eq('id', currentStudioId);
-
-                if (error) throw error;
-
-                Object.assign(studio, studioData);
-                showToast('Studio saved!', true);
-                backToList();
-            } catch (error) {
-                console.error('Error saving studio:', error);
-                showToast('Error saving studio', false);
-            }
-        }
-
-        window.deleteStudio = async function() {
-            if (!confirm('Are you sure you want to delete this studio? This will also delete all associated instruments, programs, links, and sections. This cannot be undone.')) {
+            if (studiosList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-building"></i>
+                        <p>No studios found</p>
+                        <button class="btn btn-primary" onclick="openStudioModal()">
+                            <i class="fas fa-plus"></i> Add Your First Studio
+                        </button>
+                    </div>
+                `;
                 return;
             }
 
-            try {
-                const { error } = await supabase
-                    .from('studios')
-                    .delete()
-                    .eq('id', currentStudioId);
-
-                if (error) throw error;
-
-                studios = studios.filter(s => s.id !== currentStudioId);
-                instruments = instruments.filter(i => i.studio_id !== currentStudioId);
-                programs = programs.filter(p => p.studio_id !== currentStudioId);
-                links = links.filter(l => l.studio_id !== currentStudioId);
-                sections = sections.filter(s => s.studio_id !== currentStudioId);
-
-                showToast('Studio deleted', true);
-                backToList();
-            } catch (error) {
-                console.error('Error deleting studio:', error);
-                showToast('Error deleting studio', false);
-            }
+            container.innerHTML = studiosList.map(studio => {
+                const instruments = studio.instruments || [];
+                return `
+                    <div class="studio-card">
+                        <div class="studio-card-header">
+                            <div class="studio-card-brand">${studio.brand || 'Unnamed Studio'}</div>
+                            <div class="studio-card-location">
+                                <i class="fas fa-map-marker-alt" style="margin-right: 0.25rem;"></i>
+                                ${studio.city || ''}${studio.city && studio.state ? ', ' : ''}${studio.state || ''}
+                            </div>
+                        </div>
+                        <div class="studio-card-body">
+                            ${studio.phone_number ? `<div class="studio-info-row"><i class="fas fa-phone"></i><span>${studio.phone_number}</span></div>` : ''}
+                            ${studio.director_name ? `<div class="studio-info-row"><i class="fas fa-user"></i><span>${studio.director_name}</span></div>` : ''}
+                            ${studio.monthly_rate || studio.price_45 || studio.price_60 ? `
+                                <div class="studio-info-row">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>${[studio.monthly_rate, studio.price_45, studio.price_60].filter(Boolean).join(' / ')}</span>
+                                </div>
+                            ` : ''}
+                            <div class="studio-badges">
+                                ${studio.programs_enabled ? '<span class="studio-badge badge-success"><i class="fas fa-check" style="margin-right: 0.25rem;"></i>Programs</span>' : ''}
+                                ${studio.rental_info ? '<span class="studio-badge badge-info"><i class="fas fa-guitar" style="margin-right: 0.25rem;"></i>Rentals</span>' : ''}
+                                ${instruments.length > 0 ? `<span class="studio-badge badge-warning">${instruments.length} instruments</span>` : ''}
+                            </div>
+                            <div class="studio-card-actions">
+                                <button class="btn btn-secondary btn-small" onclick='editStudio("${studio.id}")' style="flex: 1;">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteStudio('${studio.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        window.togglePrograms = async function() {
-            const toggle = document.getElementById('programsToggle');
-            const section = document.getElementById('programsSection');
-            const studio = studios.find(s => s.id === currentStudioId);
+        function openStudioModal() {
+            document.getElementById('studioModalTitle').textContent = 'Add Studio';
+            document.getElementById('studioForm').reset();
+            document.getElementById('studioId').value = '';
+            document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+            document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
+            currentInstruments = [];
+            currentLinks = [];
+            deletedInstrumentIds = [];
+            deletedLinkIds = [];
+            renderInstruments();
+            renderLinks();
+            document.getElementById('studioModal').classList.add('active');
+        }
 
-            studio.programs_enabled = !studio.programs_enabled;
+        function editStudio(studioId) {
+            const studio = studios.find(s => s.id === studioId);
+            if (!studio) {
+                showToast('Studio not found', 'error');
+                return;
+            }
+
+            document.getElementById('studioModalTitle').textContent = 'Edit Studio';
+            document.getElementById('studioId').value = studio.id;
+            document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+            document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
             
-            try {
-                const { error } = await supabase
-                    .from('studios')
-                    .update({ programs_enabled: studio.programs_enabled })
-                    .eq('id', currentStudioId);
+            // Basic Info
+            document.getElementById('studioBrand').value = studio.brand || '';
+            document.getElementById('studioState').value = studio.state || '';
+            document.getElementById('studioCity').value = studio.city || '';
+            document.getElementById('studioAddress').value = studio.address || '';
+            document.getElementById('studioParking').value = studio.parking || '';
+            document.getElementById('studioDescription').value = studio.general_notes || '';
+            
+            // Contact
+            document.getElementById('studioPhone').value = studio.phone_number || '';
+            document.getElementById('studioDirectorName').value = studio.director_name || '';
+            document.getElementById('studioDirectorEmail').value = studio.director_email || '';
+            document.getElementById('studioAdminName').value = studio.admin_name || '';
+            document.getElementById('studioAdminEmail').value = studio.admin_email || '';
+            document.getElementById('studioSchedulingLink').value = studio.scheduling_link || '';
+            
+            // Pricing
+            document.getElementById('studioPrice30').value = studio.monthly_rate || '';
+            document.getElementById('studioPrice45').value = studio.price_45 || '';
+            document.getElementById('studioPrice60').value = studio.price_60 || '';
+            document.getElementById('studioAnnualFee').value = studio.annual_fee || '';
+            
+            // Programs & Rentals
+            document.getElementById('studioPrograms').checked = studio.programs_enabled || false;
+            document.getElementById('studioRentalInfo').value = studio.rental_info || '';
+            document.getElementById('studioRentalLink').value = studio.rental_link || '';
+            
+            // Instruments (from studio_instruments table)
+            currentInstruments = (studio.instruments || []).map(i => ({
+                id: i.id,
+                name: i.name,
+                order_index: i.order_index,
+                isNew: false
+            }));
+            deletedInstrumentIds = [];
+            renderInstruments();
+            
+            // Links (from studio_links table)
+            currentLinks = (studio.custom_links || []).map(l => ({
+                id: l.id,
+                header: l.header,
+                subheader: l.subheader || '',
+                url: l.url,
+                order_index: l.order_index,
+                isNew: false
+            }));
+            deletedLinkIds = [];
+            renderLinks();
+            
+            document.getElementById('studioModal').classList.add('active');
+        }
 
-                if (error) throw error;
+        function closeStudioModal() {
+            document.getElementById('studioModal').classList.remove('active');
+        }
 
-                if (studio.programs_enabled) {
-                    toggle.classList.add('active');
-                    section.style.display = 'block';
-                } else {
-                    toggle.classList.remove('active');
-                    section.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error updating programs toggle:', error);
-                showToast('Error updating programs', false);
+        // INSTRUMENTS
+        function addInstrument() {
+            const input = document.getElementById('newInstrument');
+            const value = input.value.trim();
+            if (value && !currentInstruments.some(i => i.name === value)) {
+                currentInstruments.push({
+                    id: null,
+                    name: value,
+                    order_index: currentInstruments.length,
+                    isNew: true
+                });
+                renderInstruments();
+                input.value = '';
             }
         }
 
-        // Instruments Functions
-        function renderInstruments(studioInstruments) {
-            const container = document.getElementById('instrumentsList');
-            container.innerHTML = studioInstruments.map(inst => `
-                <div class="list-item">
-                    <div class="list-item-header">
-                        <input type="text" class="form-input" value="${inst.name}" onchange="updateInstrument('${inst.id}', this.value)" placeholder="Instrument name">
-                        <button class="remove-btn" onclick="removeInstrument('${inst.id}')">Remove</button>
-                    </div>
-                </div>
+        function removeInstrument(index) {
+            const instrument = currentInstruments[index];
+            if (instrument.id && !instrument.isNew) {
+                deletedInstrumentIds.push(instrument.id);
+            }
+            currentInstruments.splice(index, 1);
+            renderInstruments();
+        }
+
+        function renderInstruments() {
+            const container = document.getElementById('instrumentsContainer');
+            if (currentInstruments.length === 0) {
+                container.innerHTML = '<span style="color: var(--text-light); font-size: 0.875rem;">No instruments added yet</span>';
+                return;
+            }
+            container.innerHTML = currentInstruments.map((instrument, index) => `
+                <span class="instrument-tag">
+                    ${instrument.name}
+                    <button type="button" onclick="removeInstrument(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </span>
             `).join('');
         }
 
-        window.addInstrument = async function() {
-            try {
-                const studioInstruments = instruments.filter(i => i.studio_id === currentStudioId);
-                const maxOrder = studioInstruments.length > 0 
-                    ? Math.max(...studioInstruments.map(i => i.order_index)) 
-                    : 0;
+        // LINKS
+        function addLink() {
+            currentLinks.push({
+                id: null,
+                header: '',
+                subheader: '',
+                url: '',
+                order_index: currentLinks.length,
+                isNew: true
+            });
+            renderLinks();
+        }
 
-                const { data, error } = await supabase
-                    .from('studio_instruments')
-                    .insert({
-                        studio_id: currentStudioId,
-                        name: '',
-                        order_index: maxOrder + 1
-                    })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                instruments.push(data);
-                renderInstruments(instruments.filter(i => i.studio_id === currentStudioId));
-            } catch (error) {
-                console.error('Error adding instrument:', error);
-                showToast('Error adding instrument', false);
+        function removeLink(index) {
+            const link = currentLinks[index];
+            if (link.id && !link.isNew) {
+                deletedLinkIds.push(link.id);
             }
+            currentLinks.splice(index, 1);
+            renderLinks();
         }
 
-        window.updateInstrument = async function(id, value) {
-            try {
-                const { error } = await supabase
-                    .from('studio_instruments')
-                    .update({ name: value })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                const instrument = instruments.find(i => i.id === id);
-                instrument.name = value;
-            } catch (error) {
-                console.error('Error updating instrument:', error);
-            }
+        function updateLink(index, field, value) {
+            currentLinks[index][field] = value;
         }
 
-        window.removeInstrument = async function(id) {
-            try {
-                const { error } = await supabase
-                    .from('studio_instruments')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                instruments = instruments.filter(i => i.id !== id);
-                renderInstruments(instruments.filter(i => i.studio_id === currentStudioId));
-                showToast('Instrument removed', true);
-            } catch (error) {
-                console.error('Error removing instrument:', error);
-                showToast('Error removing instrument', false);
-            }
-        }
-
-        // Programs Functions
-        function renderPrograms(studioPrograms) {
-            const container = document.getElementById('programsList');
-            container.innerHTML = studioPrograms.map((prog, localIndex) => `
-                <div class="list-item">
-                    <div class="list-item-header">
-                        <div style="flex: 1;">
-                            <div class="form-group">
-                                <label class="form-label">Program Name</label>
-                                <input type="text" class="form-input" value="${prog.name}" onchange="updateProgram('${prog.id}', 'name', this.value)" placeholder="Program name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <div class="rich-text-toolbar">
-                                    <button class="toolbar-btn" onclick="formatProgramDesc('${prog.id}', 'bold')" type="button"><b>B</b></button>
-                                    <button class="toolbar-btn" onclick="formatProgramDesc('${prog.id}', 'italic')" type="button"><i>I</i></button>
-                                </div>
-                                <div id="programDesc${prog.id}" class="rich-text-editor" contenteditable="true" data-placeholder="Short description..." oninput="updateProgram('${prog.id}', 'description', this.innerHTML)">${prog.description || ''}</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Link</label>
-                                <input type="text" class="form-input" value="${prog.link || ''}" onchange="updateProgram('${prog.id}', 'link', this.value)" placeholder="https://...">
-                            </div>
-                        </div>
-                        <button class="remove-btn" onclick="removeProgram('${prog.id}')">Remove</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.addProgram = async function() {
-            try {
-                const studioPrograms = programs.filter(p => p.studio_id === currentStudioId);
-                const maxOrder = studioPrograms.length > 0 
-                    ? Math.max(...studioPrograms.map(p => p.order_index)) 
-                    : 0;
-
-                const { data, error } = await supabase
-                    .from('studio_programs')
-                    .insert({
-                        studio_id: currentStudioId,
-                        name: '',
-                        description: '',
-                        link: '',
-                        order_index: maxOrder + 1
-                    })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                programs.push(data);
-                renderPrograms(programs.filter(p => p.studio_id === currentStudioId));
-            } catch (error) {
-                console.error('Error adding program:', error);
-                showToast('Error adding program', false);
-            }
-        }
-
-        window.updateProgram = async function(id, field, value) {
-            try {
-                const { error } = await supabase
-                    .from('studio_programs')
-                    .update({ [field]: value })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                const program = programs.find(p => p.id === id);
-                program[field] = value;
-            } catch (error) {
-                console.error('Error updating program:', error);
-            }
-        }
-
-        window.removeProgram = async function(id) {
-            try {
-                const { error } = await supabase
-                    .from('studio_programs')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                programs = programs.filter(p => p.id !== id);
-                renderPrograms(programs.filter(p => p.studio_id === currentStudioId));
-                showToast('Program removed', true);
-            } catch (error) {
-                console.error('Error removing program:', error);
-                showToast('Error removing program', false);
-            }
-        }
-
-        // Links Functions
-        function renderLinks(studioLinks) {
+        function renderLinks() {
             const container = document.getElementById('linksList');
-            container.innerHTML = studioLinks.map(link => `
-                <div class="list-item">
-                    <div class="list-item-header">
-                        <div style="flex: 1;">
-                            <div class="form-group">
-                                <label class="form-label">Header</label>
-                                <input type="text" class="form-input" value="${link.header}" onchange="updateLink('${link.id}', 'header', this.value)" placeholder="Link header">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Subheader</label>
-                                <input type="text" class="form-input" value="${link.subheader || ''}" onchange="updateLink('${link.id}', 'subheader', this.value)" placeholder="Link subheader">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">URL</label>
-                                <input type="text" class="form-input" value="${link.url}" onchange="updateLink('${link.id}', 'url', this.value)" placeholder="https://...">
-                            </div>
+            if (currentLinks.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No custom links added yet</p>';
+                return;
+            }
+            container.innerHTML = currentLinks.map((link, index) => `
+                <div class="dynamic-item">
+                    <div class="dynamic-item-content">
+                        <div class="dynamic-item-row" style="margin-bottom: 0.5rem;">
+                            <input type="text" value="${link.header || ''}" placeholder="Link Title (Header)" onchange="updateLink(${index}, 'header', this.value)">
+                            <input type="text" value="${link.subheader || ''}" placeholder="Subheader (optional)" onchange="updateLink(${index}, 'subheader', this.value)">
                         </div>
-                        <button class="remove-btn" onclick="removeLink('${link.id}')">Remove</button>
+                        <input type="url" value="${link.url || ''}" placeholder="https://..." onchange="updateLink(${index}, 'url', this.value)" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 0.875rem; background: var(--gray-50);">
                     </div>
+                    <button type="button" class="remove-item-btn" onclick="removeLink(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             `).join('');
         }
 
-        window.addLink = async function() {
+        // SAVE
+        async function saveStudio() {
+            const id = document.getElementById('studioId').value;
+            
+            const studioData = {
+                brand: document.getElementById('studioBrand').value,
+                state: document.getElementById('studioState').value,
+                city: document.getElementById('studioCity').value,
+                address: document.getElementById('studioAddress').value,
+                parking: document.getElementById('studioParking').value,
+                general_notes: document.getElementById('studioDescription').value,
+                phone_number: document.getElementById('studioPhone').value,
+                director_name: document.getElementById('studioDirectorName').value,
+                director_email: document.getElementById('studioDirectorEmail').value,
+                admin_name: document.getElementById('studioAdminName').value,
+                admin_email: document.getElementById('studioAdminEmail').value,
+                scheduling_link: document.getElementById('studioSchedulingLink').value,
+                monthly_rate: document.getElementById('studioPrice30').value,
+                price_45: document.getElementById('studioPrice45').value,
+                price_60: document.getElementById('studioPrice60').value,
+                annual_fee: document.getElementById('studioAnnualFee').value,
+                programs_enabled: document.getElementById('studioPrograms').checked,
+                rental_info: document.getElementById('studioRentalInfo').value,
+                rental_link: document.getElementById('studioRentalLink').value
+            };
+
             try {
-                const studioLinks = links.filter(l => l.studio_id === currentStudioId);
-                const maxOrder = studioLinks.length > 0 
-                    ? Math.max(...studioLinks.map(l => l.order_index)) 
-                    : 0;
+                let studioId = id;
 
-                const { data, error } = await supabase
-                    .from('studio_links')
-                    .insert({
-                        studio_id: currentStudioId,
-                        header: '',
-                        subheader: '',
-                        url: '',
-                        order_index: maxOrder + 1
-                    })
-                    .select()
-                    .single();
+                // Save studio
+                if (id) {
+                    const result = await supabaseClient.from('studios').update(studioData).eq('id', id);
+                    if (result.error) throw result.error;
+                } else {
+                    const result = await supabaseClient.from('studios').insert([studioData]).select();
+                    if (result.error) throw result.error;
+                    studioId = result.data[0].id;
+                }
 
-                if (error) throw error;
+                // Delete removed instruments
+                if (deletedInstrumentIds.length > 0) {
+                    await supabaseClient.from('studio_instruments').delete().in('id', deletedInstrumentIds);
+                }
 
-                links.push(data);
-                renderLinks(links.filter(l => l.studio_id === currentStudioId));
+                // Delete removed links
+                if (deletedLinkIds.length > 0) {
+                    await supabaseClient.from('studio_links').delete().in('id', deletedLinkIds);
+                }
+
+                // Save instruments
+                for (let i = 0; i < currentInstruments.length; i++) {
+                    const inst = currentInstruments[i];
+                    if (inst.isNew) {
+                        await supabaseClient.from('studio_instruments').insert({
+                            studio_id: studioId,
+                            name: inst.name,
+                            order_index: i
+                        });
+                    } else {
+                        await supabaseClient.from('studio_instruments').update({
+                            name: inst.name,
+                            order_index: i
+                        }).eq('id', inst.id);
+                    }
+                }
+
+                // Save links
+                for (let i = 0; i < currentLinks.length; i++) {
+                    const link = currentLinks[i];
+                    if (link.isNew) {
+                        await supabaseClient.from('studio_links').insert({
+                            studio_id: studioId,
+                            header: link.header,
+                            subheader: link.subheader,
+                            url: link.url,
+                            order_index: i
+                        });
+                    } else {
+                        await supabaseClient.from('studio_links').update({
+                            header: link.header,
+                            subheader: link.subheader,
+                            url: link.url,
+                            order_index: i
+                        }).eq('id', link.id);
+                    }
+                }
+
+                showToast(id ? 'Studio updated successfully!' : 'Studio added successfully!', 'success');
+                closeStudioModal();
+                loadStudios();
             } catch (error) {
-                console.error('Error adding link:', error);
-                showToast('Error adding link', false);
+                console.error('Error saving studio:', error);
+                showToast('Error saving studio.', 'error');
             }
         }
 
-        window.updateLink = async function(id, field, value) {
+        async function deleteStudio(id) {
+            if (!confirm('Are you sure you want to delete this studio? This will also delete all associated instruments and links.')) return;
             try {
-                const { error } = await supabase
-                    .from('studio_links')
-                    .update({ [field]: value })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                const link = links.find(l => l.id === id);
-                link[field] = value;
+                const result = await supabaseClient.from('studios').delete().eq('id', id);
+                if (result.error) throw result.error;
+                showToast('Studio deleted successfully!', 'success');
+                loadStudios();
             } catch (error) {
-                console.error('Error updating link:', error);
+                console.error('Error:', error);
+                showToast('Error deleting studio.', 'error');
             }
         }
 
-        window.removeLink = async function(id) {
-            try {
-                const { error } = await supabase
-                    .from('studio_links')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                links = links.filter(l => l.id !== id);
-                renderLinks(links.filter(l => l.studio_id === currentStudioId));
-                showToast('Link removed', true);
-            } catch (error) {
-                console.error('Error removing link:', error);
-                showToast('Error removing link', false);
-            }
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toastIcon.className = type === 'success' ? 'fas fa-check-circle toast-icon' : 'fas fa-exclamation-circle toast-icon';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
-
-        // Sections Functions
-        function renderSections(studioSections) {
-            const container = document.getElementById('sectionsList');
-            container.innerHTML = studioSections.map(section => `
-                <div class="list-item">
-                    <div class="list-item-header">
-                        <div style="flex: 1;">
-                            <div class="form-group">
-                                <label class="form-label">Header</label>
-                                <input type="text" class="form-input" value="${section.header}" onchange="updateSection('${section.id}', 'header', this.value)" placeholder="Section header">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Subheader</label>
-                                <input type="text" class="form-input" value="${section.subheader || ''}" onchange="updateSection('${section.id}', 'subheader', this.value)" placeholder="Section subheader">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Notes</label>
-                                <div class="rich-text-toolbar">
-                                    <button class="toolbar-btn" onclick="formatSectionNotes('${section.id}', 'bold')" type="button"><b>B</b></button>
-                                    <button class="toolbar-btn" onclick="formatSectionNotes('${section.id}', 'italic')" type="button"><i>I</i></button>
-                                </div>
-                                <div id="sectionNotes${section.id}" class="rich-text-editor" contenteditable="true" data-placeholder="Section notes..." oninput="updateSection('${section.id}', 'notes', this.innerHTML)">${section.notes || ''}</div>
-                            </div>
-                        </div>
-                        <button class="remove-btn" onclick="removeSection('${section.id}')">Remove</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.addSection = async function() {
-            try {
-                const studioSections = sections.filter(s => s.studio_id === currentStudioId);
-                const maxOrder = studioSections.length > 0 
-                    ? Math.max(...studioSections.map(s => s.order_index)) 
-                    : 0;
-
-                const { data, error } = await supabase
-                    .from('studio_sections')
-                    .insert({
-                        studio_id: currentStudioId,
-                        header: '',
-                        subheader: '',
-                        notes: '',
-                        order_index: maxOrder + 1
-                    })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                sections.push(data);
-                renderSections(sections.filter(s => s.studio_id === currentStudioId));
-            } catch (error) {
-                console.error('Error adding section:', error);
-                showToast('Error adding section', false);
-            }
-        }
-
-        window.updateSection = async function(id, field, value) {
-            try {
-                const { error } = await supabase
-                    .from('studio_sections')
-                    .update({ [field]: value })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                const section = sections.find(s => s.id === id);
-                section[field] = value;
-            } catch (error) {
-                console.error('Error updating section:', error);
-            }
-        }
-
-        window.removeSection = async function(id) {
-            try {
-                const { error } = await supabase
-                    .from('studio_sections')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                sections = sections.filter(s => s.id !== id);
-                renderSections(sections.filter(s => s.studio_id === currentStudioId));
-                showToast('Section removed', true);
-            } catch (error) {
-                console.error('Error removing section:', error);
-                showToast('Error removing section', false);
-            }
-        }
-
-        // Rich text formatting
-        window.formatGeneralNotes = function(command) {
-            document.getElementById('generalNotes').focus();
-            document.execCommand(command, false, null);
-        }
-
-        window.formatProgramDesc = function(id, command) {
-            const editor = document.getElementById(`programDesc${id}`);
-            editor.focus();
-            document.execCommand(command, false, null);
-        }
-
-        window.formatSectionNotes = function(id, command) {
-            const editor = document.getElementById(`sectionNotes${id}`);
-            editor.focus();
-            document.execCommand(command, false, null);
-        }
-
-        // Load sidebar state and initialize
-        loadSidebarState();
-        loadData();
     </script>
 </body>
 </html>

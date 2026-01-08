@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -913,13 +914,11 @@
                                 </div>
                                 <div class="studio-detail">
                                     <i class="fas fa-dollar-sign"></i>
-                                    <span class="studio-detail-value">${studio.monthly_rate || 'N/A'}</span>
-                                    <span>/mo</span>
+                                    <span class="studio-detail-value">${studio.display_price || 'N/A'}</span>
                                 </div>
                                 <div class="studio-detail">
                                     <i class="fas fa-calendar-check"></i>
-                                    <span class="studio-detail-value">${studio.annual_fee || 'N/A'}</span>
-                                    <span>/yr</span>
+                                    <span class="studio-detail-value">${studio.display_annual_fee || 'N/A'}</span>
                                 </div>
                             </div>
                             ${hasSchedulingLink ? 
@@ -1008,8 +1007,8 @@
                     return (
                         (studio.brand || '').toLowerCase().includes(searchTerm) ||
                         (studio.phone_number || '').toLowerCase().includes(searchTerm) ||
-                        (studio.monthly_rate || '').toLowerCase().includes(searchTerm) ||
-                        (studio.annual_fee || '').toLowerCase().includes(searchTerm)
+                        (studio.display_price || '').toLowerCase().includes(searchTerm) ||
+                        (studio.display_price || '').toLowerCase().includes(searchTerm)
                     );
                 });
                 renderStudios(filtered);

@@ -979,12 +979,12 @@
                         <input type="text" class="form-input" id="studioPhone">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Monthly Rate</label>
-                        <input type="text" class="form-input" id="studioMonthlyRate" placeholder="e.g., $30">
+                        <label class="form-label">Display Price</label>
+                        <input type="text" class="form-input" id="studioDisplayPrice" placeholder="e.g., $30/month">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Annual Fee</label>
-                        <input type="text" class="form-input" id="studioAnnualFee" placeholder="e.g., $50">
+                        <label class="form-label">Display Annual Fee</label>
+                        <input type="text" class="form-input" id="studioDisplayAnnualFee" placeholder="e.g., $50/year">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Scheduling Link</label>
@@ -1203,20 +1203,19 @@
                                     <span class="info-value">${studio.phone_number}</span>
                                 </div>
                             ` : ''}
-                            ${studio.monthly_rate ? `
+                            ${studio.display_price ? `
                                 <div class="info-row">
                                     <i class="fas fa-dollar-sign"></i>
-                                    <span class="info-label">Monthly:</span>
-                                    <span class="info-value">${studio.monthly_rate}</span>
+                                    <span class="info-value">${studio.display_price}</span>
                                 </div>
                             ` : ''}
-                            ${studio.annual_fee ? `
+                            ${studio.display_annual_fee ? `
                                 <div class="info-row">
                                     <i class="fas fa-calendar-check"></i>
-                                    <span class="info-label">Annual:</span>
-                                    <span class="info-value">${studio.annual_fee}</span>
+                                    <span class="info-value">${studio.display_annual_fee}</span>
                                 </div>
                             ` : ''}
+                            
                             ${studio.scheduling_link ? `
                                 <div class="info-row">
                                     <i class="fas fa-link"></i>
@@ -1369,7 +1368,7 @@
                 return (
                     (studio.brand || '').toLowerCase().includes(searchTerm) ||
                     (studio.phone_number || '').toLowerCase().includes(searchTerm) ||
-                    (studio.monthly_rate || '').toLowerCase().includes(searchTerm)
+                    (studio.display_price || '').toLowerCase().includes(searchTerm)
                 );
             });
 
@@ -1428,18 +1427,16 @@
                                     <span class="info-value">${studio.phone_number}</span>
                                 </div>
                             ` : ''}
-                            ${studio.monthly_rate ? `
+                            ${studio.display_price ? `
                                 <div class="info-row">
                                     <i class="fas fa-dollar-sign"></i>
-                                    <span class="info-label">Monthly:</span>
-                                    <span class="info-value">${studio.monthly_rate}</span>
+                                    <span class="info-value">${studio.display_price}</span>
                                 </div>
                             ` : ''}
-                            ${studio.annual_fee ? `
+                            ${studio.display_annual_fee ? `
                                 <div class="info-row">
                                     <i class="fas fa-calendar-check"></i>
-                                    <span class="info-label">Annual:</span>
-                                    <span class="info-value">${studio.annual_fee}</span>
+                                    <span class="info-value">${studio.display_annual_fee}</span>
                                 </div>
                             ` : ''}
                             ${studio.scheduling_link ? `
@@ -1543,8 +1540,8 @@
             document.getElementById('studioId').value = studio.id;
             document.getElementById('studioBrand').value = studio.brand || '';
             document.getElementById('studioPhone').value = studio.phone_number || '';
-            document.getElementById('studioMonthlyRate').value = studio.monthly_rate || '';
-            document.getElementById('studioAnnualFee').value = studio.annual_fee || '';
+            document.getElementById('studioDisplayPrice').value = studio.display_price || '';
+            document.getElementById('studioDisplayAnnualFee').value = studio.display_annual_fee || '';
             document.getElementById('studioSchedulingLink').value = studio.scheduling_link || '';
             document.getElementById('studioModal').classList.add('active');
         }
@@ -1559,8 +1556,8 @@
             const data = {
                 brand: document.getElementById('studioBrand').value,
                 phone_number: document.getElementById('studioPhone').value,
-                monthly_rate: document.getElementById('studioMonthlyRate').value,
-                annual_fee: document.getElementById('studioAnnualFee').value,
+                display_price: document.getElementById('studioDisplayPrice').value,
+                display_annual_fee: document.getElementById('studioDisplayAnnualFee').value,
                 scheduling_link: document.getElementById('studioSchedulingLink').value
             };
 

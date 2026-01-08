@@ -990,18 +990,6 @@
                         <label class="form-label">Scheduling Link</label>
                         <input type="url" class="form-input" id="studioSchedulingLink" placeholder="https://calendly.com/...">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">City</label>
-                        <input type="text" class="form-input" id="studioCity">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">State</label>
-                        <input type="text" class="form-input" id="studioState">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Address</label>
-                        <textarea class="form-textarea" id="studioAddress"></textarea>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -1235,12 +1223,6 @@
                                     <span class="info-value" style="font-size: 0.75rem; word-break: break-all;">${studio.scheduling_link}</span>
                                 </div>
                             ` : ''}
-                            ${studio.city || studio.state ? `
-                                <div class="info-row">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span class="info-value">${[studio.city, studio.state].filter(Boolean).join(', ')}</span>
-                                </div>
-                            ` : ''}
                         </div>
                         <div class="card-actions">
                             <button class="btn btn-secondary btn-small" onclick='editStudio(${JSON.stringify(studio)})' style="flex: 1;">
@@ -1387,8 +1369,6 @@
                 return (
                     (studio.brand || '').toLowerCase().includes(searchTerm) ||
                     (studio.phone_number || '').toLowerCase().includes(searchTerm) ||
-                    (studio.city || '').toLowerCase().includes(searchTerm) ||
-                    (studio.state || '').toLowerCase().includes(searchTerm) ||
                     (studio.monthly_rate || '').toLowerCase().includes(searchTerm)
                 );
             });
@@ -1466,12 +1446,6 @@
                                 <div class="info-row">
                                     <i class="fas fa-link"></i>
                                     <span class="info-value" style="font-size: 0.75rem; word-break: break-all;">${studio.scheduling_link}</span>
-                                </div>
-                            ` : ''}
-                            ${studio.city || studio.state ? `
-                                <div class="info-row">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span class="info-value">${[studio.city, studio.state].filter(Boolean).join(', ')}</span>
                                 </div>
                             ` : ''}
                         </div>
@@ -1572,9 +1546,6 @@
             document.getElementById('studioMonthlyRate').value = studio.monthly_rate || '';
             document.getElementById('studioAnnualFee').value = studio.annual_fee || '';
             document.getElementById('studioSchedulingLink').value = studio.scheduling_link || '';
-            document.getElementById('studioCity').value = studio.city || '';
-            document.getElementById('studioState').value = studio.state || '';
-            document.getElementById('studioAddress').value = studio.address || '';
             document.getElementById('studioModal').classList.add('active');
         }
 
@@ -1590,10 +1561,7 @@
                 phone_number: document.getElementById('studioPhone').value,
                 monthly_rate: document.getElementById('studioMonthlyRate').value,
                 annual_fee: document.getElementById('studioAnnualFee').value,
-                scheduling_link: document.getElementById('studioSchedulingLink').value,
-                city: document.getElementById('studioCity').value,
-                state: document.getElementById('studioState').value,
-                address: document.getElementById('studioAddress').value
+                scheduling_link: document.getElementById('studioSchedulingLink').value
             };
 
             try {

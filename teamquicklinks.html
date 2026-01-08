@@ -514,14 +514,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.625rem;
+            padding: 0.625rem 0;
             margin-top: 0.5rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 8px;
-            color: white;
+            color: var(--text-secondary);
             font-size: 0.8125rem;
-            font-weight: 600;
+            font-weight: 500;
             gap: 0.5rem;
+        }
+
+        .studio-card:hover .studio-link-indicator {
+            color: var(--primary);
         }
 
         .studio-card:hover .studio-link-indicator i {
@@ -530,19 +532,18 @@
 
         .studio-link-indicator i {
             transition: transform 0.2s ease;
+            font-size: 0.75rem;
         }
 
         .no-link-indicator {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.625rem;
+            padding: 0.625rem 0;
             margin-top: 0.5rem;
-            background: var(--gray-100);
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-size: 0.8125rem;
-            font-weight: 500;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            font-weight: 400;
         }
 
         /* Link Cards - Compact View */
@@ -922,7 +923,7 @@
                                 </div>
                             </div>
                             ${hasSchedulingLink ? 
-                                '<div class="studio-link-indicator"><i class="fas fa-calendar-alt"></i> Schedule Online <i class="fas fa-arrow-right"></i></div>' :
+                                '<div class="studio-link-indicator">View Schedule <i class="fas fa-arrow-right"></i></div>' :
                                 '<div class="no-link-indicator"><i class="fas fa-info-circle"></i> No scheduling link</div>'
                             }
                         </div>

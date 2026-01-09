@@ -990,6 +990,10 @@
                             <input type="text" class="form-input" id="studioParking" placeholder="e.g., Free street parking available">
                         </div>
                         <div class="form-group">
+                            <label class="form-label">Landmarks</label>
+                            <input type="text" class="form-input" id="studioLandmarks" placeholder="e.g., Next to Starbucks, across from the park">
+                        </div>
+                        <div class="form-group">
                             <label class="form-label">General Notes / Description</label>
                             <div class="rich-editor">
                                 <div class="rich-editor-toolbar">
@@ -1460,6 +1464,7 @@
             document.getElementById('studioCity').value = studio.city || '';
             document.getElementById('studioAddress').value = studio.address || '';
             document.getElementById('studioParking').value = studio.parking || '';
+            document.getElementById('studioLandmarks').value = studio.landmarks || '';
             document.getElementById('studioDescription').innerHTML = studio.general_notes || '';
             
             // Contact
@@ -1771,6 +1776,7 @@
                 city: document.getElementById('studioCity').value || null,
                 address: document.getElementById('studioAddress').value || null,
                 parking: document.getElementById('studioParking').value || null,
+                landmarks: document.getElementById('studioLandmarks').value || null,
                 general_notes: document.getElementById('studioDescription').innerHTML || null,
                 phone_number: document.getElementById('studioPhone').value || null,
                 director_name: document.getElementById('studioDirectorName').value || null,

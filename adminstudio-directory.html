@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,46 +8,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            /* Light Soft Blue Admin Color Scheme */
             --primary: #60A5FA;
             --primary-light: #93C5FD;
             --primary-dark: #3B82F6;
-            --secondary: #8B5CF6;
-            --secondary-light: #A78BFA;
             --accent: #38BDF8;
             --accent-light: #7DD3FC;
-            
             --bg-primary: #FFFFFF;
             --bg-secondary: #F8F9FA;
             --text-primary: #2D3748;
             --text-secondary: #718096;
             --text-light: #A0AEC0;
             --white: #FFFFFF;
-            
             --gray-50: #F8F9FA;
             --gray-100: #F1F3F5;
             --gray-200: #E9ECEF;
             --gray-300: #DEE2E6;
-            
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
-            
             --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
             --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
-            
             --sidebar-width: 260px;
             --sidebar-collapsed: 70px;
             --transition-speed: 0.3s;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -74,9 +61,7 @@
             flex-direction: column;
         }
 
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed);
-        }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-header {
             padding: 1.5rem 1.25rem;
@@ -93,10 +78,7 @@
             transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar.collapsed .logo-section {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
 
         .logo-icon {
             width: 40px;
@@ -112,12 +94,7 @@
             font-weight: 700;
         }
 
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            white-space: nowrap;
-        }
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
 
         .admin-badge {
             display: inline-block;
@@ -147,39 +124,14 @@
             flex-shrink: 0;
         }
 
-        .toggle-btn:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-300);
-        }
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
 
-        .sidebar.collapsed .toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .toggle-icon {
-            transition: transform var(--transition-speed) ease;
-            font-size: 1rem;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 1rem 0;
-        }
-
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
-            border-radius: 2px;
-        }
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
 
         .nav-item {
             display: flex;
@@ -199,10 +151,7 @@
             font-weight: 500;
         }
 
-        .nav-item:hover {
-            background: var(--gray-100);
-            color: var(--text-primary);
-        }
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
 
         .nav-item.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -210,43 +159,13 @@
             box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
 
-        .nav-icon {
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-text {
-            white-space: nowrap;
-            transition: opacity var(--transition-speed) ease;
-        }
-
-        .sidebar.collapsed .nav-text {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: 0.875rem;
-        }
-
-        .sidebar-footer {
-            padding: 0.5rem 0 1rem 0;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .logout-btn {
-            color: var(--danger) !important;
-        }
-
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.1) !important;
-        }
+        .nav-icon { font-size: 1.25rem; flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--danger) !important; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.1) !important; }
 
         .sidebar-overlay {
             position: fixed;
@@ -261,10 +180,7 @@
             transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
 
         .main-content {
             margin-left: var(--sidebar-width);
@@ -273,16 +189,16 @@
             transition: margin-left var(--transition-speed) ease;
         }
 
-        .sidebar.collapsed ~ .main-content {
-            margin-left: var(--sidebar-collapsed);
-        }
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
 
         /* Page Header */
         .page-header {
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .page-header-left h1 {
@@ -290,18 +206,10 @@
             color: var(--text-primary);
             margin-bottom: 0.5rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
         }
 
-        .page-header-left p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .page-header-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
+        .page-header-left p { color: var(--text-secondary); font-size: 1rem; }
+        .page-header-actions { display: flex; gap: 0.75rem; }
 
         /* Buttons */
         .btn {
@@ -324,10 +232,7 @@
             box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4);
-        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4); }
 
         .btn-secondary {
             background: var(--white);
@@ -335,59 +240,38 @@
             border: 1.5px solid var(--gray-200);
         }
 
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-small { padding: 0.5rem 0.875rem; font-size: 0.8125rem; }
+        .btn-icon-only { width: 40px; padding: 0.5rem; justify-content: center; }
 
-        .btn-icon-only {
-            width: 40px;
-            padding: 0.5rem;
-            justify-content: center;
-        }
-
-        .btn-icon-only i {
-            color: var(--text-secondary);
-        }
-
-        .btn-icon-only:hover i {
-            color: var(--text-primary);
-        }
-
-        .btn-small {
-            padding: 0.5rem 0.875rem;
-            font-size: 0.8125rem;
-        }
-
-        /* Search Section */
+        /* Search */
         .search-section {
             background: var(--white);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 1.25rem;
             box-shadow: var(--shadow-md);
             margin-bottom: 1.5rem;
         }
 
         .search-input-wrapper {
             position: relative;
+            display: flex;
+            align-items: center;
         }
 
         .search-input-wrapper i {
             position: absolute;
             left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
+            color: var(--text-light);
         }
 
         .search-input {
             width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
             background: var(--gray-50);
             border: 1.5px solid var(--gray-200);
             border-radius: 10px;
             font-size: 0.9375rem;
-            color: var(--text-primary);
             transition: all 0.2s ease;
         }
 
@@ -398,7 +282,7 @@
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
         }
 
-        /* Studios Grid */
+        /* Studios Section */
         .studios-section {
             background: var(--white);
             border-radius: 16px;
@@ -411,8 +295,6 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
         }
 
         .section-title {
@@ -421,101 +303,59 @@
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 0.625rem;
+            gap: 0.5rem;
         }
 
-        .section-title i {
-            color: var(--primary);
-            font-size: 1.125rem;
-        }
+        .section-title i { color: var(--primary); }
 
+        /* Studios Grid */
         .studios-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
-        /* Studio Card */
         .studio-card {
             background: var(--white);
             border: 1px solid var(--gray-200);
-            border-radius: 12px;
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
             transition: all 0.2s ease;
         }
 
         .studio-card:hover {
             border-color: var(--primary-light);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
         }
 
         .studio-card-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             padding: 1.25rem;
             color: white;
-            position: relative;
         }
 
-        .studio-card-header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 25, 50 50 T 100 50 L 100 100 L 0 100 Z' fill='white' opacity='0.1'/%3E%3C/svg%3E");
-            background-size: cover;
-            pointer-events: none;
-        }
+        .studio-card-brand { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .studio-card-location { font-size: 0.875rem; opacity: 0.9; }
 
-        .studio-card-brand {
-            font-size: 1.125rem;
-            font-weight: 700;
-            position: relative;
-            z-index: 1;
-            margin-bottom: 0.25rem;
-        }
-
-        .studio-card-location {
-            font-size: 0.875rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-
-        .studio-card-body {
-            padding: 1.25rem;
-        }
+        .studio-card-body { padding: 1.25rem; }
 
         .studio-info-row {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--gray-100);
+            gap: 0.625rem;
+            margin-bottom: 0.625rem;
             font-size: 0.875rem;
-        }
-
-        .studio-info-row:last-child {
-            border-bottom: none;
-        }
-
-        .studio-info-row i {
-            color: var(--primary);
-            width: 16px;
-            text-align: center;
-        }
-
-        .studio-info-row span {
             color: var(--text-secondary);
         }
 
+        .studio-info-row i { color: var(--primary); width: 16px; }
+
         .studio-badges {
             display: flex;
-            gap: 0.5rem;
             flex-wrap: wrap;
-            margin-top: 1rem;
+            gap: 0.5rem;
+            margin: 1rem 0;
         }
 
         .studio-badge {
@@ -525,25 +365,13 @@
             font-weight: 600;
         }
 
-        .badge-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .badge-info {
-            background: rgba(96, 165, 250, 0.1);
-            color: var(--primary);
-        }
-
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-info { background: rgba(96, 165, 250, 0.1); color: var(--primary); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
 
         .studio-card-actions {
             display: flex;
             gap: 0.5rem;
-            margin-top: 1rem;
             padding-top: 1rem;
             border-top: 1px solid var(--gray-200);
         }
@@ -563,14 +391,12 @@
             padding: 1rem;
         }
 
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
 
         .modal-content {
             background: white;
             border-radius: 16px;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -589,11 +415,7 @@
             z-index: 10;
         }
 
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
 
         .modal-close {
             width: 32px;
@@ -609,21 +431,18 @@
             transition: all 0.2s ease;
         }
 
-        .modal-close:hover {
-            background: var(--gray-200);
-        }
+        .modal-close:hover { background: var(--gray-200); }
 
-        .modal-body {
-            padding: 1.5rem;
-        }
+        .modal-body { padding: 1.5rem; }
 
         /* Modal Tabs */
         .modal-tabs {
             display: flex;
             gap: 0.25rem;
+            flex-wrap: wrap;
             border-bottom: 2px solid var(--gray-200);
             margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            padding-bottom: 0;
         }
 
         .modal-tab {
@@ -639,26 +458,18 @@
             margin-bottom: -2px;
         }
 
-        .modal-tab:hover {
-            color: var(--text-primary);
-        }
+        .modal-tab:hover { color: var(--text-primary); }
 
         .modal-tab.active {
             color: var(--primary);
             border-bottom-color: var(--primary);
         }
 
-        .modal-tab-content {
-            display: none;
-        }
+        .modal-tab-content { display: none; }
+        .modal-tab-content.active { display: block; }
 
-        .modal-tab-content.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+        /* Form Elements */
+        .form-group { margin-bottom: 1.25rem; }
 
         .form-label {
             display: block;
@@ -691,22 +502,9 @@
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
         }
 
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .form-row-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .form-row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 
         /* Toggle Switch */
         .toggle-group {
@@ -719,23 +517,10 @@
             margin-bottom: 1rem;
         }
 
-        .toggle-label {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+        .toggle-label { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
 
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 26px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .toggle-switch { position: relative; width: 50px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
 
         .toggle-slider {
             position: absolute;
@@ -765,9 +550,20 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         }
 
-        .toggle-switch input:checked + .toggle-slider:before {
-            transform: translateX(24px);
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        /* Conditional Fields */
+        .conditional-fields {
+            display: none;
+            padding: 1rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
         }
+
+        .conditional-fields.show { display: block; }
 
         /* Dynamic Lists */
         .dynamic-list {
@@ -783,31 +579,21 @@
             margin-bottom: 1rem;
         }
 
-        .dynamic-list-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+        .dynamic-list-title { font-size: 0.9375rem; font-weight: 700; color: var(--text-primary); }
 
-        .dynamic-list-items {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
+        .dynamic-list-items { display: flex; flex-direction: column; gap: 0.75rem; }
 
         .dynamic-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.75rem;
             background: var(--white);
-            padding: 0.75rem;
-            border-radius: 8px;
+            padding: 1rem;
+            border-radius: 10px;
             border: 1px solid var(--gray-200);
         }
 
-        .dynamic-item-content {
-            flex: 1;
-        }
+        .dynamic-item-content { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
 
         .dynamic-item-row {
             display: grid;
@@ -815,18 +601,24 @@
             gap: 0.5rem;
         }
 
-        .dynamic-item input {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--gray-200);
-            border-radius: 6px;
+        .dynamic-item input,
+        .dynamic-item textarea {
+            padding: 0.625rem 0.875rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
             font-size: 0.875rem;
             background: var(--gray-50);
+            font-family: inherit;
         }
 
-        .dynamic-item input:focus {
+        .dynamic-item input:focus,
+        .dynamic-item textarea:focus {
             outline: none;
             border-color: var(--primary);
+            background: var(--white);
         }
+
+        .dynamic-item textarea { min-height: 60px; resize: vertical; }
 
         .remove-item-btn {
             width: 32px;
@@ -843,10 +635,7 @@
             flex-shrink: 0;
         }
 
-        .remove-item-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
+        .remove-item-btn:hover { background: var(--danger); color: white; }
 
         /* Instruments Tags */
         .instruments-container {
@@ -886,9 +675,7 @@
             transition: all 0.2s ease;
         }
 
-        .instrument-tag button:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
+        .instrument-tag button:hover { background: rgba(255, 255, 255, 0.5); }
 
         .add-instrument-row {
             display: flex;
@@ -904,24 +691,75 @@
             font-size: 0.875rem;
         }
 
-        .add-instrument-row input:focus {
-            outline: none;
+        .add-instrument-row input:focus { outline: none; border-color: var(--primary); }
+
+        /* Rich Text Editor */
+        .rich-editor {
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--gray-50);
+            transition: all 0.2s ease;
+        }
+
+        .rich-editor:focus-within {
             border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
         }
 
-        /* Bold Toggle */
-        .bold-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-            font-size: 0.8125rem;
+        .rich-editor-toolbar {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
             color: var(--text-secondary);
+            border-radius: 6px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
         }
 
-        .bold-toggle input {
-            accent-color: var(--primary);
+        .toolbar-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .toolbar-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .rich-editor-content {
+            min-height: 100px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+            outline: none;
+        }
+
+        .rich-editor-content:empty:before {
+            content: attr(data-placeholder);
+            color: var(--text-light);
+            pointer-events: none;
+        }
+
+        .rich-editor-content.small {
+            min-height: 60px;
         }
 
         .modal-footer {
@@ -942,16 +780,8 @@
             color: var(--text-secondary);
         }
 
-        .empty-state i {
-            font-size: 3rem;
-            color: var(--gray-300);
-            margin-bottom: 0.75rem;
-        }
-
-        .empty-state p {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 0.75rem; }
+        .empty-state p { font-size: 1rem; margin-bottom: 1rem; }
 
         .loading {
             display: flex;
@@ -980,73 +810,25 @@
             transition: all 0.3s ease;
         }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .toast.success {
-            border-left: 4px solid var(--success);
-        }
-
-        .toast.error {
-            border-left: 4px solid var(--danger);
-        }
-
-        .toast-icon {
-            font-size: 1.25rem;
-        }
-
-        .toast.success .toast-icon {
-            color: var(--success);
-        }
-
-        .toast.error .toast-icon {
-            color: var(--danger);
-        }
-
-        .toast-message {
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast-icon { font-size: 1.25rem; }
+        .toast.success .toast-icon { color: var(--success); }
+        .toast.error .toast-icon { color: var(--danger); }
+        .toast-message { font-size: 0.9375rem; color: var(--text-primary); font-weight: 500; }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar:not(.collapsed) {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 1.5rem;
-            }
-            
-            .sidebar.collapsed ~ .main-content {
-                margin-left: 0;
-            }
-
-            .studios-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .page-header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .form-row, .form-row-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-tab {
-                padding: 0.625rem 0.75rem;
-                font-size: 0.75rem;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .studios-grid { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; gap: 1rem; }
+            .form-row, .form-row-3, .dynamic-item-row { grid-template-columns: 1fr; }
+            .modal-tabs { gap: 0; }
+            .modal-tab { padding: 0.625rem 0.75rem; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -1068,52 +850,42 @@
                 <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
                 <span class="nav-text">Dashboard</span>
             </a>
-            
             <a href="adminquicklinks.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-link"></i></span>
                 <span class="nav-text">Quick Links</span>
             </a>
-            
             <a href="adminstudio-directory.html" class="nav-item active">
                 <span class="nav-icon"><i class="fas fa-building"></i></span>
                 <span class="nav-text">Studio Directory</span>
             </a>
-            
             <a href="adminteacher-directory.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
                 <span class="nav-text">Teacher Directory</span>
             </a>
-
             <a href="adminsnippets.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span class="nav-icon"><i class="fas fa-clipboard"></i></span>
                 <span class="nav-text">Snippets</span>
             </a>
-            
             <a href="adminmap.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
                 <span class="nav-text">Map</span>
             </a>
-            
             <a href="adminprograms.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
                 <span class="nav-text">Programs</span>
             </a>
-            
             <a href="admintraining-hub.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-book-open"></i></span>
                 <span class="nav-text">Training Hub</span>
             </a>
-            
             <a href="adminpolicies.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-file-alt"></i></span>
                 <span class="nav-text">Policies</span>
             </a>
-            
             <a href="adminprofiles.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-user"></i></span>
                 <span class="nav-text">Profiles</span>
             </a>
-            
             <a href="admindirectors.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
                 <span class="nav-text">DirectorsPage</span>
@@ -1138,12 +910,10 @@
             </div>
             <div class="page-header-actions">
                 <button class="btn btn-secondary" onclick="location.reload()">
-                    <i class="fas fa-sync-alt"></i>
-                    Refresh
+                    <i class="fas fa-sync-alt"></i> Refresh
                 </button>
                 <button class="btn btn-primary" onclick="openStudioModal()">
-                    <i class="fas fa-plus"></i>
-                    Add Studio
+                    <i class="fas fa-plus"></i> Add Studio
                 </button>
             </div>
         </div>
@@ -1156,15 +926,13 @@
         </div>
 
         <div id="loading" class="loading">
-            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
-            Loading...
+            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading...
         </div>
 
         <div id="content" class="studios-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title">
-                    <i class="fas fa-building"></i>
-                    Studios
+                    <i class="fas fa-building"></i> Studios
                 </h2>
                 <span id="studioCount" style="color: var(--text-secondary); font-size: 0.875rem;"></span>
             </div>
@@ -1189,8 +957,10 @@
                         <button type="button" class="modal-tab active" data-modal-tab="basic">Basic Info</button>
                         <button type="button" class="modal-tab" data-modal-tab="contact">Contact</button>
                         <button type="button" class="modal-tab" data-modal-tab="pricing">Pricing</button>
-                        <button type="button" class="modal-tab" data-modal-tab="programs">Programs</button>
-                        <button type="button" class="modal-tab" data-modal-tab="rentals">Rentals</button>
+                        <button type="button" class="modal-tab" data-modal-tab="details">Details</button>
+                        <button type="button" class="modal-tab" data-modal-tab="customercare">Customer Care</button>
+                        <button type="button" class="modal-tab" data-modal-tab="scholarships">Scholarships</button>
+                        <button type="button" class="modal-tab" data-modal-tab="notes">Notes</button>
                         <button type="button" class="modal-tab" data-modal-tab="instruments">Instruments</button>
                         <button type="button" class="modal-tab" data-modal-tab="links">Links</button>
                     </div>
@@ -1221,7 +991,20 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">General Notes / Description</label>
-                            <textarea class="form-textarea" id="studioDescription" placeholder="Studio description..."></textarea>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="formatBold('studioDescription')" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatItalic('studioDescription')" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatUnderline('studioDescription')" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                <div class="rich-editor-content" id="studioDescription" contenteditable="true" data-placeholder="Studio description..."></div>
+                            </div>
                         </div>
                     </div>
 
@@ -1241,19 +1024,20 @@
                                 <input type="email" class="form-input" id="studioDirectorEmail" placeholder="director@studio.com">
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Admin Name</label>
-                                <input type="text" class="form-input" id="studioAdminName" placeholder="Admin's name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Admin Email</label>
-                                <input type="email" class="form-input" id="studioAdminEmail" placeholder="admin@studio.com">
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label class="form-label">Scheduling Link</label>
                             <input type="url" class="form-input" id="studioSchedulingLink" placeholder="https://calendly.com/...">
+                        </div>
+
+                        <!-- Multiple Admins -->
+                        <div class="dynamic-list" style="margin-top: 1.5rem;">
+                            <div class="dynamic-list-header">
+                                <span class="dynamic-list-title">Studio Admins</span>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="addAdmin()">
+                                    <i class="fas fa-plus"></i> Add Admin
+                                </button>
+                            </div>
+                            <div id="adminsList" class="dynamic-list-items"></div>
                         </div>
                     </div>
 
@@ -1279,8 +1063,9 @@
                         </div>
                     </div>
 
-                    <!-- Programs Tab -->
-                    <div id="programsTab" class="modal-tab-content">
+                    <!-- Details Tab (Programs & Rentals) -->
+                    <div id="detailsTab" class="modal-tab-content">
+                        <!-- Programs Toggle -->
                         <div class="toggle-group">
                             <span class="toggle-label">Programs Available</span>
                             <label class="toggle-switch">
@@ -1288,24 +1073,93 @@
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
-                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">
-                            Toggle on if this studio offers programs.
-                        </p>
+
+                        <!-- Instrument Rentals Toggle -->
+                        <div class="toggle-group">
+                            <span class="toggle-label">Instrument Rentals Available</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="studioRentals" onchange="toggleRentalFields()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div id="rentalFields" class="conditional-fields">
+                            <div class="form-group">
+                                <label class="form-label">Rental Notes</label>
+                                <div class="rich-editor">
+                                    <div class="rich-editor-toolbar">
+                                        <button type="button" class="toolbar-btn" onclick="formatBold('studioRentalInfo')" title="Bold">
+                                            <i class="fas fa-bold"></i>
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="formatItalic('studioRentalInfo')" title="Italic">
+                                            <i class="fas fa-italic"></i>
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="formatUnderline('studioRentalInfo')" title="Underline">
+                                            <i class="fas fa-underline"></i>
+                                        </button>
+                                    </div>
+                                    <div class="rich-editor-content small" id="studioRentalInfo" contenteditable="true" data-placeholder="e.g., Instruments available for rent monthly"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Rental Link</label>
+                                <input type="url" class="form-input" id="studioRentalLink" placeholder="https://...">
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Rentals Tab -->
-                    <div id="rentalsTab" class="modal-tab-content">
+                    <!-- Customer Care Tab -->
+                    <div id="customercareTab" class="modal-tab-content">
                         <div class="form-group">
-                            <label class="form-label">Rental Information</label>
-                            <textarea class="form-textarea" id="studioRentalInfo" placeholder="e.g., Instruments available for rent monthly"></textarea>
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-input" id="customerCareTitle" placeholder="e.g., Customer Support">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Rental Link</label>
-                            <input type="url" class="form-input" id="studioRentalLink" placeholder="https://...">
+                            <label class="form-label">Subtitle</label>
+                            <input type="text" class="form-input" id="customerCareSubtitle" placeholder="e.g., We're here to help">
                         </div>
-                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">
-                            Leave rental info empty if this studio does not offer rentals.
-                        </p>
+                        <div class="form-group">
+                            <label class="form-label">Notes</label>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="formatBold('customerCareNotes')" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatItalic('customerCareNotes')" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatUnderline('customerCareNotes')" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                <div class="rich-editor-content" id="customerCareNotes" contenteditable="true" data-placeholder="Customer care information..." style="min-height: 150px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scholarships Tab -->
+                    <div id="scholarshipsTab" class="modal-tab-content">
+                        <div class="dynamic-list">
+                            <div class="dynamic-list-header">
+                                <span class="dynamic-list-title">Scholarship Programs</span>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="addScholarship()">
+                                    <i class="fas fa-plus"></i> Add Scholarship
+                                </button>
+                            </div>
+                            <div id="scholarshipsList" class="dynamic-list-items"></div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Tab -->
+                    <div id="notesTab" class="modal-tab-content">
+                        <div class="dynamic-list">
+                            <div class="dynamic-list-header">
+                                <span class="dynamic-list-title">Studio Notes</span>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="addNote()">
+                                    <i class="fas fa-plus"></i> Add Note
+                                </button>
+                            </div>
+                            <div id="notesList" class="dynamic-list-items"></div>
+                        </div>
                     </div>
 
                     <!-- Instruments Tab -->
@@ -1337,8 +1191,7 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeStudioModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveStudio()">
-                    <i class="fas fa-save"></i>
-                    Save Studio
+                    <i class="fas fa-save"></i> Save Studio
                 </button>
             </div>
         </div>
@@ -1355,10 +1208,20 @@
         
         let supabaseClient;
         let studios = [];
-        let currentInstruments = []; // Array of {id, name, isNew}
-        let currentLinks = []; // Array of {id, header, subheader, url, isNew}
+        
+        // Current editing state
+        let currentAdmins = [];
+        let currentInstruments = [];
+        let currentLinks = [];
+        let currentScholarships = [];
+        let currentNotes = [];
+        
+        // Track deletions
+        let deletedAdminIds = [];
         let deletedInstrumentIds = [];
         let deletedLinkIds = [];
+        let deletedScholarshipIds = [];
+        let deletedNoteIds = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1445,35 +1308,24 @@
 
         async function loadStudios() {
             try {
-                // Load studios with related data
-                const { data: studiosData, error: studiosError } = await supabaseClient
-                    .from('studios')
-                    .select('*')
-                    .order('brand');
+                const [studiosRes, instrumentsRes, linksRes, adminsRes, scholarshipsRes, notesRes] = await Promise.all([
+                    supabaseClient.from('studios').select('*').order('brand'),
+                    supabaseClient.from('studio_instruments').select('*').order('order_index'),
+                    supabaseClient.from('studio_links').select('*').order('order_index'),
+                    supabaseClient.from('studio_admins').select('*').order('order_index'),
+                    supabaseClient.from('studio_scholarships').select('*').order('order_index'),
+                    supabaseClient.from('studio_notes').select('*').order('order_index')
+                ]);
 
-                if (studiosError) throw studiosError;
+                if (studiosRes.error) throw studiosRes.error;
 
-                // Load instruments for all studios
-                const { data: instrumentsData, error: instrumentsError } = await supabaseClient
-                    .from('studio_instruments')
-                    .select('*')
-                    .order('order_index');
-
-                if (instrumentsError) throw instrumentsError;
-
-                // Load links for all studios
-                const { data: linksData, error: linksError } = await supabaseClient
-                    .from('studio_links')
-                    .select('*')
-                    .order('order_index');
-
-                if (linksError) throw linksError;
-
-                // Attach instruments and links to studios
-                studios = (studiosData || []).map(studio => ({
+                studios = (studiosRes.data || []).map(studio => ({
                     ...studio,
-                    instruments: (instrumentsData || []).filter(i => i.studio_id === studio.id),
-                    custom_links: (linksData || []).filter(l => l.studio_id === studio.id)
+                    instruments: (instrumentsRes.data || []).filter(i => i.studio_id === studio.id),
+                    custom_links: (linksRes.data || []).filter(l => l.studio_id === studio.id),
+                    admins: (adminsRes.data || []).filter(a => a.studio_id === studio.id),
+                    scholarships: (scholarshipsRes.data || []).filter(s => s.studio_id === studio.id),
+                    studio_notes: (notesRes.data || []).filter(n => n.studio_id === studio.id)
                 }));
 
                 document.getElementById('loading').style.display = 'none';
@@ -1525,7 +1377,7 @@
                             ` : ''}
                             <div class="studio-badges">
                                 ${studio.programs_enabled ? '<span class="studio-badge badge-success"><i class="fas fa-check" style="margin-right: 0.25rem;"></i>Programs</span>' : ''}
-                                ${studio.rental_info ? '<span class="studio-badge badge-info"><i class="fas fa-guitar" style="margin-right: 0.25rem;"></i>Rentals</span>' : ''}
+                                ${studio.rentals_enabled ? '<span class="studio-badge badge-info"><i class="fas fa-guitar" style="margin-right: 0.25rem;"></i>Rentals</span>' : ''}
                                 ${instruments.length > 0 ? `<span class="studio-badge badge-warning">${instruments.length} instruments</span>` : ''}
                             </div>
                             <div class="studio-card-actions">
@@ -1542,18 +1394,49 @@
             }).join('');
         }
 
+        // ============ TOGGLE FUNCTIONS ============
+        function toggleRentalFields() {
+            const checkbox = document.getElementById('studioRentals');
+            const fields = document.getElementById('rentalFields');
+            fields.classList.toggle('show', checkbox.checked);
+        }
+
+        // ============ MODAL FUNCTIONS ============
         function openStudioModal() {
             document.getElementById('studioModalTitle').textContent = 'Add Studio';
             document.getElementById('studioForm').reset();
             document.getElementById('studioId').value = '';
+            
+            // Reset tabs
             document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
+            
+            // Reset conditional fields
+            document.getElementById('rentalFields').classList.remove('show');
+            
+            // Clear rich editors
+            document.getElementById('studioDescription').innerHTML = '';
+            document.getElementById('studioRentalInfo').innerHTML = '';
+            document.getElementById('customerCareNotes').innerHTML = '';
+            
+            // Reset all arrays
+            currentAdmins = [];
             currentInstruments = [];
             currentLinks = [];
+            currentScholarships = [];
+            currentNotes = [];
+            deletedAdminIds = [];
             deletedInstrumentIds = [];
             deletedLinkIds = [];
+            deletedScholarshipIds = [];
+            deletedNoteIds = [];
+            
+            renderAdmins();
             renderInstruments();
             renderLinks();
+            renderScholarships();
+            renderNotes();
+            
             document.getElementById('studioModal').classList.add('active');
         }
 
@@ -1566,6 +1449,8 @@
 
             document.getElementById('studioModalTitle').textContent = 'Edit Studio';
             document.getElementById('studioId').value = studio.id;
+            
+            // Reset tabs
             document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
             
@@ -1575,14 +1460,12 @@
             document.getElementById('studioCity').value = studio.city || '';
             document.getElementById('studioAddress').value = studio.address || '';
             document.getElementById('studioParking').value = studio.parking || '';
-            document.getElementById('studioDescription').value = studio.general_notes || '';
+            document.getElementById('studioDescription').innerHTML = studio.general_notes || '';
             
             // Contact
             document.getElementById('studioPhone').value = studio.phone_number || '';
             document.getElementById('studioDirectorName').value = studio.director_name || '';
             document.getElementById('studioDirectorEmail').value = studio.director_email || '';
-            document.getElementById('studioAdminName').value = studio.admin_name || '';
-            document.getElementById('studioAdminEmail').value = studio.admin_email || '';
             document.getElementById('studioSchedulingLink').value = studio.scheduling_link || '';
             
             // Pricing
@@ -1591,32 +1474,36 @@
             document.getElementById('studioPrice60').value = studio.price_60 || '';
             document.getElementById('studioAnnualFee').value = studio.annual_fee || '';
             
-            // Programs & Rentals
+            // Details
             document.getElementById('studioPrograms').checked = studio.programs_enabled || false;
-            document.getElementById('studioRentalInfo').value = studio.rental_info || '';
+            document.getElementById('studioRentals').checked = studio.rentals_enabled || false;
+            document.getElementById('studioRentalInfo').innerHTML = studio.rental_info || '';
             document.getElementById('studioRentalLink').value = studio.rental_link || '';
+            toggleRentalFields();
             
-            // Instruments (from studio_instruments table)
-            currentInstruments = (studio.instruments || []).map(i => ({
-                id: i.id,
-                name: i.name,
-                order_index: i.order_index,
-                isNew: false
-            }));
+            // Customer Care
+            document.getElementById('customerCareTitle').value = studio.customer_care_title || '';
+            document.getElementById('customerCareSubtitle').value = studio.customer_care_subtitle || '';
+            document.getElementById('customerCareNotes').innerHTML = studio.customer_care_notes || '';
+            
+            // Load related data
+            currentAdmins = (studio.admins || []).map(a => ({ id: a.id, name: a.name, email: a.email, isNew: false }));
+            currentInstruments = (studio.instruments || []).map(i => ({ id: i.id, name: i.instrument, isNew: false }));
+            currentLinks = (studio.custom_links || []).map(l => ({ id: l.id, header: l.header, subheader: l.subheader, url: l.url, isNew: false }));
+            currentScholarships = (studio.scholarships || []).map(s => ({ id: s.id, title: s.title, notes: s.notes, link: s.link, isNew: false }));
+            currentNotes = (studio.studio_notes || []).map(n => ({ id: n.id, title: n.title, subtitle: n.subtitle, notes: n.notes, link: n.link, isNew: false }));
+            
+            deletedAdminIds = [];
             deletedInstrumentIds = [];
-            renderInstruments();
-            
-            // Links (from studio_links table)
-            currentLinks = (studio.custom_links || []).map(l => ({
-                id: l.id,
-                header: l.header,
-                subheader: l.subheader || '',
-                url: l.url,
-                order_index: l.order_index,
-                isNew: false
-            }));
             deletedLinkIds = [];
+            deletedScholarshipIds = [];
+            deletedNoteIds = [];
+            
+            renderAdmins();
+            renderInstruments();
             renderLinks();
+            renderScholarships();
+            renderNotes();
             
             document.getElementById('studioModal').classList.add('active');
         }
@@ -1625,27 +1512,61 @@
             document.getElementById('studioModal').classList.remove('active');
         }
 
-        // INSTRUMENTS
+        // ============ ADMINS ============
+        function addAdmin() {
+            currentAdmins.push({ id: null, name: '', email: '', isNew: true });
+            renderAdmins();
+        }
+
+        function removeAdmin(index) {
+            const admin = currentAdmins[index];
+            if (admin.id) deletedAdminIds.push(admin.id);
+            currentAdmins.splice(index, 1);
+            renderAdmins();
+        }
+
+        function updateAdmin(index, field, value) {
+            currentAdmins[index][field] = value;
+        }
+
+        function renderAdmins() {
+            const container = document.getElementById('adminsList');
+            if (currentAdmins.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No admins added. Click "Add Admin" to add one.</p>';
+                return;
+            }
+            container.innerHTML = currentAdmins.map((admin, index) => `
+                <div class="dynamic-item">
+                    <div class="dynamic-item-content">
+                        <div class="dynamic-item-row">
+                            <input type="text" placeholder="Admin Name" value="${admin.name || ''}" onchange="updateAdmin(${index}, 'name', this.value)">
+                            <input type="email" placeholder="Admin Email" value="${admin.email || ''}" onchange="updateAdmin(${index}, 'email', this.value)">
+                        </div>
+                    </div>
+                    <button type="button" class="remove-item-btn" onclick="removeAdmin(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // ============ INSTRUMENTS ============
         function addInstrument() {
             const input = document.getElementById('newInstrument');
-            const value = input.value.trim();
-            if (value && !currentInstruments.some(i => i.name === value)) {
-                currentInstruments.push({
-                    id: null,
-                    name: value,
-                    order_index: currentInstruments.length,
-                    isNew: true
-                });
-                renderInstruments();
-                input.value = '';
+            const name = input.value.trim();
+            if (!name) return;
+            if (currentInstruments.some(i => i.name.toLowerCase() === name.toLowerCase())) {
+                showToast('Instrument already added', 'error');
+                return;
             }
+            currentInstruments.push({ id: null, name: name, isNew: true });
+            input.value = '';
+            renderInstruments();
         }
 
         function removeInstrument(index) {
-            const instrument = currentInstruments[index];
-            if (instrument.id && !instrument.isNew) {
-                deletedInstrumentIds.push(instrument.id);
-            }
+            const inst = currentInstruments[index];
+            if (inst.id) deletedInstrumentIds.push(inst.id);
             currentInstruments.splice(index, 1);
             renderInstruments();
         }
@@ -1653,37 +1574,26 @@
         function renderInstruments() {
             const container = document.getElementById('instrumentsContainer');
             if (currentInstruments.length === 0) {
-                container.innerHTML = '<span style="color: var(--text-light); font-size: 0.875rem;">No instruments added yet</span>';
+                container.innerHTML = '<span style="color: var(--text-light); font-size: 0.875rem;">No instruments added</span>';
                 return;
             }
-            container.innerHTML = currentInstruments.map((instrument, index) => `
+            container.innerHTML = currentInstruments.map((inst, index) => `
                 <span class="instrument-tag">
-                    ${instrument.name}
-                    <button type="button" onclick="removeInstrument(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    ${inst.name}
+                    <button type="button" onclick="removeInstrument(${index})"><i class="fas fa-times"></i></button>
                 </span>
             `).join('');
         }
 
-        // LINKS
+        // ============ LINKS ============
         function addLink() {
-            currentLinks.push({
-                id: null,
-                header: '',
-                subheader: '',
-                url: '',
-                order_index: currentLinks.length,
-                isNew: true
-            });
+            currentLinks.push({ id: null, header: '', subheader: '', url: '', isNew: true });
             renderLinks();
         }
 
         function removeLink(index) {
             const link = currentLinks[index];
-            if (link.id && !link.isNew) {
-                deletedLinkIds.push(link.id);
-            }
+            if (link.id) deletedLinkIds.push(link.id);
             currentLinks.splice(index, 1);
             renderLinks();
         }
@@ -1695,17 +1605,17 @@
         function renderLinks() {
             const container = document.getElementById('linksList');
             if (currentLinks.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No custom links added yet</p>';
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No links added. Click "Add Link" to add one.</p>';
                 return;
             }
             container.innerHTML = currentLinks.map((link, index) => `
                 <div class="dynamic-item">
                     <div class="dynamic-item-content">
-                        <div class="dynamic-item-row" style="margin-bottom: 0.5rem;">
-                            <input type="text" value="${link.header || ''}" placeholder="Link Title (Header)" onchange="updateLink(${index}, 'header', this.value)">
-                            <input type="text" value="${link.subheader || ''}" placeholder="Subheader (optional)" onchange="updateLink(${index}, 'subheader', this.value)">
+                        <div class="dynamic-item-row">
+                            <input type="text" placeholder="Link Title" value="${link.header || ''}" onchange="updateLink(${index}, 'header', this.value)">
+                            <input type="text" placeholder="Subtitle (optional)" value="${link.subheader || ''}" onchange="updateLink(${index}, 'subheader', this.value)">
                         </div>
-                        <input type="url" value="${link.url || ''}" placeholder="https://..." onchange="updateLink(${index}, 'url', this.value)" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 0.875rem; background: var(--gray-50);">
+                        <input type="url" placeholder="URL (https://...)" value="${link.url || ''}" onchange="updateLink(${index}, 'url', this.value)">
                     </div>
                     <button type="button" class="remove-item-btn" onclick="removeLink(${index})">
                         <i class="fas fa-times"></i>
@@ -1714,53 +1624,219 @@
             `).join('');
         }
 
-        // SAVE
+        // ============ RICH TEXT EDITOR ============
+        function formatBold(editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand('bold', false, null);
+        }
+
+        function formatItalic(editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand('italic', false, null);
+        }
+
+        function formatUnderline(editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand('underline', false, null);
+        }
+
+        function formatBoldDynamic(editorElement) {
+            editorElement.focus();
+            document.execCommand('bold', false, null);
+        }
+
+        function formatItalicDynamic(editorElement) {
+            editorElement.focus();
+            document.execCommand('italic', false, null);
+        }
+
+        function formatUnderlineDynamic(editorElement) {
+            editorElement.focus();
+            document.execCommand('underline', false, null);
+        }
+
+        // ============ SCHOLARSHIPS ============
+        function addScholarship() {
+            currentScholarships.push({ id: null, title: '', notes: '', link: '', isNew: true });
+            renderScholarships();
+        }
+
+        function removeScholarship(index) {
+            const scholarship = currentScholarships[index];
+            if (scholarship.id) deletedScholarshipIds.push(scholarship.id);
+            currentScholarships.splice(index, 1);
+            renderScholarships();
+        }
+
+        function updateScholarship(index, field, value) {
+            currentScholarships[index][field] = value;
+        }
+
+        function renderScholarships() {
+            const container = document.getElementById('scholarshipsList');
+            if (currentScholarships.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No scholarships added. Click "Add Scholarship" to add one.</p>';
+                return;
+            }
+            container.innerHTML = currentScholarships.map((scholarship, index) => `
+                <div class="dynamic-item">
+                    <div class="dynamic-item-content">
+                        <input type="text" placeholder="Scholarship Title" value="${scholarship.title || ''}" onchange="updateScholarship(${index}, 'title', this.value)" style="margin-bottom: 0.5rem;">
+                        <div class="rich-editor" style="margin-bottom: 0.5rem;">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onclick="formatBoldDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatItalicDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatUnderlineDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Underline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                            </div>
+                            <div class="rich-editor-content small" contenteditable="true" data-placeholder="Scholarship notes..." data-index="${index}" data-field="notes" oninput="updateScholarship(${index}, 'notes', this.innerHTML)">${scholarship.notes || ''}</div>
+                        </div>
+                        <input type="url" placeholder="Link (https://...)" value="${scholarship.link || ''}" onchange="updateScholarship(${index}, 'link', this.value)">
+                    </div>
+                    <button type="button" class="remove-item-btn" onclick="removeScholarship(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // ============ NOTES ============
+        function addNote() {
+            currentNotes.push({ id: null, title: '', subtitle: '', notes: '', link: '', isNew: true });
+            renderNotes();
+        }
+
+        function removeNote(index) {
+            const note = currentNotes[index];
+            if (note.id) deletedNoteIds.push(note.id);
+            currentNotes.splice(index, 1);
+            renderNotes();
+        }
+
+        function updateNote(index, field, value) {
+            currentNotes[index][field] = value;
+        }
+
+        function renderNotes() {
+            const container = document.getElementById('notesList');
+            if (currentNotes.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No notes added. Click "Add Note" to add one.</p>';
+                return;
+            }
+            container.innerHTML = currentNotes.map((note, index) => `
+                <div class="dynamic-item">
+                    <div class="dynamic-item-content">
+                        <div class="dynamic-item-row">
+                            <input type="text" placeholder="Title" value="${note.title || ''}" onchange="updateNote(${index}, 'title', this.value)">
+                            <input type="text" placeholder="Subtitle (optional)" value="${note.subtitle || ''}" onchange="updateNote(${index}, 'subtitle', this.value)">
+                        </div>
+                        <div class="rich-editor" style="margin: 0.5rem 0;">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onclick="formatBoldDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatItalicDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatUnderlineDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Underline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                            </div>
+                            <div class="rich-editor-content small" contenteditable="true" data-placeholder="Notes..." oninput="updateNote(${index}, 'notes', this.innerHTML)">${note.notes || ''}</div>
+                        </div>
+                        <input type="url" placeholder="Link (https://...)" value="${note.link || ''}" onchange="updateNote(${index}, 'link', this.value)">
+                    </div>
+                    <button type="button" class="remove-item-btn" onclick="removeNote(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // ============ SAVE STUDIO ============
         async function saveStudio() {
             const id = document.getElementById('studioId').value;
             
             const studioData = {
                 brand: document.getElementById('studioBrand').value,
-                state: document.getElementById('studioState').value,
-                city: document.getElementById('studioCity').value,
-                address: document.getElementById('studioAddress').value,
-                parking: document.getElementById('studioParking').value,
-                general_notes: document.getElementById('studioDescription').value,
-                phone_number: document.getElementById('studioPhone').value,
-                director_name: document.getElementById('studioDirectorName').value,
-                director_email: document.getElementById('studioDirectorEmail').value,
-                admin_name: document.getElementById('studioAdminName').value,
-                admin_email: document.getElementById('studioAdminEmail').value,
-                scheduling_link: document.getElementById('studioSchedulingLink').value,
-                monthly_rate: document.getElementById('studioPrice30').value,
-                price_45: document.getElementById('studioPrice45').value,
-                price_60: document.getElementById('studioPrice60').value,
-                annual_fee: document.getElementById('studioAnnualFee').value,
+                state: document.getElementById('studioState').value || null,
+                city: document.getElementById('studioCity').value || null,
+                address: document.getElementById('studioAddress').value || null,
+                parking: document.getElementById('studioParking').value || null,
+                general_notes: document.getElementById('studioDescription').innerHTML || null,
+                phone_number: document.getElementById('studioPhone').value || null,
+                director_name: document.getElementById('studioDirectorName').value || null,
+                director_email: document.getElementById('studioDirectorEmail').value || null,
+                scheduling_link: document.getElementById('studioSchedulingLink').value || null,
+                monthly_rate: document.getElementById('studioPrice30').value || null,
+                price_45: document.getElementById('studioPrice45').value || null,
+                price_60: document.getElementById('studioPrice60').value || null,
+                annual_fee: document.getElementById('studioAnnualFee').value || null,
                 programs_enabled: document.getElementById('studioPrograms').checked,
-                rental_info: document.getElementById('studioRentalInfo').value,
-                rental_link: document.getElementById('studioRentalLink').value
+                rentals_enabled: document.getElementById('studioRentals').checked,
+                rental_info: document.getElementById('studioRentalInfo').innerHTML || null,
+                rental_link: document.getElementById('studioRentalLink').value || null,
+                customer_care_title: document.getElementById('customerCareTitle').value || null,
+                customer_care_subtitle: document.getElementById('customerCareSubtitle').value || null,
+                customer_care_notes: document.getElementById('customerCareNotes').innerHTML || null
             };
 
             try {
                 let studioId = id;
 
-                // Save studio
                 if (id) {
-                    const result = await supabaseClient.from('studios').update(studioData).eq('id', id);
-                    if (result.error) throw result.error;
+                    const { error } = await supabaseClient.from('studios').update(studioData).eq('id', id);
+                    if (error) throw error;
                 } else {
-                    const result = await supabaseClient.from('studios').insert([studioData]).select();
-                    if (result.error) throw result.error;
-                    studioId = result.data[0].id;
+                    const { data, error } = await supabaseClient.from('studios').insert([studioData]).select();
+                    if (error) throw error;
+                    studioId = data[0].id;
                 }
 
-                // Delete removed instruments
+                // Delete removed items
+                if (deletedAdminIds.length > 0) {
+                    await supabaseClient.from('studio_admins').delete().in('id', deletedAdminIds);
+                }
                 if (deletedInstrumentIds.length > 0) {
                     await supabaseClient.from('studio_instruments').delete().in('id', deletedInstrumentIds);
                 }
-
-                // Delete removed links
                 if (deletedLinkIds.length > 0) {
                     await supabaseClient.from('studio_links').delete().in('id', deletedLinkIds);
+                }
+                if (deletedScholarshipIds.length > 0) {
+                    await supabaseClient.from('studio_scholarships').delete().in('id', deletedScholarshipIds);
+                }
+                if (deletedNoteIds.length > 0) {
+                    await supabaseClient.from('studio_notes').delete().in('id', deletedNoteIds);
+                }
+
+                // Save admins
+                for (let i = 0; i < currentAdmins.length; i++) {
+                    const admin = currentAdmins[i];
+                    if (admin.name || admin.email) {
+                        if (admin.isNew) {
+                            await supabaseClient.from('studio_admins').insert({
+                                studio_id: studioId,
+                                name: admin.name,
+                                email: admin.email || null,
+                                order_index: i
+                            });
+                        } else {
+                            await supabaseClient.from('studio_admins').update({
+                                name: admin.name,
+                                email: admin.email || null,
+                                order_index: i
+                            }).eq('id', admin.id);
+                        }
+                    }
                 }
 
                 // Save instruments
@@ -1769,12 +1845,12 @@
                     if (inst.isNew) {
                         await supabaseClient.from('studio_instruments').insert({
                             studio_id: studioId,
-                            name: inst.name,
+                            instrument: inst.name,
                             order_index: i
                         });
                     } else {
                         await supabaseClient.from('studio_instruments').update({
-                            name: inst.name,
+                            instrument: inst.name,
                             order_index: i
                         }).eq('id', inst.id);
                     }
@@ -1783,43 +1859,95 @@
                 // Save links
                 for (let i = 0; i < currentLinks.length; i++) {
                     const link = currentLinks[i];
-                    if (link.isNew) {
-                        await supabaseClient.from('studio_links').insert({
-                            studio_id: studioId,
-                            header: link.header,
-                            subheader: link.subheader,
-                            url: link.url,
-                            order_index: i
-                        });
-                    } else {
-                        await supabaseClient.from('studio_links').update({
-                            header: link.header,
-                            subheader: link.subheader,
-                            url: link.url,
-                            order_index: i
-                        }).eq('id', link.id);
+                    if (link.header || link.url) {
+                        if (link.isNew) {
+                            await supabaseClient.from('studio_links').insert({
+                                studio_id: studioId,
+                                header: link.header || null,
+                                subheader: link.subheader || null,
+                                url: link.url || null,
+                                order_index: i
+                            });
+                        } else {
+                            await supabaseClient.from('studio_links').update({
+                                header: link.header || null,
+                                subheader: link.subheader || null,
+                                url: link.url || null,
+                                order_index: i
+                            }).eq('id', link.id);
+                        }
                     }
                 }
 
-                showToast(id ? 'Studio updated successfully!' : 'Studio added successfully!', 'success');
+                // Save scholarships
+                for (let i = 0; i < currentScholarships.length; i++) {
+                    const scholarship = currentScholarships[i];
+                    if (scholarship.title || scholarship.notes || scholarship.link) {
+                        if (scholarship.isNew) {
+                            await supabaseClient.from('studio_scholarships').insert({
+                                studio_id: studioId,
+                                title: scholarship.title || null,
+                                notes: scholarship.notes || null,
+                                link: scholarship.link || null,
+                                order_index: i
+                            });
+                        } else {
+                            await supabaseClient.from('studio_scholarships').update({
+                                title: scholarship.title || null,
+                                notes: scholarship.notes || null,
+                                link: scholarship.link || null,
+                                order_index: i
+                            }).eq('id', scholarship.id);
+                        }
+                    }
+                }
+
+                // Save notes
+                for (let i = 0; i < currentNotes.length; i++) {
+                    const note = currentNotes[i];
+                    if (note.title || note.notes) {
+                        if (note.isNew) {
+                            await supabaseClient.from('studio_notes').insert({
+                                studio_id: studioId,
+                                title: note.title || null,
+                                subtitle: note.subtitle || null,
+                                notes: note.notes || null,
+                                link: note.link || null,
+                                order_index: i
+                            });
+                        } else {
+                            await supabaseClient.from('studio_notes').update({
+                                title: note.title || null,
+                                subtitle: note.subtitle || null,
+                                notes: note.notes || null,
+                                link: note.link || null,
+                                order_index: i
+                            }).eq('id', note.id);
+                        }
+                    }
+                }
+
+                showToast(id ? 'Studio updated!' : 'Studio added!', 'success');
                 closeStudioModal();
                 loadStudios();
             } catch (error) {
                 console.error('Error saving studio:', error);
-                showToast('Error saving studio.', 'error');
+                showToast('Error saving studio', 'error');
             }
         }
 
-        async function deleteStudio(id) {
-            if (!confirm('Are you sure you want to delete this studio? This will also delete all associated instruments and links.')) return;
+        async function deleteStudio(studioId) {
+            if (!confirm('Delete this studio and all its data?')) return;
+
             try {
-                const result = await supabaseClient.from('studios').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Studio deleted successfully!', 'success');
+                const { error } = await supabaseClient.from('studios').delete().eq('id', studioId);
+                if (error) throw error;
+
+                showToast('Studio deleted!', 'success');
                 loadStudios();
             } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting studio.', 'error');
+                console.error('Error deleting studio:', error);
+                showToast('Error deleting studio', 'error');
             }
         }
 

@@ -415,6 +415,7 @@
         .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .badge-info { background: rgba(96, 165, 250, 0.1); color: var(--primary); }
         .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-purple { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
 
         .teacher-card-actions {
             display: flex;
@@ -593,6 +594,75 @@
         }
 
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        /* Rich Text Editor */
+        .rich-editor {
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--gray-50);
+            transition: all 0.2s ease;
+        }
+
+        .rich-editor:focus-within {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .rich-editor-toolbar {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .toolbar-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .rich-editor-content {
+            min-height: 100px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+            outline: none;
+        }
+
+        .rich-editor-content:empty:before {
+            content: attr(data-placeholder);
+            color: var(--text-light);
+            pointer-events: none;
+        }
+
+        .rich-editor-content.small {
+            min-height: 60px;
+        }
 
         /* Dynamic Lists & Tags */
         .tags-container {
@@ -962,7 +1032,20 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Education Details</label>
-                            <textarea class="form-textarea" id="teacherEducationDetails" placeholder="e.g., Juilliard School of Music - Bachelor of Music"></textarea>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="formatBold('teacherEducationDetails')" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatItalic('teacherEducationDetails')" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatUnderline('teacherEducationDetails')" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                <div class="rich-editor-content" id="teacherEducationDetails" contenteditable="true" data-placeholder="e.g., Juilliard School of Music - Bachelor of Music"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Teaching Strength 1</label>
@@ -994,9 +1077,29 @@
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
+                        <div class="toggle-group">
+                            <span class="toggle-label">Online Only</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="teacherOnlineOnly">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
                         <div class="form-group">
                             <label class="form-label">Additional Notes</label>
-                            <textarea class="form-textarea" id="teacherNotes" placeholder="Any other information about this teacher..."></textarea>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="formatBold('teacherNotes')" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatItalic('teacherNotes')" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatUnderline('teacherNotes')" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                <div class="rich-editor-content" id="teacherNotes" contenteditable="true" data-placeholder="Any other information about this teacher..."></div>
+                            </div>
                         </div>
                     </div>
 
@@ -1135,6 +1238,40 @@
             });
         }
 
+        // ============ RICH TEXT EDITOR ============
+        function formatBold(editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand('bold', false, null);
+        }
+
+        function formatItalic(editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand('italic', false, null);
+        }
+
+        function formatUnderline(editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand('underline', false, null);
+        }
+
+        function formatBoldDynamic(editorElement) {
+            editorElement.focus();
+            document.execCommand('bold', false, null);
+        }
+
+        function formatItalicDynamic(editorElement) {
+            editorElement.focus();
+            document.execCommand('italic', false, null);
+        }
+
+        function formatUnderlineDynamic(editorElement) {
+            editorElement.focus();
+            document.execCommand('underline', false, null);
+        }
+
         function applyFilters() {
             const searchTerm = document.getElementById('teacherSearch').value.toLowerCase();
             const studioFilter = document.getElementById('studioFilter').value;
@@ -1232,6 +1369,7 @@
                             </span>
                             ${teacher.formal_music_education ? '<span class="teacher-badge badge-info">Formal Education</span>' : ''}
                             ${teacher.online_willing ? '<span class="teacher-badge badge-info">Online</span>' : ''}
+                            ${teacher.online_only ? '<span class="teacher-badge badge-purple">Online Only</span>' : ''}
                         </div>
                         <div class="teacher-card-actions">
                             <button class="btn btn-secondary btn-small" onclick='editTeacher("${teacher.id}")' style="flex: 1;">
@@ -1252,6 +1390,10 @@
             document.getElementById('teacherId').value = '';
             document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
+
+            // Clear rich editors
+            document.getElementById('teacherEducationDetails').innerHTML = '';
+            document.getElementById('teacherNotes').innerHTML = '';
 
             currentCities = [];
             currentLanguages = [];
@@ -1290,7 +1432,7 @@
 
             // Education
             document.getElementById('teacherFormalEducation').checked = teacher.formal_music_education || false;
-            document.getElementById('teacherEducationDetails').value = teacher.formal_education_details || '';
+            document.getElementById('teacherEducationDetails').innerHTML = teacher.formal_education_details || '';
             document.getElementById('teacherStrength1').value = teacher.teaching_strength_1 || '';
             document.getElementById('teacherStrength2').value = teacher.teaching_strength_2 || '';
             document.getElementById('teacherStrength3').value = teacher.teaching_strength_3 || '';
@@ -1298,7 +1440,8 @@
             // Preferences
             document.getElementById('teacherSpecialNeeds').checked = teacher.special_needs_willing || false;
             document.getElementById('teacherOnline').checked = teacher.online_willing || false;
-            document.getElementById('teacherNotes').value = teacher.additional_notes || '';
+            document.getElementById('teacherOnlineOnly').checked = teacher.online_only || false;
+            document.getElementById('teacherNotes').innerHTML = teacher.additional_notes || '';
 
             // Cities
             currentCities = (teacher.cities || []).map(c => ({ id: c.id, city: c.city, isNew: false }));
@@ -1473,7 +1616,20 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Notes</label>
-                        <textarea class="form-textarea" onchange="updateInstrument(${index}, 'notes', this.value)" placeholder="Additional notes about teaching this instrument...">${inst.notes}</textarea>
+                        <div class="rich-editor">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onclick="formatBoldDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatItalicDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatUnderlineDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Underline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                            </div>
+                            <div class="rich-editor-content small" contenteditable="true" data-placeholder="Additional notes about teaching this instrument..." oninput="updateInstrument(${index}, 'notes', this.innerHTML)">${inst.notes || ''}</div>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -1492,13 +1648,14 @@
                 year_started_at_studio: document.getElementById('teacherYearStarted').value ? parseInt(document.getElementById('teacherYearStarted').value) : null,
                 status: document.getElementById('teacherStatus').value,
                 formal_music_education: document.getElementById('teacherFormalEducation').checked,
-                formal_education_details: document.getElementById('teacherEducationDetails').value,
+                formal_education_details: document.getElementById('teacherEducationDetails').innerHTML || null,
                 teaching_strength_1: document.getElementById('teacherStrength1').value,
                 teaching_strength_2: document.getElementById('teacherStrength2').value,
                 teaching_strength_3: document.getElementById('teacherStrength3').value,
                 special_needs_willing: document.getElementById('teacherSpecialNeeds').checked,
                 online_willing: document.getElementById('teacherOnline').checked,
-                additional_notes: document.getElementById('teacherNotes').value
+                online_only: document.getElementById('teacherOnlineOnly').checked,
+                additional_notes: document.getElementById('teacherNotes').innerHTML || null
             };
 
             try {

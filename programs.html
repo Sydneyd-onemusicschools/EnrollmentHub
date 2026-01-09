@@ -3,1039 +3,1295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enrollment Hub - Programs</title>
+    <title>Admin Policies - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #60A5FA;
+            --primary-light: #93C5FD;
+            --primary-dark: #3B82F6;
+            --accent: #38BDF8;
+            --accent-light: #7DD3FC;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --text-light: #A0AEC0;
+            --white: #FFFFFF;
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --transition-speed: 0.3s;
         }
 
-        html, body {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+            color: var(--text-primary);
             overflow-x: hidden;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-            background: #fafafa;
-            min-height: 100vh;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            color: #1a1a1a;
-            display: flex;
-        }
-
-        /* Sidebar Styles */
+        /* SIDEBAR */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #ff6b6b 0%, #ee5a6f 100%);
-            height: 100vh;
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
-            padding: 2rem 0;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: all 0.3s ease;
         }
 
-        .sidebar.collapsed {
-            width: 80px;
-        }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-header {
-            padding: 0 2rem 2rem 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
         }
 
-        .sidebar.collapsed .sidebar-header {
-            padding: 0 1rem 1rem 1rem;
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar-logo {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: white;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-        }
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
 
-        .sidebar.collapsed .sidebar-logo {
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.25rem;
-        }
-
-        .sidebar-subtitle {
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.9);
-            text-align: center;
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-subtitle {
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .sidebar-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: -15px;
-            width: 30px;
-            height: 30px;
-            background: white;
-            border: 2px solid #ff6b6b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .sidebar-toggle svg {
-            width: 16px;
-            height: 16px;
-            stroke: #ff6b6b;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-toggle svg {
-            transform: rotate(180deg);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 2rem 0;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
-            white-space: nowrap;
-        }
-
-        .sidebar.collapsed .sidebar-link {
-            padding: 1rem;
-            justify-content: center;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-left-color: white;
-        }
-
-        .sidebar-link.active {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border-left-color: white;
+            flex-shrink: 0;
+            color: var(--white);
             font-weight: 700;
         }
 
-        .sidebar-link svg {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            margin-right: 1rem;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            transition: all 0.3s ease;
-        }
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
 
-        .sidebar.collapsed .sidebar-link svg {
-            margin-right: 0;
-        }
-
-        .sidebar-link-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-link-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .sidebar-footer {
-            padding: 1rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .sidebar.collapsed .sidebar-footer {
-            padding: 1rem;
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.2);
+        .admin-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
-        .sidebar.collapsed .logout-btn {
-            padding: 0.75rem 0.5rem;
-        }
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
 
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
 
-        .logout-btn svg {
-            min-width: 18px;
-        }
-
-        .logout-btn-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .logout-btn-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .hamburger {
-            display: none;
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            z-index: 1001;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: none;
+            background: transparent;
+            width: calc(100% - 1.5rem);
+            font-size: 0.9375rem;
+            font-weight: 500;
         }
 
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: white;
-            margin: 5px 0;
-            transition: 0.3s;
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
 
-        .main-wrapper {
-            margin-left: 280px;
-            flex: 1;
-            padding: 3rem 2rem;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
-        }
+        .nav-icon { font-size: 1.25rem; flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--danger) !important; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.1) !important; }
 
-        .sidebar.collapsed ~ .main-wrapper {
-            margin-left: 80px;
-            width: calc(100% - 80px);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .sidebar.collapsed {
-                width: 280px;
-            }
-
-            .sidebar-toggle {
-                display: none;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-                width: 100%;
-                padding-top: 5rem;
-            }
-
-            .sidebar.collapsed ~ .main-wrapper {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease;
         }
 
-        .header {
-            margin-bottom: 3rem;
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem 2.5rem;
+            transition: margin-left var(--transition-speed) ease;
         }
 
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.04em;
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
-        .header h2 {
+        .page-header-left h1 {
             font-size: 2rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
             letter-spacing: -0.02em;
         }
 
-        .header p {
-            color: #6b7280;
-            font-size: 1.125rem;
-            font-weight: 400;
-        }
+        .page-header-left p { color: var(--text-secondary); font-size: 1rem; }
+        .page-header-actions { display: flex; gap: 0.75rem; }
 
-        .filters-section {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .search-bar, .filter-select {
-            padding: 1rem 1.5rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            font-size: 1.05rem;
-            color: #1a1a1a;
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
             transition: all 0.2s ease;
-            font-family: inherit;
+            text-decoration: none;
         }
 
-        .search-bar {
-            flex: 1;
-            min-width: 250px;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
 
-        .filter-select {
-            min-width: 200px;
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4); }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1.5px solid var(--gray-200);
         }
 
-        .search-bar:focus, .filter-select:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-icon-only { width: 40px; padding: 0.5rem; justify-content: center; }
+        .btn-small { padding: 0.5rem 0.875rem; font-size: 0.8125rem; }
+
+        /* Main Section */
+        .section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
         }
 
         .section-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .section-header h3 {
-            font-size: 1.5rem;
+        .section-title {
+            font-size: 1.25rem;
             font-weight: 700;
-            color: #1a1a1a;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .button {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
+        .section-title i { color: var(--primary); }
+
+        /* Category Tabs */
+        .tabs-container {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.25rem;
+            background: transparent;
             border: none;
-            border-radius: 14px;
-            padding: 0.875rem 1.75rem;
-            font-size: 0.95rem;
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.25);
+            transition: all 0.2s ease;
+            margin-bottom: -2px;
         }
 
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.35);
+        .tab:hover { color: var(--text-primary); }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
 
-        .programs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .program-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1.5px solid rgba(0, 0, 0, 0.04);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .program-card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border-color: rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-        }
-
-        .program-card.inactive {
-            opacity: 0.6;
-        }
-
-        .program-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .program-studio {
-            color: #6b7280;
-            font-size: 1rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .program-details {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            padding-top: 0.75rem;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .program-detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 8px;
+        .tab-count {
+            background: var(--gray-200);
+            color: var(--text-secondary);
             font-size: 0.75rem;
             font-weight: 600;
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        .tab.active .tab-count {
+            background: rgba(96, 165, 250, 0.2);
+            color: var(--primary);
+        }
+
+        .tab-actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .add-category-btn {
+            padding: 0.5rem 0.875rem;
+            background: transparent;
+            border: 1.5px dashed var(--gray-300);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .add-category-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(96, 165, 250, 0.05);
+        }
+
+        .manage-categories-btn {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: var(--gray-100);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .manage-categories-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(96, 165, 250, 0.05);
+        }
+
+        /* Policies Grid */
+        .policies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .policy-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .policy-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-md); }
+
+        .policy-card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1rem 1.25rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .policy-card-title { font-size: 1rem; font-weight: 700; flex: 1; }
+
+        .policy-status {
+            padding: 0.25rem 0.625rem;
+            border-radius: 6px;
+            font-size: 0.6875rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .status-badge.active {
-            background: #d1fae5;
-            color: #065f46;
+        .policy-status.active { background: rgba(255,255,255,0.3); color: white; }
+        .policy-status.inactive { background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.8); }
+
+        .policy-card-body { padding: 1.25rem; }
+
+        .policy-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
         }
 
-        .status-badge.inactive {
-            background: #fee2e2;
-            color: #991b1b;
+        .policy-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
         }
 
+        .policy-meta-item i { color: var(--primary); }
+
+        .policy-notes {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .policy-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover { background: var(--gray-200); }
+
+        .modal-body { padding: 1.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .form-textarea { resize: vertical; min-height: 80px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 10px;
+        }
+
+        .toggle-label { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
+
+        .toggle-switch { position: relative; width: 50px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gray-300);
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        /* Sections Builder */
+        .sections-container {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .sections-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .sections-title { font-size: 0.9375rem; font-weight: 700; color: var(--text-primary); }
+
+        .section-item {
+            background: var(--white);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-item:last-child { margin-bottom: 0; }
+
+        .section-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .section-item-number {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .remove-section-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .remove-section-btn:hover { background: var(--danger); color: white; }
+
+        .section-fields { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .section-field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .section-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: var(--gray-50);
+        }
+
+        .section-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+        }
+
+        /* Bullets */
+        .bullets-container { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--gray-200); }
+
+        .bullets-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .bullets-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; }
+
+        .add-bullet-btn {
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px dashed var(--gray-300);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-bullet-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        .bullet-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .bullet-icon {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .bullet-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            background: var(--white);
+        }
+
+        .bullet-input:focus { outline: none; border-color: var(--primary); }
+
+        .remove-bullet-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .remove-bullet-btn:hover { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: white;
+        }
+
+        /* Manage Categories Modal */
+        .manage-categories-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .manage-category-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            background: var(--gray-50);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+        }
+
+        .manage-category-item:hover { border-color: var(--primary-light); }
+
+        .manage-category-order {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-200);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .manage-category-info { flex: 1; display: flex; align-items: center; gap: 0.75rem; }
+
+        .manage-category-name-input {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            border: none;
+            background: transparent;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .manage-category-name-input:focus {
+            outline: none;
+            background: var(--white);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .manage-category-count {
+            background: var(--gray-200);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.625rem;
+            border-radius: 10px;
+        }
+
+        .manage-category-actions { display: flex; gap: 0.5rem; }
+
+        .manage-category-actions button {
+            width: 32px;
+            height: 32px;
+            border: 1.5px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .manage-category-actions button:hover { border-color: var(--primary); color: var(--primary); }
+        .manage-category-actions button.delete-btn:hover { border-color: var(--danger); color: var(--danger); background: rgba(239, 68, 68, 0.05); }
+        .manage-category-actions button.save-btn { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-color: transparent; color: white; }
+        .manage-category-actions button.save-btn:hover { transform: scale(1.05); }
+
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
-            color: #9ca3af;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
         }
+
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 0.75rem; }
+        .empty-state p { font-size: 1rem; margin-bottom: 1rem; }
 
         .loading {
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 400px;
-            color: #9ca3af;
-            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-size: 1.125rem;
         }
 
-        /* Edit Page Styles */
-        .edit-page {
-            display: none;
-        }
-
-        .edit-page.active {
-            display: block;
-        }
-
-        .edit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-        }
-
-        .back-button {
-            background: #f5f5f5;
-            color: #6b7280;
-            border: none;
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .back-button:hover {
-            background: #e5e7eb;
-        }
-
-        .edit-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .section-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 1rem;
-            color: #1a1a1a;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        }
-
-        .rich-text-toolbar {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .toolbar-btn {
-            background: #f5f5f5;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .toolbar-btn:hover {
-            background: #e5e7eb;
-        }
-
-        .rich-text-editor {
-            min-height: 150px;
-            padding: 1rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .rich-text-editor:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        }
-
-        .rich-text-editor:empty:before {
-            content: attr(data-placeholder);
-            color: #9ca3af;
-        }
-
-        .save-footer {
-            position: sticky;
-            bottom: 0;
-            background: white;
-            padding: 1.5rem 2rem;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-        }
-
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: #1a1a1a;
-            color: white;
+            background: white;
+            border-radius: 12px;
             padding: 1rem 1.5rem;
-            border-radius: 14px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 3000;
+            transform: translateY(100px);
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            font-size: 0.95rem;
-            z-index: 1001;
+            transition: all 0.3s ease;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateY(-8px);
-        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast-icon { font-size: 1.25rem; }
+        .toast.success .toast-icon { color: var(--success); }
+        .toast.error .toast-icon { color: var(--danger); }
+        .toast-message { font-size: 0.9375rem; color: var(--text-primary); font-weight: 500; }
 
-        .toast.success {
-            background: #10b981;
-        }
-
-        .toast.error {
-            background: #ef4444;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .main-wrapper {
-                padding: 1.5rem 1rem;
-            }
-
-            .header h1 {
-                font-size: 2.25rem;
-            }
-
-            .header h2 {
-                font-size: 1.5rem;
-            }
-
-            .programs-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .filters-section {
-                flex-direction: column;
-            }
-
-            .search-bar, .filter-select {
-                width: 100%;
-            }
-
-            .edit-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .section-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .button, .back-button {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .header h2 {
-                font-size: 1.35rem;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .policies-grid { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; gap: 1rem; }
+            .form-row, .section-field-row { grid-template-columns: 1fr; }
+            .tabs { gap: 0.125rem; }
+            .tab { padding: 0.625rem 0.875rem; font-size: 0.8125rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Hamburger Menu -->
-    <button class="hamburger" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <!-- Collapse/Expand Toggle Button -->
-        <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-        </button>
-
+    <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo">Enrollment Hub</div>
-            <div class="sidebar-subtitle">One Music Schools</div>
+            <div class="logo-section">
+                <div class="logo-icon">EH</div>
+                <span class="logo-text">Admin<span class="admin-badge">Admin</span></span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn">
+                <span class="toggle-icon">‹</span>
+            </button>
         </div>
 
         <nav class="sidebar-nav">
-            <a href="dashboard.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                <span class="sidebar-link-text">Dashboard</span>
+            <a href="admindashboard.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                <span class="nav-text">Dashboard</span>
             </a>
-            <a href="quicklinks.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                <span class="sidebar-link-text">Quick Links</span>
+            <a href="adminquicklinks.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-link"></i></span>
+                <span class="nav-text">Quick Links</span>
             </a>
-            <a href="snippets.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-                <span class="sidebar-link-text">Snippets</span>
+            <a href="adminstudio-directory.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-building"></i></span>
+                <span class="nav-text">Studio Directory</span>
             </a>
-            <a href="team.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                <span class="sidebar-link-text">Team Management</span>
+            <a href="adminteacher-directory.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span class="nav-text">Teacher Directory</span>
             </a>
-            <a href="studios.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span class="sidebar-link-text">Studio Directory</span>
+            <a href="adminsnippets.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-clipboard"></i></span>
+                <span class="nav-text">Snippets</span>
             </a>
-            <a href="teacher.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                <span class="sidebar-link-text">Teacher Selling Points</span>
+            <a href="adminmap.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
+                <span class="nav-text">Map</span>
             </a>
-            <a href="programs.html" class="sidebar-link active">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                <span class="sidebar-link-text">Programs</span>
+            <a href="adminprograms.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
+                <span class="nav-text">Programs</span>
             </a>
-            <a href="training.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                <span class="sidebar-link-text">Training Hub</span>
+            <a href="admintraining-hub.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-book-open"></i></span>
+                <span class="nav-text">Training Hub</span>
             </a>
-            <a href="policies.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                <span class="sidebar-link-text">Policies</span>
+            <a href="adminpolicies.html" class="nav-item active">
+                <span class="nav-icon"><i class="far fa-file-alt"></i></span>
+                <span class="nav-text">Policies</span>
             </a>
-            <a href="calendar.html" class="sidebar-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span class="sidebar-link-text">Calendar</span>
+            <a href="adminprofiles.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-user"></i></span>
+                <span class="nav-text">Profiles</span>
+            </a>
+            <a href="admindirectors.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
+                <span class="nav-text">DirectorsPage</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <button class="logout-btn" onclick="logout()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                <span class="logout-btn-text">Logout</span>
+            <button id="logoutBtn" class="nav-item logout-btn">
+                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span class="nav-text">Logout</span>
             </button>
         </div>
     </div>
-    
-    <div class="main-wrapper">
-        <div class="container">
-            <div id="loading" class="loading">Loading...</div>
 
-            <!-- List View -->
-            <div id="listView" class="list-view" style="display: none;">
-                <div class="header">
-                    <h1>Enrollment Hub</h1>
-                    <h2>Programs</h2>
-                    <p>Manage studio programs and offerings</p>
-                </div>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-                <div class="filters-section">
-                    <input type="text" id="searchBar" class="search-bar" placeholder="Search programs..." oninput="filterPrograms()">
-                    <select id="studioFilter" class="filter-select" onchange="filterPrograms()">
-                        <option value="">All Studios</option>
-                    </select>
-                    <select id="statusFilter" class="filter-select" onchange="filterPrograms()">
-                        <option value="">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Policies Management</h1>
+                <p>Manage company policies and guidelines</p>
+            </div>
+            <div class="page-header-actions">
+                <button class="btn btn-secondary" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
 
-                <div class="section-header">
-                    <h3>Programs</h3>
-                    <button class="button" onclick="createNewProgram()">+ Add Program</button>
-                </div>
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading...
+        </div>
 
-                <div id="programsGrid" class="programs-grid"></div>
+        <div id="content" class="section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-file-alt"></i> Policies
+                </h2>
+                <button class="btn btn-primary btn-small" onclick="openPolicyModal()" id="addPolicyBtn" style="display: none;">
+                    <i class="fas fa-plus"></i> Add Policy
+                </button>
             </div>
 
-            <!-- Edit View -->
-            <div id="editView" class="edit-page">
-                <div class="edit-header">
-                    <button class="back-button" onclick="backToList()">← Back to Programs</button>
-                    <h2 id="editTitle" style="font-size: 2rem; font-weight: 700; color: #1a1a1a;">Edit Program</h2>
-                </div>
+            <div class="tabs-container">
+                <div class="tabs" id="categoryTabs"></div>
+            </div>
 
-                <!-- Section 1: Basic Information -->
-                <div class="edit-section">
-                    <h3 class="section-title">Basic Information</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Program Name</label>
-                            <input type="text" id="programName" class="form-input" placeholder="e.g., Summer Camp">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Studio</label>
-                            <select id="studioId" class="form-select">
-                                <option value="">Select studio</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Status</label>
-                            <select id="status" class="form-select">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="lastUpdated" style="margin-top: 1rem; color: #6b7280; font-size: 0.875rem;"></div>
+            <div id="policiesGrid" class="policies-grid">
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <i class="fas fa-folder-plus"></i>
+                    <p>No categories yet. Create one to get started!</p>
+                    <button class="btn btn-primary" onclick="openCategoryModal()">
+                        <i class="fas fa-plus"></i> Add Category
+                    </button>
                 </div>
+            </div>
+        </div>
+    </main>
 
-                <!-- Section 2: Program Details -->
-                <div class="edit-section">
-                    <h3 class="section-title">Program Details</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Pricing</label>
-                            <input type="text" id="pricing" class="form-input" placeholder="e.g., $299 per week">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Schedule</label>
-                            <input type="text" id="schedule" class="form-input" placeholder="e.g., Mon-Fri 9am-3pm">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Duration</label>
-                            <input type="text" id="duration" class="form-input" placeholder="e.g., 1 week">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Age Range</label>
-                            <input type="text" id="ageRange" class="form-input" placeholder="e.g., 6-12 years">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Capacity</label>
-                            <input type="number" id="capacity" class="form-input" placeholder="e.g., 20">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Link (Optional)</label>
-                            <input type="url" id="link" class="form-input" placeholder="https://...">
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Start Date (Optional)</label>
-                            <input type="date" id="startDate" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">End Date (Optional)</label>
-                            <input type="date" id="endDate" class="form-input">
-                        </div>
-                    </div>
+    <!-- Category Modal (Quick Add) -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Category</h3>
+                <button class="modal-close" onclick="closeCategoryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Category Name *</label>
+                    <input type="text" class="form-input" id="categoryName" placeholder="e.g., Workplace Conduct">
                 </div>
-
-                <!-- Section 3: Description -->
-                <div class="edit-section">
-                    <h3 class="section-title">Description</h3>
-                    <div class="form-group">
-                        <label class="form-label">Program Description</label>
-                        <div class="rich-text-toolbar">
-                            <button class="toolbar-btn" onclick="formatDescription('bold')" type="button"><b>B</b></button>
-                            <button class="toolbar-btn" onclick="formatDescription('italic')" type="button"><i>I</i></button>
-                        </div>
-                        <div id="description" class="rich-text-editor" contenteditable="true" data-placeholder="Enter program description..."></div>
-                    </div>
-                </div>
-
-                <!-- Section 4: Notes -->
-                <div class="edit-section">
-                    <h3 class="section-title">Notes</h3>
-                    <div class="form-group">
-                        <textarea id="notes" class="form-textarea" placeholder="Additional notes about this program..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Save Footer -->
-                <div class="save-footer">
-                    <button class="back-button" onclick="backToList()">Cancel</button>
-                    <button class="button" style="background: #ef4444; margin-left: auto;" onclick="deleteProgram()">Delete Program</button>
-                    <button class="button" onclick="saveProgram()">Save Program</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCategoryModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCategory()">
+                    <i class="fas fa-plus"></i> Add Category
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <!-- Manage Categories Modal -->
+    <div id="manageCategoriesModal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Categories</h3>
+                <button class="modal-close" onclick="closeManageCategoriesModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="manageCategoriesList" class="manage-categories-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeManageCategoriesModal()">Close</button>
+            </div>
+        </div>
+    </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    <!-- Policy Modal -->
+    <div id="policyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="policyModalTitle">Add Policy</h3>
+                <button class="modal-close" onclick="closePolicyModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="policyForm">
+                    <input type="hidden" id="policyId">
 
+                    <div class="form-group">
+                        <label class="form-label">Policy Title *</label>
+                        <input type="text" class="form-input" id="policyTitle" required placeholder="e.g., Dress Code Policy">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Notes / Description</label>
+                        <textarea class="form-textarea" id="policyNotes" placeholder="Brief description of this policy..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="toggle-group">
+                            <span class="toggle-label">Active Status</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="policyStatus" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="sections-container">
+                            <div class="sections-header">
+                                <span class="sections-title">Policy Sections</span>
+                                <button type="button" class="btn btn-primary btn-small" onclick="addSection()">
+                                    <i class="fas fa-plus"></i> Add Section
+                                </button>
+                            </div>
+                            <div id="sectionsContainer"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePolicyModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="savePolicy()">
+                    <i class="fas fa-save"></i> Save Policy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span class="toast-message"></span>
+    </div>
+
+    <script>
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-        
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
 
-        let programs = [];
-        let studios = [];
-        let currentProgramId = null;
+        let supabaseClient;
+        let categories = [];
+        let policies = [];
+        let sections = [];
+        let bullets = [];
+        let selectedCategoryId = null;
 
-        // Sidebar Functions
-        window.toggleSidebar = function() {
+        // Current editing state
+        let currentSections = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            setupSidebar();
+            loadData();
+        });
+
+        function setupSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-        }
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const logoutBtn = document.getElementById('logoutBtn');
 
-        window.toggleSidebarCollapse = function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        }
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                    overlay.classList.add('active');
+                } else {
+                    overlay.classList.remove('active');
+                }
+            });
 
-        function loadSidebarState() {
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                document.getElementById('sidebar').classList.add('collapsed');
-            }
-        }
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+            });
 
-        window.logout = function() {
-            if (confirm('Are you sure you want to logout?')) {
-                alert('Logout functionality will be implemented with the login system');
-            }
-        }
-
-        function showToast(message, isSuccess = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast show';
-            if (isSuccess) toast.classList.add('success');
-            else toast.classList.add('error');
-            setTimeout(() => toast.className = 'toast', 2000);
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
         }
 
         async function loadData() {
             try {
-                const [programsResult, studiosResult] = await Promise.all([
-                    supabase.from('studio_programs').select('*').order('name'),
-                    supabase.from('studios').select('id, brand, city, state').order('brand, city')
+                const [categoriesResult, policiesResult, sectionsResult, bulletsResult] = await Promise.all([
+                    supabaseClient.from('policy_categories').select('*').order('order_index'),
+                    supabaseClient.from('policies').select('*').order('order_index'),
+                    supabaseClient.from('policy_sections').select('*').order('order_index'),
+                    supabaseClient.from('policy_section_bullets').select('*').order('order_index')
                 ]);
 
-                if (programsResult.error) throw programsResult.error;
-                if (studiosResult.error) throw studiosResult.error;
+                if (categoriesResult.error) throw categoriesResult.error;
+                if (policiesResult.error) throw policiesResult.error;
+                if (sectionsResult.error) throw sectionsResult.error;
+                if (bulletsResult.error) throw bulletsResult.error;
 
-                programs = programsResult.data || [];
-                studios = studiosResult.data || [];
-
-                // Populate studio filter dropdown
-                const studioFilter = document.getElementById('studioFilter');
-                const studioSelect = document.getElementById('studioId');
-                
-                studios.forEach(studio => {
-                    const studioLabel = `${studio.brand} - ${studio.city || 'No city'}, ${studio.state || 'No state'}`;
-                    
-                    const filterOption = document.createElement('option');
-                    filterOption.value = studio.id;
-                    filterOption.textContent = studioLabel;
-                    studioFilter.appendChild(filterOption);
-
-                    const selectOption = document.createElement('option');
-                    selectOption.value = studio.id;
-                    selectOption.textContent = studioLabel;
-                    studioSelect.appendChild(selectOption);
-                });
+                categories = categoriesResult.data || [];
+                policies = policiesResult.data || [];
+                sections = sectionsResult.data || [];
+                bullets = bulletsResult.data || [];
 
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('listView').style.display = 'block';
+                document.getElementById('content').style.display = 'block';
 
-                renderPrograms();
+                renderCategories();
             } catch (error) {
                 console.error('Error loading data:', error);
-                showToast('Error loading data', false);
+                showToast('Error loading data', 'error');
             }
         }
 
-        function renderPrograms(filtered = null) {
-            const grid = document.getElementById('programsGrid');
-            const list = filtered || programs;
+        function renderCategories() {
+            const container = document.getElementById('categoryTabs');
 
-            if (list.length === 0) {
-                grid.innerHTML = '<div class="empty-state"><p>No programs found</p></div>';
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <button class="add-category-btn" onclick="openCategoryModal()">
+                        <i class="fas fa-plus"></i> Add Category
+                    </button>
+                `;
+                document.getElementById('addPolicyBtn').style.display = 'none';
+                renderPolicies();
                 return;
             }
 
-            grid.innerHTML = list.map(program => {
-                const studio = studios.find(s => s.id === program.studio_id);
-                const studioName = studio ? `${studio.brand} - ${studio.city || 'No city'}, ${studio.state || 'No state'}` : 'No studio';
+            if (!selectedCategoryId && categories.length > 0) {
+                selectedCategoryId = categories[0].id;
+            }
 
+            container.innerHTML = categories.map(cat => {
+                const count = policies.filter(p => p.category_id === cat.id).length;
                 return `
-                    <div class="program-card ${program.status}" onclick="editProgram('${program.id}')">
-                        <div class="program-name">${program.name}</div>
-                        <div class="program-studio">${studioName}</div>
-                        <div class="program-details">
-                            ${program.pricing ? `<div class="program-detail-row"><span>Pricing:</span><span>${program.pricing}</span></div>` : ''}
-                            ${program.schedule ? `<div class="program-detail-row"><span>Schedule:</span><span>${program.schedule}</span></div>` : ''}
-                            ${program.age_range ? `<div class="program-detail-row"><span>Age:</span><span>${program.age_range}</span></div>` : ''}
-                            <div class="program-detail-row">
-                                <span>Status:</span>
-                                <span class="status-badge ${program.status}">${program.status}</span>
+                    <button class="tab ${selectedCategoryId === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+                        ${cat.name}
+                        <span class="tab-count">${count}</span>
+                    </button>
+                `;
+            }).join('') + `
+                <div class="tab-actions-bar">
+                    <button class="add-category-btn" onclick="openCategoryModal()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                    <button class="manage-categories-btn" onclick="openManageCategoriesModal()" title="Manage Categories">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('addPolicyBtn').style.display = 'inline-flex';
+            renderPolicies();
+        }
+
+        function selectCategory(categoryId) {
+            selectedCategoryId = categoryId;
+            renderCategories();
+        }
+
+        function renderPolicies() {
+            const container = document.getElementById('policiesGrid');
+
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-folder-plus"></i>
+                        <p>No categories yet. Create one to get started!</p>
+                        <button class="btn btn-primary" onclick="openCategoryModal()">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!selectedCategoryId) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-hand-pointer"></i>
+                        <p>Select a category to view policies</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const categoryPolicies = policies.filter(p => p.category_id === selectedCategoryId);
+
+            if (categoryPolicies.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-file-alt"></i>
+                        <p>No policies in this category</p>
+                        <button class="btn btn-primary" onclick="openPolicyModal()">
+                            <i class="fas fa-plus"></i> Add Policy
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = categoryPolicies.map(policy => {
+                const policySections = sections.filter(s => s.policy_id === policy.id);
+                return `
+                    <div class="policy-card">
+                        <div class="policy-card-header">
+                            <div class="policy-card-title">${policy.title}</div>
+                            <span class="policy-status ${policy.status || 'active'}">${policy.status || 'active'}</span>
+                        </div>
+                        <div class="policy-card-body">
+                            <div class="policy-meta">
+                                <div class="policy-meta-item">
+                                    <i class="fas fa-list"></i>
+                                    <span>${policySections.length} section${policySections.length !== 1 ? 's' : ''}</span>
+                                </div>
+                            </div>
+                            ${policy.notes ? `<div class="policy-notes">${policy.notes}</div>` : ''}
+                            <div class="policy-card-actions">
+                                <button class="btn btn-secondary btn-small" onclick="editPolicy('${policy.id}')" style="flex: 1;">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deletePolicy('${policy.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1043,167 +1299,368 @@
             }).join('');
         }
 
-        window.filterPrograms = function() {
-            const search = document.getElementById('searchBar').value.toLowerCase();
-            const studioFilter = document.getElementById('studioFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-
-            let filtered = programs;
-
-            if (search) {
-                filtered = filtered.filter(p => 
-                    p.name.toLowerCase().includes(search) ||
-                    (p.description || '').toLowerCase().includes(search)
-                );
-            }
-
-            if (studioFilter) {
-                filtered = filtered.filter(p => p.studio_id === studioFilter);
-            }
-
-            if (statusFilter) {
-                filtered = filtered.filter(p => p.status === statusFilter);
-            }
-
-            renderPrograms(filtered);
+        // ============ CATEGORY MODAL ============
+        function openCategoryModal() {
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryModal').classList.add('active');
         }
 
-        window.createNewProgram = async function() {
-            try {
-                const { data, error } = await supabase
-                    .from('studio_programs')
-                    .insert({
-                        studio_id: studios.length > 0 ? studios[0].id : null,
-                        name: 'New Program',
-                        description: '',
-                        link: '',
-                        pricing: '',
-                        schedule: '',
-                        duration: '',
-                        age_range: '',
-                        capacity: null,
-                        start_date: null,
-                        end_date: null,
-                        status: 'active',
-                        notes: ''
-                    })
-                    .select()
-                    .single();
-
-                if (error) throw error;
-
-                programs.push(data);
-                editProgram(data.id);
-            } catch (error) {
-                console.error('Error creating program:', error);
-                showToast('Error creating program', false);
-            }
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
         }
 
-        window.editProgram = async function(id) {
-            currentProgramId = id;
-            const program = programs.find(p => p.id === id);
-
-            document.getElementById('editTitle').textContent = program.name || 'New Program';
-            document.getElementById('programName').value = program.name || '';
-            document.getElementById('studioId').value = program.studio_id || '';
-            document.getElementById('status').value = program.status || 'active';
-            document.getElementById('pricing').value = program.pricing || '';
-            document.getElementById('schedule').value = program.schedule || '';
-            document.getElementById('duration').value = program.duration || '';
-            document.getElementById('ageRange').value = program.age_range || '';
-            document.getElementById('capacity').value = program.capacity || '';
-            document.getElementById('link').value = program.link || '';
-            document.getElementById('startDate').value = program.start_date || '';
-            document.getElementById('endDate').value = program.end_date || '';
-            document.getElementById('description').innerHTML = program.description || '';
-            document.getElementById('notes').value = program.notes || '';
-
-            // Display last updated
-            if (program.updated_at) {
-                const lastUpdated = new Date(program.updated_at).toLocaleString();
-                document.getElementById('lastUpdated').textContent = `Last updated: ${lastUpdated}`;
-            }
-
-            document.getElementById('listView').style.display = 'none';
-            document.getElementById('editView').classList.add('active');
-            window.scrollTo(0, 0);
-        }
-
-        window.backToList = function() {
-            document.getElementById('editView').classList.remove('active');
-            document.getElementById('listView').style.display = 'block';
-            loadData();
-            window.scrollTo(0, 0);
-        }
-
-        window.formatDescription = function(command) {
-            document.execCommand(command, false, null);
-            document.getElementById('description').focus();
-        }
-
-        window.saveProgram = async function() {
-            const program = programs.find(p => p.id === currentProgramId);
-            
-            const programData = {
-                studio_id: document.getElementById('studioId').value,
-                name: document.getElementById('programName').value,
-                status: document.getElementById('status').value,
-                pricing: document.getElementById('pricing').value,
-                schedule: document.getElementById('schedule').value,
-                duration: document.getElementById('duration').value,
-                age_range: document.getElementById('ageRange').value,
-                capacity: document.getElementById('capacity').value ? parseInt(document.getElementById('capacity').value) : null,
-                link: document.getElementById('link').value,
-                start_date: document.getElementById('startDate').value || null,
-                end_date: document.getElementById('endDate').value || null,
-                description: document.getElementById('description').innerHTML,
-                notes: document.getElementById('notes').value
-            };
-
-            try {
-                const { error } = await supabase
-                    .from('studio_programs')
-                    .update(programData)
-                    .eq('id', currentProgramId);
-
-                if (error) throw error;
-
-                Object.assign(program, programData);
-                showToast('Program saved!', true);
-                backToList();
-            } catch (error) {
-                console.error('Error saving program:', error);
-                showToast('Error saving program', false);
-            }
-        }
-
-        window.deleteProgram = async function() {
-            if (!confirm('Are you sure you want to delete this program? This cannot be undone.')) {
+        async function saveCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+            if (!name) {
+                showToast('Please enter a category name', 'error');
                 return;
             }
 
             try {
-                const { error } = await supabase
-                    .from('studio_programs')
-                    .delete()
-                    .eq('id', currentProgramId);
+                const result = await supabaseClient.from('policy_categories').insert([{
+                    name: name,
+                    order_index: categories.length
+                }]);
+                if (result.error) throw result.error;
 
-                if (error) throw error;
-
-                programs = programs.filter(p => p.id !== currentProgramId);
-
-                showToast('Program deleted', true);
-                backToList();
+                showToast('Category added!', 'success');
+                closeCategoryModal();
+                loadData();
             } catch (error) {
-                console.error('Error deleting program:', error);
-                showToast('Error deleting program', false);
+                console.error('Error saving category:', error);
+                showToast('Error saving category', 'error');
             }
         }
 
-        // Load sidebar state and initialize
-        loadSidebarState();
-        loadData();
+        // ============ MANAGE CATEGORIES MODAL ============
+        function openManageCategoriesModal() {
+            renderManageCategories();
+            document.getElementById('manageCategoriesModal').classList.add('active');
+        }
+
+        function closeManageCategoriesModal() {
+            document.getElementById('manageCategoriesModal').classList.remove('active');
+        }
+
+        function renderManageCategories() {
+            const container = document.getElementById('manageCategoriesList');
+
+            if (categories.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No categories yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = categories.map((cat, index) => {
+                const count = policies.filter(p => p.category_id === cat.id).length;
+                return `
+                    <div class="manage-category-item">
+                        <span class="manage-category-order">${index + 1}</span>
+                        <div class="manage-category-info">
+                            <input type="text" class="manage-category-name-input" value="${cat.name}" id="cat-name-${cat.id}" onkeypress="handleCategoryKeypress(event, '${cat.id}')" />
+                            <span class="manage-category-count">${count} polic${count !== 1 ? 'ies' : 'y'}</span>
+                        </div>
+                        <div class="manage-category-actions">
+                            <button class="save-btn" onclick="updateCategoryName('${cat.id}')" title="Save">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="delete-btn" onclick="deleteCategory('${cat.id}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleCategoryKeypress(event, categoryId) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                updateCategoryName(categoryId);
+            }
+        }
+
+        async function updateCategoryName(categoryId) {
+            const input = document.getElementById(`cat-name-${categoryId}`);
+            const newName = input.value.trim();
+
+            if (!newName) {
+                showToast('Category name cannot be empty', 'error');
+                return;
+            }
+
+            try {
+                const result = await supabaseClient.from('policy_categories').update({ name: newName }).eq('id', categoryId);
+                if (result.error) throw result.error;
+
+                showToast('Category updated!', 'success');
+                loadData();
+            } catch (error) {
+                console.error('Error updating category:', error);
+                showToast('Error updating category', 'error');
+            }
+        }
+
+        async function deleteCategory(categoryId) {
+            const categoryPolicies = policies.filter(p => p.category_id === categoryId);
+            const category = categories.find(c => c.id === categoryId);
+
+            let message = `Delete "${category?.name || 'this category'}"?`;
+            if (categoryPolicies.length > 0) {
+                message = `Delete "${category?.name}"? This will also delete ${categoryPolicies.length} polic${categoryPolicies.length !== 1 ? 'ies' : 'y'}.`;
+            }
+
+            if (!confirm(message)) return;
+
+            try {
+                const result = await supabaseClient.from('policy_categories').delete().eq('id', categoryId);
+                if (result.error) throw result.error;
+
+                if (selectedCategoryId === categoryId) {
+                    const remaining = categories.filter(c => c.id !== categoryId);
+                    selectedCategoryId = remaining.length > 0 ? remaining[0].id : null;
+                }
+
+                showToast('Category deleted!', 'success');
+                loadData();
+                renderManageCategories();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error deleting category', 'error');
+            }
+        }
+
+        // ============ POLICY MODAL ============
+        function openPolicyModal() {
+            if (!selectedCategoryId) {
+                showToast('Please select a category first', 'error');
+                return;
+            }
+
+            document.getElementById('policyModalTitle').textContent = 'Add Policy';
+            document.getElementById('policyForm').reset();
+            document.getElementById('policyId').value = '';
+            document.getElementById('policyStatus').checked = true;
+            currentSections = [];
+            renderSections();
+            document.getElementById('policyModal').classList.add('active');
+        }
+
+        function editPolicy(policyId) {
+            const policy = policies.find(p => p.id === policyId);
+            if (!policy) return;
+
+            document.getElementById('policyModalTitle').textContent = 'Edit Policy';
+            document.getElementById('policyId').value = policy.id;
+            document.getElementById('policyTitle').value = policy.title || '';
+            document.getElementById('policyNotes').value = policy.notes || '';
+            document.getElementById('policyStatus').checked = policy.status === 'active';
+
+            // Load sections with bullets
+            const policySections = sections.filter(s => s.policy_id === policy.id);
+            currentSections = policySections.map(s => ({
+                id: s.id,
+                section_text: s.section_text || '',
+                link: s.link || '',
+                isNew: false,
+                bullets: bullets.filter(b => b.policy_section_id === s.id).map(b => ({
+                    id: b.id,
+                    bullet_text: b.bullet_text || '',
+                    isNew: false
+                }))
+            }));
+
+            renderSections();
+            document.getElementById('policyModal').classList.add('active');
+        }
+
+        function closePolicyModal() {
+            document.getElementById('policyModal').classList.remove('active');
+        }
+
+        // ============ SECTIONS ============
+        function addSection() {
+            currentSections.push({
+                id: null,
+                section_text: '',
+                link: '',
+                isNew: true,
+                bullets: []
+            });
+            renderSections();
+        }
+
+        function removeSection(index) {
+            currentSections.splice(index, 1);
+            renderSections();
+        }
+
+        function updateSection(index, field, value) {
+            currentSections[index][field] = value;
+        }
+
+        function addBullet(sectionIndex) {
+            currentSections[sectionIndex].bullets.push({
+                id: null,
+                bullet_text: '',
+                isNew: true
+            });
+            renderSections();
+        }
+
+        function removeBullet(sectionIndex, bulletIndex) {
+            currentSections[sectionIndex].bullets.splice(bulletIndex, 1);
+            renderSections();
+        }
+
+        function updateBullet(sectionIndex, bulletIndex, value) {
+            currentSections[sectionIndex].bullets[bulletIndex].bullet_text = value;
+        }
+
+        function renderSections() {
+            const container = document.getElementById('sectionsContainer');
+
+            if (currentSections.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No sections added yet. Click "Add Section" to start.</p>';
+                return;
+            }
+
+            container.innerHTML = currentSections.map((section, sIndex) => `
+                <div class="section-item">
+                    <div class="section-item-header">
+                        <span class="section-item-number">${sIndex + 1}</span>
+                        <button type="button" class="remove-section-btn" onclick="removeSection(${sIndex})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="section-fields">
+                        <textarea class="section-input" placeholder="Section text..." onchange="updateSection(${sIndex}, 'section_text', this.value)" style="min-height: 60px;">${section.section_text}</textarea>
+                        <input type="url" class="section-input" placeholder="Link (optional)" value="${section.link}" onchange="updateSection(${sIndex}, 'link', this.value)">
+
+                        <div class="bullets-container">
+                            <div class="bullets-header">
+                                <span class="bullets-label">Bullet Points</span>
+                                <button type="button" class="add-bullet-btn" onclick="addBullet(${sIndex})">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                            ${section.bullets.map((bullet, bIndex) => `
+                                <div class="bullet-item">
+                                    <span class="bullet-icon"></span>
+                                    <input type="text" class="bullet-input" placeholder="Bullet text..." value="${bullet.bullet_text}" onchange="updateBullet(${sIndex}, ${bIndex}, this.value)">
+                                    <button type="button" class="remove-bullet-btn" onclick="removeBullet(${sIndex}, ${bIndex})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============ SAVE POLICY ============
+        async function savePolicy() {
+            const id = document.getElementById('policyId').value;
+            const title = document.getElementById('policyTitle').value.trim();
+
+            if (!title) {
+                showToast('Please enter a policy title', 'error');
+                return;
+            }
+
+            const policyData = {
+                category_id: selectedCategoryId,
+                title: title,
+                notes: document.getElementById('policyNotes').value || null,
+                status: document.getElementById('policyStatus').checked ? 'active' : 'inactive',
+                order_index: id ? undefined : policies.filter(p => p.category_id === selectedCategoryId).length
+            };
+
+            try {
+                let policyId = id;
+
+                // Save policy
+                if (id) {
+                    const result = await supabaseClient.from('policies').update(policyData).eq('id', id);
+                    if (result.error) throw result.error;
+
+                    // Delete existing sections and bullets
+                    const existingSections = sections.filter(s => s.policy_id === id);
+                    for (const sec of existingSections) {
+                        await supabaseClient.from('policy_section_bullets').delete().eq('policy_section_id', sec.id);
+                    }
+                    await supabaseClient.from('policy_sections').delete().eq('policy_id', id);
+                } else {
+                    const result = await supabaseClient.from('policies').insert([policyData]).select();
+                    if (result.error) throw result.error;
+                    policyId = result.data[0].id;
+                }
+
+                // Save sections and bullets
+                for (let i = 0; i < currentSections.length; i++) {
+                    const section = currentSections[i];
+                    const sectionResult = await supabaseClient.from('policy_sections').insert({
+                        policy_id: policyId,
+                        section_text: section.section_text,
+                        link: section.link || null,
+                        order_index: i
+                    }).select();
+
+                    if (sectionResult.error) throw sectionResult.error;
+                    const sectionId = sectionResult.data[0].id;
+
+                    // Save bullets for this section
+                    for (let j = 0; j < section.bullets.length; j++) {
+                        const bullet = section.bullets[j];
+                        if (bullet.bullet_text.trim()) {
+                            await supabaseClient.from('policy_section_bullets').insert({
+                                policy_section_id: sectionId,
+                                bullet_text: bullet.bullet_text,
+                                order_index: j
+                            });
+                        }
+                    }
+                }
+
+                showToast(id ? 'Policy updated!' : 'Policy added!', 'success');
+                closePolicyModal();
+                loadData();
+            } catch (error) {
+                console.error('Error saving policy:', error);
+                showToast('Error saving policy', 'error');
+            }
+        }
+
+        async function deletePolicy(policyId) {
+            if (!confirm('Delete this policy and all its sections?')) return;
+
+            try {
+                const result = await supabaseClient.from('policies').delete().eq('id', policyId);
+                if (result.error) throw result.error;
+
+                showToast('Policy deleted!', 'success');
+                loadData();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error deleting policy', 'error');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toastIcon.className = type === 'success' ? 'fas fa-check-circle toast-icon' : 'fas fa-exclamation-circle toast-icon';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
     </script>
 </body>
 </html>

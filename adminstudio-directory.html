@@ -26,7 +26,7 @@
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
-            --purple: #8B5CF6;
+            --salmon: #FA8072;
             --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
@@ -243,13 +243,13 @@
 
         .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
 
-        .btn-purple {
-            background: linear-gradient(135deg, var(--purple) 0%, #A78BFA 100%);
+        .btn-salmon {
+            background: linear-gradient(135deg, var(--salmon) 0%, #FEB2B2 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
         }
 
-        .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4); }
+        .btn-salmon:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(250, 128, 114, 0.4); }
 
         .btn-small { padding: 0.5rem 0.875rem; font-size: 0.8125rem; }
         .btn-icon-only { width: 40px; padding: 0.5rem; justify-content: center; }
@@ -279,7 +279,7 @@
             gap: 0.5rem;
         }
 
-        .zone-title i { color: var(--purple); }
+        .zone-title i { color: var(--salmon); }
 
         .zone-tabs {
             display: flex;
@@ -305,7 +305,7 @@
         }
 
         .zone-tab.active {
-            background: linear-gradient(135deg, var(--purple) 0%, #A78BFA 100%);
+            background: linear-gradient(135deg, var(--salmon) 0%, #FEB2B2 100%);
             color: white;
             border-color: transparent;
         }
@@ -441,7 +441,7 @@
         .brand-zone-badge {
             font-size: 0.75rem;
             padding: 0.25rem 0.625rem;
-            background: var(--purple);
+            background: var(--salmon);
             color: white;
             border-radius: 6px;
             font-weight: 600;
@@ -508,7 +508,7 @@
         .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .badge-info { background: rgba(96, 165, 250, 0.1); color: var(--primary); }
         .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .badge-purple { background: rgba(139, 92, 246, 0.1); color: var(--purple); }
+        .badge-salmon { background: rgba(250, 128, 114, 0.1); color: var(--salmon); }
 
         .studio-card-actions {
             display: flex;
@@ -1155,7 +1155,7 @@
                 <p>Manage zones, brands, and studio locations</p>
             </div>
             <div class="page-header-actions">
-                <button class="btn btn-purple" onclick="openZoneModal()">
+                <button class="btn btn-salmon" onclick="openZoneModal()">
                     <i class="fas fa-layer-group"></i> Manage Zones
                 </button>
                 <button class="btn btn-secondary" onclick="openBrandModal()">
@@ -2188,7 +2188,7 @@
                         ${studio.director_name ? `<div class="studio-info-row"><i class="fas fa-user"></i><span>${studio.director_name}</span></div>` : ''}
                         ${studio.admin_office_hours ? `<div class="studio-info-row"><i class="fas fa-clock"></i><span>${studio.admin_office_hours}</span></div>` : ''}
                         <div class="studio-badges">
-                            ${zone ? `<span class="studio-badge badge-purple">Zone ${zone.zone_number}</span>` : ''}
+                            ${zone ? `<span class="studio-badge badge-salmon">Zone ${zone.zone_number}</span>` : ''}
                             ${studio.programs_enabled ? '<span class="studio-badge badge-success"><i class="fas fa-check" style="margin-right: 0.25rem;"></i>Programs</span>' : ''}
                             ${studio.rentals_enabled ? '<span class="studio-badge badge-info"><i class="fas fa-guitar" style="margin-right: 0.25rem;"></i>Rentals</span>' : ''}
                             ${instruments.length > 0 ? `<span class="studio-badge badge-warning">${instruments.length} instruments</span>` : ''}
@@ -2197,7 +2197,10 @@
                             <button class="btn btn-secondary btn-small" onclick='editStudio("${studio.id}")' style="flex: 1;">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteStudio('${studio.id}')">
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="duplicateStudio('${studio.id}')" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteStudio('${studio.id}')" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -2792,6 +2795,129 @@
             } catch (error) {
                 console.error('Error deleting studio:', error);
                 showToast('Error deleting studio', 'error');
+            }
+        }
+
+        async function duplicateStudio(studioId) {
+            const studio = studios.find(s => s.id === studioId);
+            if (!studio) {
+                showToast('Studio not found', 'error');
+                return;
+            }
+
+            if (!confirm(`Duplicate "${studio.city || 'this studio'}"? A copy will be created that you can edit.`)) return;
+
+            try {
+                // Create new studio with copied data
+                const newStudioData = {
+                    brand_id: studio.brand_id,
+                    state: studio.state,
+                    city: studio.city ? `${studio.city} (Copy)` : 'Copy',
+                    time_zone: studio.time_zone,
+                    address: studio.address,
+                    parking: studio.parking,
+                    landmarks: studio.landmarks,
+                    general_notes: studio.general_notes,
+                    phone_number: studio.phone_number,
+                    director_name: studio.director_name,
+                    director_email: studio.director_email,
+                    scheduling_link: studio.scheduling_link,
+                    admin_office_hours: studio.admin_office_hours,
+                    monthly_rate: studio.monthly_rate,
+                    price_45: studio.price_45,
+                    price_60: studio.price_60,
+                    annual_fee: studio.annual_fee,
+                    programs_enabled: studio.programs_enabled,
+                    rentals_enabled: studio.rentals_enabled,
+                    rental_info: studio.rental_info,
+                    rental_link: studio.rental_link,
+                    summary_vibe: studio.summary_vibe,
+                    security_notes: studio.security_notes,
+                    customer_care_title: studio.customer_care_title,
+                    customer_care_subtitle: studio.customer_care_subtitle,
+                    customer_care_notes: studio.customer_care_notes
+                };
+
+                const { data: newStudio, error: studioError } = await supabaseClient
+                    .from('studios')
+                    .insert([newStudioData])
+                    .select();
+
+                if (studioError) throw studioError;
+
+                const newStudioId = newStudio[0].id;
+
+                // Duplicate admins
+                if (studio.admins && studio.admins.length > 0) {
+                    const adminCopies = studio.admins.map((a, i) => ({
+                        studio_id: newStudioId,
+                        name: a.name,
+                        email: a.email,
+                        order_index: i
+                    }));
+                    await supabaseClient.from('studio_admins').insert(adminCopies);
+                }
+
+                // Duplicate instruments
+                if (studio.instruments && studio.instruments.length > 0) {
+                    const instrumentCopies = studio.instruments.map((inst, i) => ({
+                        studio_id: newStudioId,
+                        name: inst.name || inst.instrument,
+                        notes: inst.notes,
+                        materials: inst.materials,
+                        order_index: i
+                    }));
+                    await supabaseClient.from('studio_instruments').insert(instrumentCopies);
+                }
+
+                // Duplicate links
+                if (studio.custom_links && studio.custom_links.length > 0) {
+                    const linkCopies = studio.custom_links.map((l, i) => ({
+                        studio_id: newStudioId,
+                        header: l.header,
+                        subheader: l.subheader,
+                        url: l.url,
+                        order_index: i
+                    }));
+                    await supabaseClient.from('studio_links').insert(linkCopies);
+                }
+
+                // Duplicate scholarships
+                if (studio.scholarships && studio.scholarships.length > 0) {
+                    const scholarshipCopies = studio.scholarships.map((s, i) => ({
+                        studio_id: newStudioId,
+                        title: s.title,
+                        notes: s.notes,
+                        link: s.link,
+                        order_index: i
+                    }));
+                    await supabaseClient.from('studio_scholarships').insert(scholarshipCopies);
+                }
+
+                // Duplicate notes
+                if (studio.studio_notes && studio.studio_notes.length > 0) {
+                    const noteCopies = studio.studio_notes.map((n, i) => ({
+                        studio_id: newStudioId,
+                        title: n.title,
+                        subtitle: n.subtitle,
+                        notes: n.notes,
+                        link: n.link,
+                        order_index: i
+                    }));
+                    await supabaseClient.from('studio_notes').insert(noteCopies);
+                }
+
+                showToast('Studio duplicated! Opening for editing...', 'success');
+                await loadAllData();
+                
+                // Open the duplicated studio for editing
+                setTimeout(() => {
+                    editStudio(newStudioId);
+                }, 500);
+
+            } catch (error) {
+                console.error('Error duplicating studio:', error);
+                showToast('Error duplicating studio', 'error');
             }
         }
 

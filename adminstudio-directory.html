@@ -1269,6 +1269,20 @@
                 </button>
                 
                 <div class="form-label">Existing Brands</div>
+                
+                <!-- Search and Filter Row -->
+                <div class="form-row" style="margin-bottom: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="text" class="form-input" id="brandSearchInput" placeholder="Search brands..." oninput="filterBrandsList()">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select class="form-select" id="brandZoneFilter" onchange="filterBrandsList()">
+                            <option value="">All Zones</option>
+                            <!-- Zones will be dynamically added here -->
+                        </select>
+                    </div>
+                </div>
+                
                 <div id="brandsList" class="management-list"></div>
             </div>
         </div>
@@ -1292,9 +1306,9 @@
                         <button type="button" class="modal-tab" data-modal-tab="contact">Contact</button>
                         <button type="button" class="modal-tab" data-modal-tab="pricing">Pricing</button>
                         <button type="button" class="modal-tab" data-modal-tab="details">Details</button>
-                        <button type="button" class="modal-tab" data-modal-tab="vibe">Vibe & Security</button>
                         <button type="button" class="modal-tab" data-modal-tab="customercare">Customer Care</button>
                         <button type="button" class="modal-tab" data-modal-tab="scholarships">Scholarships</button>
+                        <button type="button" class="modal-tab" data-modal-tab="policies">Policies</button>
                         <button type="button" class="modal-tab" data-modal-tab="notes">Notes</button>
                         <button type="button" class="modal-tab" data-modal-tab="instruments">Instruments</button>
                         <button type="button" class="modal-tab" data-modal-tab="links">Links</button>
@@ -1352,6 +1366,40 @@
                                     </button>
                                 </div>
                                 <div class="rich-editor-content" id="studioDescription" contenteditable="true" data-placeholder="Studio description..."></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Studio Summary / Vibe</label>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSummaryVibe', 'bold')" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSummaryVibe', 'italic')" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSummaryVibe', 'underline')" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                <div class="rich-editor-content" id="studioSummaryVibe" contenteditable="true" data-placeholder="Describe the studio atmosphere, culture, and vibe..."></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Safety & Supervision Policies</label>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSecurityNotes', 'bold')" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSecurityNotes', 'italic')" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSecurityNotes', 'underline')" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                <div class="rich-editor-content" id="studioSecurityNotes" contenteditable="true" data-placeholder="Safety procedures, supervision policies, emergency contacts..."></div>
                             </div>
                         </div>
                     </div>
@@ -1459,44 +1507,6 @@
                         </div>
                     </div>
 
-                    <!-- Vibe & Security Tab (NEW) -->
-                    <div id="vibeTab" class="modal-tab-content">
-                        <div class="form-group">
-                            <label class="form-label">Studio Summary / Vibe</label>
-                            <div class="rich-editor">
-                                <div class="rich-editor-toolbar">
-                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSummaryVibe', 'bold')" title="Bold">
-                                        <i class="fas fa-bold"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSummaryVibe', 'italic')" title="Italic">
-                                        <i class="fas fa-italic"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSummaryVibe', 'underline')" title="Underline">
-                                        <i class="fas fa-underline"></i>
-                                    </button>
-                                </div>
-                                <div class="rich-editor-content" id="studioSummaryVibe" contenteditable="true" data-placeholder="Describe the studio atmosphere, culture, and vibe..."></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Security Notes</label>
-                            <div class="rich-editor">
-                                <div class="rich-editor-toolbar">
-                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSecurityNotes', 'bold')" title="Bold">
-                                        <i class="fas fa-bold"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSecurityNotes', 'italic')" title="Italic">
-                                        <i class="fas fa-italic"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatText('studioSecurityNotes', 'underline')" title="Underline">
-                                        <i class="fas fa-underline"></i>
-                                    </button>
-                                </div>
-                                <div class="rich-editor-content" id="studioSecurityNotes" contenteditable="true" data-placeholder="Security codes, access procedures, alarm info..."></div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Customer Care Tab -->
                     <div id="customercareTab" class="modal-tab-content">
                         <div class="form-group">
@@ -1536,6 +1546,19 @@
                                 </button>
                             </div>
                             <div id="scholarshipsList" class="dynamic-list-items"></div>
+                        </div>
+                    </div>
+
+                    <!-- Policies Tab (NEW) -->
+                    <div id="policiesTab" class="modal-tab-content">
+                        <div class="dynamic-list">
+                            <div class="dynamic-list-header">
+                                <span class="dynamic-list-title">Studio Policies</span>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="addPolicy()">
+                                    <i class="fas fa-plus"></i> Add Policy
+                                </button>
+                            </div>
+                            <div id="policiesList" class="dynamic-list-items"></div>
                         </div>
                     </div>
 
@@ -1616,6 +1639,7 @@
         let currentLinks = [];
         let currentScholarships = [];
         let currentNotes = [];
+        let currentPolicies = [];
         
         // Track deletions
         let deletedAdminIds = [];
@@ -1623,6 +1647,7 @@
         let deletedLinkIds = [];
         let deletedScholarshipIds = [];
         let deletedNoteIds = [];
+        let deletedPolicyIds = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1704,7 +1729,7 @@
         // ============ DATA LOADING ============
         async function loadAllData() {
             try {
-                const [zonesRes, brandsRes, studiosRes, instrumentsRes, linksRes, adminsRes, scholarshipsRes, notesRes] = await Promise.all([
+                const [zonesRes, brandsRes, studiosRes, instrumentsRes, linksRes, adminsRes, scholarshipsRes, notesRes, policiesRes] = await Promise.all([
                     supabaseClient.from('zones').select('*').order('zone_number'),
                     supabaseClient.from('brands').select('*').order('name'),
                     supabaseClient.from('studios').select('*').order('city'),
@@ -1712,7 +1737,8 @@
                     supabaseClient.from('studio_links').select('*').order('order_index'),
                     supabaseClient.from('studio_admins').select('*').order('order_index'),
                     supabaseClient.from('studio_scholarships').select('*').order('order_index'),
-                    supabaseClient.from('studio_notes').select('*').order('order_index')
+                    supabaseClient.from('studio_notes').select('*').order('order_index'),
+                    supabaseClient.from('studio_policies').select('*').order('order_index')
                 ]);
 
                 if (zonesRes.error) throw zonesRes.error;
@@ -1729,7 +1755,8 @@
                     custom_links: (linksRes.data || []).filter(l => l.studio_id === studio.id),
                     admins: (adminsRes.data || []).filter(a => a.studio_id === studio.id),
                     scholarships: (scholarshipsRes.data || []).filter(s => s.studio_id === studio.id),
-                    studio_notes: (notesRes.data || []).filter(n => n.studio_id === studio.id)
+                    studio_notes: (notesRes.data || []).filter(n => n.studio_id === studio.id),
+                    policies: (policiesRes.data || []).filter(p => p.studio_id === studio.id)
                 }));
 
                 document.getElementById('loading').style.display = 'none';
@@ -1931,22 +1958,50 @@
         function openBrandModal() {
             document.getElementById('newBrandName').value = '';
             document.getElementById('newBrandZone').value = '';
+            document.getElementById('brandSearchInput').value = '';
+            document.getElementById('brandZoneFilter').value = '';
             populateZoneDropdowns();
+            populateBrandZoneFilter();
             renderBrandsList();
             document.getElementById('brandModal').classList.add('active');
+        }
+
+        function populateBrandZoneFilter() {
+            const select = document.getElementById('brandZoneFilter');
+            select.innerHTML = '<option value="">All Zones</option>' + 
+                zones.map(z => `<option value="${z.id}">Zone ${z.zone_number} - ${z.zone_name}</option>`).join('');
+        }
+
+        function filterBrandsList() {
+            const searchTerm = document.getElementById('brandSearchInput').value.toLowerCase().trim();
+            const zoneFilter = document.getElementById('brandZoneFilter').value;
+            
+            let filteredBrands = [...brands];
+            
+            if (searchTerm) {
+                filteredBrands = filteredBrands.filter(b => b.name.toLowerCase().includes(searchTerm));
+            }
+            
+            if (zoneFilter) {
+                filteredBrands = filteredBrands.filter(b => b.zone_id === zoneFilter);
+            }
+            
+            renderBrandsList(filteredBrands);
         }
 
         function closeBrandModal() {
             document.getElementById('brandModal').classList.remove('active');
         }
 
-        function renderBrandsList() {
+        function renderBrandsList(filteredBrands = null) {
             const container = document.getElementById('brandsList');
-            if (brands.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 1rem;">No brands created yet</p>';
+            const brandsToRender = filteredBrands || brands;
+            
+            if (brandsToRender.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 1rem;">No brands found</p>';
                 return;
             }
-            container.innerHTML = brands.map(brand => {
+            container.innerHTML = brandsToRender.map(brand => {
                 const zone = zones.find(z => z.id === brand.zone_id);
                 const studioCount = studios.filter(s => s.brand_id === brand.id).length;
                 return `
@@ -2245,17 +2300,20 @@
             currentLinks = [];
             currentScholarships = [];
             currentNotes = [];
+            currentPolicies = [];
             deletedAdminIds = [];
             deletedInstrumentIds = [];
             deletedLinkIds = [];
             deletedScholarshipIds = [];
             deletedNoteIds = [];
+            deletedPolicyIds = [];
             
             renderAdmins();
             renderInstruments();
             renderLinks();
             renderScholarships();
             renderNotes();
+            renderPolicies();
             
             document.getElementById('studioModal').classList.add('active');
         }
@@ -2328,18 +2386,21 @@
             currentLinks = (studio.custom_links || []).map(l => ({ id: l.id, header: l.header, subheader: l.subheader, url: l.url, isNew: false }));
             currentScholarships = (studio.scholarships || []).map(s => ({ id: s.id, title: s.title, notes: s.notes, link: s.link, isNew: false }));
             currentNotes = (studio.studio_notes || []).map(n => ({ id: n.id, title: n.title, subtitle: n.subtitle, notes: n.notes, link: n.link, isNew: false }));
+            currentPolicies = (studio.policies || []).map(p => ({ id: p.id, title: p.title, subtitle: p.subtitle, link: p.link, notes: p.notes, isNew: false }));
             
             deletedAdminIds = [];
             deletedInstrumentIds = [];
             deletedLinkIds = [];
             deletedScholarshipIds = [];
             deletedNoteIds = [];
+            deletedPolicyIds = [];
             
             renderAdmins();
             renderInstruments();
             renderLinks();
             renderScholarships();
             renderNotes();
+            renderPolicies();
             
             document.getElementById('studioModal').classList.add('active');
         }
@@ -2593,6 +2654,59 @@
             `).join('');
         }
 
+        // ============ POLICIES ============
+        function addPolicy() {
+            currentPolicies.push({ id: null, title: '', subtitle: '', link: '', notes: '', isNew: true });
+            renderPolicies();
+        }
+
+        function removePolicy(index) {
+            const policy = currentPolicies[index];
+            if (policy.id) deletedPolicyIds.push(policy.id);
+            currentPolicies.splice(index, 1);
+            renderPolicies();
+        }
+
+        function updatePolicy(index, field, value) {
+            currentPolicies[index][field] = value;
+        }
+
+        function renderPolicies() {
+            const container = document.getElementById('policiesList');
+            if (currentPolicies.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 1rem;">No policies added. Click "Add Policy" to add one.</p>';
+                return;
+            }
+            container.innerHTML = currentPolicies.map((policy, index) => `
+                <div class="dynamic-item">
+                    <div class="dynamic-item-content">
+                        <div class="dynamic-item-row">
+                            <input type="text" placeholder="Policy Title" value="${policy.title || ''}" onchange="updatePolicy(${index}, 'title', this.value)">
+                            <input type="text" placeholder="Subtitle (optional)" value="${policy.subtitle || ''}" onchange="updatePolicy(${index}, 'subtitle', this.value)">
+                        </div>
+                        <input type="url" placeholder="Link (https://...)" value="${policy.link || ''}" onchange="updatePolicy(${index}, 'link', this.value)" style="margin: 0.5rem 0;">
+                        <div class="rich-editor">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onclick="formatTextDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'), 'bold')" title="Bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatTextDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'), 'italic')" title="Italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" onclick="formatTextDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'), 'underline')" title="Underline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                            </div>
+                            <div class="rich-editor-content small" contenteditable="true" data-placeholder="Policy notes and details..." oninput="updatePolicy(${index}, 'notes', this.innerHTML)">${policy.notes || ''}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-item-btn" onclick="removePolicy(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
         // ============ SAVE STUDIO ============
         async function saveStudio() {
             const id = document.getElementById('studioId').value;
@@ -2659,6 +2773,9 @@
                 }
                 if (deletedNoteIds.length > 0) {
                     await supabaseClient.from('studio_notes').delete().in('id', deletedNoteIds);
+                }
+                if (deletedPolicyIds.length > 0) {
+                    await supabaseClient.from('studio_policies').delete().in('id', deletedPolicyIds);
                 }
 
                 // Save admins
@@ -2770,6 +2887,31 @@
                                 link: note.link || null,
                                 order_index: i
                             }).eq('id', note.id);
+                        }
+                    }
+                }
+
+                // Save policies
+                for (let i = 0; i < currentPolicies.length; i++) {
+                    const policy = currentPolicies[i];
+                    if (policy.title || policy.notes) {
+                        if (policy.isNew) {
+                            await supabaseClient.from('studio_policies').insert({
+                                studio_id: studioId,
+                                title: policy.title || null,
+                                subtitle: policy.subtitle || null,
+                                link: policy.link || null,
+                                notes: policy.notes || null,
+                                order_index: i
+                            });
+                        } else {
+                            await supabaseClient.from('studio_policies').update({
+                                title: policy.title || null,
+                                subtitle: policy.subtitle || null,
+                                link: policy.link || null,
+                                notes: policy.notes || null,
+                                order_index: i
+                            }).eq('id', policy.id);
                         }
                     }
                 }
@@ -2905,6 +3047,19 @@
                         order_index: i
                     }));
                     await supabaseClient.from('studio_notes').insert(noteCopies);
+                }
+
+                // Duplicate policies
+                if (studio.policies && studio.policies.length > 0) {
+                    const policyCopies = studio.policies.map((p, i) => ({
+                        studio_id: newStudioId,
+                        title: p.title,
+                        subtitle: p.subtitle,
+                        link: p.link,
+                        notes: p.notes,
+                        order_index: i
+                    }));
+                    await supabaseClient.from('studio_policies').insert(policyCopies);
                 }
 
                 showToast('Studio duplicated! Opening for editing...', 'success');

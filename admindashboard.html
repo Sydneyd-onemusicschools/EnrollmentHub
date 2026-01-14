@@ -1335,9 +1335,9 @@
                             <label class="form-label">Work Mode</label>
                             <select class="form-select" id="scheduleWorkMode">
                                 <option value="">Select mode...</option>
-                                <option value="In Office">In Office</option>
-                                <option value="Remote">Remote</option>
-                                <option value="Hybrid">Hybrid</option>
+                                <option value="in_office">In Office</option>
+                                <option value="remote">Remote</option>
+                                <option value="hybrid">Hybrid</option>
                             </select>
                         </div>
                     </div>
@@ -2037,7 +2037,7 @@
                         <div class="schedule-card-header"><div class="schedule-card-name">${name}</div><div class="schedule-card-day">${s.weekday || ''}</div></div>
                         <div class="schedule-card-body">
                             ${s.hours ? `<div class="schedule-info-row"><i class="fas fa-clock"></i><span>${s.hours}</span></div>` : ''}
-                            ${s.work_mode ? `<div class="schedule-info-row"><i class="fas fa-building"></i><span>${s.work_mode}</span></div>` : ''}
+                            ${s.work_mode ? `<div class="schedule-info-row"><i class="fas fa-building"></i><span>${s.work_mode === 'in_office' ? 'In Office' : s.work_mode === 'remote' ? 'Remote' : s.work_mode === 'hybrid' ? 'Hybrid' : s.work_mode}</span></div>` : ''}
                             ${s.lunch_time ? `<div class="schedule-info-row"><i class="fas fa-utensils"></i><span>${s.lunch_time}</span></div>` : ''}
                             ${s.meetings ? `<div class="schedule-info-row"><i class="fas fa-video"></i><span>${s.meetings}</span></div>` : ''}
                             ${s.notes ? `<div class="schedule-info-row"><i class="fas fa-sticky-note"></i><span>${s.notes}</span></div>` : ''}
@@ -2100,7 +2100,7 @@
                 
                 if (result.error) {
                     console.error('Supabase error:', result.error);
-                    showToast('Error: ' + result.error.message, 'error');
+                    alert('Database Error: ' + result.error.message + '\n\nDetails: ' + result.error.details + '\n\nHint: ' + result.error.hint);
                     return;
                 }
                 
@@ -2109,7 +2109,7 @@
                 loadData();
             } catch (error) { 
                 console.error('Error:', error); 
-                showToast('Error saving: ' + error.message, 'error'); 
+                alert('Error: ' + error.message);
             }
         }
 

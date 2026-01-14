@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            /* Light Soft Blue Admin Color Scheme */
             --primary: #60A5FA;
             --primary-light: #93C5FD;
             --primary-dark: #3B82F6;
@@ -44,11 +42,7 @@
             --transition-speed: 0.3s;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -74,9 +68,7 @@
             flex-direction: column;
         }
 
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed);
-        }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-header {
             padding: 1.5rem 1.25rem;
@@ -93,10 +85,7 @@
             transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar.collapsed .logo-section {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
 
         .logo-icon {
             width: 40px;
@@ -147,19 +136,9 @@
             flex-shrink: 0;
         }
 
-        .toggle-btn:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-300);
-        }
-
-        .sidebar.collapsed .toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .toggle-icon {
-            transition: transform var(--transition-speed) ease;
-            font-size: 1rem;
-        }
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
 
         .sidebar-nav {
             flex: 1;
@@ -168,18 +147,9 @@
             padding: 1rem 0;
         }
 
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
-            border-radius: 2px;
-        }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
 
         .nav-item {
             display: flex;
@@ -199,10 +169,7 @@
             font-weight: 500;
         }
 
-        .nav-item:hover {
-            background: var(--gray-100);
-            color: var(--text-primary);
-        }
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
 
         .nav-item.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -220,33 +187,13 @@
             justify-content: center;
         }
 
-        .nav-text {
-            white-space: nowrap;
-            transition: opacity var(--transition-speed) ease;
-        }
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
 
-        .sidebar.collapsed .nav-text {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: 0.875rem;
-        }
-
-        .sidebar-footer {
-            padding: 0.5rem 0 1rem 0;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .logout-btn {
-            color: var(--danger) !important;
-        }
-
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.1) !important;
-        }
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--danger) !important; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.1) !important; }
 
         .sidebar-overlay {
             position: fixed;
@@ -261,10 +208,7 @@
             transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
 
         .main-content {
             margin-left: var(--sidebar-width);
@@ -273,9 +217,7 @@
             transition: margin-left var(--transition-speed) ease;
         }
 
-        .sidebar.collapsed ~ .main-content {
-            margin-left: var(--sidebar-collapsed);
-        }
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
 
         /* Page Header */
         .page-header {
@@ -293,15 +235,8 @@
             letter-spacing: -0.02em;
         }
 
-        .page-header-left p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .page-header-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
+        .page-header-left p { color: var(--text-secondary); font-size: 1rem; }
+        .page-header-actions { display: flex; gap: 0.75rem; }
 
         /* Buttons */
         .btn {
@@ -324,10 +259,7 @@
             box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4);
-        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4); }
 
         .btn-secondary {
             background: var(--white);
@@ -335,47 +267,15 @@
             border: 1.5px solid var(--gray-200);
         }
 
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #DC2626;
-        }
-
-        .btn-icon-only {
-            width: 40px;
-            padding: 0.5rem;
-            justify-content: center;
-        }
-
-        .btn-icon-only i {
-            color: var(--text-secondary);
-        }
-
-        .btn-icon-only:hover i {
-            color: var(--text-primary);
-        }
-
-        .btn-small {
-            padding: 0.5rem 0.875rem;
-            font-size: 0.8125rem;
-        }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #DC2626; }
+        .btn-icon-only { width: 40px; padding: 0.5rem; justify-content: center; }
+        .btn-icon-only i { color: var(--text-secondary); }
+        .btn-icon-only:hover i { color: var(--text-primary); }
+        .btn-small { padding: 0.5rem 0.875rem; font-size: 0.8125rem; }
 
         /* Tabs Section */
         .tabs-section {
@@ -404,10 +304,7 @@
             gap: 0.625rem;
         }
 
-        .section-title i {
-            color: var(--primary);
-            font-size: 1.125rem;
-        }
+        .section-title i { color: var(--primary); font-size: 1.125rem; }
 
         .tabs {
             display: flex;
@@ -430,22 +327,10 @@
             margin-bottom: -2px;
         }
 
-        .tab:hover {
-            color: var(--text-primary);
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* Cards Grid */
         .cards-grid {
@@ -464,10 +349,7 @@
             transition: all 0.2s ease;
         }
 
-        .item-card:hover {
-            border-color: var(--primary-light);
-            box-shadow: var(--shadow-md);
-        }
+        .item-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-md); }
 
         .item-card-header {
             display: flex;
@@ -487,15 +369,8 @@
             flex-shrink: 0;
         }
 
-        .item-card-icon i {
-            color: white;
-            font-size: 1rem;
-        }
-
-        .item-card-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
+        .item-card-icon i { color: white; font-size: 1rem; }
+        .item-card-actions { display: flex; gap: 0.5rem; }
 
         .item-card-title {
             font-size: 1rem;
@@ -537,19 +412,14 @@
             color: var(--text-secondary);
         }
 
-        .meta-badge i {
-            font-size: 0.625rem;
-            color: var(--primary);
-        }
+        .meta-badge i { font-size: 0.625rem; color: var(--primary); }
 
         .meta-badge.starred {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
         }
 
-        .meta-badge.starred i {
-            color: white;
-        }
+        .meta-badge.starred i { color: white; }
 
         /* Stat Card Preview */
         .stat-preview {
@@ -576,10 +446,7 @@
             margin-bottom: 0.5rem;
         }
 
-        .stat-preview-subtext {
-            font-size: 0.875rem;
-            opacity: 0.9;
-        }
+        .stat-preview-subtext { font-size: 0.875rem; opacity: 0.9; }
 
         /* Goal Card */
         .goal-card {
@@ -596,11 +463,7 @@
             color: white;
         }
 
-        .goal-card-name {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
+        .goal-card-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
 
         .goal-card-type {
             font-size: 0.75rem;
@@ -609,9 +472,7 @@
             letter-spacing: 0.05em;
         }
 
-        .goal-card-body {
-            padding: 1.25rem;
-        }
+        .goal-card-body { padding: 1.25rem; }
 
         .goal-stats-grid {
             display: grid;
@@ -636,11 +497,7 @@
             margin-bottom: 0.25rem;
         }
 
-        .goal-stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+        .goal-stat-value { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); }
 
         /* Schedule Card */
         .schedule-card {
@@ -660,10 +517,7 @@
             justify-content: space-between;
         }
 
-        .schedule-card-name {
-            font-size: 1rem;
-            font-weight: 700;
-        }
+        .schedule-card-name { font-size: 1rem; font-weight: 700; }
 
         .schedule-card-day {
             font-size: 0.75rem;
@@ -673,9 +527,7 @@
             text-transform: capitalize;
         }
 
-        .schedule-card-body {
-            padding: 1.25rem;
-        }
+        .schedule-card-body { padding: 1.25rem; }
 
         .schedule-info-row {
             display: flex;
@@ -685,19 +537,9 @@
             border-bottom: 1px solid var(--gray-100);
         }
 
-        .schedule-info-row:last-child {
-            border-bottom: none;
-        }
-
-        .schedule-info-row i {
-            color: var(--primary);
-            width: 16px;
-        }
-
-        .schedule-info-row span {
-            font-size: 0.875rem;
-            color: var(--text-primary);
-        }
+        .schedule-info-row:last-child { border-bottom: none; }
+        .schedule-info-row i { color: var(--primary); width: 16px; }
+        .schedule-info-row span { font-size: 0.875rem; color: var(--text-primary); }
 
         /* Modal */
         .modal {
@@ -714,9 +556,7 @@
             padding: 1rem;
         }
 
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
 
         .modal-content {
             background: white;
@@ -736,11 +576,7 @@
             justify-content: space-between;
         }
 
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
 
         .modal-close {
             width: 32px;
@@ -756,17 +592,9 @@
             transition: all 0.2s ease;
         }
 
-        .modal-close:hover {
-            background: var(--gray-200);
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+        .modal-close:hover { background: var(--gray-200); }
+        .modal-body { padding: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
 
         .form-label {
             display: block;
@@ -799,16 +627,8 @@
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
         }
 
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 
         .form-checkbox {
             display: flex;
@@ -817,16 +637,8 @@
             cursor: pointer;
         }
 
-        .form-checkbox input {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-        }
-
-        .form-checkbox span {
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-        }
+        .form-checkbox input { width: 18px; height: 18px; accent-color: var(--primary); }
+        .form-checkbox span { font-size: 0.9375rem; color: var(--text-primary); }
 
         .modal-footer {
             padding: 1.5rem;
@@ -836,12 +648,80 @@
             justify-content: flex-end;
         }
 
+        /* Rich Text Editor */
+        .rich-editor {
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--gray-50);
+            transition: all 0.2s ease;
+        }
+
+        .rich-editor:focus-within {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .rich-editor-toolbar {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .toolbar-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .rich-editor-content {
+            min-height: 100px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+            outline: none;
+        }
+
+        .rich-editor-content:empty:before {
+            content: attr(data-placeholder);
+            color: var(--text-light);
+            pointer-events: none;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 3rem 1.5rem;
             color: var(--text-secondary);
         }
+
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 0.75rem; }
+        .empty-state p { font-size: 1rem; margin-bottom: 1rem; }
 
         /* Filter Buttons */
         .filter-btn {
@@ -859,10 +739,7 @@
             gap: 0.5rem;
         }
 
-        .filter-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
+        .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
 
         .filter-btn.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -871,20 +748,7 @@
             box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
         }
 
-        .filter-btn.active i {
-            color: white;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            color: var(--gray-300);
-            margin-bottom: 0.75rem;
-        }
-
-        .empty-state p {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
+        .filter-btn.active i { color: white; }
 
         .loading {
             display: flex;
@@ -913,76 +777,25 @@
             transition: all 0.3s ease;
         }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .toast.success {
-            border-left: 4px solid var(--success);
-        }
-
-        .toast.error {
-            border-left: 4px solid var(--danger);
-        }
-
-        .toast-icon {
-            font-size: 1.25rem;
-        }
-
-        .toast.success .toast-icon {
-            color: var(--success);
-        }
-
-        .toast.error .toast-icon {
-            color: var(--danger);
-        }
-
-        .toast-message {
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast-icon { font-size: 1.25rem; }
+        .toast.success .toast-icon { color: var(--success); }
+        .toast.error .toast-icon { color: var(--danger); }
+        .toast-message { font-size: 0.9375rem; color: var(--text-primary); font-weight: 500; }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar:not(.collapsed) {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 1.5rem;
-            }
-            
-            .sidebar.collapsed ~ .main-content {
-                margin-left: 0;
-            }
-
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .page-header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .page-header-actions {
-                width: 100%;
-            }
-
-            .btn {
-                flex: 1;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; gap: 1rem; }
+            .page-header-actions { width: 100%; }
+            .btn { flex: 1; }
+            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1004,52 +817,42 @@
                 <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
                 <span class="nav-text">Dashboard</span>
             </a>
-            
             <a href="adminquicklinks.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-link"></i></span>
                 <span class="nav-text">Quick Links</span>
             </a>
-            
             <a href="adminstudio-directory.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-building"></i></span>
                 <span class="nav-text">Studio Directory</span>
             </a>
-            
             <a href="adminteacher-directory.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
                 <span class="nav-text">Teacher Directory</span>
             </a>
-
             <a href="adminsnippets.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span class="nav-icon"><i class="fas fa-code"></i></span>
                 <span class="nav-text">Snippets</span>
             </a>
-            
             <a href="adminmap.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
                 <span class="nav-text">Map</span>
             </a>
-            
             <a href="adminprograms.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
                 <span class="nav-text">Programs</span>
             </a>
-            
             <a href="admintraining-hub.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-book-open"></i></span>
                 <span class="nav-text">Training Hub</span>
             </a>
-            
             <a href="adminpolicies.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-file-alt"></i></span>
                 <span class="nav-text">Policies</span>
             </a>
-            
             <a href="adminprofiles.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-user"></i></span>
                 <span class="nav-text">Profiles</span>
             </a>
-            
             <a href="admindirectors.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
                 <span class="nav-text">DirectorsPage</span>
@@ -1067,7 +870,6 @@
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <main class="main-content">
-        <!-- Page Header -->
         <div class="page-header">
             <div class="page-header-left">
                 <h1>Dashboard Management</h1>
@@ -1087,7 +889,6 @@
         </div>
 
         <div id="content" style="display: none;">
-            <!-- Main Tabs -->
             <div class="tabs-section">
                 <div class="tabs">
                     <button class="tab active" data-tab="stats">Stats Cards</button>
@@ -1100,13 +901,9 @@
                 <!-- Stats Cards Tab -->
                 <div id="stats" class="tab-content active">
                     <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-chart-bar"></i>
-                            Stats Cards
-                        </h2>
+                        <h2 class="section-title"><i class="fas fa-chart-bar"></i> Stats Cards</h2>
                         <button class="btn btn-primary btn-small" onclick="openStatModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Stat
+                            <i class="fas fa-plus"></i> Add Stat
                         </button>
                     </div>
                     <div id="statsGrid" class="cards-grid"></div>
@@ -1115,13 +912,9 @@
                 <!-- Team Goals Tab -->
                 <div id="teamgoals" class="tab-content">
                     <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-bullseye"></i>
-                            Team Goals & Rewards
-                        </h2>
+                        <h2 class="section-title"><i class="fas fa-bullseye"></i> Team Goals & Rewards</h2>
                         <button class="btn btn-primary btn-small" onclick="openTeamGoalModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Team Goal
+                            <i class="fas fa-plus"></i> Add Team Goal
                         </button>
                     </div>
                     <div id="teamGoalsGrid" class="cards-grid"></div>
@@ -1136,61 +929,41 @@
                         <button class="tab" data-subtab="notes">Notes</button>
                     </div>
 
-                    <!-- Announcements -->
                     <div id="announcements" class="tab-content active">
                         <div class="section-header">
-                            <h2 class="section-title">
-                                <i class="fas fa-bell"></i>
-                                Announcements
-                            </h2>
+                            <h2 class="section-title"><i class="fas fa-bell"></i> Announcements</h2>
                             <button class="btn btn-primary btn-small" onclick="openAnnouncementModal()">
-                                <i class="fas fa-plus"></i>
-                                Add Announcement
+                                <i class="fas fa-plus"></i> Add Announcement
                             </button>
                         </div>
                         <div id="announcementsGrid" class="cards-grid"></div>
                     </div>
 
-                    <!-- Shoutouts -->
                     <div id="shoutouts" class="tab-content">
                         <div class="section-header">
-                            <h2 class="section-title">
-                                <i class="fas fa-bullhorn"></i>
-                                Shoutouts
-                            </h2>
+                            <h2 class="section-title"><i class="fas fa-bullhorn"></i> Shoutouts</h2>
                             <button class="btn btn-primary btn-small" onclick="openShoutoutModal()">
-                                <i class="fas fa-plus"></i>
-                                Add Shoutout
+                                <i class="fas fa-plus"></i> Add Shoutout
                             </button>
                         </div>
                         <div id="shoutoutsGrid" class="cards-grid"></div>
                     </div>
 
-                    <!-- Promos -->
                     <div id="promos" class="tab-content">
                         <div class="section-header">
-                            <h2 class="section-title">
-                                <i class="fas fa-tag"></i>
-                                Promos
-                            </h2>
+                            <h2 class="section-title"><i class="fas fa-tag"></i> Promos</h2>
                             <button class="btn btn-primary btn-small" onclick="openPromoModal()">
-                                <i class="fas fa-plus"></i>
-                                Add Promo
+                                <i class="fas fa-plus"></i> Add Promo
                             </button>
                         </div>
                         <div id="promosGrid" class="cards-grid"></div>
                     </div>
 
-                    <!-- Notes -->
                     <div id="notes" class="tab-content">
                         <div class="section-header">
-                            <h2 class="section-title">
-                                <i class="fas fa-sticky-note"></i>
-                                Notes
-                            </h2>
+                            <h2 class="section-title"><i class="fas fa-sticky-note"></i> Notes</h2>
                             <button class="btn btn-primary btn-small" onclick="openNoteModal()">
-                                <i class="fas fa-plus"></i>
-                                Add Note
+                                <i class="fas fa-plus"></i> Add Note
                             </button>
                         </div>
                         <div id="notesGrid" class="cards-grid"></div>
@@ -1200,13 +973,9 @@
                 <!-- Individual Goals Tab -->
                 <div id="individualgoals" class="tab-content">
                     <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-user-check"></i>
-                            Individual Goals
-                        </h2>
+                        <h2 class="section-title"><i class="fas fa-user-check"></i> Individual Goals</h2>
                         <button class="btn btn-primary btn-small" onclick="openIndividualGoalModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Individual Goal
+                            <i class="fas fa-plus"></i> Add Individual Goal
                         </button>
                     </div>
                     <div class="filter-buttons" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
@@ -1229,13 +998,9 @@
                 <!-- Schedule Tab -->
                 <div id="schedule" class="tab-content">
                     <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-calendar-alt"></i>
-                            Schedule Items
-                        </h2>
+                        <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Schedule Items</h2>
                         <button class="btn btn-primary btn-small" onclick="openScheduleModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Schedule Item
+                            <i class="fas fa-plus"></i> Add Schedule Item
                         </button>
                     </div>
                     <div class="filter-buttons" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
@@ -1262,9 +1027,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="statModalTitle">Add Stat</h3>
-                <button class="modal-close" onclick="closeStatModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeStatModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="statForm">
@@ -1281,18 +1044,11 @@
                         <label class="form-label">Subtext</label>
                         <input type="text" class="form-input" id="statSubtext" placeholder="e.g., +12% from last month">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Order Index</label>
-                        <input type="number" class="form-input" id="statOrder" placeholder="0">
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeStatModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveStat()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="saveStat()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
@@ -1302,9 +1058,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="teamGoalModalTitle">Add Team Goal</h3>
-                <button class="modal-close" onclick="closeTeamGoalModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeTeamGoalModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="teamGoalForm">
@@ -1331,29 +1085,31 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeTeamGoalModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveTeamGoal()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="saveTeamGoal()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
 
-    <!-- Announcement Modal -->
+    <!-- Announcement Modal - WITH RICH TEXT -->
     <div id="announcementModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="announcementModalTitle">Add Announcement</h3>
-                <button class="modal-close" onclick="closeAnnouncementModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeAnnouncementModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="announcementForm">
                     <input type="hidden" id="announcementId">
                     <div class="form-group">
                         <label class="form-label">Content *</label>
-                        <textarea class="form-textarea" id="announcementContent" required placeholder="Enter announcement..."></textarea>
+                        <div class="rich-editor">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('announcementContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('announcementContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('announcementContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                            </div>
+                            <div class="rich-editor-content" id="announcementContent" contenteditable="true" data-placeholder="Enter announcement..."></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox">
@@ -1361,94 +1117,81 @@
                             <span>Mark as starred (important)</span>
                         </label>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Order Index</label>
-                        <input type="number" class="form-input" id="announcementOrder" placeholder="0">
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeAnnouncementModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveAnnouncement()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="saveAnnouncement()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
 
-    <!-- Shoutout Modal -->
+    <!-- Shoutout Modal - WITH RICH TEXT -->
     <div id="shoutoutModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="shoutoutModalTitle">Add Shoutout</h3>
-                <button class="modal-close" onclick="closeShoutoutModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeShoutoutModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="shoutoutForm">
                     <input type="hidden" id="shoutoutId">
                     <div class="form-group">
                         <label class="form-label">Content *</label>
-                        <textarea class="form-textarea" id="shoutoutContent" required placeholder="Enter shoutout..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Order Index</label>
-                        <input type="number" class="form-input" id="shoutoutOrder" placeholder="0">
+                        <div class="rich-editor">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('shoutoutContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('shoutoutContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('shoutoutContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                            </div>
+                            <div class="rich-editor-content" id="shoutoutContent" contenteditable="true" data-placeholder="Enter shoutout..."></div>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeShoutoutModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveShoutout()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="saveShoutout()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
 
-    <!-- Promo Modal -->
+    <!-- Promo Modal - WITH RICH TEXT -->
     <div id="promoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="promoModalTitle">Add Promo</h3>
-                <button class="modal-close" onclick="closePromoModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closePromoModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="promoForm">
                     <input type="hidden" id="promoId">
                     <div class="form-group">
                         <label class="form-label">Content *</label>
-                        <textarea class="form-textarea" id="promoContent" required placeholder="Enter promo details..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Order Index</label>
-                        <input type="number" class="form-input" id="promoOrder" placeholder="0">
+                        <div class="rich-editor">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('promoContent', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('promoContent', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('promoContent', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                            </div>
+                            <div class="rich-editor-content" id="promoContent" contenteditable="true" data-placeholder="Enter promo details..."></div>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closePromoModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="savePromo()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="savePromo()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
 
-    <!-- Note Modal -->
+    <!-- Note Modal - WITH RICH TEXT -->
     <div id="noteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="noteModalTitle">Add Note</h3>
-                <button class="modal-close" onclick="closeNoteModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeNoteModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="noteForm">
@@ -1463,24 +1206,24 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Notes *</label>
-                        <textarea class="form-textarea" id="noteNotes" required placeholder="Note content..."></textarea>
+                        <div class="rich-editor">
+                            <div class="rich-editor-toolbar">
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('noteNotes', 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('noteNotes', 'italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                <button type="button" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="formatText('noteNotes', 'underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                            </div>
+                            <div class="rich-editor-content" id="noteNotes" contenteditable="true" data-placeholder="Note content..."></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Link (optional)</label>
                         <input type="url" class="form-input" id="noteLink" placeholder="https://...">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Order Index</label>
-                        <input type="number" class="form-input" id="noteOrder" placeholder="0">
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeNoteModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveNote()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="saveNote()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
@@ -1490,9 +1233,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="individualGoalModalTitle">Add Individual Goal</h3>
-                <button class="modal-close" onclick="closeIndividualGoalModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeIndividualGoalModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="individualGoalForm">
@@ -1548,10 +1289,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeIndividualGoalModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveIndividualGoal()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="saveIndividualGoal()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
@@ -1561,9 +1299,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="scheduleModalTitle">Add Schedule Item</h3>
-                <button class="modal-close" onclick="closeScheduleModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeScheduleModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="scheduleForm">
@@ -1627,15 +1363,12 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeScheduleModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveSchedule()">
-                    <i class="fas fa-save"></i>
-                    Save
-                </button>
+                <button class="btn btn-primary" onclick="saveSchedule()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div id="toast" class="toast">
         <i class="fas fa-check-circle toast-icon"></i>
         <span class="toast-message"></span>
@@ -1665,6 +1398,23 @@
             loadData();
         });
 
+        // ============ RICH TEXT FORMATTING ============
+        function formatText(editorId, command) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand(command, false, null);
+        }
+
+        // ============ AUTO-REORDER FUNCTION ============
+        async function reorderItems(tableName, items) {
+            const sortedItems = [...items].sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+            for (let i = 0; i < sortedItems.length; i++) {
+                if (sortedItems[i].order_index !== i) {
+                    await supabaseClient.from(tableName).update({ order_index: i }).eq('id', sortedItems[i].id);
+                }
+            }
+        }
+
         function setupSidebar() {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.getElementById('sidebarToggle');
@@ -1693,31 +1443,21 @@
         }
 
         function setupTabs() {
-            // Main tabs
             document.querySelectorAll('.tab[data-tab]').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const targetId = tab.dataset.tab;
-                    
-                    // Update tab buttons
                     tab.parentElement.querySelectorAll('.tab[data-tab]').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    
-                    // Update tab contents
                     document.querySelectorAll('.tabs-section > .tab-content').forEach(tc => tc.classList.remove('active'));
                     document.getElementById(targetId).classList.add('active');
                 });
             });
 
-            // Sub tabs for Team Updates
             document.querySelectorAll('.tab[data-subtab]').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const targetId = tab.dataset.subtab;
-                    
-                    // Update tab buttons
                     tab.parentElement.querySelectorAll('.tab[data-subtab]').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    
-                    // Update tab contents within updates section
                     document.querySelectorAll('#updates > .tab-content').forEach(tc => tc.classList.remove('active'));
                     document.getElementById(targetId).classList.add('active');
                 });
@@ -1726,17 +1466,7 @@
 
         async function loadData() {
             try {
-                const [
-                    statsResult,
-                    teamGoalsResult,
-                    announcementsResult,
-                    shoutoutsResult,
-                    promosResult,
-                    notesResult,
-                    individualGoalsResult,
-                    scheduleResult,
-                    teamMembersResult
-                ] = await Promise.all([
+                const [statsResult, teamGoalsResult, announcementsResult, shoutoutsResult, promosResult, notesResult, individualGoalsResult, scheduleResult, teamMembersResult] = await Promise.all([
                     supabaseClient.from('dashboard_stats').select('*').order('order_index'),
                     supabaseClient.from('dashboard_team_goals').select('*'),
                     supabaseClient.from('dashboard_announcements').select('*').order('order_index'),
@@ -1781,9 +1511,7 @@
         }
 
         function populateMemberSelects() {
-            const options = '<option value="">Select member...</option>' +
-                teamMembers.map(m => `<option value="${m.id}">${m.first_name} ${m.last_name}</option>`).join('');
-            
+            const options = '<option value="">Select member...</option>' + teamMembers.map(m => `<option value="${m.id}">${m.first_name} ${m.last_name}</option>`).join('');
             document.getElementById('individualGoalMember').innerHTML = options;
             document.getElementById('scheduleMember').innerHTML = options;
         }
@@ -1791,21 +1519,10 @@
         // ============ STATS ============
         function renderStats() {
             const container = document.getElementById('statsGrid');
-            
             if (stats.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-chart-bar"></i>
-                        <p>No stats cards yet</p>
-                        <button class="btn btn-primary" onclick="openStatModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Your First Stat
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar"></i><p>No stats cards yet</p><button class="btn btn-primary" onclick="openStatModal()"><i class="fas fa-plus"></i> Add Your First Stat</button></div>`;
                 return;
             }
-
             container.innerHTML = stats.map(stat => `
                 <div class="item-card">
                     <div class="stat-preview">
@@ -1817,12 +1534,8 @@
                         <span class="meta-badge"><i class="fas fa-sort"></i> Order: ${stat.order_index || 0}</span>
                     </div>
                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                        <button class="btn btn-secondary btn-small" onclick='editStat(${JSON.stringify(stat)})' style="flex: 1;">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteStat('${stat.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button class="btn btn-secondary btn-small" onclick='editStat(${JSON.stringify(stat).replace(/'/g, "&#39;")})' style="flex: 1;"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteStat('${stat.id}')"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -1841,13 +1554,10 @@
             document.getElementById('statTitle').value = stat.title || '';
             document.getElementById('statValue').value = stat.number_value || '';
             document.getElementById('statSubtext').value = stat.subtext || '';
-            document.getElementById('statOrder').value = stat.order_index || 0;
             document.getElementById('statModal').classList.add('active');
         }
 
-        function closeStatModal() {
-            document.getElementById('statModal').classList.remove('active');
-        }
+        function closeStatModal() { document.getElementById('statModal').classList.remove('active'); }
 
         async function saveStat() {
             const id = document.getElementById('statId').value;
@@ -1855,85 +1565,51 @@
                 title: document.getElementById('statTitle').value,
                 number_value: document.getElementById('statValue').value,
                 subtext: document.getElementById('statSubtext').value,
-                order_index: parseInt(document.getElementById('statOrder').value) || 0
+                order_index: id ? stats.find(s => s.id === id)?.order_index || 0 : stats.length
             };
-
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_stats').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_stats').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('dashboard_stats').update(data).eq('id', id); }
+                else { result = await supabaseClient.from('dashboard_stats').insert([data]); }
                 if (result.error) throw result.error;
-
                 showToast(id ? 'Stat updated!' : 'Stat added!', 'success');
                 closeStatModal();
                 loadData();
-            } catch (error) {
-                console.error('Error saving stat:', error);
-                showToast('Error saving stat.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error saving stat.', 'error'); }
         }
 
         async function deleteStat(id) {
             if (!confirm('Delete this stat?')) return;
             try {
-                const result = await supabaseClient.from('dashboard_stats').delete().eq('id', id);
-                if (result.error) throw result.error;
+                await supabaseClient.from('dashboard_stats').delete().eq('id', id);
+                const remaining = stats.filter(s => s.id !== id);
+                await reorderItems('dashboard_stats', remaining);
                 showToast('Stat deleted!', 'success');
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting stat.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ TEAM GOALS ============
         function renderTeamGoals() {
             const container = document.getElementById('teamGoalsGrid');
-            
             if (teamGoals.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-bullseye"></i>
-                        <p>No team goals yet</p>
-                        <button class="btn btn-primary" onclick="openTeamGoalModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Team Goal
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-bullseye"></i><p>No team goals yet</p><button class="btn btn-primary" onclick="openTeamGoalModal()"><i class="fas fa-plus"></i> Add Team Goal</button></div>`;
                 return;
             }
-
             container.innerHTML = teamGoals.map(goal => {
                 const pct = goal.month_target ? Math.round((goal.current_count / goal.month_target) * 100) : 0;
                 return `
                     <div class="item-card">
                         <div class="item-card-header">
-                            <div class="item-card-icon">
-                                <i class="fas fa-bullseye"></i>
-                            </div>
+                            <div class="item-card-icon"><i class="fas fa-bullseye"></i></div>
                             <div class="item-card-actions">
-                                <button class="btn btn-secondary btn-small btn-icon-only" onclick='editTeamGoal(${JSON.stringify(goal)})'>
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteTeamGoal('${goal.id}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <button class="btn btn-secondary btn-small btn-icon-only" onclick='editTeamGoal(${JSON.stringify(goal).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteTeamGoal('${goal.id}')"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                         <div class="item-card-title">${goal.month_year || 'No Month'}</div>
-                        <div class="item-card-content">
-                            <strong>${goal.current_count || 0}</strong> / ${goal.month_target || 0} (${pct}%)
-                        </div>
-                        ${goal.team_reward ? `
-                            <div class="item-card-meta">
-                                <span class="meta-badge"><i class="fas fa-gift"></i> ${goal.team_reward}</span>
-                            </div>
-                        ` : ''}
+                        <div class="item-card-content"><strong>${goal.current_count || 0}</strong> / ${goal.month_target || 0} (${pct}%)</div>
+                        ${goal.team_reward ? `<div class="item-card-meta"><span class="meta-badge"><i class="fas fa-gift"></i> ${goal.team_reward}</span></div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -1956,82 +1632,42 @@
             document.getElementById('teamGoalModal').classList.add('active');
         }
 
-        function closeTeamGoalModal() {
-            document.getElementById('teamGoalModal').classList.remove('active');
-        }
+        function closeTeamGoalModal() { document.getElementById('teamGoalModal').classList.remove('active'); }
 
         async function saveTeamGoal() {
             const id = document.getElementById('teamGoalId').value;
-            const data = {
-                month_year: document.getElementById('teamGoalMonth').value,
-                current_count: parseInt(document.getElementById('teamGoalCurrent').value) || 0,
-                month_target: parseInt(document.getElementById('teamGoalTarget').value) || 0,
-                team_reward: document.getElementById('teamGoalReward').value
-            };
-
+            const data = { month_year: document.getElementById('teamGoalMonth').value, current_count: parseInt(document.getElementById('teamGoalCurrent').value) || 0, month_target: parseInt(document.getElementById('teamGoalTarget').value) || 0, team_reward: document.getElementById('teamGoalReward').value };
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_team_goals').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_team_goals').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('dashboard_team_goals').update(data).eq('id', id); }
+                else { result = await supabaseClient.from('dashboard_team_goals').insert([data]); }
                 if (result.error) throw result.error;
-
                 showToast(id ? 'Team goal updated!' : 'Team goal added!', 'success');
                 closeTeamGoalModal();
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error saving team goal.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error saving.', 'error'); }
         }
 
         async function deleteTeamGoal(id) {
             if (!confirm('Delete this team goal?')) return;
-            try {
-                const result = await supabaseClient.from('dashboard_team_goals').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Team goal deleted!', 'success');
-                loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting team goal.', 'error');
-            }
+            try { await supabaseClient.from('dashboard_team_goals').delete().eq('id', id); showToast('Deleted!', 'success'); loadData(); }
+            catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ ANNOUNCEMENTS ============
         function renderAnnouncements() {
             const container = document.getElementById('announcementsGrid');
-            
             if (announcements.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-bell"></i>
-                        <p>No announcements yet</p>
-                        <button class="btn btn-primary" onclick="openAnnouncementModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Announcement
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-bell"></i><p>No announcements yet</p><button class="btn btn-primary" onclick="openAnnouncementModal()"><i class="fas fa-plus"></i> Add Announcement</button></div>`;
                 return;
             }
-
             container.innerHTML = announcements.map(ann => `
                 <div class="item-card">
                     <div class="item-card-header">
-                        <div class="item-card-icon">
-                            <i class="fas fa-bell"></i>
-                        </div>
+                        <div class="item-card-icon"><i class="fas fa-bell"></i></div>
                         <div class="item-card-actions">
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editAnnouncement(${JSON.stringify(ann)})'>
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteAnnouncement('${ann.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editAnnouncement(${JSON.stringify(ann).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteAnnouncement('${ann.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                     <div class="item-card-content">${ann.content}</div>
@@ -2045,293 +1681,193 @@
 
         function openAnnouncementModal() {
             document.getElementById('announcementModalTitle').textContent = 'Add Announcement';
-            document.getElementById('announcementForm').reset();
             document.getElementById('announcementId').value = '';
+            document.getElementById('announcementContent').innerHTML = '';
+            document.getElementById('announcementStarred').checked = false;
             document.getElementById('announcementModal').classList.add('active');
         }
 
         function editAnnouncement(ann) {
             document.getElementById('announcementModalTitle').textContent = 'Edit Announcement';
             document.getElementById('announcementId').value = ann.id;
-            document.getElementById('announcementContent').value = ann.content || '';
+            document.getElementById('announcementContent').innerHTML = ann.content || '';
             document.getElementById('announcementStarred').checked = ann.is_starred || false;
-            document.getElementById('announcementOrder').value = ann.order_index || 0;
             document.getElementById('announcementModal').classList.add('active');
         }
 
-        function closeAnnouncementModal() {
-            document.getElementById('announcementModal').classList.remove('active');
-        }
+        function closeAnnouncementModal() { document.getElementById('announcementModal').classList.remove('active'); }
 
         async function saveAnnouncement() {
             const id = document.getElementById('announcementId').value;
-            const data = {
-                content: document.getElementById('announcementContent').value,
-                is_starred: document.getElementById('announcementStarred').checked,
-                order_index: parseInt(document.getElementById('announcementOrder').value) || 0
-            };
-
+            const content = document.getElementById('announcementContent').innerHTML;
+            if (!content.trim()) { showToast('Content is required', 'error'); return; }
+            const data = { content: content, is_starred: document.getElementById('announcementStarred').checked, order_index: id ? announcements.find(a => a.id === id)?.order_index || 0 : announcements.length };
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_announcements').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_announcements').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('dashboard_announcements').update(data).eq('id', id); }
+                else { result = await supabaseClient.from('dashboard_announcements').insert([data]); }
                 if (result.error) throw result.error;
-
-                showToast(id ? 'Announcement updated!' : 'Announcement added!', 'success');
+                showToast(id ? 'Updated!' : 'Added!', 'success');
                 closeAnnouncementModal();
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error saving announcement.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error saving.', 'error'); }
         }
 
         async function deleteAnnouncement(id) {
             if (!confirm('Delete this announcement?')) return;
             try {
-                const result = await supabaseClient.from('dashboard_announcements').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Announcement deleted!', 'success');
+                await supabaseClient.from('dashboard_announcements').delete().eq('id', id);
+                const remaining = announcements.filter(a => a.id !== id);
+                await reorderItems('dashboard_announcements', remaining);
+                showToast('Deleted!', 'success');
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ SHOUTOUTS ============
         function renderShoutouts() {
             const container = document.getElementById('shoutoutsGrid');
-            
             if (shoutouts.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-bullhorn"></i>
-                        <p>No shoutouts yet</p>
-                        <button class="btn btn-primary" onclick="openShoutoutModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Shoutout
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-bullhorn"></i><p>No shoutouts yet</p><button class="btn btn-primary" onclick="openShoutoutModal()"><i class="fas fa-plus"></i> Add Shoutout</button></div>`;
                 return;
             }
-
             container.innerHTML = shoutouts.map(s => `
                 <div class="item-card">
                     <div class="item-card-header">
-                        <div class="item-card-icon">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
+                        <div class="item-card-icon"><i class="fas fa-bullhorn"></i></div>
                         <div class="item-card-actions">
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editShoutout(${JSON.stringify(s)})'>
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteShoutout('${s.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editShoutout(${JSON.stringify(s).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteShoutout('${s.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                     <div class="item-card-content">${s.content}</div>
-                    <div class="item-card-meta">
-                        <span class="meta-badge"><i class="fas fa-sort"></i> Order: ${s.order_index || 0}</span>
-                    </div>
+                    <div class="item-card-meta"><span class="meta-badge"><i class="fas fa-sort"></i> Order: ${s.order_index || 0}</span></div>
                 </div>
             `).join('');
         }
 
         function openShoutoutModal() {
             document.getElementById('shoutoutModalTitle').textContent = 'Add Shoutout';
-            document.getElementById('shoutoutForm').reset();
             document.getElementById('shoutoutId').value = '';
+            document.getElementById('shoutoutContent').innerHTML = '';
             document.getElementById('shoutoutModal').classList.add('active');
         }
 
         function editShoutout(s) {
             document.getElementById('shoutoutModalTitle').textContent = 'Edit Shoutout';
             document.getElementById('shoutoutId').value = s.id;
-            document.getElementById('shoutoutContent').value = s.content || '';
-            document.getElementById('shoutoutOrder').value = s.order_index || 0;
+            document.getElementById('shoutoutContent').innerHTML = s.content || '';
             document.getElementById('shoutoutModal').classList.add('active');
         }
 
-        function closeShoutoutModal() {
-            document.getElementById('shoutoutModal').classList.remove('active');
-        }
+        function closeShoutoutModal() { document.getElementById('shoutoutModal').classList.remove('active'); }
 
         async function saveShoutout() {
             const id = document.getElementById('shoutoutId').value;
-            const data = {
-                content: document.getElementById('shoutoutContent').value,
-                order_index: parseInt(document.getElementById('shoutoutOrder').value) || 0
-            };
-
+            const content = document.getElementById('shoutoutContent').innerHTML;
+            if (!content.trim()) { showToast('Content is required', 'error'); return; }
+            const data = { content: content, order_index: id ? shoutouts.find(s => s.id === id)?.order_index || 0 : shoutouts.length };
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_shoutouts').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_shoutouts').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('dashboard_shoutouts').update(data).eq('id', id); }
+                else { result = await supabaseClient.from('dashboard_shoutouts').insert([data]); }
                 if (result.error) throw result.error;
-
-                showToast(id ? 'Shoutout updated!' : 'Shoutout added!', 'success');
+                showToast(id ? 'Updated!' : 'Added!', 'success');
                 closeShoutoutModal();
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error saving shoutout.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error saving.', 'error'); }
         }
 
         async function deleteShoutout(id) {
             if (!confirm('Delete this shoutout?')) return;
             try {
-                const result = await supabaseClient.from('dashboard_shoutouts').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Shoutout deleted!', 'success');
+                await supabaseClient.from('dashboard_shoutouts').delete().eq('id', id);
+                const remaining = shoutouts.filter(s => s.id !== id);
+                await reorderItems('dashboard_shoutouts', remaining);
+                showToast('Deleted!', 'success');
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ PROMOS ============
         function renderPromos() {
             const container = document.getElementById('promosGrid');
-            
             if (promos.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-tag"></i>
-                        <p>No promos yet</p>
-                        <button class="btn btn-primary" onclick="openPromoModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Promo
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-tag"></i><p>No promos yet</p><button class="btn btn-primary" onclick="openPromoModal()"><i class="fas fa-plus"></i> Add Promo</button></div>`;
                 return;
             }
-
             container.innerHTML = promos.map(p => `
                 <div class="item-card">
                     <div class="item-card-header">
-                        <div class="item-card-icon">
-                            <i class="fas fa-tag"></i>
-                        </div>
+                        <div class="item-card-icon"><i class="fas fa-tag"></i></div>
                         <div class="item-card-actions">
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editPromo(${JSON.stringify(p)})'>
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deletePromo('${p.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editPromo(${JSON.stringify(p).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deletePromo('${p.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                     <div class="item-card-content">${p.content}</div>
-                    <div class="item-card-meta">
-                        <span class="meta-badge"><i class="fas fa-sort"></i> Order: ${p.order_index || 0}</span>
-                    </div>
+                    <div class="item-card-meta"><span class="meta-badge"><i class="fas fa-sort"></i> Order: ${p.order_index || 0}</span></div>
                 </div>
             `).join('');
         }
 
         function openPromoModal() {
             document.getElementById('promoModalTitle').textContent = 'Add Promo';
-            document.getElementById('promoForm').reset();
             document.getElementById('promoId').value = '';
+            document.getElementById('promoContent').innerHTML = '';
             document.getElementById('promoModal').classList.add('active');
         }
 
         function editPromo(p) {
             document.getElementById('promoModalTitle').textContent = 'Edit Promo';
             document.getElementById('promoId').value = p.id;
-            document.getElementById('promoContent').value = p.content || '';
-            document.getElementById('promoOrder').value = p.order_index || 0;
+            document.getElementById('promoContent').innerHTML = p.content || '';
             document.getElementById('promoModal').classList.add('active');
         }
 
-        function closePromoModal() {
-            document.getElementById('promoModal').classList.remove('active');
-        }
+        function closePromoModal() { document.getElementById('promoModal').classList.remove('active'); }
 
         async function savePromo() {
             const id = document.getElementById('promoId').value;
-            const data = {
-                content: document.getElementById('promoContent').value,
-                order_index: parseInt(document.getElementById('promoOrder').value) || 0
-            };
-
+            const content = document.getElementById('promoContent').innerHTML;
+            if (!content.trim()) { showToast('Content is required', 'error'); return; }
+            const data = { content: content, order_index: id ? promos.find(p => p.id === id)?.order_index || 0 : promos.length };
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_promos').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_promos').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('dashboard_promos').update(data).eq('id', id); }
+                else { result = await supabaseClient.from('dashboard_promos').insert([data]); }
                 if (result.error) throw result.error;
-
-                showToast(id ? 'Promo updated!' : 'Promo added!', 'success');
+                showToast(id ? 'Updated!' : 'Added!', 'success');
                 closePromoModal();
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error saving promo.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error saving.', 'error'); }
         }
 
         async function deletePromo(id) {
             if (!confirm('Delete this promo?')) return;
             try {
-                const result = await supabaseClient.from('dashboard_promos').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Promo deleted!', 'success');
+                await supabaseClient.from('dashboard_promos').delete().eq('id', id);
+                const remaining = promos.filter(p => p.id !== id);
+                await reorderItems('dashboard_promos', remaining);
+                showToast('Deleted!', 'success');
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ NOTES ============
         function renderNotes() {
             const container = document.getElementById('notesGrid');
-            
             if (notes.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-sticky-note"></i>
-                        <p>No notes yet</p>
-                        <button class="btn btn-primary" onclick="openNoteModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Note
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-sticky-note"></i><p>No notes yet</p><button class="btn btn-primary" onclick="openNoteModal()"><i class="fas fa-plus"></i> Add Note</button></div>`;
                 return;
             }
-
             container.innerHTML = notes.map(n => `
                 <div class="item-card">
                     <div class="item-card-header">
-                        <div class="item-card-icon">
-                            <i class="fas fa-sticky-note"></i>
-                        </div>
+                        <div class="item-card-icon"><i class="fas fa-sticky-note"></i></div>
                         <div class="item-card-actions">
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editNote(${JSON.stringify(n)})'>
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteNote('${n.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick='editNote(${JSON.stringify(n).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteNote('${n.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                     ${n.header ? `<div class="item-card-title">${n.header}</div>` : ''}
@@ -2347,8 +1883,11 @@
 
         function openNoteModal() {
             document.getElementById('noteModalTitle').textContent = 'Add Note';
-            document.getElementById('noteForm').reset();
             document.getElementById('noteId').value = '';
+            document.getElementById('noteHeader').value = '';
+            document.getElementById('noteSubtitle').value = '';
+            document.getElementById('noteNotes').innerHTML = '';
+            document.getElementById('noteLink').value = '';
             document.getElementById('noteModal').classList.add('active');
         }
 
@@ -2357,145 +1896,74 @@
             document.getElementById('noteId').value = n.id;
             document.getElementById('noteHeader').value = n.header || '';
             document.getElementById('noteSubtitle').value = n.subtitle || '';
-            document.getElementById('noteNotes').value = n.notes || '';
+            document.getElementById('noteNotes').innerHTML = n.notes || '';
             document.getElementById('noteLink').value = n.link || '';
-            document.getElementById('noteOrder').value = n.order_index || 0;
             document.getElementById('noteModal').classList.add('active');
         }
 
-        function closeNoteModal() {
-            document.getElementById('noteModal').classList.remove('active');
-        }
+        function closeNoteModal() { document.getElementById('noteModal').classList.remove('active'); }
 
         async function saveNote() {
             const id = document.getElementById('noteId').value;
-            const data = {
-                header: document.getElementById('noteHeader').value,
-                subtitle: document.getElementById('noteSubtitle').value,
-                notes: document.getElementById('noteNotes').value,
-                link: document.getElementById('noteLink').value,
-                order_index: parseInt(document.getElementById('noteOrder').value) || 0
-            };
-
+            const notesContent = document.getElementById('noteNotes').innerHTML;
+            if (!notesContent.trim()) { showToast('Notes content is required', 'error'); return; }
+            const data = { header: document.getElementById('noteHeader').value, subtitle: document.getElementById('noteSubtitle').value, notes: notesContent, link: document.getElementById('noteLink').value, order_index: id ? notes.find(n => n.id === id)?.order_index || 0 : notes.length };
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_notes').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_notes').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('dashboard_notes').update(data).eq('id', id); }
+                else { result = await supabaseClient.from('dashboard_notes').insert([data]); }
                 if (result.error) throw result.error;
-
-                showToast(id ? 'Note updated!' : 'Note added!', 'success');
+                showToast(id ? 'Updated!' : 'Added!', 'success');
                 closeNoteModal();
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error saving note.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error saving.', 'error'); }
         }
 
         async function deleteNote(id) {
             if (!confirm('Delete this note?')) return;
             try {
-                const result = await supabaseClient.from('dashboard_notes').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Note deleted!', 'success');
+                await supabaseClient.from('dashboard_notes').delete().eq('id', id);
+                const remaining = notes.filter(n => n.id !== id);
+                await reorderItems('dashboard_notes', remaining);
+                showToast('Deleted!', 'success');
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ INDIVIDUAL GOALS ============
         function filterIndividualGoals(filter) {
             currentGoalFilter = filter;
-            
-            // Update button states
             document.querySelectorAll('[data-goal-filter]').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.goalFilter === filter) {
-                    btn.classList.add('active');
-                }
+                btn.classList.toggle('active', btn.dataset.goalFilter === filter);
             });
-            
             renderIndividualGoals();
         }
 
         function renderIndividualGoals() {
             const container = document.getElementById('individualGoalsGrid');
-            
-            // Apply filter
-            let filteredGoals = individualGoals;
-            if (currentGoalFilter !== 'all') {
-                filteredGoals = individualGoals.filter(g => g.goal_type === currentGoalFilter);
-            }
-            
+            let filteredGoals = currentGoalFilter === 'all' ? individualGoals : individualGoals.filter(g => g.goal_type === currentGoalFilter);
             if (filteredGoals.length === 0) {
-                const filterText = currentGoalFilter === 'all' ? '' : ` for ${currentGoalFilter.replace('_', ' ')}`;
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-user-check"></i>
-                        <p>No individual goals${filterText}</p>
-                        <button class="btn btn-primary" onclick="openIndividualGoalModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Individual Goal
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-user-check"></i><p>No individual goals${currentGoalFilter !== 'all' ? ` for ${currentGoalFilter.replace('_', ' ')}` : ''}</p><button class="btn btn-primary" onclick="openIndividualGoalModal()"><i class="fas fa-plus"></i> Add Individual Goal</button></div>`;
                 return;
             }
-
             container.innerHTML = filteredGoals.map(g => {
-                const name = g.team_members 
-                    ? `${g.team_members.first_name} ${g.team_members.last_name}` 
-                    : 'Unknown';
-                const typeLabel = g.goal_type === 'current_month' ? 'Current Month' 
-                    : g.goal_type === 'last_month' ? 'Last Month' 
-                    : 'Next Month';
-                
+                const name = g.team_members ? `${g.team_members.first_name} ${g.team_members.last_name}` : 'Unknown';
+                const typeLabel = g.goal_type === 'current_month' ? 'Current Month' : g.goal_type === 'last_month' ? 'Last Month' : 'Next Month';
                 return `
                     <div class="goal-card">
-                        <div class="goal-card-header">
-                            <div class="goal-card-name">${name}</div>
-                            <div class="goal-card-type">${typeLabel}</div>
-                        </div>
+                        <div class="goal-card-header"><div class="goal-card-name">${name}</div><div class="goal-card-type">${typeLabel}</div></div>
                         <div class="goal-card-body">
                             <div class="goal-stats-grid">
-                                <div class="goal-stat">
-                                    <div class="goal-stat-label">Progress</div>
-                                    <div class="goal-stat-value">${g.current_progress || 0}</div>
-                                </div>
-                                <div class="goal-stat">
-                                    <div class="goal-stat-label">Quota</div>
-                                    <div class="goal-stat-value">${g.quota_goal || 0}</div>
-                                </div>
-                                <div class="goal-stat">
-                                    <div class="goal-stat-label">Bronze</div>
-                                    <div class="goal-stat-value">${g.bronze_goal || '-'}</div>
-                                </div>
-                                <div class="goal-stat">
-                                    <div class="goal-stat-label">Silver</div>
-                                    <div class="goal-stat-value">${g.silver_goal || '-'}</div>
-                                </div>
-                                <div class="goal-stat">
-                                    <div class="goal-stat-label">Gold</div>
-                                    <div class="goal-stat-value">${g.gold_goal || '-'}</div>
-                                </div>
-                                <div class="goal-stat">
-                                    <div class="goal-stat-label">Final</div>
-                                    <div class="goal-stat-value">${g.final_count || '-'}</div>
-                                </div>
+                                <div class="goal-stat"><div class="goal-stat-label">Progress</div><div class="goal-stat-value">${g.current_progress || 0}</div></div>
+                                <div class="goal-stat"><div class="goal-stat-label">Quota</div><div class="goal-stat-value">${g.quota_goal || 0}</div></div>
+                                <div class="goal-stat"><div class="goal-stat-label">Bronze</div><div class="goal-stat-value">${g.bronze_goal || '-'}</div></div>
+                                <div class="goal-stat"><div class="goal-stat-label">Silver</div><div class="goal-stat-value">${g.silver_goal || '-'}</div></div>
+                                <div class="goal-stat"><div class="goal-stat-label">Gold</div><div class="goal-stat-value">${g.gold_goal || '-'}</div></div>
+                                <div class="goal-stat"><div class="goal-stat-label">Final</div><div class="goal-stat-value">${g.final_count || '-'}</div></div>
                             </div>
                             <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                                <button class="btn btn-secondary btn-small" onclick='editIndividualGoal(${JSON.stringify(g)})' style="flex: 1;">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteIndividualGoal('${g.id}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <button class="btn btn-secondary btn-small" onclick='editIndividualGoal(${JSON.stringify(g).replace(/'/g, "&#39;")})' style="flex: 1;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteIndividualGoal('${g.id}')"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     </div>
@@ -2524,143 +1992,59 @@
             document.getElementById('individualGoalModal').classList.add('active');
         }
 
-        function closeIndividualGoalModal() {
-            document.getElementById('individualGoalModal').classList.remove('active');
-        }
+        function closeIndividualGoalModal() { document.getElementById('individualGoalModal').classList.remove('active'); }
 
         async function saveIndividualGoal() {
             const id = document.getElementById('individualGoalId').value;
-            const data = {
-                team_member_id: document.getElementById('individualGoalMember').value || null,
-                goal_type: document.getElementById('individualGoalType').value,
-                current_progress: parseInt(document.getElementById('individualGoalProgress').value) || 0,
-                final_count: parseInt(document.getElementById('individualGoalFinal').value) || 0,
-                quota_goal: parseInt(document.getElementById('individualGoalQuota').value) || 0,
-                bronze_goal: parseInt(document.getElementById('individualGoalBronze').value) || null,
-                silver_goal: parseInt(document.getElementById('individualGoalSilver').value) || null,
-                gold_goal: parseInt(document.getElementById('individualGoalGold').value) || null
-            };
-
+            const data = { team_member_id: document.getElementById('individualGoalMember').value || null, goal_type: document.getElementById('individualGoalType').value, current_progress: parseInt(document.getElementById('individualGoalProgress').value) || 0, final_count: parseInt(document.getElementById('individualGoalFinal').value) || 0, quota_goal: parseInt(document.getElementById('individualGoalQuota').value) || 0, bronze_goal: parseInt(document.getElementById('individualGoalBronze').value) || null, silver_goal: parseInt(document.getElementById('individualGoalSilver').value) || null, gold_goal: parseInt(document.getElementById('individualGoalGold').value) || null };
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_individual_goals').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_individual_goals').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('dashboard_individual_goals').update(data).eq('id', id); }
+                else { result = await supabaseClient.from('dashboard_individual_goals').insert([data]); }
                 if (result.error) throw result.error;
-
-                showToast(id ? 'Goal updated!' : 'Goal added!', 'success');
+                showToast(id ? 'Updated!' : 'Added!', 'success');
                 closeIndividualGoalModal();
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error saving goal.', 'error');
-            }
+            } catch (error) { console.error('Error:', error); showToast('Error saving.', 'error'); }
         }
 
         async function deleteIndividualGoal(id) {
             if (!confirm('Delete this goal?')) return;
-            try {
-                const result = await supabaseClient.from('dashboard_individual_goals').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Goal deleted!', 'success');
-                loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting.', 'error');
-            }
+            try { await supabaseClient.from('dashboard_individual_goals').delete().eq('id', id); showToast('Deleted!', 'success'); loadData(); }
+            catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ SCHEDULE ============
         function filterSchedule(filter) {
             currentScheduleFilter = filter;
-            
-            // Update button states
             document.querySelectorAll('[data-schedule-filter]').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.scheduleFilter === filter) {
-                    btn.classList.add('active');
-                }
+                btn.classList.toggle('active', btn.dataset.scheduleFilter === filter);
             });
-            
             renderSchedule();
         }
 
         function renderSchedule() {
             const container = document.getElementById('scheduleGrid');
-            
-            // Apply filter
-            let filteredSchedule = scheduleItems;
-            if (currentScheduleFilter !== 'all') {
-                filteredSchedule = scheduleItems.filter(s => s.weekday === currentScheduleFilter);
-            }
-            
+            let filteredSchedule = currentScheduleFilter === 'all' ? scheduleItems : scheduleItems.filter(s => s.weekday === currentScheduleFilter);
             if (filteredSchedule.length === 0) {
-                const filterText = currentScheduleFilter === 'all' ? '' : ` for ${currentScheduleFilter}`;
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-alt"></i>
-                        <p>No schedule items${filterText}</p>
-                        <button class="btn btn-primary" onclick="openScheduleModal()">
-                            <i class="fas fa-plus"></i>
-                            Add Schedule Item
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-calendar-alt"></i><p>No schedule items${currentScheduleFilter !== 'all' ? ` for ${currentScheduleFilter}` : ''}</p><button class="btn btn-primary" onclick="openScheduleModal()"><i class="fas fa-plus"></i> Add Schedule Item</button></div>`;
                 return;
             }
-
             container.innerHTML = filteredSchedule.map(s => {
-                const name = s.team_members 
-                    ? `${s.team_members.first_name} ${s.team_members.last_name}` 
-                    : 'Unknown';
-                
+                const name = s.team_members ? `${s.team_members.first_name} ${s.team_members.last_name}` : 'Unknown';
                 return `
                     <div class="schedule-card">
-                        <div class="schedule-card-header">
-                            <div class="schedule-card-name">${name}</div>
-                            <div class="schedule-card-day">${s.weekday || ''}</div>
-                        </div>
+                        <div class="schedule-card-header"><div class="schedule-card-name">${name}</div><div class="schedule-card-day">${s.weekday || ''}</div></div>
                         <div class="schedule-card-body">
-                            ${s.hours ? `
-                                <div class="schedule-info-row">
-                                    <i class="fas fa-clock"></i>
-                                    <span>${s.hours}</span>
-                                </div>
-                            ` : ''}
-                            ${s.work_mode ? `
-                                <div class="schedule-info-row">
-                                    <i class="fas fa-building"></i>
-                                    <span>${s.work_mode}</span>
-                                </div>
-                            ` : ''}
-                            ${s.lunch_time ? `
-                                <div class="schedule-info-row">
-                                    <i class="fas fa-utensils"></i>
-                                    <span>${s.lunch_time}</span>
-                                </div>
-                            ` : ''}
-                            ${s.meetings ? `
-                                <div class="schedule-info-row">
-                                    <i class="fas fa-video"></i>
-                                    <span>${s.meetings}</span>
-                                </div>
-                            ` : ''}
-                            ${s.notes ? `
-                                <div class="schedule-info-row">
-                                    <i class="fas fa-sticky-note"></i>
-                                    <span>${s.notes}</span>
-                                </div>
-                            ` : ''}
+                            ${s.hours ? `<div class="schedule-info-row"><i class="fas fa-clock"></i><span>${s.hours}</span></div>` : ''}
+                            ${s.work_mode ? `<div class="schedule-info-row"><i class="fas fa-building"></i><span>${s.work_mode}</span></div>` : ''}
+                            ${s.lunch_time ? `<div class="schedule-info-row"><i class="fas fa-utensils"></i><span>${s.lunch_time}</span></div>` : ''}
+                            ${s.meetings ? `<div class="schedule-info-row"><i class="fas fa-video"></i><span>${s.meetings}</span></div>` : ''}
+                            ${s.notes ? `<div class="schedule-info-row"><i class="fas fa-sticky-note"></i><span>${s.notes}</span></div>` : ''}
+                            ${s.meeting_link ? `<div class="schedule-info-row"><i class="fas fa-link"></i><span><a href="${s.meeting_link}" target="_blank" style="color: var(--primary);">Meeting Link</a></span></div>` : ''}
                             <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                                <button class="btn btn-secondary btn-small" onclick='editSchedule(${JSON.stringify(s)})' style="flex: 1;">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteSchedule('${s.id}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <button class="btn btn-secondary btn-small" onclick='editSchedule(${JSON.stringify(s).replace(/'/g, "&#39;")})' style="flex: 1;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-secondary btn-small btn-icon-only" onclick="deleteSchedule('${s.id}')"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     </div>
@@ -2689,75 +2073,60 @@
             document.getElementById('scheduleModal').classList.add('active');
         }
 
-        function closeScheduleModal() {
-            document.getElementById('scheduleModal').classList.remove('active');
-        }
+        function closeScheduleModal() { document.getElementById('scheduleModal').classList.remove('active'); }
 
         async function saveSchedule() {
             const id = document.getElementById('scheduleId').value;
-            const data = {
-                team_member_id: document.getElementById('scheduleMember').value || null,
-                weekday: document.getElementById('scheduleWeekday').value,
-                hours: document.getElementById('scheduleHours').value,
-                work_mode: document.getElementById('scheduleWorkMode').value,
-                lunch_time: document.getElementById('scheduleLunch').value,
-                meetings: document.getElementById('scheduleMeetings').value,
-                notes: document.getElementById('scheduleNotes').value,
-                meeting_link: document.getElementById('scheduleMeetingLink').value
+            const data = { 
+                team_member_id: document.getElementById('scheduleMember').value || null, 
+                weekday: document.getElementById('scheduleWeekday').value || null, 
+                hours: document.getElementById('scheduleHours').value || null, 
+                work_mode: document.getElementById('scheduleWorkMode').value || null, 
+                lunch_time: document.getElementById('scheduleLunch').value || null, 
+                meetings: document.getElementById('scheduleMeetings').value || null, 
+                notes: document.getElementById('scheduleNotes').value || null,
+                meeting_link: document.getElementById('scheduleMeetingLink').value || null
             };
-
+            
+            console.log('Saving schedule data:', data);
+            
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('dashboard_schedule_items').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('dashboard_schedule_items').insert([data]);
+                if (id) { 
+                    result = await supabaseClient.from('dashboard_schedule_items').update(data).eq('id', id); 
+                } else { 
+                    result = await supabaseClient.from('dashboard_schedule_items').insert([data]); 
                 }
-
-                if (result.error) throw result.error;
-
-                showToast(id ? 'Schedule updated!' : 'Schedule added!', 'success');
+                
+                if (result.error) {
+                    console.error('Supabase error:', result.error);
+                    showToast('Error: ' + result.error.message, 'error');
+                    return;
+                }
+                
+                showToast(id ? 'Updated!' : 'Added!', 'success');
                 closeScheduleModal();
                 loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error saving schedule.', 'error');
+            } catch (error) { 
+                console.error('Error:', error); 
+                showToast('Error saving: ' + error.message, 'error'); 
             }
         }
 
         async function deleteSchedule(id) {
             if (!confirm('Delete this schedule item?')) return;
-            try {
-                const result = await supabaseClient.from('dashboard_schedule_items').delete().eq('id', id);
-                if (result.error) throw result.error;
-                showToast('Schedule item deleted!', 'success');
-                loadData();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting.', 'error');
-            }
+            try { await supabaseClient.from('dashboard_schedule_items').delete().eq('id', id); showToast('Deleted!', 'success'); loadData(); }
+            catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
         // ============ TOAST ============
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            const toastMessage = toast.querySelector('.toast-message');
-            const toastIcon = toast.querySelector('.toast-icon');
-
             toast.className = 'toast ' + type;
-            toastMessage.textContent = message;
-
-            if (type === 'success') {
-                toastIcon.className = 'fas fa-check-circle toast-icon';
-            } else if (type === 'error') {
-                toastIcon.className = 'fas fa-exclamation-circle toast-icon';
-            }
-
+            toast.querySelector('.toast-message').textContent = message;
+            toast.querySelector('.toast-icon').className = type === 'success' ? 'fas fa-check-circle toast-icon' : 'fas fa-exclamation-circle toast-icon';
             toast.classList.add('show');
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
     </script>
 </body>

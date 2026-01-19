@@ -1025,6 +1025,10 @@
                         <small style="color: var(--text-light); font-size: 0.75rem;">Zone is managed in Studio Directory</small>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" class="form-input" id="brandPhone" placeholder="e.g., (555) 123-4567">
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Display Price</label>
                         <input type="text" class="form-input" id="brandDisplayPrice" placeholder="e.g., Starting at $150/month">
                     </div>
@@ -1278,6 +1282,10 @@
                     <div class="studio-card-body">
                         <div class="studio-info-grid">
                             <div class="info-row">
+                                <i class="fas fa-phone"></i>
+                                <span class="info-value">${brand.phone_number || '<em style="color: var(--text-light);">Not set</em>'}</span>
+                            </div>
+                            <div class="info-row">
                                 <i class="fas fa-dollar-sign"></i>
                                 <span class="info-value">${brand.display_price || '<em style="color: var(--text-light);">Not set</em>'}</span>
                             </div>
@@ -1479,6 +1487,10 @@
                     <div class="studio-card-body">
                         <div class="studio-info-grid">
                             <div class="info-row">
+                                <i class="fas fa-phone"></i>
+                                <span class="info-value">${brand.phone_number || '<em style="color: var(--text-light);">Not set</em>'}</span>
+                            </div>
+                            <div class="info-row">
                                 <i class="fas fa-dollar-sign"></i>
                                 <span class="info-value">${brand.display_price || '<em style="color: var(--text-light);">Not set</em>'}</span>
                             </div>
@@ -1574,6 +1586,7 @@
             document.getElementById('brandId').value = brand.id;
             document.getElementById('brandName').value = brand.name || '';
             document.getElementById('brandZone').value = brand.zone ? brand.zone.zone_name : 'No zone assigned';
+            document.getElementById('brandPhone').value = brand.phone_number || '';
             document.getElementById('brandDisplayPrice').value = brand.display_price || '';
             document.getElementById('brandDisplayAnnualFee').value = brand.display_annual_fee || '';
             document.getElementById('brandSchedulingLink').value = brand.scheduling_link || '';
@@ -1588,6 +1601,7 @@
         async function saveBrand() {
             const id = document.getElementById('brandId').value;
             const data = {
+                phone_number: document.getElementById('brandPhone').value || null,
                 display_price: document.getElementById('brandDisplayPrice').value || null,
                 display_annual_fee: document.getElementById('brandDisplayAnnualFee').value || null,
                 scheduling_link: document.getElementById('brandSchedulingLink').value || null

@@ -808,7 +808,7 @@
                 <div class="zone-filter-tabs" id="zoneFilterTabs"></div>
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="brandSearch" class="search-bar" placeholder="Search brands...">
+                    <input type="text" id="brandSearch" class="search-bar" placeholder="Search by name, price, or state...">
                 </div>
                 <div id="brandsGrid" class="studios-grid"></div>
             </div>
@@ -957,7 +957,8 @@
             if (searchTerm) {
                 filteredBrands = filteredBrands.filter(brand => 
                     (brand.name || '').toLowerCase().includes(searchTerm) ||
-                    (brand.display_price || '').toLowerCase().includes(searchTerm)
+                    (brand.display_price || '').toLowerCase().includes(searchTerm) ||
+                    (brand.state || '').toLowerCase().includes(searchTerm)
                 );
             }
             

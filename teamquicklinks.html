@@ -532,43 +532,37 @@
         .brand-card-footer {
             margin-top: auto;
             padding-top: 0.75rem;
+            text-align: right;
         }
 
-        .brand-schedule-btn {
+        .brand-schedule-link {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            padding: 0.625rem 1rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
+            gap: 0.375rem;
             font-size: 0.8125rem;
             font-weight: 600;
-            border-radius: 6px;
+            color: var(--primary);
             transition: all 0.2s ease;
         }
 
-        .brand-card.clickable:hover .brand-schedule-btn {
-            box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
+        .brand-card.clickable:hover .brand-schedule-link {
+            color: var(--accent);
         }
 
-        .brand-schedule-btn i {
+        .brand-schedule-link i {
             font-size: 0.75rem;
             transition: transform 0.2s ease;
         }
 
-        .brand-card.clickable:hover .brand-schedule-btn i {
+        .brand-card.clickable:hover .brand-schedule-link i {
             transform: translateX(3px);
         }
 
         .no-schedule-text {
-            display: block;
-            text-align: center;
+            display: inline-block;
             font-size: 0.75rem;
             color: var(--text-light);
             font-style: italic;
-            padding: 0.5rem 0;
         }
 
         /* Link Cards - Compact View */
@@ -1002,8 +996,8 @@
                         </div>
                         <div class="brand-card-footer">
                             ${hasSchedulingLink ? 
-                                '<div class="brand-schedule-btn">Schedule Now <i class="fas fa-arrow-right"></i></div>' :
-                                '<span class="no-schedule-text">No scheduling link available</span>'
+                                '<span class="brand-schedule-link">Schedule <i class="fas fa-arrow-right"></i></span>' :
+                                '<span class="no-schedule-text">No scheduling link</span>'
                             }
                         </div>
                     </${tag}>

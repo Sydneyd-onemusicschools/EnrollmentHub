@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -764,19 +765,19 @@
         <!-- Filter Section -->
         <div class="filter-section">
             <div class="filter-row">
-                <div class="filter-group" style="flex: 0.7;">
+                <div class="filter-group">
                     <label>Zone</label>
                     <select class="form-select" id="zoneFilter">
                         <option value="">All Zones</option>
                     </select>
                 </div>
-                <div class="filter-group" style="flex: 0.7;">
+                <div class="filter-group">
                     <label>Brand</label>
                     <select class="form-select" id="brandFilter">
                         <option value="">All Brands</option>
                     </select>
                 </div>
-                <div class="filter-group" style="flex: 0.7;">
+                <div class="filter-group">
                     <label>State</label>
                     <select class="form-select" id="stateFilter">
                         <option value="">All States</option>
@@ -785,7 +786,7 @@
                 <div class="filter-group">
                     <label>Studio</label>
                     <select class="form-select" id="studioFilter">
-                        <option value="">-- Select a Studio --</option>
+                        <option value="">All Studios</option>
                     </select>
                 </div>
             </div>
@@ -798,7 +799,7 @@
                     <i class="fas fa-upload"></i>
                     Import JSON
                 </button>
-                <button class="btn btn-primary" id="addProgramBtn" style="display: none;">
+                <button class="btn btn-primary" id="addProgramBtn" style="display: none;" onclick="openAddProgramModal()">
                     <i class="fas fa-plus"></i>
                     Add Program
                 </button>
@@ -832,6 +833,7 @@
             <div class="modal-body">
                 <form id="programForm">
                     <input type="hidden" id="programId">
+                    <input type="hidden" id="programStudioId">
                     
                     <div class="modal-tabs">
                         <button type="button" class="modal-tab active" data-tab="basic">Basic Info</button>
@@ -1131,13 +1133,13 @@
             loadZones();
             loadBrands();
             loadStudios();
+            loadAllPrograms();
             
-            document.getElementById('zoneFilter').addEventListener('change', onFilterChange);
-            document.getElementById('brandFilter').addEventListener('change', onFilterChange);
-            document.getElementById('stateFilter').addEventListener('change', onFilterChange);
+            document.getElementById('zoneFilter').addEventListener('change', onZoneChange);
+            document.getElementById('brandFilter').addEventListener('change', onBrandChange);
+            document.getElementById('stateFilter').addEventListener('change', onStateChange);
             document.getElementById('studioFilter').addEventListener('change', onStudioChange);
-            document.getElementById('searchInput').addEventListener('input', filterPrograms);
-            document.getElementById('addProgramBtn').addEventListener('click', openAddProgramModal);
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
         });
 
         function setupSidebar() {
@@ -1243,6 +1245,7 @@
 
         function populateBrandDropdown(filteredBrands = null) {
             const select = document.getElementById('brandFilter');
+            const currentValue = select.value;
             const brands = filteredBrands || allBrands;
             select.innerHTML = '<option value="">All Brands</option>';
             
@@ -1252,6 +1255,11 @@
                 option.textContent = brand.name;
                 select.appendChild(option);
             });
+
+            // Restore value if still valid
+            if (currentValue && brands.some(b => b.id === currentValue)) {
+                select.value = currentValue;
+            }
         }
 
         async function loadStudios() {
@@ -1264,20 +1272,22 @@
                 if (error) throw error;
 
                 allStudios = data || [];
-                populateStudioDropdown();
                 populateStateDropdown();
+                populateStudioDropdown();
             } catch (error) {
                 console.error('Error loading studios:', error);
                 showToast('Error loading studios', 'error');
             }
         }
 
-        function populateStateDropdown() {
+        function populateStateDropdown(filteredStudios = null) {
             const select = document.getElementById('stateFilter');
+            const currentValue = select.value;
+            const studios = filteredStudios || allStudios;
             select.innerHTML = '<option value="">All States</option>';
             
             // Get unique states from studios
-            const states = [...new Set(allStudios.map(s => s.state).filter(Boolean))].sort();
+            const states = [...new Set(studios.map(s => s.state).filter(Boolean))].sort();
             
             states.forEach(state => {
                 const option = document.createElement('option');
@@ -1285,95 +1295,48 @@
                 option.textContent = state;
                 select.appendChild(option);
             });
+
+            // Restore value if still valid
+            if (currentValue && states.includes(currentValue)) {
+                select.value = currentValue;
+            }
         }
 
         function populateStudioDropdown(filteredStudios = null) {
             const select = document.getElementById('studioFilter');
+            const currentValue = select.value;
             const studios = filteredStudios || allStudios;
-            select.innerHTML = '<option value="">-- Select a Studio --</option>';
+            select.innerHTML = '<option value="">All Studios</option>';
             
             studios.forEach(studio => {
                 const option = document.createElement('option');
                 option.value = studio.id;
-                option.textContent = studio.brand + (studio.city ? ` - ${studio.city}` : '') + (studio.state ? `, ${studio.state}` : '');
+                let label = studio.brand || 'Unnamed Studio';
+                if (studio.city) label += ` - ${studio.city}`;
+                if (studio.state) label += `, ${studio.state}`;
+                option.textContent = label;
                 select.appendChild(option);
             });
-        }
 
-        function onFilterChange() {
-            const zoneId = document.getElementById('zoneFilter').value;
-            const brandId = document.getElementById('brandFilter').value;
-            const state = document.getElementById('stateFilter').value;
-            
-            // Filter brands by zone
-            if (zoneId) {
-                const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
-                populateBrandDropdown(filteredBrands);
-            } else {
-                populateBrandDropdown();
-            }
-            
-            // Filter studios by zone, brand, and state
-            let filteredStudios = [...allStudios];
-            
-            if (zoneId) {
-                // Get brand IDs for this zone
-                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.name);
-                filteredStudios = filteredStudios.filter(s => zoneBrandIds.includes(s.brand));
-            }
-            
-            if (brandId) {
-                const brand = allBrands.find(b => b.id === brandId);
-                if (brand) {
-                    filteredStudios = filteredStudios.filter(s => s.brand === brand.name);
-                }
-            }
-            
-            if (state) {
-                filteredStudios = filteredStudios.filter(s => s.state === state);
-            }
-            
-            populateStudioDropdown(filteredStudios);
-            
-            // Reset studio selection and hide programs
-            document.getElementById('studioFilter').value = '';
-            selectedStudioId = null;
-            document.getElementById('selectStudioMessage').style.display = 'block';
-            document.getElementById('programsContainer').style.display = 'none';
-            document.getElementById('addProgramBtn').style.display = 'none';
-            document.getElementById('searchInput').value = '';
-        }
-
-        function onStudioChange(e) {
-            selectedStudioId = e.target.value;
-            
-            if (selectedStudioId) {
-                document.getElementById('selectStudioMessage').style.display = 'none';
-                document.getElementById('addProgramBtn').style.display = 'inline-flex';
-                loadPrograms();
-            } else {
-                document.getElementById('selectStudioMessage').style.display = 'block';
-                document.getElementById('programsContainer').style.display = 'none';
-                document.getElementById('addProgramBtn').style.display = 'none';
+            // Restore value if still valid
+            if (currentValue && studios.some(s => s.id === currentValue)) {
+                select.value = currentValue;
             }
         }
 
-        async function loadPrograms() {
+        async function loadAllPrograms() {
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('programsContainer').style.display = 'none';
-            document.getElementById('searchInput').value = '';
 
             try {
                 const { data, error } = await supabaseClient
                     .from('programs')
                     .select('*')
-                    .eq('studio_id', selectedStudioId)
                     .order('name');
 
                 if (error) throw error;
 
                 allPrograms = data || [];
-                renderPrograms(allPrograms);
+                applyFilters();
             } catch (error) {
                 console.error('Error loading programs:', error);
                 showToast('Error loading programs', 'error');
@@ -1382,49 +1345,183 @@
             }
         }
 
-        function filterPrograms() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            if (!searchTerm) {
-                renderPrograms(allPrograms);
-                return;
+        function getFilteredStudios() {
+            const zoneId = document.getElementById('zoneFilter').value;
+            const brandId = document.getElementById('brandFilter').value;
+            const state = document.getElementById('stateFilter').value;
+
+            let filtered = [...allStudios];
+
+            // Filter by zone (through brands)
+            if (zoneId) {
+                const zoneBrandNames = allBrands.filter(b => b.zone_id === zoneId).map(b => b.name);
+                filtered = filtered.filter(s => zoneBrandNames.includes(s.brand));
             }
-            
-            const filtered = allPrograms.filter(program => 
-                program.name.toLowerCase().includes(searchTerm) ||
-                (program.price && program.price.toLowerCase().includes(searchTerm)) ||
-                (program.enrollment_type && program.enrollment_type.toLowerCase().includes(searchTerm)) ||
-                (program.skill_level && program.skill_level.toLowerCase().includes(searchTerm))
-            );
-            
-            renderPrograms(filtered);
+
+            // Filter by brand
+            if (brandId) {
+                const brand = allBrands.find(b => b.id === brandId);
+                if (brand) {
+                    filtered = filtered.filter(s => s.brand === brand.name);
+                }
+            }
+
+            // Filter by state
+            if (state) {
+                filtered = filtered.filter(s => s.state === state);
+            }
+
+            return filtered;
         }
 
-        function renderPrograms(programs = allPrograms) {
+        function onZoneChange() {
+            const zoneId = document.getElementById('zoneFilter').value;
+
+            // Update brand dropdown based on zone
+            if (zoneId) {
+                const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
+                populateBrandDropdown(filteredBrands);
+            } else {
+                populateBrandDropdown();
+            }
+
+            // Reset brand selection if not in filtered list
+            document.getElementById('brandFilter').value = '';
+
+            // Update state and studio dropdowns
+            updateStateAndStudioDropdowns();
+            applyFilters();
+        }
+
+        function onBrandChange() {
+            updateStateAndStudioDropdowns();
+            applyFilters();
+        }
+
+        function onStateChange() {
+            // Update studio dropdown based on current filters
+            const filteredStudios = getFilteredStudios();
+            populateStudioDropdown(filteredStudios);
+            document.getElementById('studioFilter').value = '';
+            applyFilters();
+        }
+
+        function onStudioChange() {
+            selectedStudioId = document.getElementById('studioFilter').value;
+            
+            // Show/hide Add Program button based on single studio selection
+            if (selectedStudioId) {
+                document.getElementById('addProgramBtn').style.display = 'inline-flex';
+            } else {
+                document.getElementById('addProgramBtn').style.display = 'none';
+            }
+            
+            applyFilters();
+        }
+
+        function updateStateAndStudioDropdowns() {
+            const zoneId = document.getElementById('zoneFilter').value;
+            const brandId = document.getElementById('brandFilter').value;
+
+            let filteredStudios = [...allStudios];
+
+            // Filter by zone
+            if (zoneId) {
+                const zoneBrandNames = allBrands.filter(b => b.zone_id === zoneId).map(b => b.name);
+                filteredStudios = filteredStudios.filter(s => zoneBrandNames.includes(s.brand));
+            }
+
+            // Filter by brand
+            if (brandId) {
+                const brand = allBrands.find(b => b.id === brandId);
+                if (brand) {
+                    filteredStudios = filteredStudios.filter(s => s.brand === brand.name);
+                }
+            }
+
+            // Update state dropdown with available states
+            populateStateDropdown(filteredStudios);
+            document.getElementById('stateFilter').value = '';
+
+            // Update studio dropdown
+            populateStudioDropdown(filteredStudios);
+            document.getElementById('studioFilter').value = '';
+            selectedStudioId = null;
+            document.getElementById('addProgramBtn').style.display = 'none';
+        }
+
+        function applyFilters() {
+            const zoneId = document.getElementById('zoneFilter').value;
+            const brandId = document.getElementById('brandFilter').value;
+            const state = document.getElementById('stateFilter').value;
+            const studioId = document.getElementById('studioFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            // Get studio IDs that match the filters
+            const filteredStudios = getFilteredStudios();
+            const filteredStudioIds = filteredStudios.map(s => s.id);
+
+            // Filter programs
+            let filteredPrograms = allPrograms.filter(program => {
+                // Must belong to a studio in filtered list
+                if (!filteredStudioIds.includes(program.studio_id)) return false;
+
+                // If specific studio selected, filter to that studio
+                if (studioId && program.studio_id !== studioId) return false;
+
+                // Search filter
+                if (searchTerm) {
+                    const matchesSearch = 
+                        (program.name && program.name.toLowerCase().includes(searchTerm)) ||
+                        (program.price && program.price.toLowerCase().includes(searchTerm)) ||
+                        (program.enrollment_type && program.enrollment_type.toLowerCase().includes(searchTerm)) ||
+                        (program.skill_level && program.skill_level.toLowerCase().includes(searchTerm));
+                    if (!matchesSearch) return false;
+                }
+
+                return true;
+            });
+
+            // Hide select studio message, show programs
+            document.getElementById('selectStudioMessage').style.display = 'none';
+            renderPrograms(filteredPrograms);
+        }
+
+        function renderPrograms(programs) {
             const container = document.getElementById('programsGrid');
             document.getElementById('programsContainer').style.display = 'block';
 
             if (programs.length === 0) {
                 const searchTerm = document.getElementById('searchInput').value.trim();
+                const hasFilters = document.getElementById('zoneFilter').value || 
+                                   document.getElementById('brandFilter').value || 
+                                   document.getElementById('stateFilter').value ||
+                                   document.getElementById('studioFilter').value;
                 container.innerHTML = `
                     <div class="empty-state" style="grid-column: 1 / -1;">
                         <i class="fas fa-graduation-cap"></i>
-                        <p>${searchTerm ? 'No programs match your search' : 'No programs for this studio yet'}</p>
-                        ${!searchTerm ? `<button class="btn btn-primary" onclick="openAddProgramModal()">
-                            <i class="fas fa-plus"></i>
-                            Add First Program
-                        </button>` : ''}
+                        <p>${searchTerm ? 'No programs match your search' : hasFilters ? 'No programs found for this filter' : 'No programs yet'}</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = programs.map(program => `
+            container.innerHTML = programs.map(program => {
+                // Get studio info for this program
+                const studio = allStudios.find(s => s.id === program.studio_id);
+                let studioLabel = '';
+                if (studio) {
+                    studioLabel = studio.brand || 'Unknown';
+                    if (studio.city) studioLabel += ` - ${studio.city}`;
+                }
+
+                return `
                 <div class="program-card ${program.status === 'inactive' ? 'inactive' : ''}">
                     <div class="program-card-header">
                         <div class="program-name">${program.name}</div>
                         ${program.enrollment_type ? `<span class="program-type-badge">${program.enrollment_type.replace(' Enrollment', '').replace(' Based', '')}</span>` : ''}
                     </div>
+                    ${studioLabel ? `<div style="padding: 0.5rem 1rem; background: var(--gray-50); font-size: 0.8125rem; color: var(--text-secondary); border-bottom: 1px solid var(--gray-200);"><i class="fas fa-building" style="margin-right: 0.375rem;"></i>${studioLabel}</div>` : ''}
                     <div class="program-info">
                         ${program.price ? `
                             <div class="program-info-item">
@@ -1487,13 +1584,19 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function openAddProgramModal() {
+            if (!selectedStudioId) {
+                showToast('Please select a specific studio first', 'error');
+                return;
+            }
+
             document.getElementById('programModalTitle').textContent = 'Add Program';
             document.getElementById('programForm').reset();
             document.getElementById('programId').value = '';
+            document.getElementById('programStudioId').value = selectedStudioId;
             document.getElementById('programStatus').value = 'active';
             document.getElementById('programMidSemester').checked = false;
             document.getElementById('programFirstFree').checked = false;
@@ -1512,6 +1615,7 @@
         function editProgram(program) {
             document.getElementById('programModalTitle').textContent = 'Edit Program';
             document.getElementById('programId').value = program.id;
+            document.getElementById('programStudioId').value = program.studio_id;
             
             // Basic Info
             document.getElementById('programName').value = program.name || '';
@@ -1569,14 +1673,20 @@
         async function saveProgram() {
             const id = document.getElementById('programId').value;
             const name = document.getElementById('programName').value.trim();
+            const studioId = document.getElementById('programStudioId').value;
 
             if (!name) {
                 showToast('Program name is required', 'error');
                 return;
             }
 
+            if (!studioId) {
+                showToast('No studio selected', 'error');
+                return;
+            }
+
             const data = {
-                studio_id: selectedStudioId,
+                studio_id: studioId,
                 name: name,
                 class_size: document.getElementById('programClassSize').value || null,
                 duration: document.getElementById('programDuration').value || null,
@@ -1616,7 +1726,7 @@
 
                 showToast(id ? 'Program updated!' : 'Program added!', 'success');
                 closeProgramModal();
-                loadPrograms();
+                loadAllPrograms();
             } catch (error) {
                 console.error('Error saving program:', error);
                 showToast('Error saving program', 'error');
@@ -1631,7 +1741,7 @@
                 if (error) throw error;
 
                 showToast('Program deleted!', 'success');
-                loadPrograms();
+                loadAllPrograms();
             } catch (error) {
                 console.error('Error deleting program:', error);
                 showToast('Error deleting program', 'error');
@@ -1674,7 +1784,10 @@
             allStudios.forEach(studio => {
                 const option = document.createElement('option');
                 option.value = studio.id;
-                option.textContent = studio.brand + (studio.city ? ` - ${studio.city}` : '') + (studio.state ? `, ${studio.state}` : '');
+                let label = studio.brand || 'Unnamed Studio';
+                if (studio.city) label += ` - ${studio.city}`;
+                if (studio.state) label += `, ${studio.state}`;
+                option.textContent = label;
                 select.appendChild(option);
             });
 
@@ -1824,7 +1937,9 @@
             if (matchedStudio) {
                 select.value = matchedStudio.id;
                 importStudioId = matchedStudio.id;
-                matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched to: <strong>${matchedStudio.brand}${matchedStudio.city ? ' - ' + matchedStudio.city : ''}</strong></span>`;
+                let matchLabel = matchedStudio.brand || 'Unnamed Studio';
+                if (matchedStudio.city) matchLabel += ` - ${matchedStudio.city}`;
+                matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched to: <strong>${matchLabel}</strong></span>`;
             } else {
                 matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not auto-match "${studioInfo.name}${studioInfo.location ? ' - ' + studioInfo.location : ''}". Please select a studio.</span>`;
                 importStudioId = null;
@@ -1893,7 +2008,11 @@
 
                 // Find studio name for toast
                 const studio = allStudios.find(s => s.id === importStudioId);
-                const studioName = studio ? `${studio.brand}${studio.city ? ' - ' + studio.city : ''}` : 'studio';
+                let studioName = 'studio';
+                if (studio) {
+                    studioName = studio.brand || 'Unnamed Studio';
+                    if (studio.city) studioName += ` - ${studio.city}`;
+                }
 
                 showToast(`Program "${program.name}" imported to ${studioName}!`, 'success');
                 closeImportModal();
@@ -1936,7 +2055,10 @@
             allStudios.forEach(studio => {
                 const option = document.createElement('option');
                 option.value = studio.id;
-                option.textContent = studio.brand + (studio.city ? ` - ${studio.city}` : '') + (studio.state ? `, ${studio.state}` : '');
+                let label = studio.brand || 'Unnamed Studio';
+                if (studio.city) label += ` - ${studio.city}`;
+                if (studio.state) label += `, ${studio.state}`;
+                option.textContent = label;
                 select.appendChild(option);
             });
 
@@ -2002,7 +2124,11 @@
 
                 // Find studio name for toast
                 const studio = allStudios.find(s => s.id === targetStudioId);
-                const studioName = studio ? `${studio.brand}${studio.city ? ' - ' + studio.city : ''}` : 'studio';
+                let studioName = 'studio';
+                if (studio) {
+                    studioName = studio.brand || 'Unnamed Studio';
+                    if (studio.city) studioName += ` - ${studio.city}`;
+                }
 
                 showToast(`Program "${newName}" duplicated to ${studioName}!`, 'success');
                 closeDuplicateModal();

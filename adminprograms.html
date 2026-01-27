@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1035,11 +1034,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="file-drop-zone" id="fileDropZone" onclick="document.getElementById('fileInput').click()">
+                <div class="file-drop-zone" id="fileDropZone">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p>Drag & drop JSON file here</p>
                     <small>or click to browse</small>
-                    <input type="file" id="fileInput" accept=".json" onchange="handleFileSelect(event)">
+                    <input type="file" id="fileInput" accept=".json" style="display: none;">
                 </div>
 
                 <div class="import-preview" id="importPreview">
@@ -1206,12 +1205,23 @@
                     .select('*')
                     .order('name');
 
-                if (error) throw error;
+                if (error) {
+                    console.warn('Zones table not available:', error.message);
+                    allZones = [];
+                    document.getElementById('zoneFilter').parentElement.style.display = 'none';
+                    return;
+                }
 
                 allZones = data || [];
-                populateZoneDropdown();
+                if (allZones.length === 0) {
+                    document.getElementById('zoneFilter').parentElement.style.display = 'none';
+                } else {
+                    populateZoneDropdown();
+                }
             } catch (error) {
-                console.error('Error loading zones:', error);
+                console.warn('Error loading zones:', error);
+                allZones = [];
+                document.getElementById('zoneFilter').parentElement.style.display = 'none';
             }
         }
 
@@ -1234,12 +1244,23 @@
                     .select('*')
                     .order('name');
 
-                if (error) throw error;
+                if (error) {
+                    console.warn('Brands table not available:', error.message);
+                    allBrands = [];
+                    document.getElementById('brandFilter').parentElement.style.display = 'none';
+                    return;
+                }
 
                 allBrands = data || [];
-                populateBrandDropdown();
+                if (allBrands.length === 0) {
+                    document.getElementById('brandFilter').parentElement.style.display = 'none';
+                } else {
+                    populateBrandDropdown();
+                }
             } catch (error) {
-                console.error('Error loading brands:', error);
+                console.warn('Error loading brands:', error);
+                allBrands = [];
+                document.getElementById('brandFilter').parentElement.style.display = 'none';
             }
         }
 
@@ -1352,14 +1373,14 @@
 
             let filtered = [...allStudios];
 
-            // Filter by zone (through brands)
-            if (zoneId) {
+            // Filter by zone (through brands) - only if zones exist
+            if (zoneId && allBrands.length > 0) {
                 const zoneBrandNames = allBrands.filter(b => b.zone_id === zoneId).map(b => b.name);
                 filtered = filtered.filter(s => zoneBrandNames.includes(s.brand));
             }
 
-            // Filter by brand
-            if (brandId) {
+            // Filter by brand - only if brands exist
+            if (brandId && allBrands.length > 0) {
                 const brand = allBrands.find(b => b.id === brandId);
                 if (brand) {
                     filtered = filtered.filter(s => s.brand === brand.name);
@@ -1377,16 +1398,17 @@
         function onZoneChange() {
             const zoneId = document.getElementById('zoneFilter').value;
 
-            // Update brand dropdown based on zone
-            if (zoneId) {
-                const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
-                populateBrandDropdown(filteredBrands);
-            } else {
-                populateBrandDropdown();
+            // Update brand dropdown based on zone (only if brands exist)
+            if (allBrands.length > 0) {
+                if (zoneId) {
+                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
+                    populateBrandDropdown(filteredBrands);
+                } else {
+                    populateBrandDropdown();
+                }
+                // Reset brand selection if not in filtered list
+                document.getElementById('brandFilter').value = '';
             }
-
-            // Reset brand selection if not in filtered list
-            document.getElementById('brandFilter').value = '';
 
             // Update state and studio dropdowns
             updateStateAndStudioDropdowns();
@@ -1425,14 +1447,14 @@
 
             let filteredStudios = [...allStudios];
 
-            // Filter by zone
-            if (zoneId) {
+            // Filter by zone (only if zones/brands exist)
+            if (zoneId && allBrands.length > 0) {
                 const zoneBrandNames = allBrands.filter(b => b.zone_id === zoneId).map(b => b.name);
                 filteredStudios = filteredStudios.filter(s => zoneBrandNames.includes(s.brand));
             }
 
-            // Filter by brand
-            if (brandId) {
+            // Filter by brand (only if brands exist)
+            if (brandId && allBrands.length > 0) {
                 const brand = allBrands.find(b => b.id === brandId);
                 if (brand) {
                     filteredStudios = filteredStudios.filter(s => s.brand === brand.name);
@@ -1763,22 +1785,33 @@
         // ==================== IMPORT FUNCTIONS ====================
         let importData = null;
         let importStudioId = null;
+        let dragDropSetup = false;
 
         function openImportModal() {
             importData = null;
             importStudioId = null;
-            document.getElementById('fileInput').value = '';
             document.getElementById('importPreview').classList.remove('show');
             document.getElementById('importConfirmBtn').disabled = true;
+            document.getElementById('studioMatchInfo').innerHTML = '';
             document.getElementById('importModal').classList.add('active');
             
             // Populate studio dropdown
             populateImportStudioDropdown();
-            setupDragDrop();
+            
+            // Setup drag drop only once
+            if (!dragDropSetup) {
+                setupDragDrop();
+                dragDropSetup = true;
+            }
+            
+            // Reset file input
+            const fileInput = document.getElementById('fileInput');
+            fileInput.value = '';
         }
 
         function populateImportStudioDropdown() {
             const select = document.getElementById('importStudioSelect');
+            const currentValue = select.value;
             select.innerHTML = '<option value="">-- Select a Studio --</option>';
             
             allStudios.forEach(studio => {
@@ -1790,11 +1823,6 @@
                 option.textContent = label;
                 select.appendChild(option);
             });
-
-            select.addEventListener('change', (e) => {
-                importStudioId = e.target.value;
-                updateImportButton();
-            });
         }
 
         function closeImportModal() {
@@ -1805,42 +1833,56 @@
 
         function setupDragDrop() {
             const dropZone = document.getElementById('fileDropZone');
+            const fileInput = document.getElementById('fileInput');
             
-            // Remove old listeners by cloning
-            const newDropZone = dropZone.cloneNode(true);
-            dropZone.parentNode.replaceChild(newDropZone, dropZone);
-            
-            newDropZone.addEventListener('click', () => {
-                document.getElementById('fileInput').click();
+            // File input change handler
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    processFile(file);
+                }
             });
 
-            newDropZone.addEventListener('dragover', (e) => {
+            // Click to open file picker
+            dropZone.addEventListener('click', (e) => {
+                if (e.target !== fileInput) {
+                    fileInput.click();
+                }
+            });
+
+            // Drag and drop handlers
+            dropZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                newDropZone.classList.add('dragover');
+                e.stopPropagation();
+                dropZone.classList.add('dragover');
             });
 
-            newDropZone.addEventListener('dragleave', () => {
-                newDropZone.classList.remove('dragover');
-            });
-
-            newDropZone.addEventListener('drop', (e) => {
+            dropZone.addEventListener('dragleave', (e) => {
                 e.preventDefault();
-                newDropZone.classList.remove('dragover');
+                e.stopPropagation();
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('dragover');
                 const files = e.dataTransfer.files;
                 if (files.length > 0) {
                     processFile(files[0]);
                 }
             });
-        }
-
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                processFile(file);
-            }
+            
+            // Studio select change handler
+            document.getElementById('importStudioSelect').addEventListener('change', (e) => {
+                importStudioId = e.target.value;
+                updateImportButton();
+            });
         }
 
         function processFile(file) {
+            console.log('Processing file:', file.name);
+            
             if (!file.name.endsWith('.json')) {
                 showToast('Please select a JSON file', 'error');
                 return;
@@ -1850,6 +1892,7 @@
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
+                    console.log('Parsed data:', data);
                     
                     // Validate the structure
                     if (!data.program || !data.program.name) {
@@ -1861,8 +1904,12 @@
                     showImportPreview(data);
                 } catch (error) {
                     showToast('Error parsing JSON file', 'error');
-                    console.error(error);
+                    console.error('JSON parse error:', error);
                 }
+            };
+            reader.onerror = () => {
+                showToast('Error reading file', 'error');
+                console.error('File read error');
             };
             reader.readAsText(file);
         }
@@ -2017,10 +2064,8 @@
                 showToast(`Program "${program.name}" imported to ${studioName}!`, 'success');
                 closeImportModal();
                 
-                // If we're viewing this studio, refresh
-                if (selectedStudioId === importStudioId) {
-                    loadPrograms();
-                }
+                // Reload all programs
+                loadAllPrograms();
             } catch (error) {
                 console.error('Error importing program:', error);
                 showToast('Error importing program', 'error');
@@ -2133,10 +2178,8 @@
                 showToast(`Program "${newName}" duplicated to ${studioName}!`, 'success');
                 closeDuplicateModal();
                 
-                // If we're viewing the target studio, refresh
-                if (selectedStudioId === targetStudioId) {
-                    loadPrograms();
-                }
+                // Reload all programs
+                loadAllPrograms();
             } catch (error) {
                 console.error('Error duplicating program:', error);
                 showToast('Error duplicating program', 'error');

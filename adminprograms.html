@@ -1050,11 +1050,27 @@
                     </div>
                     <div id="importPreviewContent"></div>
                     
-                    <div class="form-group" style="margin-top: 1rem;">
-                        <label class="form-label">Assign to Studio *</label>
-                        <select class="form-select" id="importStudioSelect">
-                            <option value="">-- Select a Studio --</option>
-                        </select>
+                    <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                        <label class="form-label" style="margin-bottom: 0.75rem; display: block;">Assign to Studio *</label>
+                        
+                        <div class="form-group" id="importZoneGroup" style="margin-bottom: 0.75rem;">
+                            <select class="form-select" id="importZoneSelect">
+                                <option value="">All Zones</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="importBrandGroup" style="margin-bottom: 0.75rem;">
+                            <select class="form-select" id="importBrandSelect">
+                                <option value="">Select Brand</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <select class="form-select" id="importStudioSelect">
+                                <option value="">Select Studio Location</option>
+                            </select>
+                        </div>
+                        
                         <div id="studioMatchInfo" style="margin-top: 0.5rem; font-size: 0.8125rem;"></div>
                     </div>
                 </div>
@@ -1086,14 +1102,26 @@
                     <div id="duplicatePreviewContent"></div>
                 </div>
                 
-                <div class="form-group" style="margin-top: 1.5rem;">
-                    <label class="form-label">Duplicate to Studio *</label>
-                    <select class="form-select" id="duplicateStudioSelect">
-                        <option value="">-- Select a Studio --</option>
-                    </select>
-                    <small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.5rem; display: block;">
-                        <i class="fas fa-info-circle"></i> Select the studio where you want to create a copy of this program
-                    </small>
+                <div style="margin-top: 1.5rem;">
+                    <label class="form-label" style="margin-bottom: 0.75rem; display: block;">Duplicate to Studio *</label>
+                    
+                    <div class="form-group" id="duplicateZoneGroup" style="margin-bottom: 0.75rem;">
+                        <select class="form-select" id="duplicateZoneSelect">
+                            <option value="">All Zones</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="duplicateBrandGroup" style="margin-bottom: 0.75rem;">
+                        <select class="form-select" id="duplicateBrandSelect">
+                            <option value="">Select Brand</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select class="form-select" id="duplicateStudioSelect">
+                            <option value="">Select Studio Location</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 1rem;">
@@ -1795,12 +1823,28 @@
             document.getElementById('studioMatchInfo').innerHTML = '';
             document.getElementById('importModal').classList.add('active');
             
-            // Populate studio dropdown
+            // Populate dropdowns
+            populateImportZoneDropdown();
+            populateImportBrandDropdown();
             populateImportStudioDropdown();
+            
+            // Hide zone/brand if not available
+            if (allZones.length === 0) {
+                document.getElementById('importZoneGroup').style.display = 'none';
+            } else {
+                document.getElementById('importZoneGroup').style.display = 'block';
+            }
+            
+            if (allBrands.length === 0) {
+                document.getElementById('importBrandGroup').style.display = 'none';
+            } else {
+                document.getElementById('importBrandGroup').style.display = 'block';
+            }
             
             // Setup drag drop only once
             if (!dragDropSetup) {
                 setupDragDrop();
+                setupImportDropdownListeners();
                 dragDropSetup = true;
             }
             
@@ -1809,19 +1853,90 @@
             fileInput.value = '';
         }
 
-        function populateImportStudioDropdown() {
-            const select = document.getElementById('importStudioSelect');
-            const currentValue = select.value;
-            select.innerHTML = '<option value="">-- Select a Studio --</option>';
+        function populateImportZoneDropdown() {
+            const select = document.getElementById('importZoneSelect');
+            select.innerHTML = '<option value="">All Zones</option>';
             
-            allStudios.forEach(studio => {
+            allZones.forEach(zone => {
+                const option = document.createElement('option');
+                option.value = zone.id;
+                option.textContent = zone.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateImportBrandDropdown(filteredBrands = null) {
+            const select = document.getElementById('importBrandSelect');
+            const brands = filteredBrands || allBrands;
+            select.innerHTML = '<option value="">Select Brand</option>';
+            
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = brand.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateImportStudioDropdown(filteredStudios = null) {
+            const select = document.getElementById('importStudioSelect');
+            const studios = filteredStudios || [];
+            select.innerHTML = '<option value="">Select Studio Location</option>';
+            
+            studios.forEach(studio => {
                 const option = document.createElement('option');
                 option.value = studio.id;
-                let label = studio.brand || 'Unnamed Studio';
-                if (studio.city) label += ` - ${studio.city}`;
+                let label = studio.city || 'Main Location';
                 if (studio.state) label += `, ${studio.state}`;
                 option.textContent = label;
                 select.appendChild(option);
+            });
+        }
+
+        function setupImportDropdownListeners() {
+            // Zone change
+            document.getElementById('importZoneSelect').addEventListener('change', (e) => {
+                const zoneId = e.target.value;
+                
+                // Filter brands by zone
+                if (zoneId && allBrands.length > 0) {
+                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
+                    populateImportBrandDropdown(filteredBrands);
+                } else {
+                    populateImportBrandDropdown();
+                }
+                
+                // Reset brand and studio
+                document.getElementById('importBrandSelect').value = '';
+                document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
+                importStudioId = null;
+                updateImportButton();
+            });
+            
+            // Brand change
+            document.getElementById('importBrandSelect').addEventListener('change', (e) => {
+                const brandId = e.target.value;
+                
+                if (brandId) {
+                    const brand = allBrands.find(b => b.id === brandId);
+                    if (brand) {
+                        // Get studios for this brand
+                        const brandStudios = allStudios.filter(s => s.brand === brand.name);
+                        populateImportStudioDropdown(brandStudios);
+                    }
+                } else {
+                    populateImportStudioDropdown([]);
+                }
+                
+                // Reset studio
+                importStudioId = null;
+                updateImportButton();
+            });
+            
+            // Studio change
+            document.getElementById('importStudioSelect').addEventListener('change', (e) => {
+                importStudioId = e.target.value;
+                updateImportButton();
             });
         }
 
@@ -1871,12 +1986,6 @@
                 if (files.length > 0) {
                     processFile(files[0]);
                 }
-            });
-            
-            // Studio select change handler
-            document.getElementById('importStudioSelect').addEventListener('change', (e) => {
-                importStudioId = e.target.value;
-                updateImportButton();
             });
         }
 
@@ -1941,56 +2050,92 @@
         }
 
         function autoMatchStudio(studioInfo) {
-            const select = document.getElementById('importStudioSelect');
+            const zoneSelect = document.getElementById('importZoneSelect');
+            const brandSelect = document.getElementById('importBrandSelect');
+            const studioSelect = document.getElementById('importStudioSelect');
             const matchInfo = document.getElementById('studioMatchInfo');
             
             if (!studioInfo.name && !studioInfo.location) {
-                matchInfo.innerHTML = '<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> No studio info in file. Please select a studio manually.</span>';
+                matchInfo.innerHTML = '<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> No studio info in file. Please select brand and location.</span>';
                 importStudioId = null;
-                select.value = '';
                 updateImportButton();
                 return;
             }
 
-            // Try to find matching studio
-            let matchedStudio = null;
             const searchName = (studioInfo.name || '').toLowerCase().trim();
             const searchLocation = (studioInfo.location || '').toLowerCase().trim();
 
-            // First try exact brand + city match
-            matchedStudio = allStudios.find(s => {
-                const brand = (s.brand || '').toLowerCase();
-                const city = (s.city || '').toLowerCase();
-                return brand === searchName && searchLocation.includes(city);
-            });
+            // Try to find matching brand
+            let matchedBrand = null;
+            if (allBrands.length > 0) {
+                matchedBrand = allBrands.find(b => {
+                    const brandName = (b.name || '').toLowerCase();
+                    return brandName === searchName || searchName.includes(brandName) || brandName.includes(searchName);
+                });
 
-            // If no exact match, try partial brand match
-            if (!matchedStudio) {
-                matchedStudio = allStudios.find(s => {
+                if (matchedBrand) {
+                    // Set zone if available
+                    if (matchedBrand.zone_id && allZones.length > 0) {
+                        zoneSelect.value = matchedBrand.zone_id;
+                        // Filter brands to this zone
+                        const zoneBrands = allBrands.filter(b => b.zone_id === matchedBrand.zone_id);
+                        populateImportBrandDropdown(zoneBrands);
+                    }
+                    
+                    // Set brand
+                    brandSelect.value = matchedBrand.id;
+                    
+                    // Populate studios for this brand
+                    const brandStudios = allStudios.filter(s => s.brand === matchedBrand.name);
+                    populateImportStudioDropdown(brandStudios);
+                    
+                    // Try to match studio location
+                    let matchedStudio = null;
+                    if (searchLocation) {
+                        matchedStudio = brandStudios.find(s => {
+                            const city = (s.city || '').toLowerCase();
+                            const state = (s.state || '').toLowerCase();
+                            return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim());
+                        });
+                    }
+                    
+                    if (matchedStudio) {
+                        studioSelect.value = matchedStudio.id;
+                        importStudioId = matchedStudio.id;
+                        let locationLabel = matchedStudio.city || 'Main Location';
+                        if (matchedStudio.state) locationLabel += `, ${matchedStudio.state}`;
+                        matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${matchedBrand.name} - ${locationLabel}</strong></span>`;
+                    } else if (brandStudios.length === 1) {
+                        // If only one studio for this brand, auto-select it
+                        studioSelect.value = brandStudios[0].id;
+                        importStudioId = brandStudios[0].id;
+                        let locationLabel = brandStudios[0].city || 'Main Location';
+                        if (brandStudios[0].state) locationLabel += `, ${brandStudios[0].state}`;
+                        matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${matchedBrand.name} - ${locationLabel}</strong></span>`;
+                    } else {
+                        matchInfo.innerHTML = `<span style="color: var(--primary);"><i class="fas fa-info-circle"></i> Brand matched: <strong>${matchedBrand.name}</strong>. Please select the location.</span>`;
+                    }
+                } else {
+                    matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match "${studioInfo.name}". Please select brand and location.</span>`;
+                }
+            } else {
+                // No brands table - try direct studio match
+                let matchedStudio = allStudios.find(s => {
                     const brand = (s.brand || '').toLowerCase();
                     const city = (s.city || '').toLowerCase();
-                    return searchName.includes(brand) || brand.includes(searchName);
+                    return (brand === searchName || searchName.includes(brand)) && 
+                           (!searchLocation || searchLocation.includes(city));
                 });
-            }
-
-            // If no brand match, try city match
-            if (!matchedStudio && searchLocation) {
-                matchedStudio = allStudios.find(s => {
-                    const city = (s.city || '').toLowerCase();
-                    return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim());
-                });
-            }
-
-            if (matchedStudio) {
-                select.value = matchedStudio.id;
-                importStudioId = matchedStudio.id;
-                let matchLabel = matchedStudio.brand || 'Unnamed Studio';
-                if (matchedStudio.city) matchLabel += ` - ${matchedStudio.city}`;
-                matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched to: <strong>${matchLabel}</strong></span>`;
-            } else {
-                matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not auto-match "${studioInfo.name}${studioInfo.location ? ' - ' + studioInfo.location : ''}". Please select a studio.</span>`;
-                importStudioId = null;
-                select.value = '';
+                
+                if (matchedStudio) {
+                    studioSelect.value = matchedStudio.id;
+                    importStudioId = matchedStudio.id;
+                    let label = matchedStudio.brand || 'Unknown';
+                    if (matchedStudio.city) label += ` - ${matchedStudio.city}`;
+                    matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${label}</strong></span>`;
+                } else {
+                    matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match. Please select manually.</span>`;
+                }
             }
 
             updateImportButton();
@@ -2006,9 +2151,14 @@
             importStudioId = null;
             document.getElementById('fileInput').value = '';
             document.getElementById('importPreview').classList.remove('show');
-            document.getElementById('importStudioSelect').value = '';
+            document.getElementById('importZoneSelect').value = '';
+            document.getElementById('importBrandSelect').value = '';
+            document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
             document.getElementById('studioMatchInfo').innerHTML = '';
             document.getElementById('importConfirmBtn').disabled = true;
+            
+            // Reset brand dropdown to show all brands
+            populateImportBrandDropdown();
         }
 
         async function confirmImport() {
@@ -2074,9 +2224,12 @@
 
         // ==================== DUPLICATE FUNCTIONS ====================
         let programToDuplicate = null;
+        let duplicateStudioId = null;
+        let duplicateListenersSetup = false;
 
         function openDuplicateModal(program) {
             programToDuplicate = program;
+            duplicateStudioId = null;
             
             // Show program preview
             const content = document.getElementById('duplicatePreviewContent');
@@ -2093,19 +2246,29 @@
                 </div>
             `;
 
-            // Populate studio dropdown
-            const select = document.getElementById('duplicateStudioSelect');
-            select.innerHTML = '<option value="">-- Select a Studio --</option>';
+            // Populate dropdowns
+            populateDuplicateZoneDropdown();
+            populateDuplicateBrandDropdown();
+            document.getElementById('duplicateStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
             
-            allStudios.forEach(studio => {
-                const option = document.createElement('option');
-                option.value = studio.id;
-                let label = studio.brand || 'Unnamed Studio';
-                if (studio.city) label += ` - ${studio.city}`;
-                if (studio.state) label += `, ${studio.state}`;
-                option.textContent = label;
-                select.appendChild(option);
-            });
+            // Hide zone/brand if not available
+            if (allZones.length === 0) {
+                document.getElementById('duplicateZoneGroup').style.display = 'none';
+            } else {
+                document.getElementById('duplicateZoneGroup').style.display = 'block';
+            }
+            
+            if (allBrands.length === 0) {
+                document.getElementById('duplicateBrandGroup').style.display = 'none';
+            } else {
+                document.getElementById('duplicateBrandGroup').style.display = 'block';
+            }
+
+            // Setup listeners once
+            if (!duplicateListenersSetup) {
+                setupDuplicateDropdownListeners();
+                duplicateListenersSetup = true;
+            }
 
             // Clear name input
             document.getElementById('duplicateProgramName').value = '';
@@ -2113,16 +2276,101 @@
             document.getElementById('duplicateModal').classList.add('active');
         }
 
+        function populateDuplicateZoneDropdown() {
+            const select = document.getElementById('duplicateZoneSelect');
+            select.innerHTML = '<option value="">All Zones</option>';
+            
+            allZones.forEach(zone => {
+                const option = document.createElement('option');
+                option.value = zone.id;
+                option.textContent = zone.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateDuplicateBrandDropdown(filteredBrands = null) {
+            const select = document.getElementById('duplicateBrandSelect');
+            const brands = filteredBrands || allBrands;
+            select.innerHTML = '<option value="">Select Brand</option>';
+            
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = brand.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateDuplicateStudioDropdown(filteredStudios = null) {
+            const select = document.getElementById('duplicateStudioSelect');
+            const studios = filteredStudios || [];
+            select.innerHTML = '<option value="">Select Studio Location</option>';
+            
+            studios.forEach(studio => {
+                const option = document.createElement('option');
+                option.value = studio.id;
+                let label = studio.city || 'Main Location';
+                if (studio.state) label += `, ${studio.state}`;
+                option.textContent = label;
+                select.appendChild(option);
+            });
+        }
+
+        function setupDuplicateDropdownListeners() {
+            // Zone change
+            document.getElementById('duplicateZoneSelect').addEventListener('change', (e) => {
+                const zoneId = e.target.value;
+                
+                // Filter brands by zone
+                if (zoneId && allBrands.length > 0) {
+                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
+                    populateDuplicateBrandDropdown(filteredBrands);
+                } else {
+                    populateDuplicateBrandDropdown();
+                }
+                
+                // Reset brand and studio
+                document.getElementById('duplicateBrandSelect').value = '';
+                document.getElementById('duplicateStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
+                duplicateStudioId = null;
+            });
+            
+            // Brand change
+            document.getElementById('duplicateBrandSelect').addEventListener('change', (e) => {
+                const brandId = e.target.value;
+                
+                if (brandId) {
+                    const brand = allBrands.find(b => b.id === brandId);
+                    if (brand) {
+                        // Get studios for this brand
+                        const brandStudios = allStudios.filter(s => s.brand === brand.name);
+                        populateDuplicateStudioDropdown(brandStudios);
+                    }
+                } else {
+                    populateDuplicateStudioDropdown([]);
+                }
+                
+                // Reset studio
+                duplicateStudioId = null;
+            });
+            
+            // Studio change
+            document.getElementById('duplicateStudioSelect').addEventListener('change', (e) => {
+                duplicateStudioId = e.target.value;
+            });
+        }
+
         function closeDuplicateModal() {
             document.getElementById('duplicateModal').classList.remove('active');
             programToDuplicate = null;
+            duplicateStudioId = null;
         }
 
         async function confirmDuplicate() {
-            const targetStudioId = document.getElementById('duplicateStudioSelect').value;
+            const targetStudioId = duplicateStudioId || document.getElementById('duplicateStudioSelect').value;
             
             if (!targetStudioId) {
-                showToast('Please select a studio', 'error');
+                showToast('Please select a studio location', 'error');
                 return;
             }
 

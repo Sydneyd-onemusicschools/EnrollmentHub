@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Map - Enrollment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary: #FA8072;
+            --primary-light: #FFB4A2;
+            --primary-dark: #E96E5D;
+            --secondary: #FF6B9D;
+            --secondary-light: #FFB6C1;
+            --accent: #FFA07A;
+            --accent-light: #FFCBA4;
+            
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --text-light: #A0AEC0;
+            --white: #FFFFFF;
+            
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            
+            --success: #48BB78;
+            --warning: #F6AD55;
+            
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
+            
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --transition-speed: 0.3s;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
+
+        .sidebar-header {
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
+
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: calc(100% - 1.5rem);
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
+        }
+
+        .nav-icon { font-size: 1.25rem; flex-shrink: 0; width: 20px; }
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
+
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--secondary) !important; }
+        .logout-btn:hover { background: rgba(255, 107, 157, 0.1) !important; }
+
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0;
+            pointer-events: none; transition: opacity var(--transition-speed) ease;
+        }
+
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left var(--transition-speed) ease;
+        }
+
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
+
+        /* Page Header */
+        .page-header {
+            padding: 1.5rem 2rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header-left h1 { font-size: 1.75rem; color: var(--text-primary); margin-bottom: 0.25rem; font-weight: 700; }
+        .page-header-left p { color: var(--text-secondary); font-size: 0.9375rem; }
+
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+
+        .results-count {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white; padding: 0.5rem 1rem; border-radius: 8px;
+            font-weight: 600; font-size: 0.875rem;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            padding: 1rem 2rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+            max-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.375rem;
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            background: var(--white);
+            transition: all 0.2s ease;
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            padding-right: 2rem;
+        }
+
+        .filter-group.search { flex: 2; max-width: 300px; }
+
+        /* Map Container */
+        .map-container {
+            flex: 1;
+            position: relative;
+            min-height: 500px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Legend */
+        .map-legend {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 500;
+            max-width: 200px;
+        }
+
+        .legend-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.375rem;
+        }
+
+        .legend-item:last-child { margin-bottom: 0; }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Custom Popup Styles */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .leaflet-popup-content {
+            margin: 0;
+            min-width: 250px;
+        }
+
+        .popup-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1rem;
+            color: white;
+        }
+
+        .popup-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .popup-zone {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        .popup-body {
+            padding: 1rem;
+        }
+
+        .popup-info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.625rem;
+        }
+
+        .popup-info-row:last-child { margin-bottom: 0; }
+
+        .popup-info-row i {
+            color: var(--primary);
+            width: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .popup-actions {
+            padding: 0.75rem 1rem;
+            background: var(--gray-50);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .popup-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .popup-btn.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+        }
+
+        .popup-btn.primary:hover {
+            box-shadow: 0 2px 8px rgba(250, 128, 114, 0.4);
+        }
+
+        .popup-btn.secondary {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1px solid var(--gray-200);
+        }
+
+        .popup-btn.secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Nearby Studios Line */
+        .nearby-line {
+            stroke-dasharray: 5, 5;
+            stroke-opacity: 0.6;
+        }
+
+        /* Loading */
+        .map-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            z-index: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+
+        .map-loading i { color: var(--primary); }
+
+        /* Geocoding Progress */
+        .geocode-progress {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--white);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            z-index: 600;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        .geocode-progress.active { display: flex; align-items: center; gap: 0.5rem; }
+
+        /* Custom Zoom Controls */
+        .map-controls {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .map-control-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border: none;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .map-control-btn:hover {
+            background: var(--gray-50);
+            transform: scale(1.05);
+        }
+
+        .map-control-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+        }
+
+        .map-control-btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 50px;
+            background: var(--text-primary);
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .page-header { padding: 1rem; flex-direction: column; align-items: flex-start; }
+            .filter-section { padding: 1rem; }
+            .filter-group { min-width: 100%; max-width: 100%; }
+            .map-legend { bottom: 1rem; left: 1rem; right: 1rem; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-section">
+                <div class="logo-icon">EH</div>
+                <span class="logo-text">Enrollment Hub</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn">
+                <span class="toggle-icon">‹</span>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="teamdashboard.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="teamquicklinks.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-link"></i></span>
+                <span class="nav-text">Quick Links</span>
+            </a>
+            <a href="teamstudio-directory.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-building"></i></span>
+                <span class="nav-text">Studio Directory</span>
+            </a>
+            <a href="teamsnippets.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                <span class="nav-text">Snippets</span>
+            </a>
+            <a href="teamsellingpoints.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-star"></i></span>
+                <span class="nav-text">Selling Points</span>
+            </a>
+            <a href="teamprograms.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
+                <span class="nav-text">Programs</span>
+            </a>
+            <a href="teammap.html" class="nav-item active">
+                <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
+                <span class="nav-text">Studio Map</span>
+            </a>
+            <a href="teamcalendar.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+                <span class="nav-text">Calendar</span>
+            </a>
+            <a href="teamtraining-hub.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-book-open"></i></span>
+                <span class="nav-text">Training Hub</span>
+            </a>
+            <a href="teampolicies.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                <span class="nav-text">Policies</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button id="logoutBtn" class="nav-item logout-btn">
+                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span class="nav-text">Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Studio Map</h1>
+                <p>View all studio locations across the US</p>
+            </div>
+            <div class="header-right">
+                <div class="results-count" id="resultsCount">0 Studios</div>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-group" id="zoneFilterGroup">
+                <label>Zone</label>
+                <select class="form-select" id="zoneFilter">
+                    <option value="">All Zones</option>
+                </select>
+            </div>
+            <div class="filter-group" id="brandFilterGroup">
+                <label>Brand</label>
+                <select class="form-select" id="brandFilter">
+                    <option value="">All Brands</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>State</label>
+                <select class="form-select" id="stateFilter">
+                    <option value="">All States</option>
+                </select>
+            </div>
+            <div class="filter-group search">
+                <label>Search</label>
+                <input type="text" class="form-input" id="searchInput" placeholder="Search studios...">
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+            
+            <div class="map-controls">
+                <button class="map-control-btn" id="zoomOutBtn" title="View All Studios" onclick="zoomToAll()">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button class="map-control-btn" id="zoomInBtn" title="Zoom In" onclick="map.zoomIn()">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="map-control-btn" id="zoomOutMapBtn" title="Zoom Out" onclick="map.zoomOut()">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+            
+            <div class="map-loading" id="mapLoading">
+                <i class="fas fa-spinner fa-spin"></i>
+                Loading studios...
+            </div>
+            </div>
+
+            <div class="geocode-progress" id="geocodeProgress">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="geocodeText">Geocoding addresses...</span>
+            </div>
+
+            <div class="map-legend" id="mapLegend" style="display: none;">
+                <div class="legend-title">Zones</div>
+                <div id="legendItems"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+
+        let supabaseClient;
+        let map;
+        let markers = [];
+        let nearbyLines = [];
+        let allStudios = [];
+        let allBrands = [];
+        let allZones = [];
+
+        // Zone colors for pins
+        const zoneColors = [
+            '#FA8072', // Coral/Salmon
+            '#4A90D9', // Blue
+            '#48BB78', // Green
+            '#9F7AEA', // Purple
+            '#F6AD55', // Orange
+            '#38B2AC', // Teal
+            '#ED64A6', // Pink
+            '#667EEA', // Indigo
+            '#ECC94B', // Yellow
+            '#FC8181', // Red
+        ];
+
+        let zoneColorMap = {};
+
+        // Helper functions
+        function getBrandName(brandId) {
+            if (!brandId) return 'Unknown';
+            const brand = allBrands.find(b => b.id === brandId);
+            return brand ? brand.name : 'Unknown';
+        }
+
+        function getZoneName(zoneId) {
+            if (!zoneId) return null;
+            const zone = allZones.find(z => z.id === zoneId);
+            return zone ? (zone.name || zone.zone_name || zone.title) : null;
+        }
+
+        function getZoneForStudio(studio) {
+            if (!studio.brand_id) return null;
+            const brand = allBrands.find(b => b.id === studio.brand_id);
+            if (!brand || !brand.zone_id) return null;
+            return getZoneName(brand.zone_id);
+        }
+
+        function getZoneIdForStudio(studio) {
+            if (!studio.brand_id) return null;
+            const brand = allBrands.find(b => b.id === studio.brand_id);
+            return brand ? brand.zone_id : null;
+        }
+
+        function getStudioLabel(studio) {
+            const brandName = getBrandName(studio.brand_id);
+            let label = brandName;
+            if (studio.city) label += ` - ${studio.city}`;
+            if (studio.state) label += `, ${studio.state}`;
+            return label;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            setupSidebar();
+            setupFilterListeners();
+            initMap();
+            loadData();
+        });
+
+        function setupSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                setTimeout(() => map.invalidateSize(), 300);
+            });
+            overlay.addEventListener('click', () => sidebar.classList.add('collapsed'));
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        function setupFilterListeners() {
+            document.getElementById('zoneFilter').addEventListener('change', onZoneChange);
+            document.getElementById('brandFilter').addEventListener('change', onBrandChange);
+            document.getElementById('stateFilter').addEventListener('change', applyFilters);
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+        }
+
+        function initMap() {
+            // Center on US
+            map = L.map('map', {
+                center: [39.8283, -98.5795],
+                zoom: 4,
+                maxZoom: 19
+            });
+
+            // Different map tile layers
+            const tileLayers = {
+                'Streets': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }),
+                'Detailed': L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap contributors, © CARTO',
+                    maxZoom: 19
+                }),
+                'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '© Esri',
+                    maxZoom: 19
+                }),
+                'Light': L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap contributors, © CARTO',
+                    maxZoom: 19
+                })
+            };
+
+            // Add default layer (Detailed - shows buildings)
+            tileLayers['Detailed'].addTo(map);
+
+            // Add layer control
+            L.control.layers(tileLayers, null, { position: 'topright' }).addTo(map);
+        }
+
+        async function loadData() {
+            try {
+                // Load zones
+                try {
+                    const { data: zones, error } = await supabaseClient.from('zones').select('*');
+                    if (!error) {
+                        allZones = zones || [];
+                    } else {
+                        allZones = [];
+                        document.getElementById('zoneFilterGroup').style.display = 'none';
+                    }
+                } catch (e) {
+                    allZones = [];
+                    document.getElementById('zoneFilterGroup').style.display = 'none';
+                }
+
+                // Load brands
+                try {
+                    const { data: brands, error } = await supabaseClient.from('brands').select('*').order('name');
+                    if (!error) {
+                        allBrands = brands || [];
+                    } else {
+                        allBrands = [];
+                        document.getElementById('brandFilterGroup').style.display = 'none';
+                    }
+                } catch (e) {
+                    allBrands = [];
+                    document.getElementById('brandFilterGroup').style.display = 'none';
+                }
+
+                // Load studios
+                const { data: studios, error } = await supabaseClient.from('studios').select('*');
+                if (error) throw error;
+
+                allStudios = studios || [];
+
+                // Setup zone colors
+                setupZoneColors();
+
+                // Populate filters
+                populateZoneDropdown();
+                populateBrandDropdown();
+                populateStateDropdown();
+
+                // Geocode and display
+                await geocodeStudios();
+                
+                document.getElementById('mapLoading').style.display = 'none';
+                applyFilters();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('mapLoading').innerHTML = '<i class="fas fa-exclamation-circle"></i> Error loading studios';
+            }
+        }
+
+        function setupZoneColors() {
+            allZones.forEach((zone, index) => {
+                zoneColorMap[zone.id] = zoneColors[index % zoneColors.length];
+            });
+
+            // Build legend
+            if (allZones.length > 0) {
+                const legendItems = document.getElementById('legendItems');
+                legendItems.innerHTML = allZones.map(zone => {
+                    const zoneName = zone.name || zone.zone_name || zone.title || 'Unknown';
+                    return `
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: ${zoneColorMap[zone.id]}"></div>
+                            <span>${zoneName}</span>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('mapLegend').style.display = 'block';
+            }
+        }
+
+        function populateZoneDropdown() {
+            const select = document.getElementById('zoneFilter');
+            select.innerHTML = '<option value="">All Zones</option>';
+            
+            allZones.forEach(zone => {
+                const option = document.createElement('option');
+                option.value = zone.id;
+                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
+                select.appendChild(option);
+            });
+
+            if (allZones.length === 0) {
+                document.getElementById('zoneFilterGroup').style.display = 'none';
+            }
+        }
+
+        function populateBrandDropdown(filteredBrands = null) {
+            const select = document.getElementById('brandFilter');
+            const brands = filteredBrands || allBrands;
+            select.innerHTML = '<option value="">All Brands</option>';
+            
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = brand.name;
+                select.appendChild(option);
+            });
+
+            if (allBrands.length === 0) {
+                document.getElementById('brandFilterGroup').style.display = 'none';
+            }
+        }
+
+        function populateStateDropdown(filteredStudios = null) {
+            const select = document.getElementById('stateFilter');
+            const studios = filteredStudios || allStudios;
+            const states = [...new Set(studios.map(s => s.state).filter(Boolean))].sort();
+            
+            select.innerHTML = '<option value="">All States</option>';
+            states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                select.appendChild(option);
+            });
+        }
+
+        function onZoneChange() {
+            const zoneId = document.getElementById('zoneFilter').value;
+
+            if (allBrands.length > 0) {
+                if (zoneId) {
+                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
+                    populateBrandDropdown(filteredBrands);
+                } else {
+                    populateBrandDropdown();
+                }
+                document.getElementById('brandFilter').value = '';
+            }
+
+            updateStateDropdown();
+            applyFilters();
+        }
+
+        function onBrandChange() {
+            updateStateDropdown();
+            applyFilters();
+        }
+
+        function updateStateDropdown() {
+            const zoneId = document.getElementById('zoneFilter').value;
+            const brandId = document.getElementById('brandFilter').value;
+
+            let filteredStudios = [...allStudios];
+
+            if (zoneId && allBrands.length > 0) {
+                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id);
+                filteredStudios = filteredStudios.filter(s => zoneBrandIds.includes(s.brand_id));
+            }
+
+            if (brandId) {
+                filteredStudios = filteredStudios.filter(s => s.brand_id === brandId);
+            }
+
+            populateStateDropdown(filteredStudios);
+            document.getElementById('stateFilter').value = '';
+        }
+
+        async function geocodeStudios() {
+            // Use built-in city coordinates lookup - no external API needed
+            for (const studio of allStudios) {
+                if (!studio.latitude || !studio.longitude) {
+                    const coords = getCityCoordinates(studio.city, studio.state);
+                    if (coords) {
+                        // Add small random offset so multiple studios in same city don't stack
+                        studio.latitude = coords.lat + (Math.random() - 0.5) * 0.015;
+                        studio.longitude = coords.lng + (Math.random() - 0.5) * 0.015;
+                        console.log(`Mapped ${studio.city}, ${studio.state} to coordinates`);
+                    } else {
+                        console.warn(`No coordinates found for: ${studio.city}, ${studio.state}`);
+                    }
+                }
+            }
+        }
+
+        // Built-in US city coordinates lookup (case-insensitive)
+        function getCityCoordinates(city, state) {
+            if (!city || !state) return null;
+            
+            const cityLower = city.toLowerCase().trim();
+            const stateLower = state.toLowerCase().trim();
+            
+            const cityCoords = {
+                // Utah
+                'lehi': { lat: 40.3916, lng: -111.8508 },
+                'provo': { lat: 40.2338, lng: -111.6585 },
+                'salt lake city': { lat: 40.7608, lng: -111.8910 },
+                'orem': { lat: 40.2969, lng: -111.6946 },
+                'sandy': { lat: 40.5649, lng: -111.8389 },
+                'draper': { lat: 40.5247, lng: -111.8638 },
+                'american fork': { lat: 40.3769, lng: -111.7957 },
+                'pleasant grove': { lat: 40.3641, lng: -111.7385 },
+                'spanish fork': { lat: 40.1149, lng: -111.6549 },
+                'springville': { lat: 40.1652, lng: -111.6107 },
+                'saratoga springs': { lat: 40.3493, lng: -111.9046 },
+                'eagle mountain': { lat: 40.3144, lng: -112.0097 },
+                'herriman': { lat: 40.5141, lng: -112.0330 },
+                'south jordan': { lat: 40.5621, lng: -111.9296 },
+                'west jordan': { lat: 40.6097, lng: -111.9391 },
+                'riverton': { lat: 40.5219, lng: -111.9391 },
+                'taylorsville': { lat: 40.6677, lng: -111.9388 },
+                'murray': { lat: 40.6669, lng: -111.8879 },
+                'midvale': { lat: 40.6111, lng: -111.8999 },
+                'cottonwood heights': { lat: 40.6197, lng: -111.8102 },
+                'holladay': { lat: 40.6688, lng: -111.8246 },
+                'bountiful': { lat: 40.8894, lng: -111.8808 },
+                'layton': { lat: 41.0602, lng: -111.9711 },
+                'ogden': { lat: 41.2230, lng: -111.9738 },
+                'st. george': { lat: 37.0965, lng: -113.5684 },
+                'st george': { lat: 37.0965, lng: -113.5684 },
+                'logan': { lat: 41.7370, lng: -111.8338 },
+                'kaysville': { lat: 41.0352, lng: -111.9385 },
+                'farmington': { lat: 40.9805, lng: -111.8874 },
+                'centerville': { lat: 40.9180, lng: -111.8722 },
+                'clearfield': { lat: 41.1105, lng: -112.0258 },
+                'roy': { lat: 41.1616, lng: -112.0263 },
+                'syracuse': { lat: 41.0894, lng: -112.0647 },
+                'lindon': { lat: 40.3436, lng: -111.7213 },
+                'highland': { lat: 40.4258, lng: -111.7958 },
+                'alpine': { lat: 40.4533, lng: -111.7777 },
+                'cedar hills': { lat: 40.4141, lng: -111.7580 },
+                'vineyard': { lat: 40.2969, lng: -111.7474 },
+                'payson': { lat: 40.0444, lng: -111.7322 },
+                'mapleton': { lat: 40.1302, lng: -111.5735 },
+                'tooele': { lat: 40.5308, lng: -112.2983 },
+                'woods cross': { lat: 40.8716, lng: -111.8922 },
+                'north salt lake': { lat: 40.8486, lng: -111.9069 },
+                
+                // Texas
+                'austin': { lat: 30.2672, lng: -97.7431 },
+                'houston': { lat: 29.7604, lng: -95.3698 },
+                'dallas': { lat: 32.7767, lng: -96.7970 },
+                'san antonio': { lat: 29.4241, lng: -98.4936 },
+                'fort worth': { lat: 32.7555, lng: -97.3308 },
+                'plano': { lat: 33.0198, lng: -96.6989 },
+                'round rock': { lat: 30.5083, lng: -97.6789 },
+                'cedar park': { lat: 30.5052, lng: -97.8203 },
+                'georgetown': { lat: 30.6333, lng: -97.6781 },
+                'pflugerville': { lat: 30.4394, lng: -97.6200 },
+                'leander': { lat: 30.5788, lng: -97.8531 },
+                'kyle': { lat: 29.9894, lng: -97.8772 },
+                'buda': { lat: 30.0852, lng: -97.8403 },
+                'dripping springs': { lat: 30.1902, lng: -98.0867 },
+                'lakeway': { lat: 30.3638, lng: -97.9797 },
+                'bee cave': { lat: 30.3085, lng: -97.9467 },
+                'frisco': { lat: 33.1507, lng: -96.8236 },
+                'mckinney': { lat: 33.1972, lng: -96.6397 },
+                'arlington': { lat: 32.7357, lng: -97.1081 },
+                'el paso': { lat: 31.7619, lng: -106.4850 },
+                
+                // Arizona
+                'phoenix': { lat: 33.4484, lng: -112.0740 },
+                'scottsdale': { lat: 33.4942, lng: -111.9261 },
+                'mesa': { lat: 33.4152, lng: -111.8315 },
+                'chandler': { lat: 33.3062, lng: -111.8413 },
+                'gilbert': { lat: 33.3528, lng: -111.7890 },
+                'tempe': { lat: 33.4255, lng: -111.9400 },
+                'tucson': { lat: 32.2226, lng: -110.9747 },
+                'peoria': { lat: 33.5806, lng: -112.2374 },
+                'glendale': { lat: 33.5387, lng: -112.1860 },
+                'surprise': { lat: 33.6292, lng: -112.3680 },
+                
+                // California
+                'los angeles': { lat: 34.0522, lng: -118.2437 },
+                'san diego': { lat: 32.7157, lng: -117.1611 },
+                'san francisco': { lat: 37.7749, lng: -122.4194 },
+                'san jose': { lat: 37.3382, lng: -121.8863 },
+                'fresno': { lat: 36.7378, lng: -119.7871 },
+                'sacramento': { lat: 38.5816, lng: -121.4944 },
+                'irvine': { lat: 33.6846, lng: -117.8265 },
+                
+                // Colorado
+                'denver': { lat: 39.7392, lng: -104.9903 },
+                'colorado springs': { lat: 38.8339, lng: -104.8214 },
+                'aurora': { lat: 39.7294, lng: -104.8319 },
+                'boulder': { lat: 40.0150, lng: -105.2705 },
+                'fort collins': { lat: 40.5853, lng: -105.0844 },
+                
+                // Nevada
+                'las vegas': { lat: 36.1699, lng: -115.1398 },
+                'henderson': { lat: 36.0395, lng: -114.9817 },
+                'reno': { lat: 39.5296, lng: -119.8138 },
+                
+                // Idaho
+                'boise': { lat: 43.6150, lng: -116.2023 },
+                'meridian': { lat: 43.6121, lng: -116.3915 },
+                'nampa': { lat: 43.5407, lng: -116.5635 },
+                'idaho falls': { lat: 43.4666, lng: -112.0341 },
+                
+                // Washington
+                'seattle': { lat: 47.6062, lng: -122.3321 },
+                'spokane': { lat: 47.6588, lng: -117.4260 },
+                'tacoma': { lat: 47.2529, lng: -122.4443 },
+                'bellevue': { lat: 47.6101, lng: -122.2015 },
+                
+                // Oregon
+                'portland': { lat: 45.5152, lng: -122.6784 },
+                'salem': { lat: 44.9429, lng: -123.0351 },
+                'eugene': { lat: 44.0521, lng: -123.0868 },
+                
+                // Florida
+                'miami': { lat: 25.7617, lng: -80.1918 },
+                'orlando': { lat: 28.5383, lng: -81.3792 },
+                'tampa': { lat: 27.9506, lng: -82.4572 },
+                'jacksonville': { lat: 30.3322, lng: -81.6557 },
+                
+                // Other major cities
+                'new york': { lat: 40.7128, lng: -74.0060 },
+                'atlanta': { lat: 33.7490, lng: -84.3880 },
+                'charlotte': { lat: 35.2271, lng: -80.8431 },
+                'chicago': { lat: 41.8781, lng: -87.6298 },
+                'philadelphia': { lat: 39.9526, lng: -75.1652 },
+                'nashville': { lat: 36.1627, lng: -86.7816 },
+                'kansas city': { lat: 39.0997, lng: -94.5786 },
+                'indianapolis': { lat: 39.7684, lng: -86.1581 },
+                'minneapolis': { lat: 44.9778, lng: -93.2650 },
+            };
+
+            // Try direct city lookup
+            if (cityCoords[cityLower]) {
+                return cityCoords[cityLower];
+            }
+
+            // Fallback to state center if city not found
+            return getStateCenter(stateLower);
+        }
+
+        function getStateCenter(state) {
+            const centers = {
+                'ut': { lat: 39.3200, lng: -111.0937 },
+                'utah': { lat: 39.3200, lng: -111.0937 },
+                'tx': { lat: 31.9686, lng: -99.9018 },
+                'texas': { lat: 31.9686, lng: -99.9018 },
+                'az': { lat: 34.0489, lng: -111.0937 },
+                'arizona': { lat: 34.0489, lng: -111.0937 },
+                'ca': { lat: 36.7783, lng: -119.4179 },
+                'california': { lat: 36.7783, lng: -119.4179 },
+                'co': { lat: 39.5501, lng: -105.7821 },
+                'colorado': { lat: 39.5501, lng: -105.7821 },
+                'nv': { lat: 38.8026, lng: -116.4194 },
+                'nevada': { lat: 38.8026, lng: -116.4194 },
+                'id': { lat: 44.0682, lng: -114.7420 },
+                'idaho': { lat: 44.0682, lng: -114.7420 },
+                'wa': { lat: 47.7511, lng: -120.7401 },
+                'washington': { lat: 47.7511, lng: -120.7401 },
+                'or': { lat: 43.8041, lng: -120.5542 },
+                'oregon': { lat: 43.8041, lng: -120.5542 },
+                'fl': { lat: 27.6648, lng: -81.5158 },
+                'florida': { lat: 27.6648, lng: -81.5158 },
+                'ny': { lat: 43.2994, lng: -74.2179 },
+                'new york': { lat: 43.2994, lng: -74.2179 },
+                'ga': { lat: 32.1656, lng: -82.9001 },
+                'georgia': { lat: 32.1656, lng: -82.9001 },
+                'nc': { lat: 35.7596, lng: -79.0193 },
+                'north carolina': { lat: 35.7596, lng: -79.0193 },
+                'il': { lat: 40.6331, lng: -89.3985 },
+                'illinois': { lat: 40.6331, lng: -89.3985 },
+                'pa': { lat: 41.2033, lng: -77.1945 },
+                'pennsylvania': { lat: 41.2033, lng: -77.1945 },
+                'oh': { lat: 40.4173, lng: -82.9071 },
+                'ohio': { lat: 40.4173, lng: -82.9071 },
+                'mi': { lat: 44.3148, lng: -85.6024 },
+                'michigan': { lat: 44.3148, lng: -85.6024 },
+                'tn': { lat: 35.5175, lng: -86.5804 },
+                'tennessee': { lat: 35.5175, lng: -86.5804 },
+                'mo': { lat: 37.9643, lng: -91.8318 },
+                'missouri': { lat: 37.9643, lng: -91.8318 },
+                'in': { lat: 40.2672, lng: -86.1349 },
+                'indiana': { lat: 40.2672, lng: -86.1349 },
+                'mn': { lat: 46.7296, lng: -94.6859 },
+                'minnesota': { lat: 46.7296, lng: -94.6859 },
+            };
+            return centers[state] || { lat: 39.8283, lng: -98.5795 }; // US center fallback
+        }
+
+        function applyFilters() {
+            const zoneId = document.getElementById('zoneFilter').value;
+            const brandId = document.getElementById('brandFilter').value;
+            const state = document.getElementById('stateFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            let filteredStudios = allStudios.filter(studio => {
+                // Must have coordinates
+                if (!studio.latitude || !studio.longitude) return false;
+
+                // Zone filter
+                if (zoneId) {
+                    const studioZoneId = getZoneIdForStudio(studio);
+                    if (studioZoneId !== zoneId) return false;
+                }
+
+                // Brand filter
+                if (brandId && studio.brand_id !== brandId) return false;
+
+                // State filter
+                if (state && studio.state !== state) return false;
+
+                // Search filter
+                if (searchTerm) {
+                    const searchFields = [
+                        getBrandName(studio.brand_id),
+                        studio.city,
+                        studio.state,
+                        studio.address
+                    ].join(' ').toLowerCase();
+                    if (!searchFields.includes(searchTerm)) return false;
+                }
+
+                return true;
+            });
+
+            updateMap(filteredStudios);
+            document.getElementById('resultsCount').textContent = `${filteredStudios.length} Studio${filteredStudios.length !== 1 ? 's' : ''}`;
+        }
+
+        function updateMap(studios) {
+            // Clear existing markers and lines
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+            nearbyLines.forEach(l => map.removeLayer(l));
+            nearbyLines = [];
+
+            if (studios.length === 0) return;
+
+            // Add markers
+            studios.forEach(studio => {
+                const zoneId = getZoneIdForStudio(studio);
+                const color = zoneColorMap[zoneId] || '#FA8072';
+                
+                const icon = L.divIcon({
+                    html: `<div style="
+                        width: 24px;
+                        height: 24px;
+                        background: ${color};
+                        border: 3px solid white;
+                        border-radius: 50%;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    "></div>`,
+                    className: 'custom-marker',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12],
+                    popupAnchor: [0, -12]
+                });
+
+                const marker = L.marker([studio.latitude, studio.longitude], { icon })
+                    .addTo(map)
+                    .bindPopup(createPopupContent(studio))
+                    .on('click', function() {
+                        // Zoom to studio location on click
+                        map.setView([studio.latitude, studio.longitude], 15, {
+                            animate: true,
+                            duration: 0.5
+                        });
+                    });
+
+                markers.push(marker);
+            });
+
+            // Draw nearby lines (within ~10 miles)
+            const maxDistanceMiles = 10;
+            for (let i = 0; i < studios.length; i++) {
+                for (let j = i + 1; j < studios.length; j++) {
+                    const distMiles = getDistanceMiles(
+                        studios[i].latitude, studios[i].longitude,
+                        studios[j].latitude, studios[j].longitude
+                    );
+                    
+                    if (distMiles <= maxDistanceMiles) {
+                        const line = L.polyline([
+                            [studios[i].latitude, studios[i].longitude],
+                            [studios[j].latitude, studios[j].longitude]
+                        ], {
+                            color: '#718096',
+                            weight: 2,
+                            dashArray: '5, 5',
+                            opacity: 0.5
+                        }).addTo(map);
+                        
+                        line.bindTooltip(`~${distMiles.toFixed(1)} miles apart (nearby studios)`, { sticky: true });
+                        nearbyLines.push(line);
+                    }
+                }
+            }
+
+            // Fit bounds
+            if (markers.length > 0) {
+                zoomToAll();
+            }
+        }
+
+        // Zoom to fit all visible markers
+        function zoomToAll() {
+            if (markers.length > 0) {
+                const group = L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1), {
+                    animate: true,
+                    duration: 0.5
+                });
+            } else {
+                // Reset to US view if no markers
+                map.setView([39.8283, -98.5795], 4, {
+                    animate: true,
+                    duration: 0.5
+                });
+            }
+        }
+
+        // Zoom to a specific studio
+        function zoomToStudio(lat, lng) {
+            map.setView([lat, lng], 16, {
+                animate: true,
+                duration: 0.5
+            });
+        }
+
+        function createPopupContent(studio) {
+            const zoneName = getZoneForStudio(studio);
+            const brandName = getBrandName(studio.brand_id);
+            const studioLabel = getStudioLabel(studio);
+            
+            // Build address for Google Maps
+            const addressParts = [studio.address, studio.city, studio.state].filter(Boolean);
+            const fullAddress = addressParts.join(', ');
+            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`;
+
+            // Price display
+            let priceDisplay = '';
+            if (studio.display_price) {
+                priceDisplay = studio.display_price;
+            } else if (studio.price_45 || studio.price_60) {
+                const prices = [];
+                if (studio.price_45) prices.push(`45-min: ${studio.price_45}`);
+                if (studio.price_60) prices.push(`60-min: ${studio.price_60}`);
+                priceDisplay = prices.join(' | ');
+            }
+
+            return `
+                <div class="popup-header">
+                    <div class="popup-title">${brandName}</div>
+                    ${zoneName ? `<span class="popup-zone">${zoneName}</span>` : ''}
+                </div>
+                <div class="popup-body">
+                    ${studio.address ? `
+                        <div class="popup-info-row">
+                            <i class="fas fa-location-dot"></i>
+                            <span>${studio.address}${studio.city ? `, ${studio.city}` : ''}${studio.state ? `, ${studio.state}` : ''}</span>
+                        </div>
+                    ` : ''}
+                    ${studio.phone_number ? `
+                        <div class="popup-info-row">
+                            <i class="fas fa-phone"></i>
+                            <span>${studio.phone_number}</span>
+                        </div>
+                    ` : ''}
+                    ${priceDisplay ? `
+                        <div class="popup-info-row">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>${priceDisplay}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="popup-actions">
+                    <a href="${mapsUrl}" target="_blank" class="popup-btn secondary">
+                        <i class="fas fa-directions"></i> Directions
+                    </a>
+                    <a href="teamstudio-directory.html?studio=${studio.id}" class="popup-btn primary">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </a>
+                </div>
+                <div class="popup-actions" style="padding-top: 0;">
+                    <button onclick="zoomToStudio(${studio.latitude}, ${studio.longitude})" class="popup-btn secondary" style="flex: 1;">
+                        <i class="fas fa-search-plus"></i> Zoom In
+                    </button>
+                    <button onclick="zoomToAll()" class="popup-btn secondary" style="flex: 1;">
+                        <i class="fas fa-expand"></i> View All
+                    </button>
+                </div>
+            `;
+        }
+
+        // Haversine formula for distance in miles
+        function getDistanceMiles(lat1, lon1, lat2, lon2) {
+            const R = 3959; // Earth's radius in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+    </script>
+</body>
+</html>

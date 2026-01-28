@@ -1153,6 +1153,22 @@
         let allBrands = [];
         let selectedStudioId = null;
 
+        // Helper function to get brand name from brand_id
+        function getBrandName(brandId) {
+            if (!brandId) return 'Unknown';
+            const brand = allBrands.find(b => b.id === brandId);
+            return brand ? brand.name : 'Unknown';
+        }
+
+        // Helper function to get studio display label
+        function getStudioLabel(studio) {
+            const brandName = getBrandName(studio.brand_id);
+            let label = brandName;
+            if (studio.city) label += ` - ${studio.city}`;
+            if (studio.state) label += `, ${studio.state}`;
+            return label;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             setupSidebar();
@@ -1230,8 +1246,7 @@
             try {
                 const { data, error } = await supabaseClient
                     .from('zones')
-                    .select('id, name')
-                    .order('name');
+                    .select('*');
 
                 if (error) {
                     // Table doesn't exist or other error
@@ -1245,6 +1260,12 @@
                 }
 
                 allZones = data || [];
+                console.log('Loaded zones:', allZones.length);
+                if (allZones.length > 0) {
+                    console.log('Zone fields:', Object.keys(allZones[0]));
+                    console.log('Sample zone:', allZones[0]);
+                }
+                
                 if (allZones.length === 0) {
                     const zoneFilter = document.getElementById('zoneFilter');
                     if (zoneFilter && zoneFilter.parentElement) {
@@ -1270,7 +1291,8 @@
             allZones.forEach(zone => {
                 const option = document.createElement('option');
                 option.value = zone.id;
-                option.textContent = zone.name;
+                // Try different possible column names for zone name
+                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
                 select.appendChild(option);
             });
         }
@@ -1279,7 +1301,7 @@
             try {
                 const { data, error } = await supabaseClient
                     .from('brands')
-                    .select('id, name, zone_id')
+                    .select('*')
                     .order('name');
 
                 if (error) {
@@ -1293,6 +1315,12 @@
                 }
 
                 allBrands = data || [];
+                console.log('Loaded brands:', allBrands.length);
+                if (allBrands.length > 0) {
+                    console.log('Brand fields:', Object.keys(allBrands[0]));
+                    console.log('Sample brand:', allBrands[0]);
+                }
+                
                 if (allBrands.length === 0) {
                     const brandFilter = document.getElementById('brandFilter');
                     if (brandFilter && brandFilter.parentElement) {
@@ -1340,6 +1368,11 @@
                 if (error) throw error;
 
                 allStudios = data || [];
+                console.log('Loaded studios:', allStudios.length);
+                if (allStudios.length > 0) {
+                    console.log('Sample studio fields:', Object.keys(allStudios[0]));
+                    console.log('Sample studio:', allStudios[0]);
+                }
                 populateStateDropdown();
                 populateStudioDropdown();
             } catch (error) {
@@ -1379,10 +1412,7 @@
             studios.forEach(studio => {
                 const option = document.createElement('option');
                 option.value = studio.id;
-                let label = studio.brand || 'Unnamed Studio';
-                if (studio.city) label += ` - ${studio.city}`;
-                if (studio.state) label += `, ${studio.state}`;
-                option.textContent = label;
+                option.textContent = getStudioLabel(studio);
                 select.appendChild(option);
             });
 
@@ -1420,18 +1450,15 @@
 
             let filtered = [...allStudios];
 
-            // Filter by zone (through brands) - only if zones exist
+            // Filter by zone (through brands) - get brand_ids that belong to this zone
             if (zoneId && allBrands.length > 0) {
-                const zoneBrandNames = allBrands.filter(b => b.zone_id === zoneId).map(b => b.name);
-                filtered = filtered.filter(s => zoneBrandNames.includes(s.brand));
+                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id);
+                filtered = filtered.filter(s => zoneBrandIds.includes(s.brand_id));
             }
 
-            // Filter by brand - only if brands exist
-            if (brandId && allBrands.length > 0) {
-                const brand = allBrands.find(b => b.id === brandId);
-                if (brand) {
-                    filtered = filtered.filter(s => s.brand === brand.name);
-                }
+            // Filter by brand
+            if (brandId) {
+                filtered = filtered.filter(s => s.brand_id === brandId);
             }
 
             // Filter by state
@@ -1494,18 +1521,15 @@
 
             let filteredStudios = [...allStudios];
 
-            // Filter by zone (only if zones/brands exist)
+            // Filter by zone (get brand_ids for this zone)
             if (zoneId && allBrands.length > 0) {
-                const zoneBrandNames = allBrands.filter(b => b.zone_id === zoneId).map(b => b.name);
-                filteredStudios = filteredStudios.filter(s => zoneBrandNames.includes(s.brand));
+                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id);
+                filteredStudios = filteredStudios.filter(s => zoneBrandIds.includes(s.brand_id));
             }
 
-            // Filter by brand (only if brands exist)
-            if (brandId && allBrands.length > 0) {
-                const brand = allBrands.find(b => b.id === brandId);
-                if (brand) {
-                    filteredStudios = filteredStudios.filter(s => s.brand === brand.name);
-                }
+            // Filter by brand
+            if (brandId) {
+                filteredStudios = filteredStudios.filter(s => s.brand_id === brandId);
             }
 
             // Update state dropdown with available states
@@ -1580,8 +1604,7 @@
                 const studio = allStudios.find(s => s.id === program.studio_id);
                 let studioLabel = '';
                 if (studio) {
-                    studioLabel = studio.brand || 'Unknown';
-                    if (studio.city) studioLabel += ` - ${studio.city}`;
+                    studioLabel = getStudioLabel(studio);
                 }
 
                 return `
@@ -1886,10 +1909,7 @@
             allStudios.forEach(studio => {
                 const option = document.createElement('option');
                 option.value = studio.id;
-                let label = studio.brand || 'Unnamed Studio';
-                if (studio.city) label += ` - ${studio.city}`;
-                if (studio.state) label += `, ${studio.state}`;
-                option.textContent = label;
+                option.textContent = getStudioLabel(studio);
                 select.appendChild(option);
             });
         }
@@ -1901,7 +1921,7 @@
             allZones.forEach(zone => {
                 const option = document.createElement('option');
                 option.value = zone.id;
-                option.textContent = zone.name;
+                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
                 select.appendChild(option);
             });
         }
@@ -1959,19 +1979,10 @@
                 const brandId = e.target.value;
                 
                 if (brandId) {
-                    const brand = allBrands.find(b => b.id === brandId);
-                    if (brand) {
-                        // Get studios for this brand - flexible matching
-                        const brandNameLower = brand.name.toLowerCase();
-                        const brandStudios = allStudios.filter(s => {
-                            const studioBrand = (s.brand || '').toLowerCase();
-                            return studioBrand === brandNameLower || 
-                                   studioBrand.includes(brandNameLower) || 
-                                   brandNameLower.includes(studioBrand);
-                        });
-                        console.log('Brand selected:', brand.name, 'Found studios:', brandStudios.length);
-                        populateImportStudioDropdown(brandStudios);
-                    }
+                    // Get studios for this brand using brand_id
+                    const brandStudios = allStudios.filter(s => s.brand_id === brandId);
+                    console.log('Brand selected:', brandId, 'Found studios:', brandStudios.length);
+                    populateImportStudioDropdown(brandStudios);
                 } else {
                     populateImportStudioDropdown([]);
                 }
@@ -2133,18 +2144,11 @@
                     // Set brand
                     brandSelect.value = matchedBrand.id;
                     
-                    // Populate studios for this brand - try multiple matching strategies
-                    const brandNameLower = matchedBrand.name.toLowerCase();
-                    let brandStudios = allStudios.filter(s => {
-                        const studioBrand = (s.brand || '').toLowerCase();
-                        return studioBrand === brandNameLower || 
-                               studioBrand.includes(brandNameLower) || 
-                               brandNameLower.includes(studioBrand);
-                    });
+                    // Populate studios for this brand using brand_id
+                    const brandStudios = allStudios.filter(s => s.brand_id === matchedBrand.id);
                     
-                    console.log('Looking for studios matching brand:', matchedBrand.name);
-                    console.log('Found studios:', brandStudios);
-                    console.log('All studios brands:', allStudios.map(s => s.brand));
+                    console.log('Looking for studios matching brand_id:', matchedBrand.id);
+                    console.log('Found studios:', brandStudios.length);
                     
                     populateImportStudioDropdown(brandStudios);
                     
@@ -2153,7 +2157,6 @@
                     if (searchLocation) {
                         matchedStudio = brandStudios.find(s => {
                             const city = (s.city || '').toLowerCase();
-                            const state = (s.state || '').toLowerCase();
                             return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim());
                         });
                     }
@@ -2178,15 +2181,19 @@
                     matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match "${studioInfo.name}". Please select brand and location.</span>`;
                 }
             } else {
-                // No brands table - try direct studio match
-                let matchedStudio = allStudios.find(s => {
-                    const brand = (s.brand || '').toLowerCase();
-                    return brand === searchName || searchName.includes(brand) || brand.includes(searchName);
-                });
+                // No brands table - try direct studio match by looking up brand name
+                let matchedStudio = null;
+                for (const studio of allStudios) {
+                    const brandName = getBrandName(studio.brand_id).toLowerCase();
+                    if (brandName === searchName || searchName.includes(brandName) || brandName.includes(searchName)) {
+                        matchedStudio = studio;
+                        break;
+                    }
+                }
                 
                 // If found by brand, try to narrow by location
                 if (matchedStudio && searchLocation) {
-                    const brandStudios = allStudios.filter(s => (s.brand || '').toLowerCase() === (matchedStudio.brand || '').toLowerCase());
+                    const brandStudios = allStudios.filter(s => s.brand_id === matchedStudio.brand_id);
                     const locationMatch = brandStudios.find(s => {
                         const city = (s.city || '').toLowerCase();
                         return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim());
@@ -2199,9 +2206,7 @@
                 if (matchedStudio) {
                     studioSelect.value = matchedStudio.id;
                     importStudioId = matchedStudio.id;
-                    let label = matchedStudio.brand || 'Unknown';
-                    if (matchedStudio.city) label += ` - ${matchedStudio.city}`;
-                    matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${label}</strong></span>`;
+                    matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${getStudioLabel(matchedStudio)}</strong></span>`;
                 } else {
                     matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match. Please select a studio.</span>`;
                 }
@@ -2284,11 +2289,7 @@
 
                 // Find studio name for toast
                 const studio = allStudios.find(s => s.id === importStudioId);
-                let studioName = 'studio';
-                if (studio) {
-                    studioName = studio.brand || 'Unnamed Studio';
-                    if (studio.city) studioName += ` - ${studio.city}`;
-                }
+                const studioName = studio ? getStudioLabel(studio) : 'studio';
 
                 showToast(`Program "${program.name}" imported to ${studioName}!`, 'success');
                 closeImportModal();
@@ -2368,10 +2369,7 @@
             allStudios.forEach(studio => {
                 const option = document.createElement('option');
                 option.value = studio.id;
-                let label = studio.brand || 'Unnamed Studio';
-                if (studio.city) label += ` - ${studio.city}`;
-                if (studio.state) label += `, ${studio.state}`;
-                option.textContent = label;
+                option.textContent = getStudioLabel(studio);
                 select.appendChild(option);
             });
         }
@@ -2383,7 +2381,7 @@
             allZones.forEach(zone => {
                 const option = document.createElement('option');
                 option.value = zone.id;
-                option.textContent = zone.name;
+                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
                 select.appendChild(option);
             });
         }
@@ -2440,18 +2438,9 @@
                 const brandId = e.target.value;
                 
                 if (brandId) {
-                    const brand = allBrands.find(b => b.id === brandId);
-                    if (brand) {
-                        // Get studios for this brand - flexible matching
-                        const brandNameLower = brand.name.toLowerCase();
-                        const brandStudios = allStudios.filter(s => {
-                            const studioBrand = (s.brand || '').toLowerCase();
-                            return studioBrand === brandNameLower || 
-                                   studioBrand.includes(brandNameLower) || 
-                                   brandNameLower.includes(studioBrand);
-                        });
-                        populateDuplicateStudioDropdown(brandStudios);
-                    }
+                    // Get studios for this brand using brand_id
+                    const brandStudios = allStudios.filter(s => s.brand_id === brandId);
+                    populateDuplicateStudioDropdown(brandStudios);
                 } else {
                     populateDuplicateStudioDropdown([]);
                 }
@@ -2523,11 +2512,7 @@
 
                 // Find studio name for toast
                 const studio = allStudios.find(s => s.id === targetStudioId);
-                let studioName = 'studio';
-                if (studio) {
-                    studioName = studio.brand || 'Unnamed Studio';
-                    if (studio.city) studioName += ` - ${studio.city}`;
-                }
+                const studioName = studio ? getStudioLabel(studio) : 'studio';
 
                 showToast(`Program "${newName}" duplicated to ${studioName}!`, 'success');
                 closeDuplicateModal();

@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            /* Salmon/Coral Color Scheme - EXACT MATCH TO DASHBOARD */
             --primary: #FA8072;
             --primary-light: #FFB4A2;
             --primary-dark: #E96E5D;
@@ -29,21 +28,19 @@
             --gray-200: #E9ECEF;
             --gray-300: #DEE2E6;
             
+            --success: #48BB78;
+            --warning: #F6AD55;
+            
             --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
-            --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
             
             --sidebar-width: 260px;
             --sidebar-collapsed: 70px;
             --transition-speed: 0.3s;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -53,7 +50,7 @@
             overflow-x: hidden;
         }
 
-        /* SIDEBAR - EXACT MATCH TO DASHBOARD */
+        /* SIDEBAR */
         .sidebar {
             position: fixed;
             top: 0;
@@ -69,9 +66,7 @@
             flex-direction: column;
         }
 
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed);
-        }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-header {
             padding: 1.5rem 1.25rem;
@@ -88,10 +83,7 @@
             transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar.collapsed .logo-section {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
 
         .logo-icon {
             width: 40px;
@@ -101,18 +93,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1rem;
             flex-shrink: 0;
             color: var(--white);
             font-weight: 700;
         }
 
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            white-space: nowrap;
-        }
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
 
         .toggle-btn {
             width: 32px;
@@ -129,39 +116,11 @@
             flex-shrink: 0;
         }
 
-        .toggle-btn:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-300);
-        }
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
 
-        .sidebar.collapsed .toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .toggle-icon {
-            transition: transform var(--transition-speed) ease;
-            font-size: 1rem;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 1rem 0;
-        }
-
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
-            border-radius: 2px;
-        }
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
 
         .nav-item {
             display: flex;
@@ -181,10 +140,7 @@
             font-weight: 500;
         }
 
-        .nav-item:hover {
-            background: var(--gray-100);
-            color: var(--text-primary);
-        }
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
 
         .nav-item.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -192,61 +148,22 @@
             box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
         }
 
-        .nav-icon {
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .nav-icon { font-size: 1.25rem; flex-shrink: 0; width: 20px; }
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
 
-        .nav-text {
-            white-space: nowrap;
-            transition: opacity var(--transition-speed) ease;
-        }
-
-        .sidebar.collapsed .nav-text {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: 0.875rem;
-        }
-
-        .sidebar-footer {
-            padding: 0.5rem 0 1rem 0;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .logout-btn {
-            color: var(--secondary) !important;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 107, 157, 0.1) !important;
-        }
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--secondary) !important; }
+        .logout-btn:hover { background: rgba(255, 107, 157, 0.1) !important; }
 
         .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition-speed) ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0;
+            pointer-events: none; transition: opacity var(--transition-speed) ease;
         }
 
-        .sidebar-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
 
         .main-content {
             margin-left: var(--sidebar-width);
@@ -255,348 +172,424 @@
             transition: margin-left var(--transition-speed) ease;
         }
 
-        .sidebar.collapsed ~ .main-content {
-            margin-left: var(--sidebar-collapsed);
-        }
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
 
         /* Page Header */
         .page-header {
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .page-header h1 {
-            font-size: 2rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
+        .page-header-left h1 { font-size: 2rem; color: var(--text-primary); margin-bottom: 0.25rem; font-weight: 700; }
+        .page-header-left p { color: var(--text-secondary); font-size: 1rem; }
+
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+
+        .results-count {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white; padding: 0.5rem 1rem; border-radius: 8px;
+            font-weight: 600; font-size: 0.875rem;
         }
 
-        .page-header p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        /* Filters Section - Compact */
-        .filters-section {
+        /* Filter Section */
+        .filter-section {
             background: var(--white);
             border-radius: 16px;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             box-shadow: var(--shadow-md);
         }
 
-        .filters-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        .filter-row {
+            display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
         }
 
         .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            flex: 1;
+            min-width: 180px;
         }
 
-        .filter-label {
+        .filter-group label {
+            display: block;
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
         }
 
-        .filter-select {
-            padding: 0.625rem 0.875rem;
-            border: 1.5px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            background: var(--white);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
-        }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 0.875rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1rem;
-        }
-
-        .search-bar {
+        .form-select, .form-input {
             width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.75rem;
-            background: var(--gray-50);
+            padding: 0.75rem 1rem;
             border: 1.5px solid var(--gray-200);
             border-radius: 10px;
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             color: var(--text-primary);
+            background: var(--white);
             transition: all 0.2s ease;
         }
 
-        .search-bar:focus {
+        .form-select:focus, .form-input:focus {
             outline: none;
             border-color: var(--primary);
-            background: var(--white);
             box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
         }
 
-        .clear-filters-btn {
-            padding: 0.75rem 1.25rem;
-            background: var(--gray-100);
-            border: none;
-            border-radius: 10px;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.875rem;
+        .form-select {
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
         }
 
-        .clear-filters-btn:hover {
-            background: var(--gray-200);
-            color: var(--text-primary);
-        }
-
-        .results-count {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        /* Programs Grid - Compact */
+        /* Programs Grid */
         .programs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.25rem;
+            gap: 1rem;
         }
 
+        /* Program Card */
         .program-card {
             background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 16px;
-            padding: 1.5rem;
+            border-radius: 14px;
+            overflow: hidden;
             box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            transition: all 0.2s ease;
+            border: 1px solid var(--gray-200);
+            cursor: pointer;
         }
 
         .program-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
             border-color: var(--primary);
         }
 
-        .program-header {
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--gray-100);
+        .program-card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1.25rem; color: white; position: relative; overflow: hidden;
         }
 
-        .program-name {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
+        .program-card-header::before {
+            content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .program-header-top {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 0.5rem; position: relative; z-index: 1;
+        }
+
+        .program-name { font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+
+        .program-type-badge {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 0.25rem 0.625rem; border-radius: 20px;
+            font-size: 0.6875rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em;
         }
 
         .program-studio {
-            font-size: 0.875rem;
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 0.25rem;
+            font-size: 0.875rem; opacity: 0.9;
+            display: flex; align-items: center; gap: 0.375rem;
+            position: relative; z-index: 1;
         }
 
-        .program-location {
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
+        .program-card-body {
+            padding: 1rem 1.25rem;
+        }
+
+        .program-info-row {
             display: flex;
             align-items: center;
-            gap: 0.375rem;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
         }
 
-        .program-location i {
-            font-size: 0.75rem;
+        .program-info-row:last-child { margin-bottom: 0; }
+
+        .program-info-row i {
+            width: 16px;
+            color: var(--primary);
         }
 
-        .program-details {
+        .program-badges {
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
         }
 
-        .program-detail {
+        .program-badge {
+            padding: 0.25rem 0.625rem;
+            border-radius: 20px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .program-badge.free-trial {
+            background: rgba(72, 187, 120, 0.15);
+            color: var(--success);
+        }
+
+        .program-badge.parent-stay {
+            background: rgba(246, 173, 85, 0.15);
+            color: var(--warning);
+        }
+
+        .program-card-footer {
+            padding: 0.875rem 1.25rem;
+            background: var(--gray-50);
             display: flex;
-            align-items: flex-start;
-            gap: 0.625rem;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
         }
 
-        .program-detail-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 100%);
+        .program-card-footer i {
+            color: var(--primary);
+            transition: transform 0.2s ease;
+        }
+
+        .program-card:hover .program-card-footer i {
+            transform: translateX(4px);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            color: var(--primary);
-            font-size: 0.8125rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 1rem;
         }
 
-        .program-detail-content {
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal { transform: translateY(0); }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+        }
+
+        .modal-header::before {
+            content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.2);
+            border: none; border-radius: 50%;
+            color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 1;
+        }
+
+        .modal-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
+
+        .modal-title { font-size: 1.5rem; font-weight: 700; position: relative; z-index: 1; margin-bottom: 0.25rem; }
+        .modal-subtitle { font-size: 0.9375rem; opacity: 0.9; position: relative; z-index: 1; }
+
+        .modal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            overflow-x: auto;
+        }
+
+        .modal-tab {
+            padding: 1rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .modal-tab:hover { color: var(--text-primary); background: var(--white); }
+
+        .modal-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--white);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
             flex: 1;
         }
 
-        .program-detail-label {
-            font-size: 0.6875rem;
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-section:last-child { margin-bottom: 0; }
+
+        .info-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
             color: var(--text-light);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            font-weight: 600;
-            margin-bottom: 0.125rem;
-        }
-
-        .program-detail-value {
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            font-weight: 600;
-            line-height: 1.4;
-        }
-
-        .program-description {
-            background: var(--gray-50);
-            border-left: 3px solid var(--primary);
-            padding: 0.875rem;
-            border-radius: 8px;
-            margin-bottom: 0.875rem;
-        }
-
-        .program-description-text {
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .program-notes {
-            background: rgba(250, 128, 114, 0.05);
-            border: 1px solid rgba(250, 128, 114, 0.2);
-            padding: 0.875rem;
-            border-radius: 8px;
-            margin-bottom: 0.875rem;
-        }
-
-        .program-notes-text {
-            font-size: 0.8125rem;
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-
-        .program-link-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 0.5rem;
-            text-decoration: none;
-            box-shadow: 0 2px 8px rgba(250, 128, 114, 0.3);
-            margin-top: auto;
         }
 
-        .program-link-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(250, 128, 114, 0.4);
+        .info-section-title i { color: var(--primary); }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .info-item {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .info-item.full-width { grid-column: span 2; }
+
+        .info-item-label {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 0.375rem;
+        }
+
+        .info-item-value {
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .info-item-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .info-item-value a:hover { text-decoration: underline; }
+
+        .policy-text {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+        }
+
+        .toggle-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .toggle-badge.enabled {
+            background: rgba(72, 187, 120, 0.15);
+            color: var(--success);
+        }
+
+        .toggle-badge.disabled {
+            background: var(--gray-100);
+            color: var(--text-light);
         }
 
         /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            color: var(--text-secondary);
-            grid-column: 1 / -1;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            color: var(--gray-300);
-            margin-bottom: 0.75rem;
-        }
-
-        .empty-state p {
-            font-size: 1rem;
-        }
+        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-secondary); grid-column: 1 / -1; }
+        .empty-state i { font-size: 4rem; color: var(--gray-300); margin-bottom: 1rem; }
+        .empty-state h3 { font-size: 1.25rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .empty-state p { font-size: 1rem; }
 
         .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            color: var(--text-secondary);
-            font-size: 1.125rem;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 400px; color: var(--text-secondary); font-size: 1.125rem;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar:not(.collapsed) {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 1.5rem;
-            }
-            
-            .sidebar.collapsed ~ .main-content {
-                margin-left: 0;
-            }
-
-            .filters-row {
-                grid-template-columns: 1fr;
-            }
-
-            .programs-grid {
-                grid-template-columns: 1fr;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .programs-grid { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .header-right { width: 100%; }
+            .info-grid { grid-template-columns: 1fr; }
+            .info-item.full-width { grid-column: span 1; }
+            .modal-tab { padding: 0.75rem 1rem; font-size: 0.8125rem; }
+            .modal { max-height: 95vh; margin: 0.5rem; }
+            .modal-body { padding: 1rem; }
+            .filter-row { flex-direction: column; }
+            .filter-group { width: 100%; min-width: unset; }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-tab { padding: 0.625rem 0.875rem; font-size: 0.75rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar - EXACT MATCH TO DASHBOARD -->
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <div class="logo-section">
@@ -613,50 +606,37 @@
                 <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
                 <span class="nav-text">Dashboard</span>
             </a>
-            
             <a href="teamquicklinks.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-link"></i></span>
                 <span class="nav-text">Quick Links</span>
             </a>
-            
             <a href="teamstudio-directory.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-building"></i></span>
                 <span class="nav-text">Studio Directory</span>
             </a>
-            
             <a href="teamsnippets.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
                 <span class="nav-text">Snippets</span>
             </a>
-            
-            <a href="teamteacher-selling-points.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-star"></i></span>
+            <a href="teamsellingpoints.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-star"></i></span>
                 <span class="nav-text">Selling Points</span>
             </a>
-            
             <a href="teamprograms.html" class="nav-item active">
                 <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
                 <span class="nav-text">Programs</span>
             </a>
-            
             <a href="teamcalendar.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-calendar-alt"></i></span>
+                <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
                 <span class="nav-text">Calendar</span>
             </a>
-            
             <a href="teamtraining-hub.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-book-open"></i></span>
+                <span class="nav-icon"><i class="fas fa-book-open"></i></span>
                 <span class="nav-text">Training Hub</span>
             </a>
-            
             <a href="teampolicies.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-file-alt"></i></span>
+                <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
                 <span class="nav-text">Policies</span>
-            </a>
-            
-            <a href="teamprofile.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-user"></i></span>
-                <span class="nav-text">Profiles</span>
             </a>
         </nav>
 
@@ -671,425 +651,622 @@
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <main class="main-content">
-        <!-- Page Header -->
         <div class="page-header">
-            <h1>Programs</h1>
-            <p>Browse and explore all available music programs</p>
+            <div class="page-header-left">
+                <h1>Programs</h1>
+                <p>Browse all programs across studios</p>
+            </div>
+            <div class="header-right">
+                <div class="results-count" id="resultsCount">0 Programs</div>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-group" id="zoneFilterGroup">
+                    <label>Zone</label>
+                    <select class="form-select" id="zoneFilter">
+                        <option value="">All Zones</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="brandFilterGroup">
+                    <label>Brand</label>
+                    <select class="form-select" id="brandFilter">
+                        <option value="">All Brands</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>State</label>
+                    <select class="form-select" id="stateFilter">
+                        <option value="">All States</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Studio</label>
+                    <select class="form-select" id="studioFilter">
+                        <option value="">All Studios</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-row" style="margin-top: 1rem;">
+                <div class="filter-group" style="flex: 2;">
+                    <label>Search Programs</label>
+                    <input type="text" class="form-input" id="searchInput" placeholder="Search by program name...">
+                </div>
+            </div>
         </div>
 
         <div id="loading" class="loading">
-            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
-            Loading programs...
+            <i class="fas fa-spinner fa-spin"></i>&nbsp; Loading programs...
         </div>
 
-        <div id="content" style="display: none;">
-            <!-- Filters -->
-            <div class="filters-section">
-                <div class="filters-row">
-                    <div class="filter-group">
-                        <label class="filter-label">Studio</label>
-                        <select id="studioFilter" class="filter-select">
-                            <option value="">All Studios</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">State</label>
-                        <select id="stateFilter" class="filter-select">
-                            <option value="">All States</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">City</label>
-                        <select id="cityFilter" class="filter-select">
-                            <option value="">All Cities</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Age Range</label>
-                        <select id="ageFilter" class="filter-select">
-                            <option value="">All Ages</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="searchBar" class="search-bar" placeholder="Search programs...">
-                </div>
-                <button class="clear-filters-btn" onclick="clearFilters()">
-                    <i class="fas fa-times"></i> Clear All Filters
-                </button>
-            </div>
-
-            <div class="results-count" id="resultsCount"></div>
-
-            <!-- Programs Grid -->
-            <div id="programsGrid" class="programs-grid"></div>
-        </div>
+        <div class="programs-grid" id="programsGrid" style="display: none;"></div>
     </main>
+
+    <!-- Program Detail Modal -->
+    <div class="modal-overlay" id="programModal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2 class="modal-title" id="modalTitle">Program Name</h2>
+                <p class="modal-subtitle" id="modalSubtitle">Studio Name</p>
+            </div>
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="overview">Overview</button>
+                <button class="modal-tab" data-tab="enrollment">Enrollment</button>
+                <button class="modal-tab" data-tab="policies">Policies</button>
+                <button class="modal-tab" data-tab="links">Links</button>
+            </div>
+            <div class="modal-body">
+                <!-- Overview Tab -->
+                <div class="tab-content active" id="overviewTab">
+                    <div class="info-section">
+                        <div class="info-section-title"><i class="fas fa-info-circle"></i> Basic Info</div>
+                        <div class="info-grid" id="basicInfoGrid"></div>
+                    </div>
+                    <div class="info-section">
+                        <div class="info-section-title"><i class="fas fa-dollar-sign"></i> Pricing</div>
+                        <div class="info-grid" id="pricingGrid"></div>
+                    </div>
+                </div>
+
+                <!-- Enrollment Tab -->
+                <div class="tab-content" id="enrollmentTab">
+                    <div class="info-section">
+                        <div class="info-section-title"><i class="fas fa-user-plus"></i> Enrollment Details</div>
+                        <div class="info-grid" id="enrollmentGrid"></div>
+                    </div>
+                    <div class="info-section" id="midSemesterSection" style="display: none;">
+                        <div class="info-section-title"><i class="fas fa-calendar-check"></i> Mid-Semester Enrollment</div>
+                        <div class="info-grid" id="midSemesterGrid"></div>
+                    </div>
+                </div>
+
+                <!-- Policies Tab -->
+                <div class="tab-content" id="policiesTab">
+                    <div class="info-section">
+                        <div class="info-section-title"><i class="fas fa-clipboard-list"></i> Program Policies</div>
+                        <div id="policiesContent"></div>
+                    </div>
+                </div>
+
+                <!-- Links Tab -->
+                <div class="tab-content" id="linksTab">
+                    <div class="info-section">
+                        <div class="info-section-title"><i class="fas fa-link"></i> Program Links</div>
+                        <div class="info-grid" id="linksGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-        
+
         let supabaseClient;
         let allPrograms = [];
         let allStudios = [];
+        let allBrands = [];
+        let allZones = [];
+
+        // Helper function to get brand name from brand_id
+        function getBrandName(brandId) {
+            if (!brandId) return 'Unknown';
+            const brand = allBrands.find(b => b.id === brandId);
+            return brand ? brand.name : 'Unknown';
+        }
+
+        // Helper function to get studio display label
+        function getStudioLabel(studio) {
+            if (!studio) return 'Unknown Studio';
+            const brandName = getBrandName(studio.brand_id);
+            let label = brandName;
+            if (studio.city) label += ` - ${studio.city}`;
+            if (studio.state) label += `, ${studio.state}`;
+            return label;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             setupSidebar();
+            setupModalTabs();
+            setupFilterListeners();
             loadData();
         });
 
         function setupSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const toggleBtn = document.getElementById('sidebarToggle');
+            const toggle = document.getElementById('sidebarToggle');
             const overlay = document.getElementById('sidebarOverlay');
-            const logoutBtn = document.getElementById('logoutBtn');
 
-            toggleBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
-                    overlay.classList.add('active');
-                } else {
-                    overlay.classList.remove('active');
-                }
-            });
+            toggle.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+            overlay.addEventListener('click', () => sidebar.classList.add('collapsed'));
 
-            overlay.addEventListener('click', () => {
-                sidebar.classList.add('collapsed');
-                overlay.classList.remove('active');
-            });
-
-            logoutBtn.addEventListener('click', () => {
+            document.getElementById('logoutBtn').addEventListener('click', () => {
                 if (confirm('Are you sure you want to logout?')) {
-                    window.location.href = 'index.html';
+                    window.location.href = 'login.html';
                 }
             });
         }
 
-        // Load Data
+        function setupFilterListeners() {
+            document.getElementById('zoneFilter').addEventListener('change', onZoneChange);
+            document.getElementById('brandFilter').addEventListener('change', onBrandChange);
+            document.getElementById('stateFilter').addEventListener('change', onStateChange);
+            document.getElementById('studioFilter').addEventListener('change', applyFilters);
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+        }
+
+        function setupModalTabs() {
+            document.querySelectorAll('.modal-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tabName + 'Tab').classList.add('active');
+                });
+            });
+        }
+
         async function loadData() {
             try {
-                const [programsResult, studiosResult] = await Promise.all([
-                    supabaseClient.from('studio_programs').select('*').eq('status', 'active').order('order_index'),
-                    supabaseClient.from('studios').select('*').order('brand')
-                ]);
+                // Load zones
+                try {
+                    const { data: zones, error } = await supabaseClient.from('zones').select('*');
+                    if (!error) {
+                        allZones = zones || [];
+                    } else {
+                        console.warn('Zones table not available:', error.message);
+                        allZones = [];
+                        document.getElementById('zoneFilterGroup').style.display = 'none';
+                    }
+                } catch (e) {
+                    allZones = [];
+                    document.getElementById('zoneFilterGroup').style.display = 'none';
+                }
+                
+                // Load brands
+                try {
+                    const { data: brands, error } = await supabaseClient.from('brands').select('*').order('name');
+                    if (!error) {
+                        allBrands = brands || [];
+                    } else {
+                        console.warn('Brands table not available:', error.message);
+                        allBrands = [];
+                        document.getElementById('brandFilterGroup').style.display = 'none';
+                    }
+                } catch (e) {
+                    allBrands = [];
+                    document.getElementById('brandFilterGroup').style.display = 'none';
+                }
 
-                if (programsResult.error) throw programsResult.error;
-                if (studiosResult.error) throw studiosResult.error;
+                // Load studios
+                const { data: studios } = await supabaseClient.from('studios').select('*');
+                allStudios = studios || [];
 
-                allPrograms = programsResult.data || [];
-                allStudios = studiosResult.data || [];
+                // Load programs
+                const { data: programs, error } = await supabaseClient
+                    .from('programs')
+                    .select('*')
+                    .order('name');
 
-                // Merge studio data with programs
-                allPrograms = allPrograms.map(program => {
-                    const studio = allStudios.find(s => s.id === program.studio_id);
-                    return { ...program, studio };
-                });
+                if (error) throw error;
 
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
+                allPrograms = programs || [];
 
-                populateFilters();
-                renderPrograms(allPrograms);
-                setupEventListeners();
+                // Populate dropdowns
+                populateZoneDropdown();
+                populateBrandDropdown();
+                populateStateDropdown();
+                populateStudioDropdown();
+                
+                // Render all programs
+                applyFilters();
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('loading').innerHTML = `
-                    <p style="color: red;">Error loading programs. Please refresh the page.</p>
-                `;
+                document.getElementById('loading').innerHTML = '<i class="fas fa-exclamation-circle"></i>&nbsp; Error loading programs';
             }
         }
 
-        // Populate Filter Dropdowns
-        function populateFilters() {
-            // Studio filter
-            const studioFilter = document.getElementById('studioFilter');
-            const uniqueStudios = [...new Set(allPrograms.map(p => p.studio?.brand).filter(Boolean))];
-            uniqueStudios.sort().forEach(studio => {
+        function populateZoneDropdown() {
+            const select = document.getElementById('zoneFilter');
+            select.innerHTML = '<option value="">All Zones</option>';
+            
+            allZones.forEach(zone => {
                 const option = document.createElement('option');
-                option.value = studio;
-                option.textContent = studio;
-                studioFilter.appendChild(option);
+                option.value = zone.id;
+                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
+                select.appendChild(option);
             });
 
-            // State filter
-            updateStateFilter();
-
-            // City filter
-            updateCityFilter();
-
-            // Age range filter
-            const ageFilter = document.getElementById('ageFilter');
-            const uniqueAges = [...new Set(allPrograms.map(p => p.age_range).filter(Boolean))];
-            uniqueAges.sort().forEach(age => {
-                const option = document.createElement('option');
-                option.value = age;
-                option.textContent = age;
-                ageFilter.appendChild(option);
-            });
+            if (allZones.length === 0) {
+                document.getElementById('zoneFilterGroup').style.display = 'none';
+            }
         }
 
-        // Update State Filter based on selected Studio
-        function updateStateFilter() {
-            const studioFilter = document.getElementById('studioFilter');
-            const stateFilter = document.getElementById('stateFilter');
-            const selectedStudio = studioFilter.value;
+        function populateBrandDropdown(filteredBrands = null) {
+            const select = document.getElementById('brandFilter');
+            const brands = filteredBrands || allBrands;
+            select.innerHTML = '<option value="">All Brands</option>';
+            
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = brand.name;
+                select.appendChild(option);
+            });
 
-            // Clear current options except "All States"
-            stateFilter.innerHTML = '<option value="">All States</option>';
-
-            let programsToFilter = allPrograms;
-            if (selectedStudio) {
-                programsToFilter = allPrograms.filter(p => p.studio?.brand === selectedStudio);
+            if (allBrands.length === 0) {
+                document.getElementById('brandFilterGroup').style.display = 'none';
             }
+        }
 
-            const uniqueStates = [...new Set(programsToFilter.map(p => p.studio?.state).filter(Boolean))];
-            uniqueStates.sort().forEach(state => {
+        function populateStateDropdown(filteredStudios = null) {
+            const select = document.getElementById('stateFilter');
+            const currentValue = select.value;
+            const studios = filteredStudios || allStudios;
+            const states = [...new Set(studios.map(s => s.state).filter(Boolean))].sort();
+            
+            select.innerHTML = '<option value="">All States</option>';
+            states.forEach(state => {
                 const option = document.createElement('option');
                 option.value = state;
                 option.textContent = state;
-                stateFilter.appendChild(option);
+                select.appendChild(option);
             });
-        }
 
-        // Update City Filter based on selected Studio and State
-        function updateCityFilter() {
-            const studioFilter = document.getElementById('studioFilter');
-            const stateFilter = document.getElementById('stateFilter');
-            const cityFilter = document.getElementById('cityFilter');
-            const selectedStudio = studioFilter.value;
-            const selectedState = stateFilter.value;
-
-            // Clear current options except "All Cities"
-            cityFilter.innerHTML = '<option value="">All Cities</option>';
-
-            let programsToFilter = allPrograms;
-            if (selectedStudio) {
-                programsToFilter = programsToFilter.filter(p => p.studio?.brand === selectedStudio);
+            // Restore value if still valid
+            if (currentValue && states.includes(currentValue)) {
+                select.value = currentValue;
             }
-            if (selectedState) {
-                programsToFilter = programsToFilter.filter(p => p.studio?.state === selectedState);
-            }
-
-            const uniqueCities = [...new Set(programsToFilter.map(p => p.studio?.city).filter(Boolean))];
-            uniqueCities.sort().forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                cityFilter.appendChild(option);
-            });
         }
 
-        // Setup Event Listeners
-        function setupEventListeners() {
-            document.getElementById('studioFilter').addEventListener('change', () => {
-                updateStateFilter();
-                updateCityFilter();
-                applyFilters();
-            });
-
-            document.getElementById('stateFilter').addEventListener('change', () => {
-                updateCityFilter();
-                applyFilters();
-            });
-
-            document.getElementById('cityFilter').addEventListener('change', applyFilters);
-            document.getElementById('ageFilter').addEventListener('change', applyFilters);
-            document.getElementById('searchBar').addEventListener('input', applyFilters);
-        }
-
-        // Apply Filters
-        function applyFilters() {
-            const studioFilter = document.getElementById('studioFilter').value.toLowerCase();
-            const stateFilter = document.getElementById('stateFilter').value.toLowerCase();
-            const cityFilter = document.getElementById('cityFilter').value.toLowerCase();
-            const ageFilter = document.getElementById('ageFilter').value.toLowerCase();
-            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-
-            let filtered = allPrograms.filter(program => {
-                const studio = program.studio;
-                const matchesStudio = !studioFilter || studio?.brand?.toLowerCase() === studioFilter;
-                const matchesState = !stateFilter || studio?.state?.toLowerCase() === stateFilter;
-                const matchesCity = !cityFilter || studio?.city?.toLowerCase() === cityFilter;
-                const matchesAge = !ageFilter || program.age_range?.toLowerCase() === ageFilter;
-                const matchesSearch = !searchTerm || 
-                    program.name?.toLowerCase().includes(searchTerm) ||
-                    program.description?.toLowerCase().includes(searchTerm) ||
-                    studio?.brand?.toLowerCase().includes(searchTerm);
-
-                return matchesStudio && matchesState && matchesCity && matchesAge && matchesSearch;
-            });
-
-            renderPrograms(filtered);
-        }
-
-        // Clear Filters
-        function clearFilters() {
-            document.getElementById('studioFilter').value = '';
-            document.getElementById('stateFilter').value = '';
-            document.getElementById('cityFilter').value = '';
-            document.getElementById('ageFilter').value = '';
-            document.getElementById('searchBar').value = '';
+        function populateStudioDropdown(filteredStudios = null) {
+            const select = document.getElementById('studioFilter');
+            const currentValue = select.value;
+            const studios = filteredStudios || allStudios;
             
-            updateStateFilter();
-            updateCityFilter();
-            renderPrograms(allPrograms);
+            select.innerHTML = '<option value="">All Studios</option>';
+            studios.forEach(studio => {
+                const option = document.createElement('option');
+                option.value = studio.id;
+                option.textContent = getStudioLabel(studio);
+                select.appendChild(option);
+            });
+
+            // Restore value if still valid
+            if (currentValue && studios.some(s => s.id === currentValue)) {
+                select.value = currentValue;
+            }
         }
 
-        // Render Programs
+        function getFilteredStudios() {
+            const zoneId = document.getElementById('zoneFilter').value;
+            const brandId = document.getElementById('brandFilter').value;
+            const state = document.getElementById('stateFilter').value;
+
+            let filtered = [...allStudios];
+
+            // Filter by zone (through brands) - get brand_ids that belong to this zone
+            if (zoneId && allBrands.length > 0) {
+                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id);
+                filtered = filtered.filter(s => zoneBrandIds.includes(s.brand_id));
+            }
+
+            // Filter by brand
+            if (brandId) {
+                filtered = filtered.filter(s => s.brand_id === brandId);
+            }
+
+            // Filter by state
+            if (state) {
+                filtered = filtered.filter(s => s.state === state);
+            }
+
+            return filtered;
+        }
+
+        function onZoneChange() {
+            const zoneId = document.getElementById('zoneFilter').value;
+
+            // Update brand dropdown based on zone
+            if (allBrands.length > 0) {
+                if (zoneId) {
+                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
+                    populateBrandDropdown(filteredBrands);
+                } else {
+                    populateBrandDropdown();
+                }
+                document.getElementById('brandFilter').value = '';
+            }
+
+            // Update state and studio dropdowns
+            updateStateAndStudioDropdowns();
+            applyFilters();
+        }
+
+        function onBrandChange() {
+            updateStateAndStudioDropdowns();
+            applyFilters();
+        }
+
+        function onStateChange() {
+            const filteredStudios = getFilteredStudios();
+            populateStudioDropdown(filteredStudios);
+            document.getElementById('studioFilter').value = '';
+            applyFilters();
+        }
+
+        function updateStateAndStudioDropdowns() {
+            const zoneId = document.getElementById('zoneFilter').value;
+            const brandId = document.getElementById('brandFilter').value;
+
+            let filteredStudios = [...allStudios];
+
+            // Filter by zone
+            if (zoneId && allBrands.length > 0) {
+                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id);
+                filteredStudios = filteredStudios.filter(s => zoneBrandIds.includes(s.brand_id));
+            }
+
+            // Filter by brand
+            if (brandId) {
+                filteredStudios = filteredStudios.filter(s => s.brand_id === brandId);
+            }
+
+            // Update state dropdown
+            populateStateDropdown(filteredStudios);
+            document.getElementById('stateFilter').value = '';
+
+            // Update studio dropdown
+            populateStudioDropdown(filteredStudios);
+            document.getElementById('studioFilter').value = '';
+        }
+
+        function applyFilters() {
+            const studioId = document.getElementById('studioFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            // Get studio IDs that match the filters
+            const filteredStudios = getFilteredStudios();
+            const filteredStudioIds = filteredStudios.map(s => s.id);
+
+            // Filter programs
+            let filteredPrograms = allPrograms.filter(program => {
+                // Must belong to a studio in filtered list
+                if (!filteredStudioIds.includes(program.studio_id)) return false;
+
+                // If specific studio selected, filter to that studio
+                if (studioId && program.studio_id !== studioId) return false;
+
+                // Search filter
+                if (searchTerm) {
+                    const matchesSearch = 
+                        (program.name && program.name.toLowerCase().includes(searchTerm)) ||
+                        (program.price && program.price.toLowerCase().includes(searchTerm)) ||
+                        (program.enrollment_type && program.enrollment_type.toLowerCase().includes(searchTerm)) ||
+                        (program.skill_level && program.skill_level.toLowerCase().includes(searchTerm));
+                    if (!matchesSearch) return false;
+                }
+
+                return true;
+            });
+
+            renderPrograms(filteredPrograms);
+        }
+
         function renderPrograms(programs) {
-            const container = document.getElementById('programsGrid');
+            const grid = document.getElementById('programsGrid');
+            const loading = document.getElementById('loading');
             const resultsCount = document.getElementById('resultsCount');
 
-            resultsCount.textContent = `Showing ${programs.length} program${programs.length !== 1 ? 's' : ''}`;
+            loading.style.display = 'none';
+            grid.style.display = 'grid';
+            resultsCount.textContent = `${programs.length} Program${programs.length !== 1 ? 's' : ''}`;
 
             if (programs.length === 0) {
-                container.innerHTML = `
+                grid.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-graduation-cap"></i>
-                        <p>No programs found matching your filters</p>
+                        <h3>No programs found</h3>
+                        <p>Try adjusting your filters or search term</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = programs.map(program => {
-                const studio = program.studio || {};
-                const hasLink = program.link && program.link.trim();
+            grid.innerHTML = programs.map(program => {
+                const studio = allStudios.find(s => s.id === program.studio_id);
+                const studioLabel = getStudioLabel(studio);
 
                 return `
-                    <div class="program-card">
-                        <div class="program-header">
-                            <div class="program-name">${program.name || 'Unnamed Program'}</div>
-                            <div class="program-studio">${studio.brand || 'Unknown Studio'}</div>
-                            <div class="program-location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                ${studio.city ? `${studio.city}, ` : ''}${studio.state || 'N/A'}
+                    <div class="program-card" onclick='openProgramModal(${JSON.stringify(program).replace(/'/g, "&#39;")})'>
+                        <div class="program-card-header">
+                            <div class="program-header-top">
+                                <div class="program-name">${program.name}</div>
+                                ${program.enrollment_type ? `<span class="program-type-badge">${program.enrollment_type.replace(' Enrollment', '').replace(' Based', '')}</span>` : ''}
+                            </div>
+                            <div class="program-studio">
+                                <i class="fas fa-building"></i>
+                                ${studioLabel}
                             </div>
                         </div>
-
-                        <div class="program-details">
-                            ${studio.address ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="fas fa-map-pin"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">Address</div>
-                                        <div class="program-detail-value">${studio.address}</div>
-                                    </div>
+                        <div class="program-card-body">
+                            ${program.price ? `
+                                <div class="program-info-row">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>${program.price}${program.price_type ? ` (${program.price_type})` : ''}</span>
                                 </div>
                             ` : ''}
-
-                            ${program.pricing ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="fas fa-dollar-sign"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">Pricing</div>
-                                        <div class="program-detail-value">${program.pricing}</div>
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                            ${program.schedule ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="far fa-clock"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">Schedule</div>
-                                        <div class="program-detail-value">${program.schedule}</div>
-                                    </div>
-                                </div>
-                            ` : ''}
-
                             ${program.duration ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="fas fa-hourglass-half"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">Duration</div>
-                                        <div class="program-detail-value">${program.duration}</div>
-                                    </div>
+                                <div class="program-info-row">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${program.duration}</span>
                                 </div>
                             ` : ''}
-
-                            ${program.age_range ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">Age Range</div>
-                                        <div class="program-detail-value">${program.age_range}</div>
-                                    </div>
+                            ${program.lesson_frequency ? `
+                                <div class="program-info-row">
+                                    <i class="fas fa-calendar-week"></i>
+                                    <span>${program.lesson_frequency}</span>
                                 </div>
                             ` : ''}
-
-                            ${program.capacity ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="fas fa-user-friends"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">Capacity</div>
-                                        <div class="program-detail-value">${program.capacity} students</div>
-                                    </div>
+                            ${program.skill_level ? `
+                                <div class="program-info-row">
+                                    <i class="fas fa-signal"></i>
+                                    <span>${program.skill_level}</span>
                                 </div>
                             ` : ''}
-
-                            ${program.start_date ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">Start Date</div>
-                                        <div class="program-detail-value">${new Date(program.start_date).toLocaleDateString()}</div>
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                            ${program.end_date ? `
-                                <div class="program-detail">
-                                    <div class="program-detail-icon">
-                                        <i class="fas fa-calendar-check"></i>
-                                    </div>
-                                    <div class="program-detail-content">
-                                        <div class="program-detail-label">End Date</div>
-                                        <div class="program-detail-value">${new Date(program.end_date).toLocaleDateString()}</div>
-                                    </div>
+                            ${(program.first_free_lesson || program.parent_guardian_required) ? `
+                                <div class="program-badges">
+                                    ${program.first_free_lesson ? '<span class="program-badge free-trial"><i class="fas fa-gift"></i> Free Trial</span>' : ''}
+                                    ${program.parent_guardian_required ? '<span class="program-badge parent-stay"><i class="fas fa-user-friends"></i> Parent Must Stay</span>' : ''}
                                 </div>
                             ` : ''}
                         </div>
-
-                        ${program.description ? `
-                            <div class="program-description">
-                                <div class="program-description-text">${program.description}</div>
-                            </div>
-                        ` : ''}
-
-                        ${program.notes ? `
-                            <div class="program-notes">
-                                <div class="program-notes-text">${program.notes}</div>
-                            </div>
-                        ` : ''}
-
-                        ${hasLink ? `
-                            <a href="${program.link}" target="_blank" class="program-link-btn">
-                                Learn More
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        ` : ''}
+                        <div class="program-card-footer">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
+
+        function openProgramModal(program) {
+            const studio = allStudios.find(s => s.id === program.studio_id);
+            const studioLabel = getStudioLabel(studio);
+
+            document.getElementById('modalTitle').textContent = program.name;
+            document.getElementById('modalSubtitle').textContent = studioLabel;
+
+            // Basic Info
+            document.getElementById('basicInfoGrid').innerHTML = `
+                ${infoItem('Class Size', program.class_size)}
+                ${infoItem('Duration', program.duration)}
+                ${infoItem('Frequency', program.lesson_frequency)}
+                ${infoItem('Skill Level', program.skill_level)}
+                ${infoItem('Requirements', program.qualifications, true)}
+                ${infoItem('Curriculum', program.curriculum_details, true)}
+            `;
+
+            // Pricing
+            document.getElementById('pricingGrid').innerHTML = `
+                ${infoItem('Price', program.price)}
+                ${infoItem('Billing Type', program.price_type)}
+                ${infoItem('Registration Fee', program.registration_fee)}
+                ${infoItem('Fee Covers', program.registration_fee_covers, true)}
+            `;
+
+            // Enrollment
+            document.getElementById('enrollmentGrid').innerHTML = `
+                ${infoItem('Enrollment Type', program.enrollment_type)}
+                ${infoItem('Enrollment Process', program.enrollment_process, true)}
+            `;
+
+            // Mid-Semester
+            const midSemesterSection = document.getElementById('midSemesterSection');
+            if (program.mid_semester_enrollment) {
+                midSemesterSection.style.display = 'block';
+                document.getElementById('midSemesterGrid').innerHTML = `
+                    ${infoItem('Mid-Semester Allowed', '<span class="toggle-badge enabled"><i class="fas fa-check"></i> Yes</span>')}
+                    ${infoItem('Policy', program.mid_semester_policy, true)}
+                    ${infoItem('Price Change', program.mid_semester_price_change, true)}
+                `;
+            } else {
+                midSemesterSection.style.display = 'none';
+            }
+
+            // Policies
+            document.getElementById('policiesContent').innerHTML = `
+                <div class="info-grid">
+                    ${infoItem('First Free Lesson', program.first_free_lesson ? 
+                        '<span class="toggle-badge enabled"><i class="fas fa-check"></i> Yes</span>' : 
+                        '<span class="toggle-badge disabled"><i class="fas fa-times"></i> No</span>')}
+                    ${infoItem('Parent Must Stay', program.parent_guardian_required ? 
+                        '<span class="toggle-badge enabled"><i class="fas fa-check"></i> Yes</span>' : 
+                        '<span class="toggle-badge disabled"><i class="fas fa-times"></i> No</span>')}
+                    ${infoItem('Makeup Policy', program.makeup_policy, true)}
+                    ${infoItem('Withdrawal Policy', program.withdrawal_policy, true)}
+                    ${infoItem('Additional Policies', program.additional_policies, true)}
+                </div>
+            `;
+
+            // Links
+            document.getElementById('linksGrid').innerHTML = `
+                ${linkItem('Scheduling Link', program.scheduling_link)}
+                ${linkItem('Flyer Link', program.flyer_link)}
+                ${linkItem('Website Description', program.website_description_link)}
+            `;
+
+            // Reset to first tab
+            document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.modal-tab[data-tab="overview"]').classList.add('active');
+            document.getElementById('overviewTab').classList.add('active');
+
+            document.getElementById('programModal').classList.add('active');
+        }
+
+        function infoItem(label, value, fullWidth = false) {
+            if (!value) return '';
+            return `
+                <div class="info-item ${fullWidth ? 'full-width' : ''}">
+                    <div class="info-item-label">${label}</div>
+                    <div class="info-item-value">${value}</div>
+                </div>
+            `;
+        }
+
+        function linkItem(label, url) {
+            if (!url) return '';
+            return `
+                <div class="info-item">
+                    <div class="info-item-label">${label}</div>
+                    <div class="info-item-value">
+                        <a href="${url}" target="_blank"><i class="fas fa-external-link-alt"></i> Open Link</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function closeModal() {
+            document.getElementById('programModal').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('programModal').addEventListener('click', (e) => {
+            if (e.target.id === 'programModal') closeModal();
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
     </script>
 </body>
 </html>

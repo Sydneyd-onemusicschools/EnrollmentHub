@@ -1961,8 +1961,15 @@
                 if (brandId) {
                     const brand = allBrands.find(b => b.id === brandId);
                     if (brand) {
-                        // Get studios for this brand
-                        const brandStudios = allStudios.filter(s => s.brand === brand.name);
+                        // Get studios for this brand - flexible matching
+                        const brandNameLower = brand.name.toLowerCase();
+                        const brandStudios = allStudios.filter(s => {
+                            const studioBrand = (s.brand || '').toLowerCase();
+                            return studioBrand === brandNameLower || 
+                                   studioBrand.includes(brandNameLower) || 
+                                   brandNameLower.includes(studioBrand);
+                        });
+                        console.log('Brand selected:', brand.name, 'Found studios:', brandStudios.length);
                         populateImportStudioDropdown(brandStudios);
                     }
                 } else {
@@ -2126,8 +2133,19 @@
                     // Set brand
                     brandSelect.value = matchedBrand.id;
                     
-                    // Populate studios for this brand
-                    const brandStudios = allStudios.filter(s => s.brand === matchedBrand.name);
+                    // Populate studios for this brand - try multiple matching strategies
+                    const brandNameLower = matchedBrand.name.toLowerCase();
+                    let brandStudios = allStudios.filter(s => {
+                        const studioBrand = (s.brand || '').toLowerCase();
+                        return studioBrand === brandNameLower || 
+                               studioBrand.includes(brandNameLower) || 
+                               brandNameLower.includes(studioBrand);
+                    });
+                    
+                    console.log('Looking for studios matching brand:', matchedBrand.name);
+                    console.log('Found studios:', brandStudios);
+                    console.log('All studios brands:', allStudios.map(s => s.brand));
+                    
                     populateImportStudioDropdown(brandStudios);
                     
                     // Try to match studio location
@@ -2424,8 +2442,14 @@
                 if (brandId) {
                     const brand = allBrands.find(b => b.id === brandId);
                     if (brand) {
-                        // Get studios for this brand
-                        const brandStudios = allStudios.filter(s => s.brand === brand.name);
+                        // Get studios for this brand - flexible matching
+                        const brandNameLower = brand.name.toLowerCase();
+                        const brandStudios = allStudios.filter(s => {
+                            const studioBrand = (s.brand || '').toLowerCase();
+                            return studioBrand === brandNameLower || 
+                                   studioBrand.includes(brandNameLower) || 
+                                   brandNameLower.includes(studioBrand);
+                        });
                         populateDuplicateStudioDropdown(brandStudios);
                     }
                 } else {

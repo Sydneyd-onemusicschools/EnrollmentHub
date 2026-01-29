@@ -1377,6 +1377,16 @@
                             <label class="form-label">Location / Address</label>
                             <input type="text" class="form-input" id="studioAddress" placeholder="Full address">
                         </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Latitude</label>
+                                <input type="text" class="form-input" id="studioLatitude" placeholder="e.g., 40.3916">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Longitude</label>
+                                <input type="text" class="form-input" id="studioLongitude" placeholder="e.g., -111.8508">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="form-label">Parking Details</label>
                             <input type="text" class="form-input" id="studioParking" placeholder="e.g., Free street parking available">
@@ -1500,10 +1510,6 @@
                                 <label class="form-label">Display Annual Fee</label>
                                 <input type="text" class="form-input" id="studioDisplayAnnualFee" placeholder="e.g., $49/year">
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Display Price</label>
-                            <input type="text" class="form-input" id="studioDisplayPrice" placeholder="e.g., Starting at $150/month">
                         </div>
                     </div>
 
@@ -2441,6 +2447,8 @@
             document.getElementById('studioCity').value = studio.city || '';
             document.getElementById('studioTimeZone').value = studio.time_zone || '';
             document.getElementById('studioAddress').value = studio.address || '';
+            document.getElementById('studioLatitude').value = studio.latitude || '';
+            document.getElementById('studioLongitude').value = studio.longitude || '';
             document.getElementById('studioParking').value = studio.parking || '';
             document.getElementById('studioLandmarks').value = studio.landmarks || '';
             document.getElementById('studioDescription').innerHTML = studio.general_notes || '';
@@ -2457,7 +2465,6 @@
             document.getElementById('studioPrice45').value = studio.price_45 || '';
             document.getElementById('studioPrice60').value = studio.price_60 || '';
             document.getElementById('studioAnnualFee').value = studio.annual_fee || '';
-            document.getElementById('studioDisplayPrice').value = studio.display_price || '';
             document.getElementById('studioDisplayAnnualFee').value = studio.display_annual_fee || '';
             
             // Details
@@ -2920,6 +2927,8 @@
                 city: document.getElementById('studioCity').value || null,
                 time_zone: document.getElementById('studioTimeZone').value || null,
                 address: document.getElementById('studioAddress').value || null,
+                latitude: document.getElementById('studioLatitude').value ? parseFloat(document.getElementById('studioLatitude').value) : null,
+                longitude: document.getElementById('studioLongitude').value ? parseFloat(document.getElementById('studioLongitude').value) : null,
                 parking: document.getElementById('studioParking').value || null,
                 landmarks: document.getElementById('studioLandmarks').value || null,
                 general_notes: document.getElementById('studioDescription').innerHTML || null,
@@ -2932,7 +2941,6 @@
                 price_45: document.getElementById('studioPrice45').value || null,
                 price_60: document.getElementById('studioPrice60').value || null,
                 annual_fee: document.getElementById('studioAnnualFee').value || null,
-                display_price: document.getElementById('studioDisplayPrice').value || null,
                 display_annual_fee: document.getElementById('studioDisplayAnnualFee').value || null,
                 programs_enabled: document.getElementById('studioPrograms').checked,
                 rentals_enabled: document.getElementById('studioRentals').checked,
@@ -3220,8 +3228,9 @@
                     price_45: studio.price_45,
                     price_60: studio.price_60,
                     annual_fee: studio.annual_fee,
-                    display_price: studio.display_price,
                     display_annual_fee: studio.display_annual_fee,
+                    latitude: studio.latitude,
+                    longitude: studio.longitude,
                     programs_enabled: studio.programs_enabled,
                     rentals_enabled: studio.rentals_enabled,
                     rental_info: studio.rental_info,
@@ -3399,6 +3408,7 @@
                 instruments: (data.instruments || []).length,
                 links: (data.links || []).length,
                 scholarships: (data.scholarships || []).length,
+                discounts: (data.discounts || []).length,
                 policies: (data.policies || []).length,
                 notes: (data.notes || []).length
             };
@@ -3419,6 +3429,7 @@
                     ${counts.instruments > 0 ? `<span class="studio-badge badge-warning">${counts.instruments} Instrument${counts.instruments > 1 ? 's' : ''}</span>` : ''}
                     ${counts.links > 0 ? `<span class="studio-badge badge-info">${counts.links} Link${counts.links > 1 ? 's' : ''}</span>` : ''}
                     ${counts.scholarships > 0 ? `<span class="studio-badge badge-success">${counts.scholarships} Scholarship${counts.scholarships > 1 ? 's' : ''}</span>` : ''}
+                    ${counts.discounts > 0 ? `<span class="studio-badge badge-warning">${counts.discounts} Discount${counts.discounts > 1 ? 's' : ''}</span>` : ''}
                     ${counts.policies > 0 ? `<span class="studio-badge badge-salmon">${counts.policies} Polic${counts.policies > 1 ? 'ies' : 'y'}</span>` : ''}
                     ${counts.notes > 0 ? `<span class="studio-badge badge-info">${counts.notes} Note${counts.notes > 1 ? 's' : ''}</span>` : ''}
                     ${studio.programs_enabled ? '<span class="studio-badge badge-success"><i class="fas fa-check" style="margin-right: 0.25rem;"></i>Programs</span>' : ''}
@@ -3430,12 +3441,17 @@
 
             // Populate brand dropdown
             const brandSelect = document.getElementById('importBrandSelect');
-            brandSelect.innerHTML = '<option value="">Select Brand</option>' + 
-                brands.map(b => {
-                    const zone = zones.find(z => z.id === b.zone_id);
-                    const zoneLabel = zone ? ` (Zone ${zone.zone_number})` : '';
-                    return `<option value="${b.id}">${b.name}${zoneLabel}</option>`;
-                }).join('');
+            if (brands.length === 0) {
+                brandSelect.innerHTML = '<option value="">No brands available - please create a brand first</option>';
+                showToast('No brands found. Please create a brand before importing.', 'error');
+            } else {
+                brandSelect.innerHTML = '<option value="">Select Brand</option>' + 
+                    brands.map(b => {
+                        const zone = zones.find(z => z.id === b.zone_id);
+                        const zoneLabel = zone ? ` (Zone ${zone.zone_number})` : '';
+                        return `<option value="${b.id}">${b.name}${zoneLabel}</option>`;
+                    }).join('');
+            }
         }
 
         function openImportModal() {
@@ -3459,10 +3475,15 @@
                 return;
             }
 
+            let studioId = null;
+            let currentStep = '';
+
             try {
                 const studio = pendingImportData.studio;
                 
-                // Create studio
+                // Step 1: Create studio
+                currentStep = 'Creating studio';
+                console.log('Step 1: Creating studio...');
                 const studioData = {
                     brand_id: brandId,
                     city: studio.city,
@@ -3483,8 +3504,9 @@
                     price_45: studio.price_45 || null,
                     price_60: studio.price_60 || null,
                     annual_fee: studio.annual_fee || null,
-                    display_price: studio.display_price || null,
                     display_annual_fee: studio.display_annual_fee || null,
+                    latitude: studio.latitude || null,
+                    longitude: studio.longitude || null,
                     programs_enabled: studio.programs_enabled || false,
                     rentals_enabled: studio.rentals_enabled || false,
                     rental_info: studio.rental_info || null,
@@ -3499,23 +3521,36 @@
                     .insert([studioData])
                     .select();
 
-                if (studioError) throw studioError;
+                if (studioError) {
+                    console.error('Studio insert error:', studioError);
+                    throw new Error(`Failed to create studio: ${studioError.message}`);
+                }
 
-                const studioId = newStudio[0].id;
+                studioId = newStudio[0].id;
+                console.log('Studio created with ID:', studioId);
 
-                // Import admins
+                // Step 2: Import admins
                 if (pendingImportData.admins && pendingImportData.admins.length > 0) {
+                    currentStep = 'Importing admins';
+                    console.log('Step 2: Importing admins...');
                     const adminInserts = pendingImportData.admins.map((a, i) => ({
                         studio_id: studioId,
                         name: a.name || null,
                         email: a.email || null,
                         order_index: i
                     }));
-                    await supabaseClient.from('studio_admins').insert(adminInserts);
+                    const { error: adminError } = await supabaseClient.from('studio_admins').insert(adminInserts);
+                    if (adminError) {
+                        console.error('Admin insert error:', adminError);
+                        throw new Error(`Failed to import admins: ${adminError.message}`);
+                    }
+                    console.log('Admins imported successfully');
                 }
 
-                // Import instruments
+                // Step 3: Import instruments
                 if (pendingImportData.instruments && pendingImportData.instruments.length > 0) {
+                    currentStep = 'Importing instruments';
+                    console.log('Step 3: Importing instruments...');
                     const instrumentInserts = pendingImportData.instruments.map((inst, i) => ({
                         studio_id: studioId,
                         name: inst.name,
@@ -3523,11 +3558,18 @@
                         materials: inst.materials || null,
                         order_index: i
                     }));
-                    await supabaseClient.from('studio_instruments').insert(instrumentInserts);
+                    const { error: instError } = await supabaseClient.from('studio_instruments').insert(instrumentInserts);
+                    if (instError) {
+                        console.error('Instrument insert error:', instError);
+                        throw new Error(`Failed to import instruments: ${instError.message}`);
+                    }
+                    console.log('Instruments imported successfully');
                 }
 
-                // Import links
+                // Step 4: Import links
                 if (pendingImportData.links && pendingImportData.links.length > 0) {
+                    currentStep = 'Importing links';
+                    console.log('Step 4: Importing links...');
                     const linkInserts = pendingImportData.links.map((l, i) => ({
                         studio_id: studioId,
                         header: l.header || null,
@@ -3535,11 +3577,18 @@
                         url: l.url || null,
                         order_index: i
                     }));
-                    await supabaseClient.from('studio_links').insert(linkInserts);
+                    const { error: linkError } = await supabaseClient.from('studio_links').insert(linkInserts);
+                    if (linkError) {
+                        console.error('Link insert error:', linkError);
+                        throw new Error(`Failed to import links: ${linkError.message}`);
+                    }
+                    console.log('Links imported successfully');
                 }
 
-                // Import scholarships
+                // Step 5: Import scholarships
                 if (pendingImportData.scholarships && pendingImportData.scholarships.length > 0) {
+                    currentStep = 'Importing scholarships';
+                    console.log('Step 5: Importing scholarships...');
                     const scholarshipInserts = pendingImportData.scholarships.map((s, i) => ({
                         studio_id: studioId,
                         title: s.title || null,
@@ -3547,11 +3596,18 @@
                         link: s.link || null,
                         order_index: i
                     }));
-                    await supabaseClient.from('studio_scholarships').insert(scholarshipInserts);
+                    const { error: scholarshipError } = await supabaseClient.from('studio_scholarships').insert(scholarshipInserts);
+                    if (scholarshipError) {
+                        console.error('Scholarship insert error:', scholarshipError);
+                        throw new Error(`Failed to import scholarships: ${scholarshipError.message}`);
+                    }
+                    console.log('Scholarships imported successfully');
                 }
 
-                // Import policies
+                // Step 6: Import policies
                 if (pendingImportData.policies && pendingImportData.policies.length > 0) {
+                    currentStep = 'Importing policies';
+                    console.log('Step 6: Importing policies...');
                     const policyInserts = pendingImportData.policies.map((p, i) => ({
                         studio_id: studioId,
                         policy_type: p.policy_type || 'custom',
@@ -3562,11 +3618,18 @@
                         notes: p.notes || null,
                         order_index: i
                     }));
-                    await supabaseClient.from('studio_policies').insert(policyInserts);
+                    const { error: policyError } = await supabaseClient.from('studio_policies').insert(policyInserts);
+                    if (policyError) {
+                        console.error('Policy insert error:', policyError);
+                        throw new Error(`Failed to import policies: ${policyError.message}`);
+                    }
+                    console.log('Policies imported successfully');
                 }
 
-                // Import discounts
+                // Step 7: Import discounts
                 if (pendingImportData.discounts && pendingImportData.discounts.length > 0) {
+                    currentStep = 'Importing discounts';
+                    console.log('Step 7: Importing discounts...');
                     const discountInserts = pendingImportData.discounts.map((d, i) => ({
                         studio_id: studioId,
                         title: d.title || null,
@@ -3574,11 +3637,18 @@
                         link: d.link || null,
                         order_index: i
                     }));
-                    await supabaseClient.from('studio_discounts').insert(discountInserts);
+                    const { error: discountError } = await supabaseClient.from('studio_discounts').insert(discountInserts);
+                    if (discountError) {
+                        console.error('Discount insert error:', discountError);
+                        throw new Error(`Failed to import discounts: ${discountError.message}`);
+                    }
+                    console.log('Discounts imported successfully');
                 }
 
-                // Import notes
+                // Step 8: Import notes
                 if (pendingImportData.notes && pendingImportData.notes.length > 0) {
+                    currentStep = 'Importing notes';
+                    console.log('Step 8: Importing notes...');
                     const noteInserts = pendingImportData.notes.map((n, i) => ({
                         studio_id: studioId,
                         title: n.title || null,
@@ -3587,7 +3657,12 @@
                         link: n.link || null,
                         order_index: i
                     }));
-                    await supabaseClient.from('studio_notes').insert(noteInserts);
+                    const { error: noteError } = await supabaseClient.from('studio_notes').insert(noteInserts);
+                    if (noteError) {
+                        console.error('Note insert error:', noteError);
+                        throw new Error(`Failed to import notes: ${noteError.message}`);
+                    }
+                    console.log('Notes imported successfully');
                 }
 
                 showToast('Studio imported successfully!', 'success');
@@ -3596,7 +3671,18 @@
 
             } catch (error) {
                 console.error('Error importing studio:', error);
-                showToast('Error importing studio', 'error');
+                console.error('Failed at step:', currentStep);
+                
+                // If studio was created but something else failed, offer to delete it
+                if (studioId) {
+                    console.log('Cleaning up - deleting partially imported studio:', studioId);
+                    await supabaseClient.from('studios').delete().eq('id', studioId);
+                }
+                
+                // Show detailed error
+                const errorMsg = error.message || 'Unknown error';
+                showToast(`Error: ${currentStep} - ${errorMsg}`, 'error');
+                alert(`Import failed at step: ${currentStep}\n\nError: ${errorMsg}\n\nCheck the browser console (F12) for more details.`);
             }
         }
     </script>

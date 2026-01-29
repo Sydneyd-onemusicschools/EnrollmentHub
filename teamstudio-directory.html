@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1036,6 +1035,9 @@
 
                 populateFilters();
                 renderStudios();
+                
+                // Check for studio ID in URL parameter and auto-open that studio
+                checkUrlForStudio();
             } catch (error) {
                 console.error('Error loading studios:', error);
                 document.getElementById('loading').innerHTML = '<p style="color: red;">Error loading studios. Please refresh.</p>';
@@ -1166,6 +1168,34 @@
         function openModal(index) {
             currentStudio = filteredStudios[index];
             if (!currentStudio) return;
+            showStudioModal();
+        }
+
+        function openModalById(studioId) {
+            // Convert to string for comparison since URL params are strings
+            currentStudio = allStudios.find(s => String(s.id) === String(studioId));
+            if (!currentStudio) {
+                console.log('Studio not found with ID:', studioId);
+                console.log('Available IDs:', allStudios.map(s => s.id));
+                return;
+            }
+            showStudioModal();
+        }
+
+        function checkUrlForStudio() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const studioId = urlParams.get('studio');
+            if (studioId) {
+                console.log('Found studio ID in URL:', studioId);
+                // Small delay to ensure DOM is ready
+                setTimeout(() => {
+                    openModalById(studioId);
+                }, 100);
+            }
+        }
+
+        function showStudioModal() {
+            if (!currentStudio) return;
 
             const location = [currentStudio.city, currentStudio.state].filter(Boolean).join(', ');
             const brandName = currentStudio.brand?.name || 'Unnamed Studio';
@@ -1210,6 +1240,9 @@
             const s = currentStudio;
             
             // Basic Info Tab
+            const fullAddress = [s.address, s.city, s.state].filter(Boolean).join(', ');
+            const mapsUrl = fullAddress ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(fullAddress) : '';
+            
             const basicContent = `
                 <div class="info-grid-2col">
                     ${renderInfoRow('fa-building', 'Brand', s.brand?.name)}
@@ -1217,7 +1250,20 @@
                     ${renderInfoRow('fa-city', 'City', s.city)}
                     ${renderInfoRow('fa-flag-usa', 'State', s.state)}
                     ${renderInfoRow('fa-clock', 'Time Zone', s.time_zone)}
-                    ${renderInfoRow('fa-location-dot', 'Address', s.address, true)}
+                    ${s.address ? `
+                        <div class="info-row full-width">
+                            <div class="info-icon"><i class="fas fa-location-dot"></i></div>
+                            <div class="info-content">
+                                <div class="info-label">Address</div>
+                                <div class="info-value">
+                                    <a href="${mapsUrl}" target="_blank" style="color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                        ${s.address}
+                                        <i class="fas fa-external-link-alt" style="font-size: 0.75rem;"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
                     ${renderInfoRow('fa-car', 'Parking', s.parking, true)}
                     ${renderInfoRow('fa-landmark', 'Landmarks', s.landmarks, true)}
                 </div>

@@ -985,6 +985,140 @@
       border-top-color: var(--color-text-muted);
       pointer-events: none;
     }
+
+    /* Categories Grid */
+    .categories-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .category-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .category-tag:hover {
+      border-color: var(--color-blue);
+    }
+
+    .category-tag-icon {
+      width: 24px;
+      height: 24px;
+      background: rgba(33, 150, 243, 0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-blue);
+    }
+
+    .category-tag-count {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      background: var(--color-bg);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .category-tag-actions {
+      display: flex;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .category-tag-actions .action-btn {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Promo Card */
+    .promo-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%);
+      border: 1px solid rgba(33, 150, 243, 0.2);
+      border-radius: var(--radius-lg);
+      margin-bottom: 12px;
+    }
+
+    .promo-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .promo-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .promo-info {
+      flex: 1;
+    }
+
+    .promo-info h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .promo-info p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: 6px;
+    }
+
+    .promo-dates {
+      font-size: 12px;
+      color: var(--color-blue);
+      font-weight: 500;
+    }
+
+    .promo-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .promo-badge.active {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-success);
+    }
+
+    .promo-badge.scheduled {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--color-warning);
+    }
+
+    .promo-badge.expired {
+      background: rgba(107, 114, 128, 0.1);
+      color: var(--color-text-muted);
+    }
+
+    /* Team description */
+    .team-description {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -1011,7 +1145,20 @@
     </header>
 
     <!-- Stats Cards -->
-    <div class="hero-cards">
+    <div class="hero-cards" style="grid-template-columns: repeat(4, 1fr);">
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="stat-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="stat-card-value" id="promoCount">0</div>
+        <div class="stat-card-label">Active Promos</div>
+      </div>
       <div class="stat-card">
         <div class="stat-card-header">
           <div class="stat-card-icon">
@@ -1063,32 +1210,68 @@
       <div class="content">
         <!-- Announcements Section -->
         <div id="announcements" class="section">
-          <div class="section-header">
-            <h2 class="section-title">
-              <span class="section-title-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="m3 11 18-5v12L3 13v-2z"></path>
-                  <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
+          <!-- Promos Subsection -->
+          <div class="subsection">
+            <div class="subsection-header">
+              <h3 class="subsection-title">
+                <span class="subsection-title-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                  </svg>
+                </span>
+                Active Promotions
+              </h3>
+              <button class="add-btn" onclick="openPromoModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14M5 12h14"></path>
                 </svg>
-              </span>
-              Announcements
-            </h2>
-            <button class="add-btn" onclick="openAnnouncementModal()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"></path>
-              </svg>
-              Add Announcement
-            </button>
-          </div>
-          <div id="announcementsContainer">
-            <div class="empty-state">
-              <div class="empty-state-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="m3 11 18-5v12L3 13v-2z"></path>
-                </svg>
+                Add Promo
+              </button>
+            </div>
+            <div id="promosContainer">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  </svg>
+                </div>
+                <h3>No promotions yet</h3>
+                <p>Create promotional offers for enrollment</p>
               </div>
-              <h3>No announcements yet</h3>
-              <p>Create your first announcement to get started</p>
+            </div>
+          </div>
+
+          <!-- Announcements Subsection -->
+          <div class="subsection">
+            <div class="subsection-header">
+              <h3 class="subsection-title">
+                <span class="subsection-title-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m3 11 18-5v12L3 13v-2z"></path>
+                    <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
+                  </svg>
+                </span>
+                Announcements
+              </h3>
+              <button class="add-btn" onclick="openAnnouncementModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Add Announcement
+              </button>
+            </div>
+            <div id="announcementsContainer">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m3 11 18-5v12L3 13v-2z"></path>
+                  </svg>
+                </div>
+                <h3>No announcements yet</h3>
+                <p>Create your first announcement to get started</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1175,32 +1358,66 @@
 
         <!-- Links Section -->
         <div id="links" class="section hidden">
-          <div class="section-header">
-            <h2 class="section-title">
-              <span class="section-title-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          <!-- Link Categories Subsection -->
+          <div class="subsection">
+            <div class="subsection-header">
+              <h3 class="subsection-title">
+                <span class="subsection-title-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </span>
+                Link Categories
+              </h3>
+              <button class="add-btn" onclick="openLinkCategoryModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14M5 12h14"></path>
                 </svg>
-              </span>
-              Quick Links
-            </h2>
-            <button class="add-btn" onclick="openLinkModal()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"></path>
-              </svg>
-              Add Link
-            </button>
-          </div>
-          <div id="linksContainer" class="links-grid">
-            <div class="empty-state">
-              <div class="empty-state-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                </svg>
+                Add Category
+              </button>
+            </div>
+            <div id="linkCategoriesContainer" class="categories-grid">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </div>
+                <h3>No categories yet</h3>
+                <p>Create categories to organize your links</p>
               </div>
-              <h3>No links yet</h3>
-              <p>Add quick links for easy access</p>
+            </div>
+          </div>
+
+          <!-- Links Subsection -->
+          <div class="subsection">
+            <div class="subsection-header">
+              <h3 class="subsection-title">
+                <span class="subsection-title-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                  </svg>
+                </span>
+                Quick Links
+              </h3>
+              <button class="add-btn" onclick="openLinkModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Add Link
+              </button>
+            </div>
+            <div id="linksContainer" class="links-grid">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  </svg>
+                </div>
+                <h3>No links yet</h3>
+                <p>Add quick links for easy access</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1272,16 +1489,18 @@
     // SUPABASE CONFIGURATION
     // ============================================
     // Replace these with your actual Supabase credentials
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
 
-    let supabase = null;
+    let supabaseClient = null;
     let isConnected = false;
 
     // Data stores
     let announcements = [];
+    let promos = [];
     let policies = [];
     let links = [];
+    let linkCategories = [];
     let team = [];
     let scriptContent = '';
 
@@ -1297,10 +1516,10 @@
           return;
         }
 
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // Test connection
-        const { data, error } = await supabase.from('announcements').select('count');
+        const { data, error } = await supabaseClient.from('announcements').select('count');
         
         if (error) throw error;
         
@@ -1337,8 +1556,10 @@
     // ============================================
     function loadFromLocalStorage() {
       announcements = JSON.parse(localStorage.getItem('admin_announcements') || '[]');
+      promos = JSON.parse(localStorage.getItem('admin_promos') || '[]');
       policies = JSON.parse(localStorage.getItem('admin_policies') || '[]');
       links = JSON.parse(localStorage.getItem('admin_links') || '[]');
+      linkCategories = JSON.parse(localStorage.getItem('admin_link_categories') || '[]');
       team = JSON.parse(localStorage.getItem('admin_team') || '[]');
       scriptContent = localStorage.getItem('admin_script') || getDefaultScript();
       
@@ -1347,8 +1568,10 @@
 
     function saveToLocalStorage() {
       localStorage.setItem('admin_announcements', JSON.stringify(announcements));
+      localStorage.setItem('admin_promos', JSON.stringify(promos));
       localStorage.setItem('admin_policies', JSON.stringify(policies));
       localStorage.setItem('admin_links', JSON.stringify(links));
+      localStorage.setItem('admin_link_categories', JSON.stringify(linkCategories));
       localStorage.setItem('admin_team', JSON.stringify(team));
       localStorage.setItem('admin_script', scriptContent);
     }
@@ -1376,16 +1599,20 @@
       if (!isConnected) return;
 
       try {
-        const [announcementsRes, policiesRes, linksRes, teamRes, scriptRes] = await Promise.all([
-          supabase.from('announcements').select('*').order('created_at', { ascending: false }),
-          supabase.from('policies').select('*').order('category'),
-          supabase.from('links').select('*').order('category'),
-          supabase.from('team_members').select('*').order('name'),
-          supabase.from('settings').select('value').eq('key', 'enrollment_script').single()
+        const [promosRes, announcementsRes, policiesRes, linkCategoriesRes, linksRes, teamRes, scriptRes] = await Promise.all([
+          supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
+          supabaseClient.from('announcements').select('*').order('created_at', { ascending: false }),
+          supabaseClient.from('policies').select('*').order('category'),
+          supabaseClient.from('link_categories').select('*').order('name'),
+          supabaseClient.from('links').select('*').order('category'),
+          supabaseClient.from('team_members').select('*').order('name'),
+          supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single()
         ]);
 
+        promos = promosRes.data || [];
         announcements = announcementsRes.data || [];
         policies = policiesRes.data || [];
+        linkCategories = linkCategoriesRes.data || [];
         links = linksRes.data || [];
         team = teamRes.data || [];
         scriptContent = scriptRes.data?.value || getDefaultScript();
@@ -1401,8 +1628,10 @@
     // RENDERING
     // ============================================
     function renderAll() {
+      renderPromos();
       renderAnnouncements();
       renderPolicies();
+      renderLinkCategories();
       renderLinks();
       renderTeam();
       renderScript();
@@ -1413,6 +1642,76 @@
       document.getElementById('teamCount').textContent = team.length;
       document.getElementById('policyCount').textContent = policies.length;
       document.getElementById('linkCount').textContent = links.length;
+      
+      // Update promo count if element exists
+      const promoCountEl = document.getElementById('promoCount');
+      if (promoCountEl) {
+        const activePromos = promos.filter(p => {
+          const now = new Date();
+          const start = new Date(p.start_date);
+          const end = new Date(p.end_date);
+          return now >= start && now <= end;
+        }).length;
+        promoCountEl.textContent = activePromos;
+      }
+    }
+
+    function renderPromos() {
+      const container = document.getElementById('promosContainer');
+      
+      if (promos.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              </svg>
+            </div>
+            <h3>No promotions yet</h3>
+            <p>Create promotional offers for enrollment</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = promos.map(p => {
+        const now = new Date();
+        const start = new Date(p.start_date);
+        const end = new Date(p.end_date);
+        let status = 'active';
+        if (now < start) status = 'scheduled';
+        if (now > end) status = 'expired';
+        
+        return `
+          <div class="promo-card">
+            <div class="promo-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5"></path>
+                <path d="M2 12l10 5 10-5"></path>
+              </svg>
+            </div>
+            <div class="promo-info">
+              <h4>${escapeHtml(p.title)}</h4>
+              <p>${escapeHtml(p.description || '')}</p>
+              <span class="promo-dates">${formatDate(p.start_date)} - ${formatDate(p.end_date)}</span>
+            </div>
+            <span class="promo-badge ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            <div class="table-actions">
+              <button class="action-btn" onclick="editPromo('${p.id}')" title="Edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                </svg>
+              </button>
+              <button class="action-btn delete" onclick="confirmDelete('promo', '${p.id}')" title="Delete">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderAnnouncements() {
@@ -1519,6 +1818,52 @@
       `).join('');
     }
 
+    function renderLinkCategories() {
+      const container = document.getElementById('linkCategoriesContainer');
+      
+      if (linkCategories.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <h3>No categories yet</h3>
+            <p>Create categories to organize your links</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = linkCategories.map(c => {
+        const linkCount = links.filter(l => l.category === c.name).length;
+        return `
+          <div class="category-tag">
+            <span class="category-tag-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </span>
+            ${escapeHtml(c.name)}
+            <span class="category-tag-count">${linkCount}</span>
+            <div class="category-tag-actions">
+              <button class="action-btn" onclick="editLinkCategory('${c.id}')" title="Edit">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                </svg>
+              </button>
+              <button class="action-btn delete" onclick="confirmDelete('linkCategory', '${c.id}')" title="Delete">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     function renderLinks() {
       const container = document.getElementById('linksContainer');
       
@@ -1591,6 +1936,7 @@
           <div class="team-info">
             <h3 class="team-name">${escapeHtml(t.name)}</h3>
             <p class="team-role">${escapeHtml(t.role)}</p>
+            ${t.description ? `<p class="team-description">${escapeHtml(t.description)}</p>` : ''}
           </div>
           <span class="team-zone">${escapeHtml(t.zone || 'Central')}</span>
           <div class="team-contact-info">
@@ -1643,6 +1989,96 @@
       document.getElementById('modalOverlay').classList.remove('active');
       currentEditId = null;
       currentEditType = null;
+    }
+
+    // Promo Modal
+    function openPromoModal(id = null) {
+      currentEditType = 'promo';
+      currentEditId = id;
+      
+      const promo = id ? promos.find(p => p.id === id) : null;
+      const today = new Date().toISOString().split('T')[0];
+      const nextMonth = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      
+      document.getElementById('modalTitle').textContent = id ? 'Edit Promotion' : 'Add Promotion';
+      document.getElementById('modalBody').innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Promotion Title</label>
+          <input type="text" class="form-input" id="promoTitle" value="${escapeHtml(promo?.title || '')}" placeholder="e.g., Early Bird Discount">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="promoDescription" placeholder="Describe the promotion details">${escapeHtml(promo?.description || '')}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-input" id="promoStartDate" value="${promo?.start_date || today}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-input" id="promoEndDate" value="${promo?.end_date || nextMonth}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Discount/Offer</label>
+          <input type="text" class="form-input" id="promoDiscount" value="${escapeHtml(promo?.discount || '')}" placeholder="e.g., 15% off, $100 credit">
+        </div>
+      `;
+      
+      document.getElementById('modalSaveBtn').onclick = savePromo;
+      document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn" onclick="savePromo()">Save</button>
+      `;
+      openModal();
+    }
+
+    function editPromo(id) {
+      openPromoModal(id);
+    }
+
+    async function savePromo() {
+      const data = {
+        title: document.getElementById('promoTitle').value,
+        description: document.getElementById('promoDescription').value,
+        start_date: document.getElementById('promoStartDate').value,
+        end_date: document.getElementById('promoEndDate').value,
+        discount: document.getElementById('promoDiscount').value
+      };
+
+      if (!data.title) {
+        showToast('Please enter a title', 'error');
+        return;
+      }
+
+      try {
+        if (isConnected) {
+          if (currentEditId) {
+            await supabaseClient.from('promos').update(data).eq('id', currentEditId);
+          } else {
+            await supabaseClient.from('promos').insert(data);
+          }
+          await loadAllData();
+        } else {
+          if (currentEditId) {
+            const idx = promos.findIndex(p => p.id === currentEditId);
+            promos[idx] = { ...promos[idx], ...data };
+          } else {
+            data.id = Date.now().toString();
+            data.created_at = new Date().toISOString();
+            promos.push(data);
+          }
+          saveToLocalStorage();
+          renderAll();
+        }
+        
+        showToast(currentEditId ? 'Promotion updated' : 'Promotion created', 'success');
+        closeModal();
+      } catch (error) {
+        console.error('Error saving promo:', error);
+        showToast('Error saving promotion', 'error');
+      }
     }
 
     // Announcement Modal
@@ -1701,9 +2137,9 @@
       try {
         if (isConnected) {
           if (currentEditId) {
-            await supabase.from('announcements').update(data).eq('id', currentEditId);
+            await supabaseClient.from('announcements').update(data).eq('id', currentEditId);
           } else {
-            await supabase.from('announcements').insert(data);
+            await supabaseClient.from('announcements').insert(data);
           }
           await loadAllData();
         } else {
@@ -1784,9 +2220,9 @@
       try {
         if (isConnected) {
           if (currentEditId) {
-            await supabase.from('policies').update(data).eq('id', currentEditId);
+            await supabaseClient.from('policies').update(data).eq('id', currentEditId);
           } else {
-            await supabase.from('policies').insert(data);
+            await supabaseClient.from('policies').insert(data);
           }
           await loadAllData();
         } else {
@@ -1809,12 +2245,88 @@
       }
     }
 
+    // Link Category Modal
+    function openLinkCategoryModal(id = null) {
+      currentEditType = 'linkCategory';
+      currentEditId = id;
+      
+      const category = id ? linkCategories.find(c => c.id === id) : null;
+      
+      document.getElementById('modalTitle').textContent = id ? 'Edit Category' : 'Add Category';
+      document.getElementById('modalBody').innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Category Name</label>
+          <input type="text" class="form-input" id="categoryName" value="${escapeHtml(category?.name || '')}" placeholder="e.g., Resources, Forms, Training">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description (optional)</label>
+          <input type="text" class="form-input" id="categoryDescription" value="${escapeHtml(category?.description || '')}" placeholder="Brief description of this category">
+        </div>
+      `;
+      
+      document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveLinkCategory()">Save</button>
+      `;
+      openModal();
+    }
+
+    function editLinkCategory(id) {
+      openLinkCategoryModal(id);
+    }
+
+    async function saveLinkCategory() {
+      const data = {
+        name: document.getElementById('categoryName').value,
+        description: document.getElementById('categoryDescription').value
+      };
+
+      if (!data.name) {
+        showToast('Please enter a category name', 'error');
+        return;
+      }
+
+      try {
+        if (isConnected) {
+          if (currentEditId) {
+            await supabaseClient.from('link_categories').update(data).eq('id', currentEditId);
+          } else {
+            await supabaseClient.from('link_categories').insert(data);
+          }
+          await loadAllData();
+        } else {
+          if (currentEditId) {
+            const idx = linkCategories.findIndex(c => c.id === currentEditId);
+            linkCategories[idx] = { ...linkCategories[idx], ...data };
+          } else {
+            data.id = Date.now().toString();
+            linkCategories.push(data);
+          }
+          saveToLocalStorage();
+          renderAll();
+        }
+        
+        showToast(currentEditId ? 'Category updated' : 'Category created', 'success');
+        closeModal();
+      } catch (error) {
+        console.error('Error saving category:', error);
+        showToast('Error saving category', 'error');
+      }
+    }
+
     // Link Modal
     function openLinkModal(id = null) {
       currentEditType = 'link';
       currentEditId = id;
       
       const link = id ? links.find(l => l.id === id) : null;
+      
+      // Build category options from linkCategories array
+      const defaultCategories = ['Resources', 'Scheduling', 'Forms', 'Training', 'General'];
+      const allCategories = [...new Set([...defaultCategories, ...linkCategories.map(c => c.name)])];
+      const categoryOptions = allCategories.map(cat => 
+        `<option value="${escapeHtml(cat)}" ${link?.category === cat ? 'selected' : ''}>${escapeHtml(cat)}</option>`
+      ).join('');
       
       document.getElementById('modalTitle').textContent = id ? 'Edit Link' : 'Add Link';
       document.getElementById('modalBody').innerHTML = `
@@ -1829,11 +2341,7 @@
         <div class="form-group">
           <label class="form-label">Category</label>
           <select class="form-select" id="linkCategory">
-            <option value="Resources" ${link?.category === 'Resources' ? 'selected' : ''}>Resources</option>
-            <option value="Scheduling" ${link?.category === 'Scheduling' ? 'selected' : ''}>Scheduling</option>
-            <option value="Forms" ${link?.category === 'Forms' ? 'selected' : ''}>Forms</option>
-            <option value="Training" ${link?.category === 'Training' ? 'selected' : ''}>Training</option>
-            <option value="General" ${link?.category === 'General' ? 'selected' : ''}>General</option>
+            ${categoryOptions}
           </select>
         </div>
         <div class="form-group">
@@ -1849,7 +2357,10 @@
         </div>
       `;
       
-      document.getElementById('modalSaveBtn').onclick = saveLink;
+      document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveLink()">Save</button>
+      `;
       openModal();
     }
 
@@ -1873,9 +2384,9 @@
       try {
         if (isConnected) {
           if (currentEditId) {
-            await supabase.from('links').update(data).eq('id', currentEditId);
+            await supabaseClient.from('links').update(data).eq('id', currentEditId);
           } else {
-            await supabase.from('links').insert(data);
+            await supabaseClient.from('links').insert(data);
           }
           await loadAllData();
         } else {
@@ -1924,6 +2435,10 @@
             <input type="text" class="form-input" id="teamRole" value="${escapeHtml(member?.role || '')}" placeholder="Enrollment Specialist">
           </div>
         </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="teamDescription" placeholder="Brief bio or specialization...">${escapeHtml(member?.description || '')}</textarea>
+        </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Email</label>
@@ -1946,7 +2461,10 @@
         </div>
       `;
       
-      document.getElementById('modalSaveBtn').onclick = saveTeamMember;
+      document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTeamMember()">Save</button>
+      `;
       openModal();
     }
 
@@ -1963,6 +2481,7 @@
       const data = {
         name: document.getElementById('teamName').value,
         role: document.getElementById('teamRole').value,
+        description: document.getElementById('teamDescription').value,
         email: document.getElementById('teamEmail').value,
         extension: document.getElementById('teamExtension').value,
         zone: document.getElementById('teamZone').value,
@@ -1977,9 +2496,9 @@
       try {
         if (isConnected) {
           if (currentEditId) {
-            await supabase.from('team_members').update(data).eq('id', currentEditId);
+            await supabaseClient.from('team_members').update(data).eq('id', currentEditId);
           } else {
-            await supabase.from('team_members').insert(data);
+            await supabaseClient.from('team_members').insert(data);
           }
           await loadAllData();
         } else {
@@ -2008,8 +2527,10 @@
       currentEditId = id;
       
       const typeNames = {
+        promo: 'promotion',
         announcement: 'announcement',
         policy: 'policy',
+        linkCategory: 'category',
         link: 'link',
         team: 'team member'
       };
@@ -2040,20 +2561,26 @@
     async function executeDelete() {
       try {
         const tables = {
+          promo: 'promos',
           announcement: 'announcements',
           policy: 'policies',
+          linkCategory: 'link_categories',
           link: 'links',
           team: 'team_members'
         };
 
         if (isConnected) {
-          await supabase.from(tables[currentEditType]).delete().eq('id', currentEditId);
+          await supabaseClient.from(tables[currentEditType]).delete().eq('id', currentEditId);
           await loadAllData();
         } else {
-          if (currentEditType === 'announcement') {
+          if (currentEditType === 'promo') {
+            promos = promos.filter(p => p.id !== currentEditId);
+          } else if (currentEditType === 'announcement') {
             announcements = announcements.filter(a => a.id !== currentEditId);
           } else if (currentEditType === 'policy') {
             policies = policies.filter(p => p.id !== currentEditId);
+          } else if (currentEditType === 'linkCategory') {
+            linkCategories = linkCategories.filter(c => c.id !== currentEditId);
           } else if (currentEditType === 'link') {
             links = links.filter(l => l.id !== currentEditId);
           } else if (currentEditType === 'team') {
@@ -2087,7 +2614,7 @@
 
       try {
         if (isConnected) {
-          await supabase.from('settings').upsert({
+          await supabaseClient.from('settings').upsert({
             key: 'enrollment_script',
             value: scriptContent
           });

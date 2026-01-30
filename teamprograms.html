@@ -618,10 +618,6 @@
                 <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
                 <span class="nav-text">Snippets</span>
             </a>
-            <a href="teammap.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-star"></i></span>
-                <span class="nav-text">Map</span>
-            </a>
             <a href="teamsellingpoints.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-star"></i></span>
                 <span class="nav-text">Selling Points</span>
@@ -629,6 +625,10 @@
             <a href="teamprograms.html" class="nav-item active">
                 <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
                 <span class="nav-text">Programs</span>
+            </a>
+            <a href="teamcalendar.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+                <span class="nav-text">Calendar</span>
             </a>
             <a href="teamtraining-hub.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-book-open"></i></span>
@@ -691,7 +691,7 @@
             <div class="filter-row" style="margin-top: 1rem;">
                 <div class="filter-group" style="flex: 2;">
                     <label>Search Programs</label>
-                    <input type="text" class="form-input" id="searchInput" placeholder="Search by program name...">
+                    <input type="text" class="form-input" id="searchInput" placeholder="Search by program, brand, city, or state...">
                 </div>
             </div>
         </div>
@@ -1064,13 +1064,23 @@
                 // If specific studio selected, filter to that studio
                 if (studioId && program.studio_id !== studioId) return false;
 
-                // Search filter
+                // Search filter - search by program name, price, enrollment type, skill level, brand, state, city
                 if (searchTerm) {
+                    // Get studio info for this program
+                    const studio = allStudios.find(s => s.id === program.studio_id);
+                    const brand = studio ? allBrands.find(b => b.id === studio.brand_id) : null;
+                    const brandName = brand ? brand.name : '';
+                    const studioCity = studio ? (studio.city || '') : '';
+                    const studioState = studio ? (studio.state || '') : '';
+                    
                     const matchesSearch = 
                         (program.name && program.name.toLowerCase().includes(searchTerm)) ||
                         (program.price && program.price.toLowerCase().includes(searchTerm)) ||
                         (program.enrollment_type && program.enrollment_type.toLowerCase().includes(searchTerm)) ||
-                        (program.skill_level && program.skill_level.toLowerCase().includes(searchTerm));
+                        (program.skill_level && program.skill_level.toLowerCase().includes(searchTerm)) ||
+                        (brandName && brandName.toLowerCase().includes(searchTerm)) ||
+                        (studioCity && studioCity.toLowerCase().includes(searchTerm)) ||
+                        (studioState && studioState.toLowerCase().includes(searchTerm));
                     if (!matchesSearch) return false;
                 }
 

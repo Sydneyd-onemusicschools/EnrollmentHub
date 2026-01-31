@@ -6,6 +6,7 @@
   <title>Admin Portal - Director's Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -37,6 +38,16 @@
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 20px;
+      
+      /* Zone colors */
+      --zone-color-1: #2196F3;
+      --zone-color-2: #10B981;
+      --zone-color-3: #F59E0B;
+      --zone-color-4: #EF4444;
+      --zone-color-5: #8B5CF6;
+      --zone-color-6: #EC4899;
+      --zone-color-7: #06B6D4;
+      --zone-color-8: #84CC16;
     }
 
     body {
@@ -106,40 +117,60 @@
       gap: 12px;
     }
 
-    .status-indicator {
+    .date-display {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       background: var(--color-white);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-md);
       padding: 10px 16px;
       font-size: 14px;
       font-weight: 500;
+      color: var(--color-text);
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--color-success);
+    .date-display svg {
+      color: var(--color-blue);
     }
 
-    .status-dot.disconnected {
-      background: var(--color-danger);
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      min-width: 220px;
+      transition: all 0.2s ease;
     }
 
-    .status-dot.connecting {
-      background: var(--color-warning);
-      animation: pulse 1s infinite;
+    .search-box:focus-within {
+      border-color: var(--color-blue);
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+    .search-box svg {
+      color: var(--color-text-light);
+      flex-shrink: 0;
     }
 
-    .btn-settings {
+    .search-box input {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--color-text);
+      width: 100%;
+      background: transparent;
+    }
+
+    .search-box input::placeholder {
+      color: var(--color-text-light);
+    }
+
+    .preview-btn {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -150,12 +181,16 @@
       font-size: 14px;
       font-weight: 500;
       color: var(--color-text);
-      cursor: pointer;
+      text-decoration: none;
       transition: all 0.2s ease;
     }
 
-    .btn-settings:hover {
+    .preview-btn:hover {
       border-color: var(--color-blue);
+      color: var(--color-blue);
+    }
+
+    .preview-btn svg {
       color: var(--color-blue);
     }
 
@@ -986,6 +1021,406 @@
       pointer-events: none;
     }
 
+    /* Drag and Drop */
+    .draggable {
+      cursor: grab;
+      transition: all 0.2s ease;
+    }
+
+    .draggable:active {
+      cursor: grabbing;
+    }
+
+    .draggable.dragging {
+      opacity: 0.5;
+      transform: scale(1.02);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .drag-handle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      color: var(--color-text-light);
+      cursor: grab;
+      flex-shrink: 0;
+      margin-right: 8px;
+    }
+
+    .drag-handle:hover {
+      color: var(--color-text-muted);
+    }
+
+    .drag-over {
+      border-color: var(--color-blue) !important;
+      background: rgba(33, 150, 243, 0.05) !important;
+    }
+
+    /* Bulk Actions */
+    .bulk-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--color-border);
+      border-radius: 4px;
+      cursor: pointer;
+      appearance: none;
+      background: var(--color-white);
+      flex-shrink: 0;
+      margin-right: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .bulk-checkbox:checked {
+      background: var(--color-blue);
+      border-color: var(--color-blue);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-size: 12px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .bulk-checkbox:hover {
+      border-color: var(--color-blue);
+    }
+
+    .bulk-action-bar {
+      display: none;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(0, 188, 212, 0.1) 100%);
+      border: 1px solid rgba(33, 150, 243, 0.2);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      animation: slideIn 0.2s ease;
+    }
+
+    .bulk-action-bar.active {
+      display: flex;
+    }
+
+    .bulk-action-bar .selected-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-blue);
+    }
+
+    .bulk-action-bar .bulk-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      font-family: inherit;
+    }
+
+    .bulk-action-bar .bulk-btn.delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--color-danger);
+    }
+
+    .bulk-action-bar .bulk-btn.delete:hover {
+      background: var(--color-danger);
+      color: white;
+    }
+
+    .bulk-action-bar .bulk-btn.deactivate {
+      background: rgba(107, 114, 128, 0.1);
+      color: var(--color-text-muted);
+    }
+
+    .bulk-action-bar .bulk-btn.deactivate:hover {
+      background: var(--color-text-muted);
+      color: white;
+    }
+
+    .bulk-action-bar .bulk-btn.clear {
+      background: transparent;
+      color: var(--color-text-muted);
+      margin-left: auto;
+    }
+
+    .bulk-action-bar .bulk-btn.clear:hover {
+      color: var(--color-text);
+    }
+
+    .select-all-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    /* Color-coded zones */
+    .zone-color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .zone-color-picker {
+      width: 40px;
+      height: 32px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .team-zone {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Image Upload */
+    .avatar-upload-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-upload-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-border);
+    }
+
+    .avatar-upload-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .avatar-upload-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-white);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .avatar-upload-btn:hover {
+      border-color: var(--color-blue);
+      color: var(--color-blue);
+    }
+
+    .avatar-upload-btn.primary {
+      background: var(--color-blue);
+      border-color: var(--color-blue);
+      color: white;
+    }
+
+    .avatar-upload-btn.primary:hover {
+      background: var(--color-blue-dark);
+    }
+
+    .avatar-file-input {
+      display: none;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .container {
+        padding: 24px 20px;
+      }
+
+      .hero-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .header-right {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .search-box {
+        flex: 1;
+        min-width: 180px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px 12px;
+      }
+
+      .header-left h1 {
+        font-size: 24px;
+      }
+
+      .hero-cards {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 16px;
+      }
+
+      .stat-card-value {
+        font-size: 24px;
+      }
+
+      .tabs {
+        padding: 0 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .tab {
+        padding: 14px 16px;
+        white-space: nowrap;
+        font-size: 14px;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .add-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .team-card {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .team-info {
+        flex: 1 1 100%;
+        order: 2;
+      }
+
+      .team-avatar {
+        order: 1;
+      }
+
+      .team-zone {
+        order: 3;
+      }
+
+      .team-contact-info {
+        order: 4;
+        flex: 1;
+      }
+
+      .table-actions {
+        order: 5;
+      }
+
+      .link-item {
+        flex-wrap: wrap;
+      }
+
+      .link-info {
+        flex: 1 1 calc(100% - 70px);
+      }
+
+      .modal {
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+      }
+
+      .modal-body {
+        max-height: calc(100vh - 180px);
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .zone-card {
+        padding: 16px;
+      }
+
+      .bulk-action-bar {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .bulk-action-bar .bulk-btn.clear {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .subsection-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .subsection-header .add-btn {
+        width: 100%;
+      }
+
+      .drag-handle {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-cards {
+        grid-template-columns: 1fr !important;
+      }
+
+      .header-right {
+        flex-direction: column;
+      }
+
+      .search-box, .preview-btn, .date-display {
+        width: 100%;
+      }
+
+      .preview-btn {
+        justify-content: center;
+      }
+
+      .team-card {
+        padding: 16px;
+      }
+
+      .team-contact-info {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
     /* Categories Grid */
     .categories-grid {
       display: flex;
@@ -1119,6 +1554,441 @@
       margin-top: 4px;
       line-height: 1.4;
     }
+
+    /* Zones Grid */
+    .zones-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .zone-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .zone-card:hover {
+      border-color: var(--color-blue);
+      box-shadow: var(--shadow-md);
+    }
+
+    .zone-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .zone-card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .zone-card-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(33, 150, 243, 0.1);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-blue);
+    }
+
+    .zone-card-title h4 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .zone-card-description {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .zone-card-stats {
+      display: flex;
+      gap: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .zone-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .zone-stat svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Drag and Drop Styles */
+    .drag-handle {
+      cursor: grab;
+      color: var(--color-text-light);
+      padding: 4px;
+      margin-right: 8px;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+
+    .drag-handle:hover {
+      opacity: 1;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .sortable-ghost {
+      opacity: 0.4;
+      background: rgba(33, 150, 243, 0.1);
+    }
+
+    .sortable-chosen {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .sortable-drag {
+      opacity: 1 !important;
+    }
+
+    /* Bulk Actions */
+    .bulk-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--color-border);
+      border-radius: 4px;
+      cursor: pointer;
+      appearance: none;
+      background: var(--color-white);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .bulk-checkbox:checked {
+      background: var(--color-blue);
+      border-color: var(--color-blue);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-size: 12px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .bulk-toolbar {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(0, 188, 212, 0.1) 100%);
+      border: 1px solid rgba(33, 150, 243, 0.2);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .bulk-toolbar.active {
+      display: flex;
+    }
+
+    .bulk-toolbar-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-blue);
+    }
+
+    .bulk-toolbar-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .bulk-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      font-family: inherit;
+    }
+
+    .bulk-btn-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--color-danger);
+    }
+
+    .bulk-btn-danger:hover {
+      background: var(--color-danger);
+      color: white;
+    }
+
+    .bulk-btn-secondary {
+      background: var(--color-white);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .bulk-btn-secondary:hover {
+      border-color: var(--color-blue);
+      color: var(--color-blue);
+    }
+
+    /* Image Upload */
+    .avatar-upload-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-upload-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-border);
+      background: var(--color-bg);
+    }
+
+    .avatar-upload-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .avatar-upload-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid var(--color-border);
+      background: var(--color-white);
+      color: var(--color-text);
+      font-family: inherit;
+    }
+
+    .avatar-upload-btn:hover {
+      border-color: var(--color-blue);
+      color: var(--color-blue);
+    }
+
+    .avatar-upload-btn.primary {
+      background: var(--gradient-primary);
+      border: none;
+      color: white;
+    }
+
+    .avatar-upload-input {
+      display: none;
+    }
+
+    .avatar-url-input {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    /* Zone Colors */
+    .zone-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: white;
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 1024px) {
+      .container {
+        padding: 24px 20px;
+      }
+
+      .hero-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .header-right {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .search-box {
+        flex: 1;
+        min-width: 180px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px 12px;
+      }
+
+      .header-left h1 {
+        font-size: 24px;
+      }
+
+      .hero-cards {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 16px;
+      }
+
+      .stat-card-value {
+        font-size: 24px;
+      }
+
+      .tabs {
+        padding: 0 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .tab {
+        padding: 14px 16px;
+        white-space: nowrap;
+        font-size: 14px;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .add-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .team-card {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .team-info {
+        flex: 1 1 100%;
+        order: 2;
+      }
+
+      .team-avatar {
+        order: 1;
+      }
+
+      .team-zone {
+        order: 3;
+      }
+
+      .team-contact-info {
+        order: 4;
+        flex: 1;
+      }
+
+      .table-actions {
+        order: 5;
+      }
+
+      .link-item {
+        flex-wrap: wrap;
+      }
+
+      .link-info {
+        flex: 1 1 calc(100% - 70px);
+      }
+
+      .modal {
+        max-width: 95%;
+        margin: 10px;
+        max-height: 95vh;
+      }
+
+      .modal-body {
+        max-height: calc(95vh - 140px);
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .data-table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .bulk-toolbar {
+        flex-wrap: wrap;
+      }
+
+      .bulk-toolbar-actions {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 8px;
+      }
+
+      .zones-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-cards {
+        grid-template-columns: 1fr !important;
+      }
+
+      .header-right {
+        flex-direction: column;
+      }
+
+      .search-box,
+      .preview-btn,
+      .date-display {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .preview-btn {
+        justify-content: center;
+      }
+
+      .subsection-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .subsection-header .add-btn {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1130,17 +2000,29 @@
         <p>Manage content, team members, and resources</p>
       </div>
       <div class="header-right">
-        <div class="status-indicator">
-          <span class="status-dot connecting" id="statusDot"></span>
-          <span id="statusText">Connecting...</span>
-        </div>
-        <button class="btn-settings" onclick="openSettingsModal()">
+        <div class="search-box">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+          <input type="text" id="globalSearch" placeholder="Search..." oninput="handleSearch(this.value)">
+        </div>
+        <a href="director-dashboard.html" target="_blank" class="preview-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
-          Settings
-        </button>
+          Preview
+        </a>
+        <div class="date-display">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+            <line x1="16" x2="16" y1="2" y2="6"></line>
+            <line x1="8" x2="8" y1="2" y2="6"></line>
+            <line x1="3" x2="21" y1="10" y2="10"></line>
+          </svg>
+          <span id="currentDate"></span>
+        </div>
       </div>
     </header>
 
@@ -1205,6 +2087,7 @@
         <button class="tab" onclick="switchTab('script')">Enrollment Script</button>
         <button class="tab" onclick="switchTab('links')">Links</button>
         <button class="tab" onclick="switchTab('team')">Team</button>
+        <button class="tab" onclick="switchTab('zones')">Zones</button>
       </div>
 
       <div class="content">
@@ -1443,6 +2326,19 @@
               Add Team Member
             </button>
           </div>
+          
+          <!-- Bulk Action Bar -->
+          <div id="bulkActionBar-team" class="bulk-action-bar">
+            <span class="selected-count">0 selected</span>
+            <button class="bulk-btn delete" onclick="bulkDelete('team')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              </svg>
+              Delete Selected
+            </button>
+            <button class="bulk-btn clear" onclick="clearBulkSelection('team')">Clear Selection</button>
+          </div>
+          
           <div id="teamContainer" class="team-grid">
             <div class="empty-state">
               <div class="empty-state-icon">
@@ -1453,6 +2349,40 @@
               </div>
               <h3>No team members yet</h3>
               <p>Add enrollment team members</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zones Section -->
+        <div id="zones" class="section hidden">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-title-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </span>
+              Zones
+            </h2>
+            <button class="add-btn" onclick="openZoneModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"></path>
+              </svg>
+              Add Zone
+            </button>
+          </div>
+          <p style="color: var(--color-text-muted); margin-bottom: 20px;">Manage geographic zones for team members and scheduling links.</p>
+          <div id="zonesContainer" class="zones-grid">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <h3>No zones yet</h3>
+              <p>Add zones to organize team members and links</p>
             </div>
           </div>
         </div>
@@ -1502,16 +2432,43 @@
     let links = [];
     let linkCategories = [];
     let team = [];
+    let zones = [];
     let scriptContent = '';
+    
+    // Zone colors palette
+    const zoneColors = [
+      '#2196F3', '#10B981', '#F59E0B', '#EF4444', 
+      '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16'
+    ];
+    
+    // Bulk selection tracking
+    let selectedItems = {
+      announcements: new Set(),
+      promos: new Set(),
+      policies: new Set(),
+      links: new Set(),
+      team: new Set()
+    };
+    
+    // Sortable instances
+    let sortableInstances = {};
 
     // ============================================
     // INITIALIZATION
     // ============================================
     async function initSupabase() {
       try {
+        // Set current date
+        const now = new Date();
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          month: 'short', 
+          day: 'numeric', 
+          year: 'numeric' 
+        });
+
         if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
           // Demo mode - use localStorage
-          updateConnectionStatus('demo');
           loadFromLocalStorage();
           return;
         }
@@ -1524,30 +2481,10 @@
         if (error) throw error;
         
         isConnected = true;
-        updateConnectionStatus('connected');
         await loadAllData();
       } catch (error) {
         console.error('Supabase connection error:', error);
-        updateConnectionStatus('disconnected');
         loadFromLocalStorage();
-      }
-    }
-
-    function updateConnectionStatus(status) {
-      const dot = document.getElementById('statusDot');
-      const text = document.getElementById('statusText');
-      
-      dot.className = 'status-dot';
-      
-      if (status === 'connected') {
-        dot.classList.add('connected');
-        text.textContent = 'Connected to Supabase';
-      } else if (status === 'demo') {
-        dot.style.background = 'var(--color-blue)';
-        text.textContent = 'Demo Mode (Local Storage)';
-      } else {
-        dot.classList.add('disconnected');
-        text.textContent = 'Disconnected';
       }
     }
 
@@ -1561,6 +2498,7 @@
       links = JSON.parse(localStorage.getItem('admin_links') || '[]');
       linkCategories = JSON.parse(localStorage.getItem('admin_link_categories') || '[]');
       team = JSON.parse(localStorage.getItem('admin_team') || '[]');
+      zones = JSON.parse(localStorage.getItem('admin_zones') || '[]');
       scriptContent = localStorage.getItem('admin_script') || getDefaultScript();
       
       renderAll();
@@ -1573,6 +2511,7 @@
       localStorage.setItem('admin_links', JSON.stringify(links));
       localStorage.setItem('admin_link_categories', JSON.stringify(linkCategories));
       localStorage.setItem('admin_team', JSON.stringify(team));
+      localStorage.setItem('admin_zones', JSON.stringify(zones));
       localStorage.setItem('admin_script', scriptContent);
     }
 
@@ -1599,13 +2538,14 @@
       if (!isConnected) return;
 
       try {
-        const [promosRes, announcementsRes, policiesRes, linkCategoriesRes, linksRes, teamRes, scriptRes] = await Promise.all([
+        const [promosRes, announcementsRes, policiesRes, linkCategoriesRes, linksRes, teamRes, zonesRes, scriptRes] = await Promise.all([
           supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
           supabaseClient.from('announcements').select('*').order('created_at', { ascending: false }),
           supabaseClient.from('policies').select('*').order('category'),
           supabaseClient.from('link_categories').select('*').order('name'),
           supabaseClient.from('links').select('*').order('category'),
           supabaseClient.from('team_members').select('*').order('name'),
+          supabaseClient.from('zones').select('*').order('name'),
           supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single()
         ]);
 
@@ -1615,6 +2555,7 @@
         linkCategories = linkCategoriesRes.data || [];
         links = linksRes.data || [];
         team = teamRes.data || [];
+        zones = zonesRes.data || [];
         scriptContent = scriptRes.data?.value || getDefaultScript();
 
         renderAll();
@@ -1634,6 +2575,7 @@
       renderLinkCategories();
       renderLinks();
       renderTeam();
+      renderZones();
       renderScript();
       updateStats();
     }
@@ -1716,8 +2658,9 @@
 
     function renderAnnouncements() {
       const container = document.getElementById('announcementsContainer');
+      const filtered = filterBySearch(announcements, ['title', 'content']);
       
-      if (announcements.length === 0) {
+      if (filtered.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">
@@ -1725,8 +2668,8 @@
                 <path d="m3 11 18-5v12L3 13v-2z"></path>
               </svg>
             </div>
-            <h3>No announcements yet</h3>
-            <p>Create your first announcement to get started</p>
+            <h3>${searchQuery ? 'No matching announcements' : 'No announcements yet'}</h3>
+            <p>${searchQuery ? 'Try a different search term' : 'Create your first announcement to get started'}</p>
           </div>
         `;
         return;
@@ -1743,7 +2686,7 @@
             </tr>
           </thead>
           <tbody>
-            ${announcements.map(a => `
+            ${filtered.map(a => `
               <tr>
                 <td>
                   <div class="table-title">${escapeHtml(a.title)}</div>
@@ -1913,8 +2856,9 @@
 
     function renderTeam() {
       const container = document.getElementById('teamContainer');
+      const filtered = filterBySearch(team, ['name', 'role', 'email', 'zone', 'description']);
       
-      if (team.length === 0) {
+      if (filtered.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">
@@ -1923,22 +2867,36 @@
                 <circle cx="9" cy="7" r="4"></circle>
               </svg>
             </div>
-            <h3>No team members yet</h3>
-            <p>Add enrollment team members</p>
+            <h3>${searchQuery ? 'No matching team members' : 'No team members yet'}</h3>
+            <p>${searchQuery ? 'Try a different search term' : 'Add enrollment team members'}</p>
           </div>
         `;
+        updateBulkActionBar('team', 0);
         return;
       }
 
-      container.innerHTML = team.map(t => `
-        <div class="team-card">
+      container.innerHTML = filtered.map((t, index) => {
+        const zoneColor = getZoneColor(t.zone);
+        const isSelected = selectedItems.team.has(t.id);
+        return `
+        <div class="team-card draggable" draggable="true" data-id="${t.id}" data-index="${index}">
+          <div class="drag-handle" title="Drag to reorder">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="19" r="1"></circle>
+              <circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="19" r="1"></circle>
+            </svg>
+          </div>
+          <input type="checkbox" class="bulk-checkbox" ${isSelected ? 'checked' : ''} onchange="toggleBulkSelect('team', '${t.id}')">
           <img src="${escapeHtml(t.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" alt="${escapeHtml(t.name)}" class="team-avatar">
           <div class="team-info">
             <h3 class="team-name">${escapeHtml(t.name)}</h3>
             <p class="team-role">${escapeHtml(t.role)}</p>
             ${t.description ? `<p class="team-description">${escapeHtml(t.description)}</p>` : ''}
           </div>
-          <span class="team-zone">${escapeHtml(t.zone || 'Central')}</span>
+          <span class="team-zone" style="background: ${zoneColor}20; color: ${zoneColor}; border: 1px solid ${zoneColor}40;">
+            <span class="zone-color-dot" style="background: ${zoneColor}"></span>
+            ${escapeHtml(t.zone || 'Central')}
+          </span>
           <div class="team-contact-info">
             <span>${escapeHtml(t.email)}</span>
             <span>Ext. ${escapeHtml(t.extension || '0000')}</span>
@@ -1956,7 +2914,81 @@
             </button>
           </div>
         </div>
-      `).join('');
+      `}).join('');
+      
+      updateBulkActionBar('team', selectedItems.team.size);
+      initDragDrop('teamContainer', 'team');
+    }
+
+    function renderZones() {
+      const container = document.getElementById('zonesContainer');
+      
+      if (zones.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <h3>No zones yet</h3>
+            <p>Add zones to organize team members and links</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = zones.map((z, index) => {
+        const teamCount = team.filter(t => t.zone === z.name).length;
+        const linkCount = links.filter(l => l.zone === z.name.toLowerCase()).length;
+        const zoneColor = z.color || zoneColors[index % zoneColors.length];
+        
+        return `
+          <div class="zone-card" style="border-top: 4px solid ${zoneColor};">
+            <div class="zone-card-header">
+              <div class="zone-card-title">
+                <div class="zone-card-icon" style="background: ${zoneColor}20; color: ${zoneColor};">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+                <h4>${escapeHtml(z.name)}</h4>
+              </div>
+              <div class="table-actions">
+                <button class="action-btn" onclick="editZone('${z.id}')" title="Edit">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                  </svg>
+                </button>
+                <button class="action-btn delete" onclick="confirmDelete('zone', '${z.id}')" title="Delete">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            ${z.description ? `<p class="zone-card-description">${escapeHtml(z.description)}</p>` : ''}
+            <div class="zone-card-stats">
+              <span class="zone-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+                ${teamCount} team member${teamCount !== 1 ? 's' : ''}
+              </span>
+              <span class="zone-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                ${linkCount} link${linkCount !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderScript() {
@@ -2328,6 +3360,13 @@
         `<option value="${escapeHtml(cat)}" ${link?.category === cat ? 'selected' : ''}>${escapeHtml(cat)}</option>`
       ).join('');
       
+      // Build zone options from zones array (with fallback defaults)
+      const defaultZones = ['north', 'south', 'east', 'west', 'central'];
+      const allZones = zones.length > 0 ? zones.map(z => z.name.toLowerCase()) : defaultZones;
+      const zoneOptions = allZones.map(zone => 
+        `<option value="${escapeHtml(zone)}" ${link?.zone === zone ? 'selected' : ''}>${escapeHtml(zone.charAt(0).toUpperCase() + zone.slice(1))}</option>`
+      ).join('');
+      
       document.getElementById('modalTitle').textContent = id ? 'Edit Link' : 'Add Link';
       document.getElementById('modalBody').innerHTML = `
         <div class="form-group">
@@ -2348,12 +3387,9 @@
           <label class="form-label">Zone (for scheduling links)</label>
           <select class="form-select" id="linkZone">
             <option value="" ${!link?.zone ? 'selected' : ''}>All Zones</option>
-            <option value="north" ${link?.zone === 'north' ? 'selected' : ''}>North</option>
-            <option value="south" ${link?.zone === 'south' ? 'selected' : ''}>South</option>
-            <option value="east" ${link?.zone === 'east' ? 'selected' : ''}>East</option>
-            <option value="west" ${link?.zone === 'west' ? 'selected' : ''}>West</option>
-            <option value="central" ${link?.zone === 'central' ? 'selected' : ''}>Central</option>
+            ${zoneOptions}
           </select>
+          ${zones.length === 0 ? '<p style="font-size: 12px; color: var(--color-text-muted); margin-top: 6px;">Add zones in the Zones tab to customize this list</p>' : ''}
         </div>
       `;
       
@@ -2416,13 +3452,42 @@
       
       const member = id ? team.find(t => t.id === id) : null;
       
+      // Build zone options from zones array (with fallback defaults)
+      const defaultZones = ['North', 'South', 'East', 'West', 'Central'];
+      const allZones = zones.length > 0 ? zones.map(z => z.name) : defaultZones;
+      const zoneOptions = allZones.map(zone => {
+        const zoneColor = getZoneColor(zone);
+        return `<option value="${escapeHtml(zone)}" ${member?.zone === zone ? 'selected' : ''}>${escapeHtml(zone)}</option>`;
+      }).join('');
+      
       document.getElementById('modalTitle').textContent = id ? 'Edit Team Member' : 'Add Team Member';
       document.getElementById('modalBody').innerHTML = `
         <div class="form-group">
-          <label class="form-label">Photo URL</label>
-          <div class="avatar-input-wrapper">
-            <img src="${escapeHtml(member?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="avatar-preview" id="avatarPreview">
-            <input type="url" class="form-input" id="teamAvatar" value="${escapeHtml(member?.avatar_url || '')}" placeholder="https://..." oninput="updateAvatarPreview(this.value)">
+          <label class="form-label">Photo</label>
+          <div class="avatar-upload-wrapper">
+            <img src="${escapeHtml(member?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="avatar-upload-preview" id="avatarPreview">
+            <div class="avatar-upload-actions">
+              <label class="avatar-upload-btn primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Upload
+                <input type="file" class="avatar-file-input" accept="image/*" onchange="handleImageUpload(this)">
+              </label>
+              <button type="button" class="avatar-upload-btn" onclick="toggleUrlInput()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                URL
+              </button>
+            </div>
+            <div id="urlInputWrapper" style="display: none; width: 100%; margin-top: 8px;">
+              <input type="url" class="form-input" id="teamAvatar" value="${escapeHtml(member?.avatar_url || '')}" placeholder="https://..." oninput="updateAvatarFromUrl(this.value)">
+            </div>
+            <input type="hidden" id="teamAvatarData" value="">
           </div>
         </div>
         <div class="form-row">
@@ -2452,12 +3517,9 @@
         <div class="form-group">
           <label class="form-label">Zone</label>
           <select class="form-select" id="teamZone">
-            <option value="North" ${member?.zone === 'North' ? 'selected' : ''}>North</option>
-            <option value="South" ${member?.zone === 'South' ? 'selected' : ''}>South</option>
-            <option value="East" ${member?.zone === 'East' ? 'selected' : ''}>East</option>
-            <option value="West" ${member?.zone === 'West' ? 'selected' : ''}>West</option>
-            <option value="Central" ${member?.zone === 'Central' ? 'selected' : ''}>Central</option>
+            ${zoneOptions}
           </select>
+          ${zones.length === 0 ? '<p style="font-size: 12px; color: var(--color-text-muted); margin-top: 6px;">Add zones in the Zones tab to customize this list</p>' : ''}
         </div>
       `;
       
@@ -2472,12 +3534,48 @@
       openTeamModal(id);
     }
 
-    function updateAvatarPreview(url) {
-      const preview = document.getElementById('avatarPreview');
-      preview.src = url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+    function toggleUrlInput() {
+      const wrapper = document.getElementById('urlInputWrapper');
+      wrapper.style.display = wrapper.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleImageUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select an image file', 'error');
+        return;
+      }
+      
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Image must be less than 2MB', 'error');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('avatarPreview').src = e.target.result;
+        document.getElementById('teamAvatarData').value = e.target.result;
+        document.getElementById('teamAvatar').value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateAvatarFromUrl(url) {
+      if (url) {
+        document.getElementById('avatarPreview').src = url;
+        document.getElementById('teamAvatarData').value = '';
+      } else {
+        document.getElementById('avatarPreview').src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+      }
     }
 
     async function saveTeamMember() {
+      // Get avatar from either uploaded data or URL
+      const avatarData = document.getElementById('teamAvatarData').value;
+      const avatarUrl = document.getElementById('teamAvatar').value;
+      
       const data = {
         name: document.getElementById('teamName').value,
         role: document.getElementById('teamRole').value,
@@ -2485,7 +3583,7 @@
         email: document.getElementById('teamEmail').value,
         extension: document.getElementById('teamExtension').value,
         zone: document.getElementById('teamZone').value,
-        avatar_url: document.getElementById('teamAvatar').value || null
+        avatar_url: avatarData || avatarUrl || null
       };
 
       if (!data.name || !data.email) {
@@ -2521,6 +3619,90 @@
       }
     }
 
+    // Zone Modal
+    function openZoneModal(id = null) {
+      currentEditType = 'zone';
+      currentEditId = id;
+      
+      const zone = id ? zones.find(z => z.id === id) : null;
+      const defaultColor = zone?.color || zoneColors[zones.length % zoneColors.length];
+      
+      document.getElementById('modalTitle').textContent = id ? 'Edit Zone' : 'Add Zone';
+      document.getElementById('modalBody').innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Zone Name</label>
+          <input type="text" class="form-input" id="zoneName" value="${escapeHtml(zone?.name || '')}" placeholder="e.g., North, South, Downtown">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Zone Color</label>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="color" class="zone-color-picker" id="zoneColor" value="${defaultColor}">
+            <div style="display: flex; gap: 6px;">
+              ${zoneColors.map(color => `
+                <button type="button" onclick="document.getElementById('zoneColor').value='${color}'" 
+                  style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid ${color === defaultColor ? '#333' : 'transparent'}; background: ${color}; cursor: pointer;"
+                  title="${color}"></button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description (optional)</label>
+          <textarea class="form-textarea" id="zoneDescription" placeholder="Describe this zone's coverage area...">${escapeHtml(zone?.description || '')}</textarea>
+        </div>
+      `;
+      
+      document.getElementById('modalFooter').innerHTML = `
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveZone()">Save</button>
+      `;
+      openModal();
+    }
+
+    function editZone(id) {
+      openZoneModal(id);
+    }
+
+    async function saveZone() {
+      const data = {
+        name: document.getElementById('zoneName').value,
+        description: document.getElementById('zoneDescription').value,
+        color: document.getElementById('zoneColor').value
+      };
+
+      if (!data.name) {
+        showToast('Please enter a zone name', 'error');
+        return;
+      }
+
+      try {
+        if (isConnected) {
+          if (currentEditId) {
+            await supabaseClient.from('zones').update(data).eq('id', currentEditId);
+          } else {
+            await supabaseClient.from('zones').insert(data);
+          }
+          await loadAllData();
+        } else {
+          if (currentEditId) {
+            const idx = zones.findIndex(z => z.id === currentEditId);
+            zones[idx] = { ...zones[idx], ...data };
+          } else {
+            data.id = Date.now().toString();
+            zones.push(data);
+          }
+          saveToLocalStorage();
+          renderAll();
+        }
+        
+        showToast(currentEditId ? 'Zone updated' : 'Zone created', 'success');
+        closeModal();
+      } catch (error) {
+        console.error('Error saving zone:', error);
+        showToast('Error saving zone', 'error');
+      }
+    }
+
     // Delete Confirmation
     function confirmDelete(type, id) {
       currentEditType = type;
@@ -2532,7 +3714,8 @@
         policy: 'policy',
         linkCategory: 'category',
         link: 'link',
-        team: 'team member'
+        team: 'team member',
+        zone: 'zone'
       };
 
       document.getElementById('modalTitle').textContent = 'Confirm Delete';
@@ -2566,7 +3749,8 @@
           policy: 'policies',
           linkCategory: 'link_categories',
           link: 'links',
-          team: 'team_members'
+          team: 'team_members',
+          zone: 'zones'
         };
 
         if (isConnected) {
@@ -2585,6 +3769,8 @@
             links = links.filter(l => l.id !== currentEditId);
           } else if (currentEditType === 'team') {
             team = team.filter(t => t.id !== currentEditId);
+          } else if (currentEditType === 'zone') {
+            zones = zones.filter(z => z.id !== currentEditId);
           }
           saveToLocalStorage();
           renderAll();
@@ -2628,46 +3814,6 @@
       }
     }
 
-    // Settings Modal
-    function openSettingsModal() {
-      document.getElementById('modalTitle').textContent = 'Settings';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="settings-grid">
-          <div class="settings-item">
-            <div class="settings-item-info">
-              <h4>Supabase URL</h4>
-              <p>Your Supabase project URL</p>
-            </div>
-          </div>
-          <div class="form-group">
-            <input type="text" class="form-input" id="settingsSupabaseUrl" value="${SUPABASE_URL}" placeholder="https://xxx.supabase.co">
-          </div>
-          <div class="settings-item">
-            <div class="settings-item-info">
-              <h4>Supabase Anon Key</h4>
-              <p>Your Supabase anonymous key</p>
-            </div>
-          </div>
-          <div class="form-group">
-            <input type="password" class="form-input" id="settingsSupabaseKey" value="${SUPABASE_ANON_KEY}" placeholder="eyJ...">
-          </div>
-        </div>
-        <div style="margin-top: 20px; padding: 16px; background: rgba(33, 150, 243, 0.1); border-radius: var(--radius-md);">
-          <p style="font-size: 13px; color: var(--color-text-muted);">
-            <strong>Note:</strong> Changes require a page reload. Data will sync with Supabase once connected. In demo mode, data is stored in your browser's local storage.
-          </p>
-        </div>
-      `;
-      
-      document.getElementById('modalSaveBtn').onclick = saveSettings;
-      openModal();
-    }
-
-    function saveSettings() {
-      showToast('Settings saved - please reload the page', 'success');
-      closeModal();
-    }
-
     // ============================================
     // UTILITIES
     // ============================================
@@ -2702,6 +3848,234 @@
         toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 300);
       }, 3000);
+    }
+
+    // Search functionality
+    let searchQuery = '';
+    
+    function handleSearch(query) {
+      searchQuery = query.toLowerCase();
+      renderAll();
+    }
+
+    function filterBySearch(items, fields) {
+      if (!searchQuery) return items;
+      return items.filter(item => 
+        fields.some(field => 
+          (item[field] || '').toLowerCase().includes(searchQuery)
+        )
+      );
+    }
+
+    // ============================================
+    // ZONE COLOR HELPERS
+    // ============================================
+    function getZoneColor(zoneName) {
+      if (!zoneName) return zoneColors[0];
+      const zoneIndex = zones.findIndex(z => z.name.toLowerCase() === zoneName.toLowerCase());
+      if (zoneIndex >= 0 && zones[zoneIndex].color) {
+        return zones[zoneIndex].color;
+      }
+      // Hash the zone name to get consistent color
+      let hash = 0;
+      for (let i = 0; i < zoneName.length; i++) {
+        hash = zoneName.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return zoneColors[Math.abs(hash) % zoneColors.length];
+    }
+
+    function getZoneBadgeStyle(zoneName) {
+      const color = getZoneColor(zoneName);
+      return `background: ${color}20; color: ${color}; border: 1px solid ${color}40;`;
+    }
+
+    // ============================================
+    // BULK ACTION HELPERS
+    // ============================================
+    function toggleSelectAll(type, checked) {
+      const items = type === 'announcements' ? announcements :
+                    type === 'promos' ? promos :
+                    type === 'policies' ? policies :
+                    type === 'links' ? links :
+                    type === 'team' ? team : [];
+      
+      if (checked) {
+        items.forEach(item => selectedItems[type].add(item.id));
+      } else {
+        selectedItems[type].clear();
+      }
+      renderAll();
+    }
+
+    function toggleBulkSelect(type, id) {
+      if (selectedItems[type].has(id)) {
+        selectedItems[type].delete(id);
+      } else {
+        selectedItems[type].add(id);
+      }
+      updateBulkActionBar(type, selectedItems[type].size);
+    }
+
+    function updateBulkActionBar(type, count) {
+      const toolbar = document.getElementById(`bulkActionBar-${type}`);
+      if (toolbar) {
+        if (count > 0) {
+          toolbar.classList.add('active');
+          toolbar.querySelector('.selected-count').textContent = `${count} selected`;
+        } else {
+          toolbar.classList.remove('active');
+        }
+      }
+    }
+
+    function clearBulkSelection(type) {
+      selectedItems[type].clear();
+      renderAll();
+      updateBulkActionBar(type, 0);
+    }
+
+    async function bulkDelete(type) {
+      const count = selectedItems[type].size;
+      if (count === 0) return;
+      
+      if (!confirm(`Are you sure you want to delete ${count} item(s)?`)) return;
+      
+      const tables = {
+        announcements: 'announcements',
+        promos: 'promos',
+        policies: 'policies',
+        links: 'links',
+        team: 'team_members'
+      };
+      
+      try {
+        const ids = Array.from(selectedItems[type]);
+        
+        if (isConnected) {
+          await supabaseClient.from(tables[type]).delete().in('id', ids);
+          await loadAllData();
+        } else {
+          if (type === 'announcements') {
+            announcements = announcements.filter(a => !ids.includes(a.id));
+          } else if (type === 'promos') {
+            promos = promos.filter(p => !ids.includes(p.id));
+          } else if (type === 'policies') {
+            policies = policies.filter(p => !ids.includes(p.id));
+          } else if (type === 'links') {
+            links = links.filter(l => !ids.includes(l.id));
+          } else if (type === 'team') {
+            team = team.filter(t => !ids.includes(t.id));
+          }
+          saveToLocalStorage();
+        }
+        
+        selectedItems[type].clear();
+        renderAll();
+        showToast(`${count} item(s) deleted`, 'success');
+      } catch (error) {
+        console.error('Bulk delete error:', error);
+        showToast('Error deleting items', 'error');
+      }
+    }
+
+    // ============================================
+    // DRAG AND DROP HELPERS
+    // ============================================
+    function initDragDrop(containerId, type) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      const items = container.querySelectorAll('.draggable');
+      
+      items.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragend', handleDragEnd);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', (e) => handleDrop(e, type));
+        item.addEventListener('dragleave', handleDragLeave);
+      });
+    }
+
+    let draggedItem = null;
+    let draggedIndex = null;
+
+    function handleDragStart(e) {
+      draggedItem = this;
+      draggedIndex = parseInt(this.dataset.index);
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragEnd(e) {
+      this.classList.remove('dragging');
+      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (this !== draggedItem) {
+        this.classList.add('drag-over');
+      }
+    }
+
+    function handleDragLeave(e) {
+      this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, type) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      
+      if (this === draggedItem) return;
+      
+      const dropIndex = parseInt(this.dataset.index);
+      
+      if (draggedIndex !== dropIndex) {
+        reorderItems(type, draggedIndex, dropIndex);
+      }
+    }
+
+    async function reorderItems(type, fromIndex, toIndex) {
+      let items;
+      if (type === 'announcements') items = announcements;
+      else if (type === 'promos') items = promos;
+      else if (type === 'links') items = links;
+      else if (type === 'team') items = team;
+      else if (type === 'policies') items = policies;
+      else return;
+      
+      // Reorder array
+      const [removed] = items.splice(fromIndex, 1);
+      items.splice(toIndex, 0, removed);
+      
+      // Update sort_order for all items
+      items.forEach((item, index) => {
+        item.sort_order = index;
+      });
+      
+      if (isConnected) {
+        const tables = {
+          announcements: 'announcements',
+          promos: 'promos',
+          policies: 'policies',
+          links: 'links',
+          team: 'team_members'
+        };
+        
+        try {
+          for (const item of items) {
+            await supabaseClient.from(tables[type]).update({ sort_order: item.sort_order }).eq('id', item.id);
+          }
+        } catch (error) {
+          console.error('Reorder error:', error);
+        }
+      } else {
+        saveToLocalStorage();
+      }
+      
+      renderAll();
+      showToast('Order updated', 'success');
     }
 
     // Initialize on load

@@ -6,7 +6,6 @@
   <title>Admin Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -14,7 +13,6 @@
       --color-bg: #F5F5F7;
       --color-white: #FFFFFF;
       --color-coral: #F97B5F;
-      --color-coral-dark: #E56A4F;
       --color-pink: #F472B6;
       --gradient-primary: linear-gradient(135deg, #F97B5F 0%, #F472B6 100%);
       --color-text: #1F2937;
@@ -23,1068 +21,582 @@
       --color-border: #E5E7EB;
       --color-success: #10B981;
       --color-warning: #F59E0B;
-      --color-danger: #EF4444;
       --color-blue: #3B82F6;
+      --color-danger: #EF4444;
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
       --sidebar-width: 260px;
     }
 
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--color-bg);
-      color: var(--color-text);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--color-bg); color: var(--color-text); min-height: 100vh; line-height: 1.6; }
     .app-layout { display: flex; min-height: 100vh; }
 
     /* Sidebar */
-    .sidebar {
-      width: var(--sidebar-width);
-      background: var(--color-white);
-      border-right: 1px solid var(--color-border);
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      z-index: 100;
-      transition: transform 0.3s ease;
-    }
-
+    .sidebar { width: var(--sidebar-width); background: var(--color-white); border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; }
     .sidebar-header { padding: 20px; border-bottom: 1px solid var(--color-border); }
-
     .sidebar-logo { display: flex; align-items: center; gap: 12px; }
-
-    .sidebar-logo-icon {
-      width: 42px;
-      height: 42px;
-      background: var(--gradient-primary);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .sidebar-logo-text h1 { font-size: 15px; font-weight: 700; color: var(--color-text); }
+    .sidebar-logo-icon { width: 42px; height: 42px; background: var(--gradient-primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; }
+    .sidebar-logo-text h1 { font-size: 15px; font-weight: 700; }
     .sidebar-logo-text p { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
-
     .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
-
     .nav-section { margin-bottom: 20px; }
-    .nav-section-title {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--color-text-light);
-      padding: 0 12px;
-      margin-bottom: 8px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      color: var(--color-text-muted);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      margin-bottom: 2px;
-    }
-
+    .nav-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--color-text-light); padding: 0 12px; margin-bottom: 8px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--color-text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
     .nav-item:hover { background: var(--color-bg); color: var(--color-text); }
-    .nav-item.active {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.12) 0%, rgba(244, 114, 182, 0.12) 100%);
-      color: var(--color-coral);
-    }
-    .nav-item.active svg { color: var(--color-coral); }
+    .nav-item.active { background: linear-gradient(135deg, rgba(249,123,95,0.12) 0%, rgba(244,114,182,0.12) 100%); color: var(--color-coral); }
     .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-
     .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--color-border); }
 
-    .preview-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 10px 16px;
-      background: var(--gradient-primary);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity 0.15s;
-    }
+    /* Mobile */
+    .mobile-header { display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--color-white); border-bottom: 1px solid var(--color-border); padding: 0 16px; align-items: center; justify-content: space-between; z-index: 99; }
+    .mobile-menu-btn { width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text); border-radius: var(--radius-sm); }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
 
-    .preview-btn:hover { opacity: 0.9; }
-
-    /* Mobile Header */
-    .mobile-header {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 56px;
-      background: var(--color-white);
-      border-bottom: 1px solid var(--color-border);
-      padding: 0 16px;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 99;
-    }
-
-    .mobile-menu-btn {
-      width: 40px; height: 40px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-text);
-      border-radius: var(--radius-sm);
-    }
-
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 99;
-    }
-
-    /* Main Content */
-    .main-content {
-      flex: 1;
-      margin-left: var(--sidebar-width);
-      padding: 32px;
-      min-height: 100vh;
-    }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .page-header-text h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
-    .page-header-text p { font-size: 14px; color: var(--color-text-muted); }
-
+    /* Main */
+    .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 32px; min-height: 100vh; }
+    .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--color-text-muted); }
     .section { display: none; }
-    .section.active { display: block; animation: fadeIn 0.25s ease; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .section.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s ease;
-      font-family: inherit;
-    }
-
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
     .btn-primary { background: var(--gradient-primary); color: white; }
-    .btn-primary:hover { opacity: 0.9; box-shadow: var(--shadow-md); }
-
-    .btn-secondary {
-      background: var(--color-white);
-      color: var(--color-text);
-      border: 1px solid var(--color-border);
-    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--color-white); border: 1px solid var(--color-border); color: var(--color-text); }
     .btn-secondary:hover { background: var(--color-bg); }
-
     .btn-danger { background: var(--color-danger); color: white; }
-    .btn-danger:hover { background: #DC2626; }
-
     .btn-sm { padding: 6px 12px; font-size: 13px; }
-
-    .btn-icon {
-      width: 36px; height: 36px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-sm);
-      color: var(--color-text-muted);
-      cursor: pointer;
-    }
-
-    .btn-icon:hover { background: var(--color-bg); color: var(--color-text); }
-    .btn-icon.danger:hover { background: rgba(239, 68, 68, 0.1); color: var(--color-danger); border-color: var(--color-danger); }
+    .btn svg { width: 16px; height: 16px; }
 
     /* Cards */
-    .card {
-      background: var(--color-white);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border);
-    }
+    .card { background: var(--color-white); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); }
+    .card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .card-icon { width: 44px; height: 44px; background: linear-gradient(135deg, rgba(249,123,95,0.1) 0%, rgba(244,114,182,0.1) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-coral); }
+    .card-title { font-size: 16px; font-weight: 600; }
+    .card-subtitle { font-size: 13px; color: var(--color-text-muted); margin-top: 2px; }
 
-    /* Data Table */
-    .data-table { width: 100%; border-collapse: collapse; }
+    /* Hero Banner */
+    .hero-banner { background: var(--gradient-primary); border-radius: var(--radius-lg); padding: 32px; color: white; margin-bottom: 24px; position: relative; overflow: hidden; }
+    .hero-banner::before { content: ''; position: absolute; top: -50%; right: -10%; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+    .hero-banner h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; position: relative; }
+    .hero-banner > p { font-size: 15px; opacity: 0.9; max-width: 600px; position: relative; }
+    .promo-badge { display: inline-block; background: white; color: var(--color-coral); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 12px; position: relative; }
 
-    .data-table th {
-      text-align: left;
-      padding: 12px 16px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--color-text-muted);
-      border-bottom: 2px solid var(--color-border);
-      background: var(--color-bg);
-    }
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--color-white); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--color-border); }
+    .stat-card-label { font-size: 13px; color: var(--color-text-muted); margin-bottom: 6px; }
+    .stat-card-value { font-size: 28px; font-weight: 700; color: var(--color-coral); }
 
-    .data-table td {
-      padding: 14px 16px;
-      font-size: 14px;
-      border-bottom: 1px solid var(--color-border);
-      vertical-align: middle;
-    }
+    /* Announcements */
+    .announcement-list { display: flex; flex-direction: column; gap: 12px; }
+    .announcement-item { display: flex; gap: 16px; padding: 16px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
+    .announcement-date { text-align: center; width: 50px; flex-shrink: 0; }
+    .announcement-date .day { font-size: 24px; font-weight: 700; color: var(--color-coral); line-height: 1.2; }
+    .announcement-date .month { font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; }
+    .announcement-content { flex: 1; }
+    .announcement-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .announcement-content p { font-size: 13px; color: var(--color-text-muted); line-height: 1.5; }
 
-    .data-table tr:hover td { background: rgba(249, 123, 95, 0.03); }
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab-btn { padding: 10px 20px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: var(--color-white); font-size: 14px; font-weight: 500; color: var(--color-text-muted); cursor: pointer; transition: all 0.15s; }
+    .tab-btn:hover { border-color: var(--color-coral); color: var(--color-coral); }
+    .tab-btn.active { background: var(--gradient-primary); color: white; border-color: transparent; }
 
-    .data-table .drag-handle {
-      cursor: grab;
-      color: var(--color-text-light);
-      padding-right: 8px;
-    }
+    /* Promo/Discount Grid */
+    .promo-grid, .discount-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+    .promo-card, .discount-card { background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; position: relative; }
+    .promo-card:hover, .discount-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); }
+    .promo-status, .discount-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: capitalize; margin-bottom: 12px; }
+    .promo-status.active, .discount-status.active { background: rgba(16,185,129,0.1); color: var(--color-success); }
+    .promo-status.upcoming, .discount-status.upcoming { background: rgba(59,130,246,0.1); color: var(--color-blue); }
+    .promo-status.past, .discount-status.expired { background: var(--color-bg); color: var(--color-text-muted); }
+    .promo-card h4, .discount-card h4 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    .promo-dates, .discount-dates { font-size: 13px; color: var(--color-text-muted); margin-bottom: 12px; }
+    .promo-discount, .discount-amount { display: inline-block; background: var(--gradient-primary); color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+    .promo-card > p, .discount-card > p { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
+    .discount-code { display: inline-block; background: var(--color-bg); padding: 8px 16px; border-radius: var(--radius-sm); font-family: monospace; font-size: 14px; font-weight: 600; margin-top: 12px; letter-spacing: 1px; }
 
-    .data-table .drag-handle:active { cursor: grabbing; }
-    .data-table .actions { display: flex; gap: 8px; justify-content: flex-end; }
+    /* Contact Cards */
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .contact-card { background: var(--color-bg); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: flex-start; gap: 16px; position: relative; }
+    .contact-card-icon { width: 48px; height: 48px; background: var(--color-white); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-coral); flex-shrink: 0; }
+    .contact-card-content { flex: 1; }
+    .contact-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .contact-card p { font-size: 13px; color: var(--color-text-muted); margin-bottom: 10px; line-height: 1.5; }
 
-    /* Status Badges */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
-    }
+    /* Responsibility Lists */
+    .responsibility-section { margin-bottom: 28px; }
+    .responsibility-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .responsibility-badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+    .responsibility-badge.we-handle { background: rgba(16,185,129,0.1); color: var(--color-success); }
+    .responsibility-badge.you-handle { background: rgba(249,123,95,0.1); color: var(--color-coral); }
+    .responsibility-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+    .responsibility-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
+    .responsibility-item .icon-wrapper { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .responsibility-item.we-handle .icon-wrapper { background: rgba(16,185,129,0.15); color: var(--color-success); }
+    .responsibility-item.you-handle .icon-wrapper { background: rgba(249,123,95,0.15); color: var(--color-coral); }
+    .responsibility-item .icon-wrapper svg { width: 14px; height: 14px; }
+    .responsibility-item span { font-size: 14px; flex: 1; }
 
-    .status-badge.active { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
-    .status-badge.inactive { background: rgba(107, 114, 128, 0.1); color: var(--color-text-muted); }
-    .status-badge.upcoming { background: rgba(59, 130, 246, 0.1); color: var(--color-blue); }
-    .status-badge.ended { background: rgba(107, 114, 128, 0.1); color: var(--color-text-muted); }
+    /* Best Practices */
+    .practices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+    .practice-card { background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; border-left: 4px solid var(--color-coral); position: relative; }
+    .practice-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+    .practice-card h4 .number { width: 28px; height: 28px; background: var(--gradient-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .practice-card > p { font-size: 13px; color: var(--color-text-muted); line-height: 1.6; }
+    .practice-card ul { margin-top: 12px; padding-left: 18px; }
+    .practice-card li { font-size: 13px; color: var(--color-text-muted); margin-bottom: 6px; }
 
-    /* Avatar */
-    .avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--color-bg);
-    }
+    /* Policies */
+    .policy-category { margin-bottom: 28px; }
+    .policy-category-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .policy-category-title svg { color: var(--color-coral); width: 18px; height: 18px; }
+    .policy-list { display: flex; flex-direction: column; gap: 8px; }
+    .policy-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
+    .policy-item:hover { background: linear-gradient(135deg, rgba(249,123,95,0.08) 0%, rgba(244,114,182,0.08) 100%); }
+    .policy-item-info { display: flex; align-items: center; gap: 12px; }
+    .policy-item-icon { width: 36px; height: 36px; background: var(--color-white); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--color-coral); }
+    .policy-item h4 { font-size: 14px; font-weight: 500; }
 
-    .avatar-sm { width: 32px; height: 32px; }
-
-    /* Zone Badge */
-    .zone-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      background: var(--color-bg);
-      border-radius: 12px;
-      font-size: 12px;
-      color: var(--color-text-muted);
-      font-weight: 500;
-    }
-
-    /* Form Elements */
-    .form-group { margin-bottom: 20px; }
-
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--color-text);
-      margin-bottom: 6px;
-    }
-
-    .form-group .hint {
-      font-size: 12px;
-      color: var(--color-text-muted);
-      margin-top: 4px;
-    }
-
-    .form-input, .form-select, .form-textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-family: inherit;
-      background: var(--color-white);
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      outline: none;
-      border-color: var(--color-coral);
-      box-shadow: 0 0 0 3px rgba(249, 123, 95, 0.1);
-    }
-
-    .form-textarea { resize: vertical; min-height: 100px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-switch { display: flex; align-items: center; gap: 10px; }
-
-    .switch { position: relative; width: 44px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-
-    .switch-slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background: var(--color-border);
-      border-radius: 24px;
-      transition: 0.2s;
-    }
-
-    .switch-slider:before {
-      content: '';
-      position: absolute;
-      width: 18px; height: 18px;
-      left: 3px; bottom: 3px;
-      background: white;
-      border-radius: 50%;
-      transition: 0.2s;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .switch input:checked + .switch-slider { background: var(--color-success); }
-    .switch input:checked + .switch-slider:before { transform: translateX(20px); }
-
-    /* Avatar Upload */
-    .avatar-upload { display: flex; align-items: center; gap: 16px; }
-
-    .avatar-preview {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--color-bg);
-      background: var(--color-bg);
-    }
-
-    .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
-
-    /* Rich Text Editor */
-    .editor-toolbar {
-      display: flex;
-      gap: 4px;
-      padding: 10px;
-      background: var(--color-bg);
-      border: 1px solid var(--color-border);
-      border-bottom: none;
-      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-      flex-wrap: wrap;
-    }
-
-    .editor-btn {
-      width: 32px; height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: 4px;
-      cursor: pointer;
-      color: var(--color-text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.15s;
-    }
-
+    /* Script Editor */
+    .editor-toolbar { display: flex; gap: 6px; padding: 12px; background: var(--color-bg); border-radius: var(--radius-md) var(--radius-md) 0 0; flex-wrap: wrap; }
+    .editor-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 6px; cursor: pointer; color: var(--color-text-muted); font-size: 13px; font-weight: 600; }
     .editor-btn:hover { background: var(--color-coral); color: white; border-color: var(--color-coral); }
+    .script-container { background: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); overflow: hidden; }
+    .script-content { min-height: 400px; padding: 32px; font-size: 15px; line-height: 1.8; outline: none; }
+    .script-content h2 { font-size: 20px; font-weight: 600; margin: 28px 0 12px; color: var(--color-coral); }
+    .script-content h2:first-child { margin-top: 0; }
+    .script-content h3 { font-size: 16px; font-weight: 600; margin: 24px 0 10px; }
+    .script-content p { margin-bottom: 14px; }
+    .script-content ul, .script-content ol { margin: 14px 0; padding-left: 24px; }
+    .script-content li { margin-bottom: 8px; }
+    .script-content blockquote { background: linear-gradient(135deg, rgba(249,123,95,0.08) 0%, rgba(244,114,182,0.08) 100%); border-left: 4px solid var(--color-coral); padding: 16px 20px; margin: 18px 0; border-radius: 0 var(--radius-md) var(--radius-md) 0; font-style: italic; color: var(--color-text-muted); }
 
-    .editor-content {
-      min-height: 300px;
-      padding: 16px;
-      border: 1px solid var(--color-border);
-      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-      font-size: 14px;
-      line-height: 1.7;
-      background: var(--color-white);
-    }
+    /* Links */
+    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .link-card { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
+    .link-card:hover { background: linear-gradient(135deg, rgba(249,123,95,0.1) 0%, rgba(244,114,182,0.1) 100%); }
+    .link-card-icon { width: 44px; height: 44px; background: var(--color-white); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-coral); flex-shrink: 0; }
+    .link-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .link-card p { font-size: 12px; color: var(--color-text-muted); }
 
-    .editor-content:focus { outline: none; border-color: var(--color-coral); }
-    .editor-content h2 { font-size: 18px; margin: 16px 0 8px; color: var(--color-coral); }
-    .editor-content h3 { font-size: 16px; margin: 14px 0 6px; }
-    .editor-content p { margin-bottom: 12px; }
-    .editor-content ul, .editor-content ol { padding-left: 24px; margin: 12px 0; }
-    .editor-content li { margin-bottom: 6px; }
-    .editor-content blockquote {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.08) 0%, rgba(244, 114, 182, 0.08) 100%);
-      border-left: 4px solid var(--color-coral);
-      padding: 12px 16px;
-      margin: 12px 0;
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      font-style: italic;
-    }
+    /* Team */
+    .filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-label { font-size: 14px; color: var(--color-text-muted); }
+    .filter-select { padding: 10px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 14px; background: var(--color-white); cursor: pointer; }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .team-card { background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; position: relative; }
+    .team-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); }
+    .team-card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .team-card-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-bg); flex-shrink: 0; }
+    .team-card-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .team-card-info .role { font-size: 13px; color: var(--color-coral); font-weight: 500; }
+    .team-card-info .zone { display: inline-block; padding: 3px 10px; background: var(--color-bg); border-radius: 12px; font-size: 11px; color: var(--color-text-muted); margin-top: 4px; }
+    .team-card-details { border-top: 1px solid var(--color-border); padding-top: 16px; }
+    .team-detail-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
+    .team-detail-row svg { width: 16px; height: 16px; color: var(--color-text-muted); flex-shrink: 0; }
+    .team-detail-row a { color: var(--color-coral); text-decoration: none; }
+
+    /* Edit Controls */
+    .edit-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+    .announcement-item:hover .edit-actions, .promo-card:hover .edit-actions, .discount-card:hover .edit-actions,
+    .contact-card:hover .edit-actions, .responsibility-item:hover .edit-actions, .practice-card:hover .edit-actions,
+    .policy-item:hover .edit-actions, .link-card:hover .edit-actions, .team-card:hover .edit-actions { opacity: 1; }
+    .edit-btn-small { width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .edit-btn-small svg { width: 14px; height: 14px; }
+    .edit-btn-small.edit { background: var(--color-blue); color: white; }
+    .edit-btn-small.delete { background: var(--color-danger); color: white; }
+    .edit-btn-small:hover { transform: scale(1.1); }
+    .add-btn-inline { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; background: var(--color-bg); border: 2px dashed var(--color-border); border-radius: var(--radius-md); color: var(--color-text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .add-btn-inline:hover { border-color: var(--color-coral); color: var(--color-coral); background: linear-gradient(135deg, rgba(249,123,95,0.05) 0%, rgba(244,114,182,0.05) 100%); }
+    .add-btn-inline svg { width: 16px; height: 16px; }
 
     /* Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.2s ease;
-      padding: 20px;
-    }
-
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 20px; }
     .modal-overlay.active { opacity: 1; visibility: visible; }
-
-    .modal {
-      background: var(--color-white);
-      border-radius: var(--radius-lg);
-      max-width: 560px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      transform: scale(0.95);
-      transition: all 0.2s ease;
-    }
-
-    .modal-overlay.active .modal { transform: scale(1); }
-
-    .modal-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--color-border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .modal-header h3 { font-size: 18px; font-weight: 600; }
-
-    .modal-close {
-      width: 32px; height: 32px;
-      border: none;
-      background: var(--color-bg);
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-text-muted);
-      transition: all 0.15s ease;
-    }
-
+    .modal { background: var(--color-white); border-radius: var(--radius-lg); max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 24px; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { font-size: 20px; font-weight: 600; }
+    .modal-close { width: 36px; height: 36px; border: none; background: var(--color-bg); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); }
     .modal-close:hover { background: var(--color-coral); color: white; }
-
+    .modal-close svg { width: 18px; height: 18px; }
     .modal-body { padding: 24px; }
+    .modal-footer { padding: 20px 24px; border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end; gap: 12px; }
 
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1px solid var(--color-border);
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--color-text-muted);
-    }
-
-    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.4; }
-    .empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
-    .empty-state p { font-size: 14px; margin-bottom: 20px; }
+    /* Forms */
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--color-coral); box-shadow: 0 0 0 3px rgba(249,123,95,0.1); }
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-hint { font-size: 12px; color: var(--color-text-muted); margin-top: 6px; }
+    .switch { position: relative; width: 48px; height: 26px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch-slider { position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 26px; transition: 0.2s; }
+    .switch-slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+    .switch input:checked + .switch-slider { background: var(--color-success); }
+    .switch input:checked + .switch-slider:before { transform: translateX(22px); }
 
     /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 24px; right: 24px;
-      background: var(--color-text);
-      color: white;
-      padding: 14px 20px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: var(--shadow-lg);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 2000;
-    }
-
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--color-text); color: white; padding: 16px 24px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 2000; }
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.success { background: var(--color-success); }
     .toast.error { background: var(--color-danger); }
 
-    /* Connection Status */
-    .connection-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: var(--color-bg);
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 500;
-      margin-bottom: 12px;
-    }
+    /* Empty/Loading */
+    .empty-state { text-align: center; padding: 40px; color: var(--color-text-muted); }
+    .loading { text-align: center; padding: 60px; color: var(--color-text-muted); }
 
-    .connection-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .connection-dot.connected { background: var(--color-success); }
-    .connection-dot.disconnected { background: var(--color-warning); }
-
-    /* Mobile Responsive */
-    @media (max-width: 1024px) {
-      .form-row { grid-template-columns: 1fr; }
-    }
-
+    /* Mobile */
+    @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 768px) {
       .mobile-header { display: flex; }
-      .sidebar { transform: translateX(-100%); }
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
       .sidebar.open { transform: translateX(0); }
       .sidebar-overlay.open { display: block; }
-      .main-content { margin-left: 0; padding: 72px 16px 32px; }
-      .page-header { flex-direction: column; align-items: stretch; }
-      .data-table { font-size: 13px; }
-      .data-table th, .data-table td { padding: 10px 12px; }
-      .modal { margin: 16px; }
+      .main-content { margin-left: 0; padding: 72px 20px 32px; }
+      .page-header { flex-direction: column; gap: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .practices-grid, .promo-grid, .discount-grid, .links-grid, .team-grid, .contact-grid, .responsibility-list { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
     }
+    @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <div class="mobile-header">
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-    </button>
-    <span style="font-size: 15px; font-weight: 700;">Admin Portal</span>
-    <div style="width: 40px;"></div>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <span style="font-size:15px;font-weight:700">Admin Portal</span>
+    <div style="width:40px"></div>
   </div>
-
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
   <div class="app-layout">
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <div class="sidebar-logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </div>
-          <div class="sidebar-logo-text">
-            <h1>Admin Portal</h1>
-            <p>Manage Content</p>
-          </div>
+          <div class="sidebar-logo-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></div>
+          <div class="sidebar-logo-text"><h1>Admin Portal</h1><p>Content Editor</p></div>
         </div>
       </div>
-
       <nav class="sidebar-nav">
         <div class="nav-section">
-          <div class="nav-section-title">Content</div>
-          <a class="nav-item active" onclick="switchSection('announcements')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
-            Announcements
-          </a>
-          <a class="nav-item" onclick="switchSection('promos')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
-            Promotions
-          </a>
-          <a class="nav-item" onclick="switchSection('policies')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-            Policies
-          </a>
-          <a class="nav-item" onclick="switchSection('links')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-            Resources
-          </a>
-          <a class="nav-item" onclick="switchSection('script')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
-            Enrollment Script
-          </a>
+          <div class="nav-section-title">Overview</div>
+          <a class="nav-item active" onclick="switchSection('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+          <a class="nav-item" onclick="switchSection('promos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>Promotions</a>
+          <a class="nav-item" onclick="switchSection('discounts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>Discounts</a>
         </div>
-
         <div class="nav-section">
-          <div class="nav-section-title">Team</div>
-          <a class="nav-item" onclick="switchSection('team')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            Team Members
-          </a>
-          <a class="nav-item" onclick="switchSection('zones')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            Zones
-          </a>
+          <div class="nav-section-title">Guide</div>
+          <a class="nav-item" onclick="switchSection('working-with-us')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Working With Us</a>
+          <a class="nav-item" onclick="switchSection('best-practices')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Best Practices</a>
+          <a class="nav-item" onclick="switchSection('policies')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Policies</a>
+          <a class="nav-item" onclick="switchSection('script')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>Enrollment Script</a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Support</div>
+          <a class="nav-item" onclick="switchSection('resources')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Resources</a>
+          <a class="nav-item" onclick="switchSection('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Team</a>
         </div>
       </nav>
-
-      <div class="sidebar-footer">
-        <a href="director-dashboard.html" target="_blank" class="preview-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          Preview Director Portal
-        </a>
-      </div>
+      <div class="sidebar-footer"><p style="font-size:11px;color:var(--color-text-light)">© 2026 Enrollment Team</p></div>
     </aside>
 
     <main class="main-content">
-      <!-- Announcements Section -->
-      <section id="announcements" class="section active">
+      <!-- Dashboard -->
+      <section id="dashboard" class="section active">
         <div class="page-header">
-          <div class="page-header-text">
-            <h1>Announcements</h1>
-            <p>Manage announcements displayed on the director dashboard.</p>
-          </div>
-          <button class="btn btn-primary" onclick="openAnnouncementModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Add Announcement
-          </button>
+          <div><h1>Dashboard</h1><p>Main dashboard content directors see first.</p></div>
+          <button class="btn btn-primary" onclick="openModal('announcement')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Announcement</button>
         </div>
-        <div class="connection-status">
-          <div class="connection-dot" id="connectionDot"></div>
-          <span id="connectionText">Checking connection...</span>
+        <div class="hero-banner"><h2 id="promoTitle">Loading...</h2><p id="promoDescription"></p><span class="promo-badge" id="promoBadge" style="display:none"></span></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-card-label">Announcements</div><div class="stat-card-value" id="statAnnouncements">-</div></div>
+          <div class="stat-card"><div class="stat-card-label">Active Promos</div><div class="stat-card-value" id="statPromos">-</div></div>
+          <div class="stat-card"><div class="stat-card-label">Team Members</div><div class="stat-card-value" id="statTeam">-</div></div>
+          <div class="stat-card"><div class="stat-card-label">Resources</div><div class="stat-card-value" id="statLinks">-</div></div>
         </div>
         <div class="card">
-          <table class="data-table"><thead><tr>
-            <th style="width: 40px;"></th><th>Title</th><th>Date</th><th>Status</th><th style="width: 120px; text-align: right;">Actions</th>
-          </tr></thead><tbody id="announcementsList"></tbody></table>
+          <div class="card-header"><div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div><div><div class="card-title">Recent Announcements</div><div class="card-subtitle">Latest updates</div></div></div>
+          <div class="announcement-list" id="announcementsList"><div class="loading">Loading...</div></div>
         </div>
       </section>
 
-      <!-- Promos Section -->
+      <!-- Promotions -->
       <section id="promos" class="section">
         <div class="page-header">
-          <div class="page-header-text"><h1>Promotions</h1><p>Manage promotional offers and campaigns.</p></div>
-          <button class="btn btn-primary" onclick="openPromoModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Add Promotion
-          </button>
+          <div><h1>Promotions</h1><p>Promotional campaigns for directors.</p></div>
+          <button class="btn btn-primary" onclick="openModal('promo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Promotion</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchPromoTab('active')">Active</button>
+          <button class="tab-btn" onclick="switchPromoTab('upcoming')">Upcoming</button>
+          <button class="tab-btn" onclick="switchPromoTab('past')">Past</button>
+        </div>
+        <div class="promo-grid" id="promoGrid"><div class="loading">Loading...</div></div>
+      </section>
+
+      <!-- Discounts -->
+      <section id="discounts" class="section">
+        <div class="page-header">
+          <div><h1>Discounts</h1><p>Manage discount codes and special offers.</p></div>
+          <button class="btn btn-primary" onclick="openModal('discount')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Discount</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchDiscountTab('active')">Active</button>
+          <button class="tab-btn" onclick="switchDiscountTab('upcoming')">Upcoming</button>
+          <button class="tab-btn" onclick="switchDiscountTab('expired')">Expired</button>
+        </div>
+        <div class="discount-grid" id="discountGrid"><div class="loading">Loading...</div></div>
+      </section>
+
+      <!-- Working With Us -->
+      <section id="working-with-us" class="section">
+        <div class="page-header">
+          <div><h1>Working With Us</h1><p>Contact methods and responsibilities.</p></div>
+          <button class="btn btn-primary" onclick="saveWorking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes</button>
         </div>
         <div class="card">
-          <table class="data-table"><thead><tr>
-            <th>Title</th><th>Discount</th><th>Start</th><th>End</th><th>Status</th><th style="width: 120px; text-align: right;">Actions</th>
-          </tr></thead><tbody id="promosList"></tbody></table>
+          <div class="card-header"><div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><div class="card-title">How to Reach Us</div><div class="card-subtitle">Contact methods</div></div></div>
+          <div class="contact-grid" id="contactGrid"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg></div><div><div class="card-title">Division of Responsibilities</div><div class="card-subtitle">Clear boundaries</div></div></div>
+          <div class="responsibility-section">
+            <div class="responsibility-header"><span class="responsibility-badge we-handle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> What We Handle</span><button class="btn btn-sm btn-secondary" onclick="addResp('we')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button></div>
+            <div class="responsibility-list" id="weHandleList"></div>
+          </div>
+          <div class="responsibility-section">
+            <div class="responsibility-header"><span class="responsibility-badge you-handle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg> What Directors Handle</span><button class="btn btn-sm btn-secondary" onclick="addResp('you')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button></div>
+            <div class="responsibility-list" id="youHandleList"></div>
+          </div>
         </div>
       </section>
 
-      <!-- Policies Section -->
+      <!-- Best Practices -->
+      <section id="best-practices" class="section">
+        <div class="page-header">
+          <div><h1>Best Practices</h1><p>Enrollment guidelines for directors.</p></div>
+          <button class="btn btn-primary" onclick="openModal('practice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Practice</button>
+        </div>
+        <div class="practices-grid" id="practicesGrid"><div class="loading">Loading...</div></div>
+      </section>
+
+      <!-- Policies -->
       <section id="policies" class="section">
         <div class="page-header">
-          <div class="page-header-text"><h1>Policies</h1><p>Manage policy documents and guidelines.</p></div>
-          <button class="btn btn-primary" onclick="openPolicyModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Add Policy
-          </button>
+          <div><h1>Policies</h1><p>Policy documents and guidelines.</p></div>
+          <button class="btn btn-primary" onclick="openModal('policy')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Policy</button>
         </div>
-        <div class="card">
-          <table class="data-table"><thead><tr>
-            <th style="width: 40px;"></th><th>Title</th><th>Category</th><th>URL</th><th style="width: 120px; text-align: right;">Actions</th>
-          </tr></thead><tbody id="policiesList"></tbody></table>
-        </div>
+        <div class="card"><div id="policiesContainer"><div class="loading">Loading...</div></div></div>
       </section>
 
-      <!-- Links Section -->
-      <section id="links" class="section">
-        <div class="page-header">
-          <div class="page-header-text"><h1>Resources & Links</h1><p>Manage quick links and resources for directors.</p></div>
-          <button class="btn btn-primary" onclick="openLinkModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Add Resource
-          </button>
-        </div>
-        <div class="card">
-          <table class="data-table"><thead><tr>
-            <th style="width: 40px;"></th><th>Title</th><th>Category</th><th>URL</th><th style="width: 120px; text-align: right;">Actions</th>
-          </tr></thead><tbody id="linksList"></tbody></table>
-        </div>
-      </section>
-
-      <!-- Script Section -->
+      <!-- Script -->
       <section id="script" class="section">
         <div class="page-header">
-          <div class="page-header-text"><h1>Enrollment Script</h1><p>Edit the enrollment script displayed to directors.</p></div>
-          <button class="btn btn-primary" onclick="saveScript()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            Save Script
-          </button>
+          <div><h1>Enrollment Script</h1><p>Script directors follow during tours.</p></div>
+          <button class="btn btn-primary" onclick="saveScript()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Script</button>
+        </div>
+        <div class="editor-toolbar">
+          <button class="editor-btn" onclick="fmt('h2')">H2</button>
+          <button class="editor-btn" onclick="fmt('h3')">H3</button>
+          <button class="editor-btn" onclick="fmt('p')">P</button>
+          <button class="editor-btn" onclick="document.execCommand('bold')"><b>B</b></button>
+          <button class="editor-btn" onclick="document.execCommand('italic')"><i>I</i></button>
+          <button class="editor-btn" onclick="document.execCommand('insertUnorderedList')">•</button>
+          <button class="editor-btn" onclick="document.execCommand('insertOrderedList')">1.</button>
+          <button class="editor-btn" onclick="fmt('blockquote')">"</button>
+        </div>
+        <div class="script-container" style="border-radius:0 0 var(--radius-lg) var(--radius-lg)"><div class="script-content" id="scriptContent" contenteditable="true"><p>Loading...</p></div></div>
+      </section>
+
+      <!-- Resources -->
+      <section id="resources" class="section">
+        <div class="page-header">
+          <div><h1>Resources</h1><p>Quick links for directors.</p></div>
+          <button class="btn btn-primary" onclick="openModal('link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Link</button>
         </div>
         <div class="card">
-          <div class="editor-toolbar">
-            <button class="editor-btn" onclick="formatText('h2')" title="Heading 2">H2</button>
-            <button class="editor-btn" onclick="formatText('h3')" title="Heading 3">H3</button>
-            <button class="editor-btn" onclick="formatText('p')" title="Paragraph">P</button>
-            <button class="editor-btn" onclick="document.execCommand('bold')" title="Bold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg></button>
-            <button class="editor-btn" onclick="document.execCommand('italic')" title="Italic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg></button>
-            <button class="editor-btn" onclick="document.execCommand('insertUnorderedList')" title="Bullet List">•</button>
-            <button class="editor-btn" onclick="document.execCommand('insertOrderedList')" title="Numbered List">1.</button>
-            <button class="editor-btn" onclick="formatText('blockquote')" title="Quote">"</button>
-          </div>
-          <div class="editor-content" id="scriptEditor" contenteditable="true"></div>
+          <div class="card-header"><div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div><div class="card-title">Quick Links</div><div class="card-subtitle">Resources and tools</div></div></div>
+          <div class="links-grid" id="linksGrid"><div class="loading">Loading...</div></div>
         </div>
       </section>
 
-      <!-- Team Section -->
+      <!-- Team -->
       <section id="team" class="section">
         <div class="page-header">
-          <div class="page-header-text"><h1>Team Members</h1><p>Manage enrollment team members.</p></div>
-          <button class="btn btn-primary" onclick="openTeamModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Add Team Member
-          </button>
+          <div><h1>Team</h1><p>Enrollment team contacts.</p></div>
+          <button class="btn btn-primary" onclick="openModal('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Member</button>
         </div>
-        <div class="card">
-          <table class="data-table"><thead><tr>
-            <th style="width: 40px;"></th><th>Member</th><th>Role</th><th>Email</th><th>Ext.</th><th>Zone</th><th style="width: 120px; text-align: right;">Actions</th>
-          </tr></thead><tbody id="teamList"></tbody></table>
+        <div class="filter-bar">
+          <span class="filter-label">Filter:</span>
+          <select class="filter-select" id="zoneFilter" onchange="renderTeam()"><option value="all">All Zones</option></select>
+          <button class="btn btn-sm btn-secondary" onclick="openModal('zone')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Zone</button>
         </div>
-      </section>
-
-      <!-- Zones Section -->
-      <section id="zones" class="section">
-        <div class="page-header">
-          <div class="page-header-text"><h1>Zones</h1><p>Manage geographic zones for team organization.</p></div>
-          <button class="btn btn-primary" onclick="openZoneModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Add Zone
-          </button>
-        </div>
-        <div class="card">
-          <table class="data-table"><thead><tr>
-            <th style="width: 40px;"></th><th>Zone Name</th><th>Color</th><th>Members</th><th style="width: 120px; text-align: right;">Actions</th>
-          </tr></thead><tbody id="zonesList"></tbody></table>
-        </div>
+        <div class="team-grid" id="teamGrid"><div class="loading">Loading...</div></div>
       </section>
     </main>
   </div>
 
-  <!-- Modals (Announcement, Promo, Policy, Link, Team, Zone, Delete) -->
-  <div class="modal-overlay" id="announcementModal" onclick="closeModal('announcementModal', event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header"><h3 id="announcementModalTitle">Add Announcement</h3><button class="modal-close" onclick="closeModal('announcementModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
-      <div class="modal-body">
-        <input type="hidden" id="announcementId">
-        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="announcementTitle" placeholder="Enter title"></div>
-        <div class="form-group"><label>Content</label><textarea class="form-textarea" id="announcementContent" placeholder="Enter details"></textarea></div>
-        <div class="form-row">
-          <div class="form-group"><label>Date</label><input type="date" class="form-input" id="announcementDate"></div>
-          <div class="form-group"><label>Status</label><div class="form-switch" style="margin-top: 8px;"><label class="switch"><input type="checkbox" id="announcementActive" checked><span class="switch-slider"></span></label><span>Active</span></div></div>
-        </div>
-      </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('announcementModal')">Cancel</button><button class="btn btn-primary" onclick="saveAnnouncement()">Save</button></div>
-    </div>
-  </div>
+  <!-- Modals -->
+  <div class="modal-overlay" id="announcementModal"><div class="modal"><div class="modal-header"><h3>Announcement</h3><button class="modal-close" onclick="closeModal('announcement')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="annId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="annTitle"></div><div class="form-group"><label class="form-label">Content</label><textarea class="form-textarea" id="annContent"></textarea></div><div class="form-row"><div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="annDate"></div><div class="form-group"><label class="form-label">Active</label><div style="margin-top:10px;display:flex;align-items:center;gap:10px"><label class="switch"><input type="checkbox" id="annActive" checked><span class="switch-slider"></span></label><span>Visible</span></div></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('announcement')">Cancel</button><button class="btn btn-primary" onclick="saveAnn()">Save</button></div></div></div>
 
-  <div class="modal-overlay" id="promoModal" onclick="closeModal('promoModal', event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header"><h3 id="promoModalTitle">Add Promotion</h3><button class="modal-close" onclick="closeModal('promoModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
-      <div class="modal-body">
-        <input type="hidden" id="promoId">
-        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="promoTitle" placeholder="e.g., Spring Enrollment Special"></div>
-        <div class="form-group"><label>Discount/Offer</label><input type="text" class="form-input" id="promoDiscount" placeholder="e.g., 50% Off Registration"></div>
-        <div class="form-group"><label>Description</label><textarea class="form-textarea" id="promoDescription" placeholder="Brief description"></textarea></div>
-        <div class="form-group"><label>Additional Details</label><textarea class="form-textarea" id="promoDetails" placeholder="Terms, conditions, etc."></textarea></div>
-        <div class="form-row">
-          <div class="form-group"><label>Start Date *</label><input type="date" class="form-input" id="promoStartDate"></div>
-          <div class="form-group"><label>End Date</label><input type="date" class="form-input" id="promoEndDate"><p class="hint">Leave blank for ongoing</p></div>
-        </div>
-      </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('promoModal')">Cancel</button><button class="btn btn-primary" onclick="savePromo()">Save</button></div>
-    </div>
-  </div>
+  <div class="modal-overlay" id="promoModal"><div class="modal"><div class="modal-header"><h3>Promotion</h3><button class="modal-close" onclick="closeModal('promo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="promoId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="promoTitleInput"></div><div class="form-group"><label class="form-label">Discount/Offer</label><input type="text" class="form-input" id="promoDiscount" placeholder="e.g. 50% Off"></div><div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="promoDesc"></textarea></div><div class="form-group"><label class="form-label">Details (Terms)</label><textarea class="form-textarea" id="promoDetails"></textarea></div><div class="form-row"><div class="form-group"><label class="form-label">Start Date *</label><input type="date" class="form-input" id="promoStart"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" class="form-input" id="promoEnd"><p class="form-hint">Leave blank for ongoing</p></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('promo')">Cancel</button><button class="btn btn-primary" onclick="savePromo()">Save</button></div></div></div>
 
-  <div class="modal-overlay" id="policyModal" onclick="closeModal('policyModal', event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header"><h3 id="policyModalTitle">Add Policy</h3><button class="modal-close" onclick="closeModal('policyModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
-      <div class="modal-body">
-        <input type="hidden" id="policyId">
-        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="policyTitle" placeholder="Policy name"></div>
-        <div class="form-group"><label>Category *</label><input type="text" class="form-input" id="policyCategory" placeholder="e.g., Enrollment, Safety"></div>
-        <div class="form-group"><label>Document URL *</label><input type="url" class="form-input" id="policyUrl" placeholder="https://..."></div>
-        <div class="form-group"><label>Description</label><textarea class="form-textarea" id="policyDescription" placeholder="Brief description (optional)"></textarea></div>
-      </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('policyModal')">Cancel</button><button class="btn btn-primary" onclick="savePolicy()">Save</button></div>
-    </div>
-  </div>
+  <div class="modal-overlay" id="discountModal"><div class="modal"><div class="modal-header"><h3>Discount</h3><button class="modal-close" onclick="closeModal('discount')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="discountId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="discountTitle" placeholder="e.g. New Family Discount"></div><div class="form-group"><label class="form-label">Code *</label><input type="text" class="form-input" id="discountCode" placeholder="e.g. WELCOME25" style="text-transform:uppercase;font-family:monospace"></div><div class="form-group"><label class="form-label">Amount/Value *</label><input type="text" class="form-input" id="discountAmount" placeholder="e.g. 25% Off or $100 Off"></div><div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="discountDesc"></textarea></div><div class="form-group"><label class="form-label">Terms & Conditions</label><textarea class="form-textarea" id="discountTerms" placeholder="e.g. Valid for new enrollments only"></textarea></div><div class="form-row"><div class="form-group"><label class="form-label">Start Date *</label><input type="date" class="form-input" id="discountStart"></div><div class="form-group"><label class="form-label">Expiry Date</label><input type="date" class="form-input" id="discountEnd"><p class="form-hint">Leave blank for no expiry</p></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('discount')">Cancel</button><button class="btn btn-primary" onclick="saveDiscount()">Save</button></div></div></div>
 
-  <div class="modal-overlay" id="linkModal" onclick="closeModal('linkModal', event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header"><h3 id="linkModalTitle">Add Resource</h3><button class="modal-close" onclick="closeModal('linkModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
-      <div class="modal-body">
-        <input type="hidden" id="linkId">
-        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="linkTitle" placeholder="Resource name"></div>
-        <div class="form-group"><label>Category</label><input type="text" class="form-input" id="linkCategory" placeholder="e.g., Forms, Tools"></div>
-        <div class="form-group"><label>URL *</label><input type="url" class="form-input" id="linkUrl" placeholder="https://..."></div>
-      </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('linkModal')">Cancel</button><button class="btn btn-primary" onclick="saveLink()">Save</button></div>
-    </div>
-  </div>
+  <div class="modal-overlay" id="practiceModal"><div class="modal"><div class="modal-header"><h3>Best Practice</h3><button class="modal-close" onclick="closeModal('practice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="practiceId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="practiceTitle"></div><div class="form-group"><label class="form-label">Description *</label><textarea class="form-textarea" id="practiceDesc"></textarea></div><div class="form-group"><label class="form-label">Tips (one per line)</label><textarea class="form-textarea" id="practiceTips" placeholder="Tip 1&#10;Tip 2"></textarea></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('practice')">Cancel</button><button class="btn btn-primary" onclick="savePractice()">Save</button></div></div></div>
 
-  <div class="modal-overlay" id="teamModal" onclick="closeModal('teamModal', event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header"><h3 id="teamModalTitle">Add Team Member</h3><button class="modal-close" onclick="closeModal('teamModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
-      <div class="modal-body">
-        <input type="hidden" id="teamMemberId">
-        <div class="form-group">
-          <label>Avatar</label>
-          <div class="avatar-upload">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" class="avatar-preview" id="teamAvatarPreview">
-            <div class="avatar-actions">
-              <input type="file" id="teamAvatarFile" accept="image/*" style="display: none;" onchange="previewAvatar(this)">
-              <button class="btn btn-sm btn-secondary" onclick="document.getElementById('teamAvatarFile').click()">Upload Image</button>
-              <input type="text" class="form-input" id="teamAvatarUrl" placeholder="Or paste image URL" style="font-size: 12px; padding: 6px 10px;">
-            </div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Name *</label><input type="text" class="form-input" id="teamName" placeholder="Full name"></div>
-          <div class="form-group"><label>Role</label><input type="text" class="form-input" id="teamRole" placeholder="e.g., Enrollment Specialist"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Email *</label><input type="email" class="form-input" id="teamEmail" placeholder="email@example.com"></div>
-          <div class="form-group"><label>Phone Extension</label><input type="text" class="form-input" id="teamExtension" placeholder="e.g., 1234"></div>
-        </div>
-        <div class="form-group"><label>Zone</label><select class="form-select" id="teamZone"><option value="">Select zone...</option></select></div>
-      </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('teamModal')">Cancel</button><button class="btn btn-primary" onclick="saveTeamMember()">Save</button></div>
-    </div>
-  </div>
+  <div class="modal-overlay" id="policyModal"><div class="modal"><div class="modal-header"><h3>Policy</h3><button class="modal-close" onclick="closeModal('policy')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="policyId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="policyTitle"></div><div class="form-group"><label class="form-label">Category</label><input type="text" class="form-input" id="policyCat" placeholder="e.g. Enrollment, Safety"></div><div class="form-group"><label class="form-label">Document URL *</label><input type="url" class="form-input" id="policyUrl"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('policy')">Cancel</button><button class="btn btn-primary" onclick="savePolicy()">Save</button></div></div></div>
 
-  <div class="modal-overlay" id="zoneModal" onclick="closeModal('zoneModal', event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header"><h3 id="zoneModalTitle">Add Zone</h3><button class="modal-close" onclick="closeModal('zoneModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
-      <div class="modal-body">
-        <input type="hidden" id="zoneId">
-        <div class="form-group"><label>Zone Name *</label><input type="text" class="form-input" id="zoneName" placeholder="e.g., Northeast"></div>
-        <div class="form-group"><label>Color</label><input type="color" class="form-input" id="zoneColor" value="#F97B5F" style="height: 44px; padding: 4px;"></div>
-      </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('zoneModal')">Cancel</button><button class="btn btn-primary" onclick="saveZone()">Save</button></div>
-    </div>
-  </div>
+  <div class="modal-overlay" id="linkModal"><div class="modal"><div class="modal-header"><h3>Quick Link</h3><button class="modal-close" onclick="closeModal('link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="linkId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="linkTitle"></div><div class="form-group"><label class="form-label">Category</label><input type="text" class="form-input" id="linkCat"></div><div class="form-group"><label class="form-label">URL *</label><input type="url" class="form-input" id="linkUrl"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('link')">Cancel</button><button class="btn btn-primary" onclick="saveLink()">Save</button></div></div></div>
 
-  <div class="modal-overlay" id="deleteModal" onclick="closeModal('deleteModal', event)">
-    <div class="modal" style="max-width: 400px;" onclick="event.stopPropagation()">
-      <div class="modal-header"><h3>Confirm Delete</h3><button class="modal-close" onclick="closeModal('deleteModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
-      <div class="modal-body"><p>Are you sure you want to delete this item? This action cannot be undone.</p></div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button><button class="btn btn-danger" onclick="confirmDelete()">Delete</button></div>
-    </div>
-  </div>
+  <div class="modal-overlay" id="teamModal"><div class="modal"><div class="modal-header"><h3>Team Member</h3><button class="modal-close" onclick="closeModal('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="teamId"><div class="form-row"><div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="teamFirst"></div><div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" id="teamLast"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Role</label><input type="text" class="form-input" id="teamRole"></div><div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" id="teamEmail"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Extension</label><input type="text" class="form-input" id="teamExt"></div><div class="form-group"><label class="form-label">Zone</label><select class="form-select" id="teamZone"></select></div></div><div class="form-group"><label class="form-label">Avatar URL</label><input type="url" class="form-input" id="teamAvatar"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('team')">Cancel</button><button class="btn btn-primary" onclick="saveTeam()">Save</button></div></div></div>
+
+  <div class="modal-overlay" id="zoneModal"><div class="modal"><div class="modal-header"><h3>Zone</h3><button class="modal-close" onclick="closeModal('zone')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="zoneId"><div class="form-group"><label class="form-label">Name *</label><input type="text" class="form-input" id="zoneName"></div><div class="form-group"><label class="form-label">Color</label><input type="color" class="form-input" id="zoneColor" value="#F97B5F" style="height:50px"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('zone')">Cancel</button><button class="btn btn-primary" onclick="saveZone()">Save</button></div></div></div>
+
+  <div class="modal-overlay" id="deleteModal"><div class="modal" style="max-width:400px"><div class="modal-header"><h3>Delete?</h3><button class="modal-close" onclick="closeModal('delete')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><p>Are you sure? This cannot be undone.</p></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('delete')">Cancel</button><button class="btn btn-danger" onclick="confirmDel()">Delete</button></div></div></div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+    const SB_URL='https://kvyvjwepfrqqkvyyutdw.supabase.co';
+    const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
+    let sb,delCb=null,currentPromoTab='active',currentDiscountTab='active';
+    let D={announcements:[],promos:[],discounts:[],policies:[],links:[],team:[],zones:[],practices:[],weHandle:[],youHandle:[],contact:{},script:''};
 
-    let supabaseClient = null, isConnected = false, deleteCallback = null;
-    let announcements = [], promos = [], policies = [], links = [], team = [], zones = [], scriptContent = '';
+    const defPractices=[{id:'1',title:'Respond Within 5 Minutes',description:'Speed to lead is #1.',tips:[]},{id:'2',title:'Keep Availability Updated',description:'Update weekly.',tips:['Update Monday by 10am','Notify immediately if spots open']},{id:'3',title:'Prepare for Every Tour',description:'Prepared tours convert 3x better.',tips:['Review family info','Have packet ready']},{id:'4',title:'Follow the Script',description:'Our script is tested and proven.',tips:[]},{id:'5',title:'Ask for the Enrollment',description:'Always ask to secure the spot.',tips:[]},{id:'6',title:'Request Reviews',description:'Aim for 50+ reviews at 4.5+ stars.',tips:['Send review link via text']}];
+    const defWeHandle=['All inbound enrollment inquiries','Scheduling tours','Processing applications','Payment setup questions','Lead nurturing','Reporting and analytics'];
+    const defYouHandle=['Conducting tours','Answering curriculum questions','Providing availability updates','Local marketing partnerships','Post-enrollment follow-up','Managing online reviews'];
+    const defContact={email:'enrollment@example.com',emailDesc:'General questions',phone:'(555) 123-4567',phoneDesc:'Urgent issues',meetDesc:'Book strategy time',meetUrl:''};
+    const defScript='<h2>Welcome Script</h2><p>Hello! I\'m [Name], excited to show you around.</p><h3>Opening Questions</h3><ul><li>What brings you here?</li><li>Tell me about your child</li></ul>';
 
-    async function init() {
-      try {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const { error } = await supabaseClient.from('announcements').select('count');
-        if (!error) { isConnected = true; updateConnectionStatus(true); await loadAllData(); return; }
-      } catch (e) { console.error(e); }
-      updateConnectionStatus(false);
-      loadFromLocalStorage();
+    async function init(){
+      sb=window.supabase.createClient(SB_URL,SB_KEY);
+      await loadAll();
     }
 
-    function updateConnectionStatus(connected) {
-      document.getElementById('connectionDot').className = 'connection-dot ' + (connected ? 'connected' : 'disconnected');
-      document.getElementById('connectionText').textContent = connected ? 'Connected to Supabase' : 'Demo Mode (localStorage)';
-    }
-
-    async function loadAllData() {
-      try {
-        const [r1, r2, r3, r4, r5, r6, r7] = await Promise.all([
-          supabaseClient.from('announcements').select('*').order('created_at', { ascending: false }),
-          supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
-          supabaseClient.from('policies').select('*').order('sort_order'),
-          supabaseClient.from('links').select('*').order('sort_order'),
-          supabaseClient.from('team_members').select('*').order('sort_order'),
-          supabaseClient.from('zones').select('*').order('sort_order'),
-          supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single()
+    async function loadAll(){
+      try{
+        const[r1,r2,r3,r4,r5,r6,r7]=await Promise.all([
+          sb.from('announcements').select('*').order('created_at',{ascending:false}),
+          sb.from('promos').select('*').order('start_date',{ascending:false}),
+          sb.from('discounts').select('*').order('start_date',{ascending:false}),
+          sb.from('policies').select('*').order('sort_order'),
+          sb.from('links').select('*').order('sort_order'),
+          sb.from('team_members').select('*').order('sort_order'),
+          sb.from('zones').select('*').order('sort_order')
         ]);
-        announcements = r1.data || []; promos = r2.data || []; policies = r3.data || [];
-        links = r4.data || []; team = r5.data || []; zones = r6.data || [];
-        scriptContent = r7.data?.value || getDefaultScript();
-        renderAll();
-      } catch (e) { console.error(e); loadFromLocalStorage(); }
+        D.announcements=r1.data||[];D.promos=r2.data||[];D.discounts=r3.data||[];D.policies=r4.data||[];D.links=r5.data||[];D.team=r6.data||[];D.zones=r7.data||[];
+        const settings=await sb.from('settings').select('*');
+        if(settings.data)settings.data.forEach(s=>{
+          if(s.key==='practices')D.practices=JSON.parse(s.value||'[]');
+          if(s.key==='we_handle')D.weHandle=JSON.parse(s.value||'[]');
+          if(s.key==='you_handle')D.youHandle=JSON.parse(s.value||'[]');
+          if(s.key==='contact')D.contact=JSON.parse(s.value||'{}');
+          if(s.key==='enrollment_script')D.script=s.value||'';
+        });
+        applyDefaults();render();
+      }catch(e){console.error(e);toast('Error loading data','error');}
     }
 
-    function loadFromLocalStorage() {
-      announcements = JSON.parse(localStorage.getItem('admin_announcements') || '[]');
-      promos = JSON.parse(localStorage.getItem('admin_promos') || '[]');
-      policies = JSON.parse(localStorage.getItem('admin_policies') || '[]');
-      links = JSON.parse(localStorage.getItem('admin_links') || '[]');
-      team = JSON.parse(localStorage.getItem('admin_team') || '[]');
-      zones = JSON.parse(localStorage.getItem('admin_zones') || '[]');
-      scriptContent = localStorage.getItem('admin_script') || getDefaultScript();
-      renderAll();
+    function applyDefaults(){if(!D.practices.length)D.practices=defPractices;if(!D.weHandle.length)D.weHandle=defWeHandle;if(!D.youHandle.length)D.youHandle=defYouHandle;if(!Object.keys(D.contact).length)D.contact=defContact;if(!D.script)D.script=defScript;}
+    async function saveSetting(k,v){const{data}=await sb.from('settings').select('id').eq('key',k).single();if(data)await sb.from('settings').update({value:v}).eq('key',k);else await sb.from('settings').insert({key:k,value:v});}
+
+    function render(){renderHero();renderStats();renderAnn();renderPromos();renderDiscounts();renderContact();renderResp();renderPractices();renderPolicies();renderLinks();renderTeam();renderZoneFilter();document.getElementById('scriptContent').innerHTML=D.script;}
+    function esc(t){if(!t)return'';const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+    function name(t){return t.name||((t.first_name||'')+' '+(t.last_name||'')).trim()||'Team Member';}
+    function getStatus(p){const n=new Date(),s=new Date(p.start_date),e=p.end_date?new Date(p.end_date):null;if(s>n)return'upcoming';if(e&&e<n)return'past';return'active';}
+    function getDiscountStatus(d){const n=new Date(),s=new Date(d.start_date),e=d.end_date?new Date(d.end_date):null;if(s>n)return'upcoming';if(e&&e<n)return'expired';return'active';}
+    function fmtDate(d){return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'-';}
+    const editIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
+    const delIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+    const addIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+
+    function renderHero(){const a=D.promos.find(p=>getStatus(p)==='active');document.getElementById('promoTitle').textContent=a?a.title:"Welcome to the Director's Portal";document.getElementById('promoDescription').textContent=a?.description||'Your central hub for enrollment resources.';const b=document.getElementById('promoBadge');if(a&&a.discount){b.textContent=a.discount;b.style.display='inline-block';}else b.style.display='none';}
+    function renderStats(){document.getElementById('statAnnouncements').textContent=D.announcements.length;document.getElementById('statPromos').textContent=D.promos.filter(p=>getStatus(p)==='active').length;document.getElementById('statTeam').textContent=D.team.length;document.getElementById('statLinks').textContent=D.links.length;}
+
+    function renderAnn(){const el=document.getElementById('announcementsList');if(!D.announcements.length){el.innerHTML=`<div class="add-btn-inline" onclick="openModal('announcement')">${addIcon} Add first announcement</div>`;return;}el.innerHTML=D.announcements.slice(0,5).map(a=>{const d=new Date(a.date||a.created_at);return`<div class="announcement-item"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editAnn('${a.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('ann','${a.id}')">${delIcon}</button></div><div class="announcement-date"><div class="day">${d.getDate()}</div><div class="month">${d.toLocaleString('en',{month:'short'})}</div></div><div class="announcement-content"><h4>${esc(a.title)}</h4><p>${esc(a.content||'')}</p></div></div>`;}).join('');}
+
+    function switchPromoTab(tab){currentPromoTab=tab;document.querySelectorAll('#promos .tab-btn').forEach(b=>b.classList.remove('active'));event.currentTarget.classList.add('active');renderPromos();}
+    function renderPromos(){const el=document.getElementById('promoGrid');const filtered=D.promos.filter(p=>getStatus(p)===currentPromoTab);if(!filtered.length){el.innerHTML=`<div class="add-btn-inline" style="grid-column:1/-1" onclick="openModal('promo')">${addIcon} Add promotion</div>`;return;}el.innerHTML=filtered.map(p=>{const s=getStatus(p);return`<div class="promo-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editPromo('${p.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('promo','${p.id}')">${delIcon}</button></div><span class="promo-status ${s}">${s}</span><h4>${esc(p.title)}</h4><div class="promo-dates">${fmtDate(p.start_date)} - ${p.end_date?fmtDate(p.end_date):'Ongoing'}</div>${p.discount?`<div class="promo-discount">${esc(p.discount)}</div>`:''}<p>${esc(p.description||'')}</p></div>`;}).join('');}
+
+    function switchDiscountTab(tab){currentDiscountTab=tab;document.querySelectorAll('#discounts .tab-btn').forEach(b=>b.classList.remove('active'));event.currentTarget.classList.add('active');renderDiscounts();}
+    function renderDiscounts(){const el=document.getElementById('discountGrid');const filtered=D.discounts.filter(d=>getDiscountStatus(d)===currentDiscountTab);if(!filtered.length){el.innerHTML=`<div class="add-btn-inline" style="grid-column:1/-1" onclick="openModal('discount')">${addIcon} Add discount</div>`;return;}el.innerHTML=filtered.map(d=>{const s=getDiscountStatus(d);return`<div class="discount-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editDiscount('${d.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('discount','${d.id}')">${delIcon}</button></div><span class="discount-status ${s}">${s}</span><h4>${esc(d.title)}</h4><div class="discount-dates">${fmtDate(d.start_date)} - ${d.end_date?fmtDate(d.end_date):'No Expiry'}</div><div class="discount-amount">${esc(d.amount)}</div><p>${esc(d.description||'')}</p><div class="discount-code">${esc(d.code)}</div></div>`;}).join('');}
+
+    function renderContact(){document.getElementById('contactGrid').innerHTML=`
+      <div class="contact-card"><div class="contact-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div><div class="contact-card-content"><h4>Email (Non-Urgent)</h4><input class="form-input" style="margin:8px 0;font-size:13px" id="cEmailDesc" value="${esc(D.contact.emailDesc||'')}"><input class="form-input" style="font-size:13px" id="cEmail" value="${esc(D.contact.email||'')}"></div></div>
+      <div class="contact-card"><div class="contact-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="contact-card-content"><h4>Phone (Urgent)</h4><input class="form-input" style="margin:8px 0;font-size:13px" id="cPhoneDesc" value="${esc(D.contact.phoneDesc||'')}"><input class="form-input" style="font-size:13px" id="cPhone" value="${esc(D.contact.phone||'')}"></div></div>
+      <div class="contact-card"><div class="contact-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></div><div class="contact-card-content"><h4>Schedule Meeting</h4><input class="form-input" style="margin:8px 0;font-size:13px" id="cMeetDesc" value="${esc(D.contact.meetDesc||'')}"><input class="form-input" style="font-size:13px" id="cMeetUrl" value="${esc(D.contact.meetUrl||'')}" placeholder="Booking URL"></div></div>`;}
+
+    function renderResp(){
+      document.getElementById('weHandleList').innerHTML=D.weHandle.map((r,i)=>`<div class="responsibility-item we-handle"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editResp('we',${i})">${editIcon}</button><button class="edit-btn-small delete" onclick="delResp('we',${i})">${delIcon}</button></div><div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div><span>${esc(r)}</span></div>`).join('');
+      document.getElementById('youHandleList').innerHTML=D.youHandle.map((r,i)=>`<div class="responsibility-item you-handle"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editResp('you',${i})">${editIcon}</button><button class="edit-btn-small delete" onclick="delResp('you',${i})">${delIcon}</button></div><div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div><span>${esc(r)}</span></div>`).join('');
     }
 
-    function saveToLocalStorage() {
-      localStorage.setItem('admin_announcements', JSON.stringify(announcements));
-      localStorage.setItem('admin_promos', JSON.stringify(promos));
-      localStorage.setItem('admin_policies', JSON.stringify(policies));
-      localStorage.setItem('admin_links', JSON.stringify(links));
-      localStorage.setItem('admin_team', JSON.stringify(team));
-      localStorage.setItem('admin_zones', JSON.stringify(zones));
-      localStorage.setItem('admin_script', scriptContent);
-    }
+    function renderPractices(){const el=document.getElementById('practicesGrid');el.innerHTML=D.practices.map((p,i)=>`<div class="practice-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editPractice('${p.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="delPractice('${p.id}')">${delIcon}</button></div><h4><span class="number">${i+1}</span>${esc(p.title)}</h4><p>${esc(p.description)}</p>${p.tips&&p.tips.length?`<ul>${p.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}</div>`).join('')+`<div class="add-btn-inline" onclick="openModal('practice')" style="min-height:150px;align-items:center">${addIcon} Add Practice</div>`;}
 
-    function getDefaultScript() {
-      return `<h2>Welcome Script</h2><p>Hello! My name is [Your Name], and I'm excited to show you around today.</p><h3>Opening Questions</h3><ul><li>What brings you to us today?</li><li>Tell me about your child</li><li>What's most important to you?</li></ul><h3>Tour Flow</h3><ol><li>Classroom your child would be in</li><li>Outdoor play areas</li><li>Safety features</li><li>Meal preparation area</li></ol><blockquote>"What makes us different is our focus on [unique value]. Parents tell us they chose us because..."</blockquote><h3>Closing</h3><p>Based on everything we've discussed, I think your child would thrive here. Would you like to secure your spot today?</p>`;
-    }
+    function renderPolicies(){const el=document.getElementById('policiesContainer');if(!D.policies.length){el.innerHTML=`<div class="add-btn-inline" onclick="openModal('policy')">${addIcon} Add policy</div>`;return;}const g=D.policies.reduce((a,p)=>{const c=p.category||'General';if(!a[c])a[c]=[];a[c].push(p);return a;},{});el.innerHTML=Object.entries(g).map(([cat,items])=>`<div class="policy-category"><div class="policy-category-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>${esc(cat)}</div><div class="policy-list">${items.map(p=>`<div class="policy-item"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editPolicy('${p.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('policy','${p.id}')">${delIcon}</button></div><div class="policy-item-info"><div class="policy-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h4>${esc(p.title)}</h4></div></div>`).join('')}</div></div>`).join('')+`<div class="add-btn-inline" onclick="openModal('policy')">${addIcon} Add Policy</div>`;}
 
-    function renderAll() {
-      renderAnnouncements(); renderPromos(); renderPolicies(); renderLinks(); renderTeam(); renderZones();
-      document.getElementById('scriptEditor').innerHTML = scriptContent;
-      initSortables();
-    }
+    function renderLinks(){const el=document.getElementById('linksGrid');if(!D.links.length){el.innerHTML=`<div class="add-btn-inline" style="grid-column:1/-1" onclick="openModal('link')">${addIcon} Add link</div>`;return;}el.innerHTML=D.links.map(l=>`<div class="link-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editLink('${l.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('link','${l.id}')">${delIcon}</button></div><div class="link-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div><h4>${esc(l.title)}</h4><p>${esc(l.category||'Resource')}</p></div></div>`).join('')+`<div class="add-btn-inline" onclick="openModal('link')">${addIcon} Add Link</div>`;}
 
-    function renderAnnouncements() {
-      const tbody = document.getElementById('announcementsList');
-      if (!announcements.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No announcements yet</p><button class="btn btn-primary btn-sm" onclick="openAnnouncementModal()">Add your first</button></div></td></tr>'; return; }
-      tbody.innerHTML = announcements.map(a => `<tr data-id="${a.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(a.title)}</strong></td><td>${formatDate(a.date || a.created_at)}</td><td><span class="status-badge ${a.active ? 'active' : 'inactive'}">${a.active ? 'Active' : 'Inactive'}</span></td><td class="actions"><button class="btn-icon" onclick="editAnnouncement('${a.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('announcement', '${a.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
-    }
+    function renderZoneFilter(){const s=document.getElementById('zoneFilter');const zs=D.zones.map(z=>z.name);s.innerHTML='<option value="all">All Zones</option>'+zs.map(z=>`<option value="${esc(z)}">${esc(z)}</option>`).join('');document.getElementById('teamZone').innerHTML='<option value="">Select...</option>'+zs.map(z=>`<option value="${esc(z)}">${esc(z)}</option>`).join('');}
+    function renderTeam(){const el=document.getElementById('teamGrid');const f=document.getElementById('zoneFilter').value;let filtered=f==='all'?D.team:D.team.filter(t=>t.zone===f);if(!filtered.length){el.innerHTML=`<div class="add-btn-inline" style="grid-column:1/-1" onclick="openModal('team')">${addIcon} Add member</div>`;return;}el.innerHTML=filtered.map(t=>`<div class="team-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editTeam('${t.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('team','${t.id}')">${delIcon}</button></div><div class="team-card-header"><img src="${esc(t.avatar_url||'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="team-card-avatar"><div class="team-card-info"><h4>${esc(name(t))}</h4><div class="role">${esc(t.role||'Specialist')}</div><div class="zone">${esc(t.zone||'General')}</div></div></div><div class="team-card-details"><div class="team-detail-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><a href="mailto:${esc(t.email)}">${esc(t.email||'-')}</a></div><div class="team-detail-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Ext: ${esc(t.extension||'-')}</div></div></div>`).join('')+`<div class="add-btn-inline" onclick="openModal('team')" style="min-height:200px;align-items:center">${addIcon} Add Member</div>`;}
 
-    function renderPromos() {
-      const tbody = document.getElementById('promosList');
-      if (!promos.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>No promotions yet</p><button class="btn btn-primary btn-sm" onclick="openPromoModal()">Add your first</button></div></td></tr>'; return; }
-      tbody.innerHTML = promos.map(p => { const s = getPromoStatus(p); return `<tr data-id="${p.id}"><td><strong>${esc(p.title)}</strong></td><td>${esc(p.discount || '-')}</td><td>${formatDate(p.start_date)}</td><td>${p.end_date ? formatDate(p.end_date) : 'Ongoing'}</td><td><span class="status-badge ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span></td><td class="actions"><button class="btn-icon" onclick="editPromo('${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('promo', '${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`; }).join('');
-    }
+    // CRUD
+    function openModal(t){document.getElementById(t+'Modal').classList.add('active');}
+    function closeModal(t){document.getElementById(t+'Modal').classList.remove('active');}
 
-    function renderPolicies() {
-      const tbody = document.getElementById('policiesList');
-      if (!policies.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No policies yet</p><button class="btn btn-primary btn-sm" onclick="openPolicyModal()">Add your first</button></div></td></tr>'; return; }
-      tbody.innerHTML = policies.map(p => `<tr data-id="${p.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(p.title)}</strong></td><td><span class="zone-badge">${esc(p.category || 'General')}</span></td><td><a href="${esc(p.url)}" target="_blank" style="color: var(--color-coral);">${truncate(p.url, 30)}</a></td><td class="actions"><button class="btn-icon" onclick="editPolicy('${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('policy', '${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
-    }
+    function editAnn(id){const a=D.announcements.find(x=>x.id===id);if(!a)return;document.getElementById('annId').value=a.id;document.getElementById('annTitle').value=a.title||'';document.getElementById('annContent').value=a.content||'';document.getElementById('annDate').value=a.date||'';document.getElementById('annActive').checked=a.active!==false;openModal('announcement');}
+    async function saveAnn(){const id=document.getElementById('annId').value;const d={title:document.getElementById('annTitle').value.trim(),content:document.getElementById('annContent').value.trim(),date:document.getElementById('annDate').value||new Date().toISOString().split('T')[0],active:document.getElementById('annActive').checked};if(!d.title){toast('Title required','error');return;}try{if(id)await sb.from('announcements').update(d).eq('id',id);else await sb.from('announcements').insert(d);await loadAll();closeModal('announcement');document.getElementById('annId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
 
-    function renderLinks() {
-      const tbody = document.getElementById('linksList');
-      if (!links.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No resources yet</p><button class="btn btn-primary btn-sm" onclick="openLinkModal()">Add your first</button></div></td></tr>'; return; }
-      tbody.innerHTML = links.map(l => `<tr data-id="${l.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(l.title)}</strong></td><td><span class="zone-badge">${esc(l.category || 'Resource')}</span></td><td><a href="${esc(l.url)}" target="_blank" style="color: var(--color-coral);">${truncate(l.url, 30)}</a></td><td class="actions"><button class="btn-icon" onclick="editLink('${l.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('link', '${l.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
-    }
+    function editPromo(id){const p=D.promos.find(x=>x.id===id);if(!p)return;document.getElementById('promoId').value=p.id;document.getElementById('promoTitleInput').value=p.title||'';document.getElementById('promoDiscount').value=p.discount||'';document.getElementById('promoDesc').value=p.description||'';document.getElementById('promoDetails').value=p.details||'';document.getElementById('promoStart').value=p.start_date||'';document.getElementById('promoEnd').value=p.end_date||'';openModal('promo');}
+    async function savePromo(){const id=document.getElementById('promoId').value;const d={title:document.getElementById('promoTitleInput').value.trim(),discount:document.getElementById('promoDiscount').value.trim(),description:document.getElementById('promoDesc').value.trim(),details:document.getElementById('promoDetails').value.trim(),start_date:document.getElementById('promoStart').value,end_date:document.getElementById('promoEnd').value||null};if(!d.title||!d.start_date){toast('Title and start date required','error');return;}try{if(id)await sb.from('promos').update(d).eq('id',id);else await sb.from('promos').insert(d);await loadAll();closeModal('promo');document.getElementById('promoId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
 
-    function renderTeam() {
-      const tbody = document.getElementById('teamList');
-      if (!team.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No team members yet</p><button class="btn btn-primary btn-sm" onclick="openTeamModal()">Add your first</button></div></td></tr>'; return; }
-      tbody.innerHTML = team.map(t => `<tr data-id="${t.id}"><td><span class="drag-handle">⋮⋮</span></td><td><div style="display: flex; align-items: center; gap: 12px;"><img src="${esc(t.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="avatar avatar-sm"><strong>${esc(t.name)}</strong></div></td><td>${esc(t.role || '-')}</td><td>${esc(t.email || '-')}</td><td>${esc(t.extension || '-')}</td><td><span class="zone-badge">${esc(t.zone || 'General')}</span></td><td class="actions"><button class="btn-icon" onclick="editTeamMember('${t.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('team', '${t.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
-      updateZoneDropdowns();
-    }
+    function editDiscount(id){const d=D.discounts.find(x=>x.id===id);if(!d)return;document.getElementById('discountId').value=d.id;document.getElementById('discountTitle').value=d.title||'';document.getElementById('discountCode').value=d.code||'';document.getElementById('discountAmount').value=d.amount||'';document.getElementById('discountDesc').value=d.description||'';document.getElementById('discountTerms').value=d.terms||'';document.getElementById('discountStart').value=d.start_date||'';document.getElementById('discountEnd').value=d.end_date||'';openModal('discount');}
+    async function saveDiscount(){const id=document.getElementById('discountId').value;const d={title:document.getElementById('discountTitle').value.trim(),code:document.getElementById('discountCode').value.trim().toUpperCase(),amount:document.getElementById('discountAmount').value.trim(),description:document.getElementById('discountDesc').value.trim(),terms:document.getElementById('discountTerms').value.trim(),start_date:document.getElementById('discountStart').value,end_date:document.getElementById('discountEnd').value||null};if(!d.title||!d.code||!d.amount||!d.start_date){toast('Title, code, amount, and start date required','error');return;}try{if(id)await sb.from('discounts').update(d).eq('id',id);else await sb.from('discounts').insert(d);await loadAll();closeModal('discount');document.getElementById('discountId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
 
-    function renderZones() {
-      const tbody = document.getElementById('zonesList');
-      if (!zones.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No zones yet</p><button class="btn btn-primary btn-sm" onclick="openZoneModal()">Add your first</button></div></td></tr>'; return; }
-      tbody.innerHTML = zones.map(z => { const mc = team.filter(t => t.zone === z.name).length; return `<tr data-id="${z.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(z.name)}</strong></td><td><div style="width: 24px; height: 24px; border-radius: 6px; background: ${esc(z.color || '#F97B5F')};"></div></td><td>${mc} member${mc !== 1 ? 's' : ''}</td><td class="actions"><button class="btn-icon" onclick="editZone('${z.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('zone', '${z.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`; }).join('');
-    }
+    function editPractice(id){const p=D.practices.find(x=>x.id===id);if(!p)return;document.getElementById('practiceId').value=p.id;document.getElementById('practiceTitle').value=p.title||'';document.getElementById('practiceDesc').value=p.description||'';document.getElementById('practiceTips').value=(p.tips||[]).join('\n');openModal('practice');}
+    async function savePractice(){const id=document.getElementById('practiceId').value;const d={title:document.getElementById('practiceTitle').value.trim(),description:document.getElementById('practiceDesc').value.trim(),tips:document.getElementById('practiceTips').value.split('\n').map(t=>t.trim()).filter(t=>t)};if(!d.title||!d.description){toast('Title and description required','error');return;}if(id){const i=D.practices.findIndex(p=>p.id===id);if(i>=0)D.practices[i]={...D.practices[i],...d};}else{d.id=Date.now().toString();D.practices.push(d);}await saveSetting('practices',JSON.stringify(D.practices));renderPractices();closeModal('practice');document.getElementById('practiceId').value='';toast('Saved!','success');}
+    async function delPractice(id){D.practices=D.practices.filter(p=>p.id!==id);await saveSetting('practices',JSON.stringify(D.practices));renderPractices();toast('Deleted','success');}
 
-    function updateZoneDropdowns() { document.getElementById('teamZone').innerHTML = '<option value="">Select zone...</option>' + zones.map(z => `<option value="${esc(z.name)}">${esc(z.name)}</option>`).join(''); }
+    function editPolicy(id){const p=D.policies.find(x=>x.id===id);if(!p)return;document.getElementById('policyId').value=p.id;document.getElementById('policyTitle').value=p.title||'';document.getElementById('policyCat').value=p.category||'';document.getElementById('policyUrl').value=p.url||'';openModal('policy');}
+    async function savePolicy(){const id=document.getElementById('policyId').value;const d={title:document.getElementById('policyTitle').value.trim(),category:document.getElementById('policyCat').value.trim(),url:document.getElementById('policyUrl').value.trim()};if(!d.title||!d.url){toast('Title and URL required','error');return;}try{if(id)await sb.from('policies').update(d).eq('id',id);else{d.sort_order=D.policies.length;await sb.from('policies').insert(d);}await loadAll();closeModal('policy');document.getElementById('policyId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
 
-    function initSortables() {
-      ['announcementsList', 'policiesList', 'linksList', 'teamList', 'zonesList'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.querySelector('.drag-handle')) new Sortable(el, { handle: '.drag-handle', animation: 150, onEnd: (evt) => handleReorder(id, evt) });
-      });
-    }
+    function editLink(id){const l=D.links.find(x=>x.id===id);if(!l)return;document.getElementById('linkId').value=l.id;document.getElementById('linkTitle').value=l.title||'';document.getElementById('linkCat').value=l.category||'';document.getElementById('linkUrl').value=l.url||'';openModal('link');}
+    async function saveLink(){const id=document.getElementById('linkId').value;const d={title:document.getElementById('linkTitle').value.trim(),category:document.getElementById('linkCat').value.trim(),url:document.getElementById('linkUrl').value.trim()};if(!d.title||!d.url){toast('Title and URL required','error');return;}try{if(id)await sb.from('links').update(d).eq('id',id);else{d.sort_order=D.links.length;await sb.from('links').insert(d);}await loadAll();closeModal('link');document.getElementById('linkId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
 
-    async function handleReorder(listId, evt) {
-      const map = { announcementsList: ['announcements', announcements], policiesList: ['policies', policies], linksList: ['links', links], teamList: ['team_members', team], zonesList: ['zones', zones] };
-      const [table, data] = map[listId];
-      const item = data.splice(evt.oldIndex, 1)[0];
-      data.splice(evt.newIndex, 0, item);
-      data.forEach((d, i) => d.sort_order = i);
-      if (isConnected) { for (const d of data) await supabaseClient.from(table).update({ sort_order: d.sort_order }).eq('id', d.id); }
-      saveToLocalStorage();
-      showToast('Order updated');
-    }
+    function editTeam(id){const t=D.team.find(x=>x.id===id);if(!t)return;document.getElementById('teamId').value=t.id;document.getElementById('teamFirst').value=t.first_name||'';document.getElementById('teamLast').value=t.last_name||'';document.getElementById('teamRole').value=t.role||'';document.getElementById('teamEmail').value=t.email||'';document.getElementById('teamExt').value=t.extension||'';document.getElementById('teamZone').value=t.zone||'';document.getElementById('teamAvatar').value=t.avatar_url||'';openModal('team');}
+    async function saveTeam(){const id=document.getElementById('teamId').value;const d={first_name:document.getElementById('teamFirst').value.trim(),last_name:document.getElementById('teamLast').value.trim(),role:document.getElementById('teamRole').value.trim(),email:document.getElementById('teamEmail').value.trim(),extension:document.getElementById('teamExt').value.trim(),zone:document.getElementById('teamZone').value,avatar_url:document.getElementById('teamAvatar').value.trim()};if(!d.first_name||!d.email){toast('Name and email required','error');return;}try{if(id)await sb.from('team_members').update(d).eq('id',id);else{d.sort_order=D.team.length;await sb.from('team_members').insert(d);}await loadAll();closeModal('team');document.getElementById('teamId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
 
-    // CRUD Functions
-    function openAnnouncementModal(data = null) { document.getElementById('announcementModalTitle').textContent = data ? 'Edit Announcement' : 'Add Announcement'; document.getElementById('announcementId').value = data?.id || ''; document.getElementById('announcementTitle').value = data?.title || ''; document.getElementById('announcementContent').value = data?.content || ''; document.getElementById('announcementDate').value = data?.date || new Date().toISOString().split('T')[0]; document.getElementById('announcementActive').checked = data?.active !== false; document.getElementById('announcementModal').classList.add('active'); }
-    function editAnnouncement(id) { const a = announcements.find(x => x.id === id); if (a) openAnnouncementModal(a); }
-    async function saveAnnouncement() { const id = document.getElementById('announcementId').value; const data = { title: document.getElementById('announcementTitle').value.trim(), content: document.getElementById('announcementContent').value.trim(), date: document.getElementById('announcementDate').value, active: document.getElementById('announcementActive').checked }; if (!data.title) { showToast('Title is required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('announcements').update(data).eq('id', id); else { data.sort_order = announcements.length; await supabaseClient.from('announcements').insert(data); } await loadAllData(); } else { if (id) { const idx = announcements.findIndex(a => a.id === id); if (idx >= 0) announcements[idx] = { ...announcements[idx], ...data }; } else { data.id = Date.now().toString(); data.created_at = new Date().toISOString(); data.sort_order = announcements.length; announcements.unshift(data); } saveToLocalStorage(); renderAnnouncements(); } closeModal('announcementModal'); showToast(id ? 'Announcement updated' : 'Announcement added', 'success'); }
+    async function saveZone(){const id=document.getElementById('zoneId').value;const d={name:document.getElementById('zoneName').value.trim(),color:document.getElementById('zoneColor').value};if(!d.name){toast('Name required','error');return;}try{if(id)await sb.from('zones').update(d).eq('id',id);else{d.sort_order=D.zones.length;await sb.from('zones').insert(d);}await loadAll();closeModal('zone');document.getElementById('zoneId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
 
-    function openPromoModal(data = null) { document.getElementById('promoModalTitle').textContent = data ? 'Edit Promotion' : 'Add Promotion'; document.getElementById('promoId').value = data?.id || ''; document.getElementById('promoTitle').value = data?.title || ''; document.getElementById('promoDiscount').value = data?.discount || ''; document.getElementById('promoDescription').value = data?.description || ''; document.getElementById('promoDetails').value = data?.details || ''; document.getElementById('promoStartDate').value = data?.start_date || ''; document.getElementById('promoEndDate').value = data?.end_date || ''; document.getElementById('promoModal').classList.add('active'); }
-    function editPromo(id) { const p = promos.find(x => x.id === id); if (p) openPromoModal(p); }
-    async function savePromo() { const id = document.getElementById('promoId').value; const data = { title: document.getElementById('promoTitle').value.trim(), discount: document.getElementById('promoDiscount').value.trim(), description: document.getElementById('promoDescription').value.trim(), details: document.getElementById('promoDetails').value.trim(), start_date: document.getElementById('promoStartDate').value, end_date: document.getElementById('promoEndDate').value || null }; if (!data.title || !data.start_date) { showToast('Title and start date are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('promos').update(data).eq('id', id); else await supabaseClient.from('promos').insert(data); await loadAllData(); } else { if (id) { const idx = promos.findIndex(p => p.id === id); if (idx >= 0) promos[idx] = { ...promos[idx], ...data }; } else { data.id = Date.now().toString(); promos.unshift(data); } saveToLocalStorage(); renderPromos(); } closeModal('promoModal'); showToast(id ? 'Promotion updated' : 'Promotion added', 'success'); }
+    function addResp(type){const t=prompt('Enter responsibility:');if(t&&t.trim()){if(type==='we')D.weHandle.push(t.trim());else D.youHandle.push(t.trim());renderResp();}}
+    function editResp(type,i){const arr=type==='we'?D.weHandle:D.youHandle;const t=prompt('Edit:',arr[i]);if(t&&t.trim()){arr[i]=t.trim();renderResp();}}
+    function delResp(type,i){if(type==='we')D.weHandle.splice(i,1);else D.youHandle.splice(i,1);renderResp();}
 
-    function openPolicyModal(data = null) { document.getElementById('policyModalTitle').textContent = data ? 'Edit Policy' : 'Add Policy'; document.getElementById('policyId').value = data?.id || ''; document.getElementById('policyTitle').value = data?.title || ''; document.getElementById('policyCategory').value = data?.category || ''; document.getElementById('policyUrl').value = data?.url || ''; document.getElementById('policyDescription').value = data?.description || ''; document.getElementById('policyModal').classList.add('active'); }
-    function editPolicy(id) { const p = policies.find(x => x.id === id); if (p) openPolicyModal(p); }
-    async function savePolicy() { const id = document.getElementById('policyId').value; const data = { title: document.getElementById('policyTitle').value.trim(), category: document.getElementById('policyCategory').value.trim(), url: document.getElementById('policyUrl').value.trim(), description: document.getElementById('policyDescription').value.trim() }; if (!data.title || !data.url) { showToast('Title and URL are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('policies').update(data).eq('id', id); else { data.sort_order = policies.length; await supabaseClient.from('policies').insert(data); } await loadAllData(); } else { if (id) { const idx = policies.findIndex(p => p.id === id); if (idx >= 0) policies[idx] = { ...policies[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = policies.length; policies.push(data); } saveToLocalStorage(); renderPolicies(); } closeModal('policyModal'); showToast(id ? 'Policy updated' : 'Policy added', 'success'); }
+    async function saveWorking(){D.contact={email:document.getElementById('cEmail').value,emailDesc:document.getElementById('cEmailDesc').value,phone:document.getElementById('cPhone').value,phoneDesc:document.getElementById('cPhoneDesc').value,meetDesc:document.getElementById('cMeetDesc').value,meetUrl:document.getElementById('cMeetUrl').value};await saveSetting('contact',JSON.stringify(D.contact));await saveSetting('we_handle',JSON.stringify(D.weHandle));await saveSetting('you_handle',JSON.stringify(D.youHandle));toast('Saved!','success');}
+    async function saveScript(){D.script=document.getElementById('scriptContent').innerHTML;await saveSetting('enrollment_script',D.script);toast('Script saved!','success');}
+    function fmt(tag){document.execCommand('formatBlock',false,tag);}
 
-    function openLinkModal(data = null) { document.getElementById('linkModalTitle').textContent = data ? 'Edit Resource' : 'Add Resource'; document.getElementById('linkId').value = data?.id || ''; document.getElementById('linkTitle').value = data?.title || ''; document.getElementById('linkCategory').value = data?.category || ''; document.getElementById('linkUrl').value = data?.url || ''; document.getElementById('linkModal').classList.add('active'); }
-    function editLink(id) { const l = links.find(x => x.id === id); if (l) openLinkModal(l); }
-    async function saveLink() { const id = document.getElementById('linkId').value; const data = { title: document.getElementById('linkTitle').value.trim(), category: document.getElementById('linkCategory').value.trim(), url: document.getElementById('linkUrl').value.trim() }; if (!data.title || !data.url) { showToast('Title and URL are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('links').update(data).eq('id', id); else { data.sort_order = links.length; await supabaseClient.from('links').insert(data); } await loadAllData(); } else { if (id) { const idx = links.findIndex(l => l.id === id); if (idx >= 0) links[idx] = { ...links[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = links.length; links.push(data); } saveToLocalStorage(); renderLinks(); } closeModal('linkModal'); showToast(id ? 'Resource updated' : 'Resource added', 'success'); }
+    function del(type,id){delCb=async()=>{const map={ann:['announcements'],promo:['promos'],discount:['discounts'],policy:['policies'],link:['links'],team:['team_members'],zone:['zones']};const tbl=map[type][0];try{await sb.from(tbl).delete().eq('id',id);await loadAll();toast('Deleted','success');}catch(e){toast('Error deleting','error');}};openModal('delete');}
+    function confirmDel(){if(delCb)delCb();closeModal('delete');delCb=null;}
 
-    function openTeamModal(data = null) { document.getElementById('teamModalTitle').textContent = data ? 'Edit Team Member' : 'Add Team Member'; document.getElementById('teamMemberId').value = data?.id || ''; document.getElementById('teamName').value = data?.name || ''; document.getElementById('teamRole').value = data?.role || ''; document.getElementById('teamEmail').value = data?.email || ''; document.getElementById('teamExtension').value = data?.extension || ''; document.getElementById('teamZone').value = data?.zone || ''; document.getElementById('teamAvatarUrl').value = data?.avatar_url || ''; document.getElementById('teamAvatarPreview').src = data?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'; document.getElementById('teamModal').classList.add('active'); }
-    function editTeamMember(id) { const t = team.find(x => x.id === id); if (t) openTeamModal(t); }
-    function previewAvatar(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = (e) => { document.getElementById('teamAvatarPreview').src = e.target.result; document.getElementById('teamAvatarUrl').value = e.target.result; }; reader.readAsDataURL(input.files[0]); } }
-    async function saveTeamMember() { const id = document.getElementById('teamMemberId').value; const data = { name: document.getElementById('teamName').value.trim(), role: document.getElementById('teamRole').value.trim(), email: document.getElementById('teamEmail').value.trim(), extension: document.getElementById('teamExtension').value.trim(), zone: document.getElementById('teamZone').value, avatar_url: document.getElementById('teamAvatarUrl').value.trim() }; if (!data.name || !data.email) { showToast('Name and email are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('team_members').update(data).eq('id', id); else { data.sort_order = team.length; await supabaseClient.from('team_members').insert(data); } await loadAllData(); } else { if (id) { const idx = team.findIndex(t => t.id === id); if (idx >= 0) team[idx] = { ...team[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = team.length; team.push(data); } saveToLocalStorage(); renderTeam(); } closeModal('teamModal'); showToast(id ? 'Team member updated' : 'Team member added', 'success'); }
+    function switchSection(id){document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));event.currentTarget.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');closeSidebar();window.scrollTo(0,0);}
+    function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+    function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+    function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+type;setTimeout(()=>t.classList.remove('show'),3000);}
 
-    function openZoneModal(data = null) { document.getElementById('zoneModalTitle').textContent = data ? 'Edit Zone' : 'Add Zone'; document.getElementById('zoneId').value = data?.id || ''; document.getElementById('zoneName').value = data?.name || ''; document.getElementById('zoneColor').value = data?.color || '#F97B5F'; document.getElementById('zoneModal').classList.add('active'); }
-    function editZone(id) { const z = zones.find(x => x.id === id); if (z) openZoneModal(z); }
-    async function saveZone() { const id = document.getElementById('zoneId').value; const data = { name: document.getElementById('zoneName').value.trim(), color: document.getElementById('zoneColor').value }; if (!data.name) { showToast('Zone name is required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('zones').update(data).eq('id', id); else { data.sort_order = zones.length; await supabaseClient.from('zones').insert(data); } await loadAllData(); } else { if (id) { const idx = zones.findIndex(z => z.id === id); if (idx >= 0) zones[idx] = { ...zones[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = zones.length; zones.push(data); } saveToLocalStorage(); renderZones(); updateZoneDropdowns(); } closeModal('zoneModal'); showToast(id ? 'Zone updated' : 'Zone added', 'success'); }
-
-    async function saveScript() { scriptContent = document.getElementById('scriptEditor').innerHTML; if (isConnected) { const { data } = await supabaseClient.from('settings').select('id').eq('key', 'enrollment_script').single(); if (data) await supabaseClient.from('settings').update({ value: scriptContent }).eq('key', 'enrollment_script'); else await supabaseClient.from('settings').insert({ key: 'enrollment_script', value: scriptContent }); } saveToLocalStorage(); showToast('Script saved', 'success'); }
-
-    function formatText(tag) { document.execCommand('formatBlock', false, tag); }
-
-    function deleteItem(type, id) { deleteCallback = async () => { const map = { announcement: ['announcements', announcements], promo: ['promos', promos], policy: ['policies', policies], link: ['links', links], team: ['team_members', team], zone: ['zones', zones] }; const [table, arr] = map[type]; if (isConnected) { await supabaseClient.from(table).delete().eq('id', id); await loadAllData(); } else { const idx = arr.findIndex(x => x.id === id); if (idx >= 0) arr.splice(idx, 1); saveToLocalStorage(); renderAll(); } showToast('Item deleted', 'success'); }; document.getElementById('deleteModal').classList.add('active'); }
-    function confirmDelete() { if (deleteCallback) deleteCallback(); closeModal('deleteModal'); deleteCallback = null; }
-
-    function getPromoStatus(p) { const now = new Date(), s = new Date(p.start_date), e = p.end_date ? new Date(p.end_date) : null; if (s > now) return 'upcoming'; if (e && e < now) return 'ended'; return 'active'; }
-    function formatDate(d) { if (!d) return '-'; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-    function truncate(s, l) { if (!s) return ''; return s.length > l ? s.substring(0, l) + '...' : s; }
-    function esc(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-
-    function closeModal(id, e) { if (e && e.target !== e.currentTarget) return; document.getElementById(id).classList.remove('active'); }
-    function switchSection(id) { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); event.currentTarget.classList.add('active'); document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); closeSidebar(); }
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('open'); }
-    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
-    function showToast(msg, type = '') { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show ' + type; setTimeout(() => t.classList.remove('show'), 3000); }
-
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded',init);
   </script>
 </body>
 </html>

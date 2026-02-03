@@ -399,6 +399,72 @@
       color: var(--color-coral);
     }
 
+    /* Discount Cards */
+    .discount-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .discount-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: all 0.15s ease;
+    }
+
+    .discount-card:hover {
+      border-color: var(--color-coral);
+      box-shadow: var(--shadow-md);
+    }
+
+    .discount-card-header { margin-bottom: 12px; }
+
+    .discount-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .discount-status.active { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
+    .discount-status.upcoming { background: rgba(59, 130, 246, 0.1); color: var(--color-blue); }
+    .discount-status.expired { background: var(--color-bg); color: var(--color-text-muted); }
+
+    .discount-card h4 { font-size: 17px; font-weight: 600; margin-bottom: 8px; color: var(--color-text); }
+    .discount-dates { font-size: 13px; color: var(--color-text-muted); margin-bottom: 12px; }
+    .discount-amount {
+      display: inline-block;
+      background: var(--gradient-primary);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .discount-card > p { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
+    .discount-code {
+      display: inline-block;
+      background: var(--color-bg);
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-top: 12px;
+      border: 2px dashed var(--color-border);
+    }
+    .discount-terms {
+      font-size: 12px;
+      color: var(--color-text-light);
+      margin-top: 12px;
+      font-style: italic;
+    }
+
     /* Contact Cards */
     .contact-grid {
       display: grid;
@@ -844,7 +910,7 @@
       .hero-banner { padding: 24px; }
       .hero-banner h2 { font-size: 20px; }
       .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .practices-grid, .promo-grid, .links-grid, .team-grid, .contact-grid, .responsibility-list { grid-template-columns: 1fr; }
+      .practices-grid, .promo-grid, .discount-grid, .links-grid, .team-grid, .contact-grid, .responsibility-list { grid-template-columns: 1fr; }
       .tabs { flex-wrap: wrap; }
       .tab-btn { flex: 1; min-width: 100px; text-align: center; }
     }
@@ -901,11 +967,18 @@
           </a>
           <a class="nav-item" onclick="switchSection('promos')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-              <path d="M12 9v4"></path>
-              <path d="M12 17h.01"></path>
+              <circle cx="12" cy="8" r="6"></circle>
+              <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
             </svg>
             Promotions
+          </a>
+          <a class="nav-item" onclick="switchSection('discounts')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 5 5 19"></path>
+              <circle cx="6.5" cy="6.5" r="2.5"></circle>
+              <circle cx="17.5" cy="17.5" r="2.5"></circle>
+            </svg>
+            Discounts
           </a>
         </div>
 
@@ -1034,6 +1107,22 @@
         <div class="promo-grid" id="promoGrid"></div>
       </section>
 
+      <!-- Discounts -->
+      <section id="discounts" class="section">
+        <div class="page-header">
+          <h1>Discounts</h1>
+          <p>Available discount codes and special offers for families.</p>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchDiscountTab('active')">Active</button>
+          <button class="tab-btn" onclick="switchDiscountTab('upcoming')">Upcoming</button>
+          <button class="tab-btn" onclick="switchDiscountTab('expired')">Expired</button>
+        </div>
+
+        <div class="discount-grid" id="discountGrid"></div>
+      </section>
+
       <!-- Working With Us -->
       <section id="working-with-us" class="section">
         <div class="page-header">
@@ -1064,7 +1153,7 @@
               <div class="contact-card-content">
                 <h4>Email (Non-Urgent)</h4>
                 <p>General questions, policy clarifications, and resource requests.</p>
-                <a href="mailto:enrollment@school.com">enrollment@school.com</a>
+                <a href="/cdn-cgi/l/email-protection#f4919a869b989899919a80b487979c9b9b98da979b99"><span class="__cf_email__" data-cfemail="c2a7acb0adaeaeafa7acb682b1a1aaadadaeeca1adaf">[email&#160;protected]</span></a>
               </div>
             </div>
             <div class="contact-card">
@@ -1310,13 +1399,14 @@
     </div>
   </div>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
 
     let supabaseClient = null;
-    let announcements = [], promos = [], policies = [], links = [], team = [], zones = [], scriptContent = '';
+    let announcements = [], promos = [], discounts = [], policies = [], links = [], team = [], zones = [], scriptContent = '';
     let currentPromoTab = 'active';
+    let currentDiscountTab = 'active';
 
     async function init() {
       try {
@@ -1329,18 +1419,20 @@
 
     async function loadAllData() {
       try {
-        const [p1, p2, p3, p4, p5, p6, p7] = await Promise.all([
+        const [p1, p2, p3, p4, p5, p6, p7, p8] = await Promise.all([
           supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
           supabaseClient.from('announcements').select('*').eq('active', true).order('created_at', { ascending: false }),
           supabaseClient.from('policies').select('*').order('category'),
           supabaseClient.from('links').select('*').order('sort_order'),
           supabaseClient.from('team_members').select('*').order('sort_order'),
           supabaseClient.from('zones').select('*').order('sort_order'),
-          supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single()
+          supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single(),
+          supabaseClient.from('discounts').select('*').order('start_date', { ascending: false })
         ]);
         promos = p1.data || []; announcements = p2.data || []; policies = p3.data || [];
         links = p4.data || []; team = p5.data || []; zones = p6.data || [];
         scriptContent = p7.data?.value || getDefaultScript();
+        discounts = p8.data || [];
         renderAll();
       } catch (e) { console.error(e); loadFromLocalStorage(); }
     }
@@ -1352,6 +1444,7 @@
       links = JSON.parse(localStorage.getItem('admin_links') || '[]');
       team = JSON.parse(localStorage.getItem('admin_team') || '[]');
       zones = JSON.parse(localStorage.getItem('admin_zones') || '[]');
+      discounts = JSON.parse(localStorage.getItem('admin_discounts') || '[]');
       scriptContent = localStorage.getItem('admin_script') || getDefaultScript();
       renderAll();
     }
@@ -1365,7 +1458,7 @@
     }
 
     function renderAll() {
-      renderHeroBanner(); renderStats(); renderAnnouncements(); renderPromos();
+      renderHeroBanner(); renderStats(); renderAnnouncements(); renderPromos(); renderDiscounts();
       renderPolicies(); renderScript(); renderLinks(); renderTeam(); renderZoneFilter();
     }
 
@@ -1475,6 +1568,52 @@
       document.getElementById('promoModal').classList.remove('active');
     }
 
+    function getDiscountStatus(d) {
+      const now = new Date();
+      const start = new Date(d.start_date);
+      const end = d.end_date ? new Date(d.end_date) : null;
+      if (start > now) return 'upcoming';
+      if (end && end < now) return 'expired';
+      return 'active';
+    }
+
+    function switchDiscountTab(tab) {
+      currentDiscountTab = tab;
+      document.querySelectorAll('#discounts .tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      renderDiscounts();
+    }
+
+    function renderDiscounts() {
+      const c = document.getElementById('discountGrid');
+      const filtered = discounts.filter(d => getDiscountStatus(d) === currentDiscountTab);
+      
+      if (!filtered.length) {
+        const msgs = { active: 'No active discounts', upcoming: 'No upcoming discounts', expired: 'No expired discounts' };
+        c.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><p>${msgs[currentDiscountTab]}</p></div>`;
+        return;
+      }
+
+      c.innerHTML = filtered.map(d => {
+        const status = getDiscountStatus(d);
+        const startDate = new Date(d.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const endDate = d.end_date ? new Date(d.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'No Expiry';
+        return `
+          <div class="discount-card">
+            <div class="discount-card-header">
+              <span class="discount-status ${status}">${status}</span>
+            </div>
+            <h4>${esc(d.title)}</h4>
+            <div class="discount-dates">${startDate} - ${endDate}</div>
+            <div class="discount-amount">${esc(d.amount)}</div>
+            <p>${esc(d.description || '')}</p>
+            <div class="discount-code">${esc(d.code)}</div>
+            ${d.terms ? `<div class="discount-terms">${esc(d.terms)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
     function renderPolicies() {
       const c = document.getElementById('policiesContainer');
       if (!policies.length) { c.innerHTML = '<div class="empty-state"><p>No policies added yet</p></div>'; return; }
@@ -1505,12 +1644,14 @@
         return; 
       }
       
-      c.innerHTML = filtered.map(t => `
+      c.innerHTML = filtered.map(t => {
+        const fullName = t.name || ((t.first_name || '') + ' ' + (t.last_name || '')).trim() || 'Team Member';
+        return `
         <div class="team-card">
           <div class="team-card-header">
-            <img src="${esc(t.avatar_url||'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="team-card-avatar" alt="${esc(t.name)}">
+            <img src="${esc(t.avatar_url||'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="team-card-avatar" alt="${esc(fullName)}">
             <div class="team-card-info">
-              <h4>${esc(t.name)}</h4>
+              <h4>${esc(fullName)}</h4>
               <div class="role">${esc(t.role||'Enrollment Specialist')}</div>
               <div class="zone">${esc(t.zone||'General')}</div>
             </div>
@@ -1533,7 +1674,7 @@
             </div>
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     function renderZoneFilter() {
@@ -1560,12 +1701,4 @@
 
     function closeSidebar() {
       document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarOverlay').classList.remove('open');
-    }
-
-    function esc(t) { if(!t)return''; const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
-
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
-</body>
-</html>
+      document.getElementById('sideb

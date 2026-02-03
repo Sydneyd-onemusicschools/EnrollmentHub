@@ -3,51 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Portal - Director's Dashboard</title>
+  <title>Admin Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --color-bg: #F0F4F8;
+      --color-bg: #F5F5F7;
       --color-white: #FFFFFF;
-      --color-blue: #2196F3;
-      --color-blue-light: #64B5F6;
-      --color-blue-dark: #1976D2;
-      --color-cyan: #00BCD4;
-      --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
-      --gradient-card-left: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
-      --gradient-card-right: linear-gradient(135deg, #4DD0E1 0%, #00BCD4 100%);
+      --color-coral: #F97B5F;
+      --color-coral-dark: #E56A4F;
+      --color-pink: #F472B6;
+      --gradient-primary: linear-gradient(135deg, #F97B5F 0%, #F472B6 100%);
       --color-text: #1F2937;
       --color-text-muted: #6B7280;
       --color-text-light: #9CA3AF;
       --color-border: #E5E7EB;
       --color-success: #10B981;
-      --color-danger: #EF4444;
       --color-warning: #F59E0B;
+      --color-danger: #EF4444;
+      --color-blue: #3B82F6;
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
       --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
-      --radius-xl: 20px;
-      
-      /* Zone colors */
-      --zone-color-1: #2196F3;
-      --zone-color-2: #10B981;
-      --zone-color-3: #F59E0B;
-      --zone-color-4: #EF4444;
-      --zone-color-5: #8B5CF6;
-      --zone-color-6: #EC4899;
-      --zone-color-7: #06B6D4;
-      --zone-color-8: #84CC16;
+      --sidebar-width: 260px;
     }
 
     body {
@@ -55,290 +39,223 @@
       background: var(--color-bg);
       color: var(--color-text);
       min-height: 100vh;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .app-layout { display: flex; min-height: 100vh; }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 32px 40px;
-    }
-
-    /* Header */
-    .header {
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-white);
+      border-right: 1px solid var(--color-border);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 32px;
+      flex-direction: column;
+      z-index: 100;
+      transition: transform 0.3s ease;
     }
 
-    .header-left h1 {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--color-text);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .sidebar-header { padding: 20px; border-bottom: 1px solid var(--color-border); }
 
-    .admin-badge {
+    .sidebar-logo { display: flex; align-items: center; gap: 12px; }
+
+    .sidebar-logo-icon {
+      width: 42px;
+      height: 42px;
       background: var(--gradient-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .header-left p {
-      font-size: 15px;
-      color: var(--color-text-muted);
-    }
-
-    .header-right {
-      display: flex;
-      gap: 12px;
-    }
-
-    .date-display {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: 10px 16px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text);
-    }
-
-    .date-display svg {
-      color: var(--color-blue);
-    }
-
-    .search-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: 10px 16px;
-      min-width: 220px;
-      transition: all 0.2s ease;
-    }
-
-    .search-box:focus-within {
-      border-color: var(--color-blue);
-      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-    }
-
-    .search-box svg {
-      color: var(--color-text-light);
       flex-shrink: 0;
     }
 
-    .search-box input {
-      border: none;
-      outline: none;
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--color-text);
-      width: 100%;
-      background: transparent;
+    .sidebar-logo-text h1 { font-size: 15px; font-weight: 700; color: var(--color-text); }
+    .sidebar-logo-text p { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+
+    .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+
+    .nav-section { margin-bottom: 20px; }
+    .nav-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--color-text-light);
+      padding: 0 12px;
+      margin-bottom: 8px;
     }
 
-    .search-box input::placeholder {
-      color: var(--color-text-light);
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
     }
+
+    .nav-item:hover { background: var(--color-bg); color: var(--color-text); }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(249, 123, 95, 0.12) 0%, rgba(244, 114, 182, 0.12) 100%);
+      color: var(--color-coral);
+    }
+    .nav-item.active svg { color: var(--color-coral); }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--color-border); }
 
     .preview-btn {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
+      width: 100%;
       padding: 10px 16px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text);
-      text-decoration: none;
-      transition: all 0.2s ease;
-    }
-
-    .preview-btn:hover {
-      border-color: var(--color-blue);
-      color: var(--color-blue);
-    }
-
-    .preview-btn svg {
-      color: var(--color-blue);
-    }
-
-    /* Hero Cards */
-    .hero-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: var(--color-white);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      border: 1px solid var(--color-border);
-    }
-
-    .stat-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 16px;
-    }
-
-    .stat-card-icon {
-      width: 44px;
-      height: 44px;
-      background: rgba(33, 150, 243, 0.1);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-blue);
-    }
-
-    .stat-card-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--color-text);
-      margin-bottom: 4px;
-    }
-
-    .stat-card-label {
-      font-size: 14px;
-      color: var(--color-text-muted);
-    }
-
-    /* Main Card */
-    .main-card {
-      background: var(--color-white);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-md);
-      overflow: hidden;
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid var(--color-border);
-      padding: 0 28px;
-      background: linear-gradient(180deg, #FAFBFC 0%, #FFFFFF 100%);
-    }
-
-    .tab {
-      padding: 18px 24px;
-      background: none;
-      border: none;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      position: relative;
-      font-family: inherit;
-      transition: color 0.2s ease;
-    }
-    .tab:hover { color: var(--color-text); }
-    .tab.active { color: var(--color-blue); }
-    .tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--color-blue);
-      border-radius: 2px 2px 0 0;
-    }
-
-    /* Content Area */
-    .content { padding: 28px; }
-    .section { animation: fadeIn 0.4s ease; }
-    .section.hidden { display: none; }
-
-    /* Section Header */
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--color-text);
-    }
-
-    .section-title-icon {
-      width: 32px;
-      height: 32px;
-      background: rgba(33, 150, 243, 0.1);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-blue);
-    }
-
-    .add-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
       background: var(--gradient-primary);
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      font-size: 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
       font-weight: 600;
-      font-family: inherit;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
     }
-    .add-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+
+    .preview-btn:hover { opacity: 0.9; }
+
+    /* Mobile Header */
+    .mobile-header {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 16px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 99;
+    }
+
+    .mobile-menu-btn {
+      width: 40px; height: 40px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text);
+      border-radius: var(--radius-sm);
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-header-text h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .page-header-text p { font-size: 14px; color: var(--color-text-muted); }
+
+    .section { display: none; }
+    .section.active { display: block; animation: fadeIn 0.25s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary { background: var(--gradient-primary); color: white; }
+    .btn-primary:hover { opacity: 0.9; box-shadow: var(--shadow-md); }
+
+    .btn-secondary {
+      background: var(--color-white);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+    .btn-secondary:hover { background: var(--color-bg); }
+
+    .btn-danger { background: var(--color-danger); color: white; }
+    .btn-danger:hover { background: #DC2626; }
+
+    .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+    .btn-icon {
+      width: 36px; height: 36px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .btn-icon:hover { background: var(--color-bg); color: var(--color-text); }
+    .btn-icon.danger:hover { background: rgba(239, 68, 68, 0.1); color: var(--color-danger); border-color: var(--color-danger); }
+
+    /* Cards */
+    .card {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border);
     }
 
     /* Data Table */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    .data-table { width: 100%; border-collapse: collapse; }
 
     .data-table th {
       text-align: left;
@@ -348,112 +265,194 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--color-text-muted);
+      border-bottom: 2px solid var(--color-border);
       background: var(--color-bg);
-      border-bottom: 1px solid var(--color-border);
     }
 
     .data-table td {
-      padding: 16px;
+      padding: 14px 16px;
+      font-size: 14px;
       border-bottom: 1px solid var(--color-border);
       vertical-align: middle;
     }
 
-    .data-table tr:last-child td {
-      border-bottom: none;
+    .data-table tr:hover td { background: rgba(249, 123, 95, 0.03); }
+
+    .data-table .drag-handle {
+      cursor: grab;
+      color: var(--color-text-light);
+      padding-right: 8px;
     }
 
-    .data-table tr:hover {
-      background: rgba(33, 150, 243, 0.02);
-    }
+    .data-table .drag-handle:active { cursor: grabbing; }
+    .data-table .actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-    .table-title {
-      font-weight: 600;
-      color: var(--color-text);
-    }
-
-    .table-subtitle {
-      font-size: 13px;
-      color: var(--color-text-muted);
-      margin-top: 2px;
-    }
-
-    .table-badge {
+    /* Status Badges */
+    .status-badge {
       display: inline-flex;
       align-items: center;
+      gap: 6px;
       padding: 4px 10px;
-      border-radius: 20px;
+      border-radius: 12px;
       font-size: 12px;
       font-weight: 500;
     }
 
-    .table-badge.active {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--color-success);
-    }
+    .status-badge.active { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
+    .status-badge.inactive { background: rgba(107, 114, 128, 0.1); color: var(--color-text-muted); }
+    .status-badge.upcoming { background: rgba(59, 130, 246, 0.1); color: var(--color-blue); }
+    .status-badge.ended { background: rgba(107, 114, 128, 0.1); color: var(--color-text-muted); }
 
-    .table-badge.inactive {
-      background: rgba(107, 114, 128, 0.1);
-      color: var(--color-text-muted);
-    }
-
-    .table-badge.zone {
-      background: rgba(33, 150, 243, 0.1);
-      color: var(--color-blue);
-    }
-
-    .table-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .action-btn {
-      width: 32px;
-      height: 32px;
-      border: 1px solid var(--color-border);
-      background: var(--color-white);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-text-muted);
-      transition: all 0.2s ease;
-    }
-
-    .action-btn:hover {
-      border-color: var(--color-blue);
-      color: var(--color-blue);
-    }
-
-    .action-btn.delete:hover {
-      border-color: var(--color-danger);
-      color: var(--color-danger);
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--color-text-muted);
-    }
-
-    .empty-state-icon {
-      width: 64px;
-      height: 64px;
-      background: rgba(33, 150, 243, 0.1);
+    /* Avatar */
+    .avatar {
+      width: 40px; height: 40px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      color: var(--color-blue);
+      object-fit: cover;
+      border: 2px solid var(--color-bg);
     }
 
-    .empty-state h3 {
-      font-size: 16px;
+    .avatar-sm { width: 32px; height: 32px; }
+
+    /* Zone Badge */
+    .zone-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: var(--color-bg);
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--color-text-muted);
+      font-weight: 500;
+    }
+
+    /* Form Elements */
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
       font-weight: 600;
       color: var(--color-text);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+    }
+
+    .form-group .hint {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--color-white);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--color-coral);
+      box-shadow: 0 0 0 3px rgba(249, 123, 95, 0.1);
+    }
+
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-switch { display: flex; align-items: center; gap: 10px; }
+
+    .switch { position: relative; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--color-border);
+      border-radius: 24px;
+      transition: 0.2s;
+    }
+
+    .switch-slider:before {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      left: 3px; bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .switch input:checked + .switch-slider { background: var(--color-success); }
+    .switch input:checked + .switch-slider:before { transform: translateX(20px); }
+
+    /* Avatar Upload */
+    .avatar-upload { display: flex; align-items: center; gap: 16px; }
+
+    .avatar-preview {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-bg);
+      background: var(--color-bg);
+    }
+
+    .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Rich Text Editor */
+    .editor-toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 10px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-bottom: none;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      flex-wrap: wrap;
+    }
+
+    .editor-btn {
+      width: 32px; height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .editor-btn:hover { background: var(--color-coral); color: white; border-color: var(--color-coral); }
+
+    .editor-content {
+      min-height: 300px;
+      padding: 16px;
+      border: 1px solid var(--color-border);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      font-size: 14px;
+      line-height: 1.7;
+      background: var(--color-white);
+    }
+
+    .editor-content:focus { outline: none; border-color: var(--color-coral); }
+    .editor-content h2 { font-size: 18px; margin: 16px 0 8px; color: var(--color-coral); }
+    .editor-content h3 { font-size: 16px; margin: 14px 0 6px; }
+    .editor-content p { margin-bottom: 12px; }
+    .editor-content ul, .editor-content ol { padding-left: 24px; margin: 12px 0; }
+    .editor-content li { margin-bottom: 6px; }
+    .editor-content blockquote {
+      background: linear-gradient(135deg, rgba(249, 123, 95, 0.08) 0%, rgba(244, 114, 182, 0.08) 100%);
+      border-left: 4px solid var(--color-coral);
+      padding: 12px 16px;
+      margin: 12px 0;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-style: italic;
     }
 
     /* Modal */
@@ -461,7 +460,6 @@
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -469,2038 +467,499 @@
       opacity: 0;
       visibility: hidden;
       transition: all 0.2s ease;
+      padding: 20px;
     }
 
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
 
     .modal {
       background: var(--color-white);
-      border-radius: var(--radius-xl);
-      width: 100%;
+      border-radius: var(--radius-lg);
       max-width: 560px;
+      width: 100%;
       max-height: 90vh;
-      overflow: hidden;
+      overflow-y: auto;
       transform: scale(0.95);
-      transition: transform 0.2s ease;
+      transition: all 0.2s ease;
     }
 
-    .modal-overlay.active .modal {
-      transform: scale(1);
-    }
+    .modal-overlay.active .modal { transform: scale(1); }
 
     .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--color-border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 24px;
-      border-bottom: 1px solid var(--color-border);
     }
 
-    .modal-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
+    .modal-header h3 { font-size: 18px; font-weight: 600; }
 
     .modal-close {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       border: none;
       background: var(--color-bg);
-      border-radius: var(--radius-sm);
+      border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--color-text-muted);
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
     }
 
-    .modal-close:hover {
-      background: var(--color-border);
-      color: var(--color-text);
-    }
+    .modal-close:hover { background: var(--color-coral); color: white; }
 
-    .modal-body {
-      padding: 24px;
-      overflow-y: auto;
-      max-height: calc(90vh - 160px);
-    }
+    .modal-body { padding: 24px; }
 
     .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--color-border);
       display: flex;
       justify-content: flex-end;
       gap: 12px;
-      padding: 20px 24px;
-      border-top: 1px solid var(--color-border);
-      background: var(--color-bg);
     }
 
-    /* Form Elements */
-    .form-group {
-      margin-bottom: 20px;
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--color-text-muted);
     }
 
-    .form-group:last-child {
-      margin-bottom: 0;
-    }
+    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.4; }
+    .empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
+    .empty-state p { font-size: 14px; margin-bottom: 20px; }
 
-    .form-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text);
-      margin-bottom: 8px;
-    }
-
-    .form-input,
-    .form-select,
-    .form-textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--color-text);
-      background: var(--color-white);
-      transition: all 0.2s ease;
-    }
-
-    .form-input:focus,
-    .form-select:focus,
-    .form-textarea:focus {
-      outline: none;
-      border-color: var(--color-blue);
-      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-    }
-
-    .form-textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-primary {
-      background: var(--gradient-primary);
-      color: white;
-      border: none;
-      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
-    }
-
-    .btn-secondary {
-      background: var(--color-white);
-      color: var(--color-text);
-      border: 1px solid var(--color-border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--color-bg);
-    }
-
-    .btn-danger {
-      background: var(--color-danger);
-      color: white;
-      border: none;
-    }
-
-    .btn-danger:hover {
-      background: #DC2626;
-    }
-
-    /* Loading Spinner */
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid transparent;
-      border-top-color: currentColor;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    /* Toast Notifications */
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
+    /* Toast */
     .toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
       background: var(--color-text);
       color: white;
       padding: 14px 20px;
       border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: var(--shadow-lg);
-      animation: slideIn 0.3s ease;
-    }
-
-    .toast.success {
-      background: var(--color-success);
-    }
-
-    .toast.error {
-      background: var(--color-danger);
-    }
-
-    /* Settings Modal */
-    .settings-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .settings-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-    }
-
-    .settings-item-info h4 {
       font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .settings-item-info p {
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    /* Enrollment Script Editor */
-    .script-editor {
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
-
-    .script-toolbar {
-      display: flex;
-      gap: 4px;
-      padding: 12px;
-      background: var(--color-bg);
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .toolbar-btn {
-      width: 32px;
-      height: 32px;
-      border: none;
-      background: var(--color-white);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-text-muted);
-      transition: all 0.2s ease;
-    }
-
-    .toolbar-btn:hover {
-      background: var(--color-border);
-      color: var(--color-text);
-    }
-
-    .script-content {
-      padding: 20px;
-      min-height: 400px;
-      outline: none;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .script-content:focus {
-      background: rgba(33, 150, 243, 0.02);
-    }
-
-    /* Subsection styling */
-    .subsection {
-      margin-bottom: 32px;
-    }
-
-    .subsection-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .subsection-title {
+      font-weight: 500;
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--color-text);
-    }
-
-    .subsection-title-icon {
-      width: 28px;
-      height: 28px;
-      background: rgba(33, 150, 243, 0.1);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-blue);
-    }
-
-    /* Links Grid */
-    .links-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .link-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      transition: all 0.2s ease;
-    }
-
-    .link-item:hover {
-      border-color: var(--color-blue);
-    }
-
-    .link-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(33, 150, 243, 0.1);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-blue);
-    }
-
-    .link-info {
-      flex: 1;
-    }
-
-    .link-info h4 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .link-info p {
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    /* Team Grid */
-    .team-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .team-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      transition: all 0.2s ease;
-    }
-
-    .team-card:hover {
-      border-color: var(--color-blue);
-    }
-
-    .team-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .team-info {
-      flex: 1;
-    }
-
-    .team-name {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .team-role {
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    .team-zone {
-      padding: 6px 12px;
-      background: rgba(33, 150, 243, 0.1);
-      color: var(--color-blue);
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .team-contact-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      font-size: 13px;
-      color: var(--color-text-muted);
-      margin-right: 16px;
-    }
-
-    /* Avatar Input */
-    .avatar-input-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .avatar-preview {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--color-border);
-    }
-
-    .avatar-input-wrapper .form-input {
-      flex: 1;
-    }
-
-    /* Policy List */
-    .policy-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .policy-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      transition: all 0.2s ease;
-    }
-
-    .policy-item:hover {
-      border-color: var(--color-blue);
-    }
-
-    .policy-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(33, 150, 243, 0.1);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-blue);
-    }
-
-    .policy-info {
-      flex: 1;
-    }
-
-    .policy-info h4 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .policy-info p {
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    /* Delete Confirmation */
-    .delete-confirm {
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    .delete-confirm-icon {
-      width: 64px;
-      height: 64px;
-      background: rgba(239, 68, 68, 0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      color: var(--color-danger);
-    }
-
-    .delete-confirm h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .delete-confirm p {
-      color: var(--color-text-muted);
-      margin-bottom: 24px;
-    }
-
-    /* Zone filter */
-    .zone-select-wrapper {
-      position: relative;
-    }
-
-    .zone-select {
-      appearance: none;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: 8px 36px 8px 14px;
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--color-text);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .zone-select:hover {
-      border-color: var(--color-blue);
-    }
-
-    .zone-select:focus {
-      outline: none;
-      border-color: var(--color-blue);
-      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-    }
-
-    .zone-select-wrapper::after {
-      content: '';
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: 5px solid transparent;
-      border-top-color: var(--color-text-muted);
-      pointer-events: none;
-    }
-
-    /* Drag and Drop */
-    .draggable {
-      cursor: grab;
-      transition: all 0.2s ease;
-    }
-
-    .draggable:active {
-      cursor: grabbing;
-    }
-
-    .draggable.dragging {
-      opacity: 0.5;
-      transform: scale(1.02);
       box-shadow: var(--shadow-lg);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 2000;
     }
 
-    .drag-handle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      color: var(--color-text-light);
-      cursor: grab;
-      flex-shrink: 0;
-      margin-right: 8px;
-    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: var(--color-success); }
+    .toast.error { background: var(--color-danger); }
 
-    .drag-handle:hover {
-      color: var(--color-text-muted);
-    }
-
-    .drag-over {
-      border-color: var(--color-blue) !important;
-      background: rgba(33, 150, 243, 0.05) !important;
-    }
-
-    /* Bulk Actions */
-    .bulk-checkbox {
-      width: 18px;
-      height: 18px;
-      border: 2px solid var(--color-border);
-      border-radius: 4px;
-      cursor: pointer;
-      appearance: none;
-      background: var(--color-white);
-      flex-shrink: 0;
-      margin-right: 12px;
-      transition: all 0.2s ease;
-    }
-
-    .bulk-checkbox:checked {
-      background: var(--color-blue);
-      border-color: var(--color-blue);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
-      background-size: 12px;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .bulk-checkbox:hover {
-      border-color: var(--color-blue);
-    }
-
-    .bulk-action-bar {
-      display: none;
-      align-items: center;
-      gap: 16px;
-      padding: 12px 20px;
-      background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(0, 188, 212, 0.1) 100%);
-      border: 1px solid rgba(33, 150, 243, 0.2);
-      border-radius: var(--radius-md);
-      margin-bottom: 16px;
-      animation: slideIn 0.2s ease;
-    }
-
-    .bulk-action-bar.active {
-      display: flex;
-    }
-
-    .bulk-action-bar .selected-count {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--color-blue);
-    }
-
-    .bulk-action-bar .bulk-btn {
-      padding: 6px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-      font-family: inherit;
-    }
-
-    .bulk-action-bar .bulk-btn.delete {
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--color-danger);
-    }
-
-    .bulk-action-bar .bulk-btn.delete:hover {
-      background: var(--color-danger);
-      color: white;
-    }
-
-    .bulk-action-bar .bulk-btn.deactivate {
-      background: rgba(107, 114, 128, 0.1);
-      color: var(--color-text-muted);
-    }
-
-    .bulk-action-bar .bulk-btn.deactivate:hover {
-      background: var(--color-text-muted);
-      color: white;
-    }
-
-    .bulk-action-bar .bulk-btn.clear {
-      background: transparent;
-      color: var(--color-text-muted);
-      margin-left: auto;
-    }
-
-    .bulk-action-bar .bulk-btn.clear:hover {
-      color: var(--color-text);
-    }
-
-    .select-all-wrapper {
+    /* Connection Status */
+    .connection-status {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 12px;
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    /* Color-coded zones */
-    .zone-color-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .zone-color-picker {
-      width: 40px;
-      height: 32px;
-      border: 1px solid var(--color-border);
+      padding: 8px 12px;
+      background: var(--color-bg);
       border-radius: var(--radius-sm);
-      cursor: pointer;
-      padding: 2px;
-    }
-
-    .team-zone {
-      padding: 6px 12px;
-      border-radius: 20px;
       font-size: 12px;
       font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-bottom: 12px;
     }
 
-    /* Image Upload */
-    .avatar-upload-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .avatar-upload-preview {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--color-border);
-    }
-
-    .avatar-upload-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .avatar-upload-btn {
-      padding: 8px 16px;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-sm);
-      background: var(--color-white);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: inherit;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .avatar-upload-btn:hover {
-      border-color: var(--color-blue);
-      color: var(--color-blue);
-    }
-
-    .avatar-upload-btn.primary {
-      background: var(--color-blue);
-      border-color: var(--color-blue);
-      color: white;
-    }
-
-    .avatar-upload-btn.primary:hover {
-      background: var(--color-blue-dark);
-    }
-
-    .avatar-file-input {
-      display: none;
-    }
+    .connection-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .connection-dot.connected { background: var(--color-success); }
+    .connection-dot.disconnected { background: var(--color-warning); }
 
     /* Mobile Responsive */
     @media (max-width: 1024px) {
-      .container {
-        padding: 24px 20px;
-      }
-
-      .hero-cards {
-        grid-template-columns: repeat(2, 1fr) !important;
-      }
-
-      .header {
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .header-right {
-        width: 100%;
-        flex-wrap: wrap;
-      }
-
-      .search-box {
-        flex: 1;
-        min-width: 180px;
-      }
+      .form-row { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
-      .container {
-        padding: 16px 12px;
-      }
-
-      .header-left h1 {
-        font-size: 24px;
-      }
-
-      .hero-cards {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 12px;
-      }
-
-      .stat-card {
-        padding: 16px;
-      }
-
-      .stat-card-value {
-        font-size: 24px;
-      }
-
-      .tabs {
-        padding: 0 12px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .tab {
-        padding: 14px 16px;
-        white-space: nowrap;
-        font-size: 14px;
-      }
-
-      .content {
-        padding: 16px;
-      }
-
-      .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-
-      .add-btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .team-card {
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .team-info {
-        flex: 1 1 100%;
-        order: 2;
-      }
-
-      .team-avatar {
-        order: 1;
-      }
-
-      .team-zone {
-        order: 3;
-      }
-
-      .team-contact-info {
-        order: 4;
-        flex: 1;
-      }
-
-      .table-actions {
-        order: 5;
-      }
-
-      .link-item {
-        flex-wrap: wrap;
-      }
-
-      .link-info {
-        flex: 1 1 calc(100% - 70px);
-      }
-
-      .modal {
-        margin: 16px;
-        max-height: calc(100vh - 32px);
-      }
-
-      .modal-body {
-        max-height: calc(100vh - 180px);
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .zone-card {
-        padding: 16px;
-      }
-
-      .bulk-action-bar {
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .bulk-action-bar .bulk-btn.clear {
-        margin-left: 0;
-        width: 100%;
-        text-align: center;
-        justify-content: center;
-      }
-
-      .subsection-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-
-      .subsection-header .add-btn {
-        width: 100%;
-      }
-
-      .drag-handle {
-        display: none;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero-cards {
-        grid-template-columns: 1fr !important;
-      }
-
-      .header-right {
-        flex-direction: column;
-      }
-
-      .search-box, .preview-btn, .date-display {
-        width: 100%;
-      }
-
-      .preview-btn {
-        justify-content: center;
-      }
-
-      .team-card {
-        padding: 16px;
-      }
-
-      .team-contact-info {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-between;
-      }
-    }
-
-    /* Categories Grid */
-    .categories-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .category-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-
-    .category-tag:hover {
-      border-color: var(--color-blue);
-    }
-
-    .category-tag-icon {
-      width: 24px;
-      height: 24px;
-      background: rgba(33, 150, 243, 0.1);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-blue);
-    }
-
-    .category-tag-count {
-      font-size: 12px;
-      color: var(--color-text-muted);
-      background: var(--color-bg);
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .category-tag-actions {
-      display: flex;
-      gap: 4px;
-      margin-left: 4px;
-    }
-
-    .category-tag-actions .action-btn {
-      width: 24px;
-      height: 24px;
-    }
-
-    /* Promo Card */
-    .promo-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px;
-      background: linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%);
-      border: 1px solid rgba(33, 150, 243, 0.2);
-      border-radius: var(--radius-lg);
-      margin-bottom: 12px;
-    }
-
-    .promo-card:last-child {
-      margin-bottom: 0;
-    }
-
-    .promo-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--gradient-primary);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .promo-info {
-      flex: 1;
-    }
-
-    .promo-info h4 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .promo-info p {
-      font-size: 14px;
-      color: var(--color-text-muted);
-      margin-bottom: 6px;
-    }
-
-    .promo-dates {
-      font-size: 12px;
-      color: var(--color-blue);
-      font-weight: 500;
-    }
-
-    .promo-badge {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .promo-badge.active {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--color-success);
-    }
-
-    .promo-badge.scheduled {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--color-warning);
-    }
-
-    .promo-badge.expired {
-      background: rgba(107, 114, 128, 0.1);
-      color: var(--color-text-muted);
-    }
-
-    /* Team description */
-    .team-description {
-      font-size: 13px;
-      color: var(--color-text-muted);
-      margin-top: 4px;
-      line-height: 1.4;
-    }
-
-    /* Zones Grid */
-    .zones-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .zone-card {
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      transition: all 0.2s ease;
-    }
-
-    .zone-card:hover {
-      border-color: var(--color-blue);
-      box-shadow: var(--shadow-md);
-    }
-
-    .zone-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .zone-card-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .zone-card-icon {
-      width: 36px;
-      height: 36px;
-      background: rgba(33, 150, 243, 0.1);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-blue);
-    }
-
-    .zone-card-title h4 {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .zone-card-description {
-      font-size: 13px;
-      color: var(--color-text-muted);
-      margin-bottom: 16px;
-      line-height: 1.5;
-    }
-
-    .zone-card-stats {
-      display: flex;
-      gap: 16px;
-      padding-top: 12px;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .zone-stat {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    .zone-stat svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    /* Drag and Drop Styles */
-    .drag-handle {
-      cursor: grab;
-      color: var(--color-text-light);
-      padding: 4px;
-      margin-right: 8px;
-      opacity: 0.5;
-      transition: opacity 0.2s ease;
-    }
-
-    .drag-handle:hover {
-      opacity: 1;
-    }
-
-    .drag-handle:active {
-      cursor: grabbing;
-    }
-
-    .sortable-ghost {
-      opacity: 0.4;
-      background: rgba(33, 150, 243, 0.1);
-    }
-
-    .sortable-chosen {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    }
-
-    .sortable-drag {
-      opacity: 1 !important;
-    }
-
-    /* Bulk Actions */
-    .bulk-checkbox {
-      width: 18px;
-      height: 18px;
-      border: 2px solid var(--color-border);
-      border-radius: 4px;
-      cursor: pointer;
-      appearance: none;
-      background: var(--color-white);
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .bulk-checkbox:checked {
-      background: var(--color-blue);
-      border-color: var(--color-blue);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
-      background-size: 12px;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .bulk-toolbar {
-      display: none;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(0, 188, 212, 0.1) 100%);
-      border: 1px solid rgba(33, 150, 243, 0.2);
-      border-radius: var(--radius-md);
-      margin-bottom: 16px;
-      animation: fadeIn 0.2s ease;
-    }
-
-    .bulk-toolbar.active {
-      display: flex;
-    }
-
-    .bulk-toolbar-count {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--color-blue);
-    }
-
-    .bulk-toolbar-actions {
-      display: flex;
-      gap: 8px;
-      margin-left: auto;
-    }
-
-    .bulk-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-      font-family: inherit;
-    }
-
-    .bulk-btn-danger {
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--color-danger);
-    }
-
-    .bulk-btn-danger:hover {
-      background: var(--color-danger);
-      color: white;
-    }
-
-    .bulk-btn-secondary {
-      background: var(--color-white);
-      color: var(--color-text);
-      border: 1px solid var(--color-border);
-    }
-
-    .bulk-btn-secondary:hover {
-      border-color: var(--color-blue);
-      color: var(--color-blue);
-    }
-
-    /* Image Upload */
-    .avatar-upload-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .avatar-upload-preview {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--color-border);
-      background: var(--color-bg);
-    }
-
-    .avatar-upload-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .avatar-upload-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 1px solid var(--color-border);
-      background: var(--color-white);
-      color: var(--color-text);
-      font-family: inherit;
-    }
-
-    .avatar-upload-btn:hover {
-      border-color: var(--color-blue);
-      color: var(--color-blue);
-    }
-
-    .avatar-upload-btn.primary {
-      background: var(--gradient-primary);
-      border: none;
-      color: white;
-    }
-
-    .avatar-upload-input {
-      display: none;
-    }
-
-    .avatar-url-input {
-      width: 100%;
-      margin-top: 8px;
-    }
-
-    /* Zone Colors */
-    .zone-badge {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      color: white;
-    }
-
-    /* Mobile Responsive Styles */
-    @media (max-width: 1024px) {
-      .container {
-        padding: 24px 20px;
-      }
-
-      .hero-cards {
-        grid-template-columns: repeat(2, 1fr) !important;
-      }
-
-      .header {
-        flex-direction: column;
-        gap: 16px;
-        align-items: flex-start;
-      }
-
-      .header-right {
-        width: 100%;
-        flex-wrap: wrap;
-      }
-
-      .search-box {
-        flex: 1;
-        min-width: 180px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 16px 12px;
-      }
-
-      .header-left h1 {
-        font-size: 24px;
-      }
-
-      .hero-cards {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 12px;
-      }
-
-      .stat-card {
-        padding: 16px;
-      }
-
-      .stat-card-value {
-        font-size: 24px;
-      }
-
-      .tabs {
-        padding: 0 12px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .tab {
-        padding: 14px 16px;
-        white-space: nowrap;
-        font-size: 14px;
-      }
-
-      .content {
-        padding: 16px;
-      }
-
-      .section-header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .add-btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .team-card {
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .team-info {
-        flex: 1 1 100%;
-        order: 2;
-      }
-
-      .team-avatar {
-        order: 1;
-      }
-
-      .team-zone {
-        order: 3;
-      }
-
-      .team-contact-info {
-        order: 4;
-        flex: 1;
-      }
-
-      .table-actions {
-        order: 5;
-      }
-
-      .link-item {
-        flex-wrap: wrap;
-      }
-
-      .link-info {
-        flex: 1 1 calc(100% - 70px);
-      }
-
-      .modal {
-        max-width: 95%;
-        margin: 10px;
-        max-height: 95vh;
-      }
-
-      .modal-body {
-        max-height: calc(95vh - 140px);
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .data-table {
-        display: block;
-        overflow-x: auto;
-      }
-
-      .bulk-toolbar {
-        flex-wrap: wrap;
-      }
-
-      .bulk-toolbar-actions {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 8px;
-      }
-
-      .zones-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero-cards {
-        grid-template-columns: 1fr !important;
-      }
-
-      .header-right {
-        flex-direction: column;
-      }
-
-      .search-box,
-      .preview-btn,
-      .date-display {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .preview-btn {
-        justify-content: center;
-      }
-
-      .subsection-header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .subsection-header .add-btn {
-        width: 100%;
-      }
+      .mobile-header { display: flex; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .main-content { margin-left: 0; padding: 72px 16px 32px; }
+      .page-header { flex-direction: column; align-items: stretch; }
+      .data-table { font-size: 13px; }
+      .data-table th, .data-table td { padding: 10px 12px; }
+      .modal { margin: 16px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-left">
-        <h1>Director's Portal <span class="admin-badge">Admin</span></h1>
-        <p>Manage content, team members, and resources</p>
-      </div>
-      <div class="header-right">
-        <div class="search-box">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </svg>
-          <input type="text" id="globalSearch" placeholder="Search..." oninput="handleSearch(this.value)">
+  <div class="mobile-header">
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+    <span style="font-size: 15px; font-weight: 700;">Admin Portal</span>
+    <div style="width: 40px;"></div>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </div>
+          <div class="sidebar-logo-text">
+            <h1>Admin Portal</h1>
+            <p>Manage Content</p>
+          </div>
         </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Content</div>
+          <a class="nav-item active" onclick="switchSection('announcements')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+            Announcements
+          </a>
+          <a class="nav-item" onclick="switchSection('promos')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+            Promotions
+          </a>
+          <a class="nav-item" onclick="switchSection('policies')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            Policies
+          </a>
+          <a class="nav-item" onclick="switchSection('links')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            Resources
+          </a>
+          <a class="nav-item" onclick="switchSection('script')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+            Enrollment Script
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Team</div>
+          <a class="nav-item" onclick="switchSection('team')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Team Members
+          </a>
+          <a class="nav-item" onclick="switchSection('zones')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Zones
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
         <a href="director-dashboard.html" target="_blank" class="preview-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-          Preview
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          Preview Director Portal
         </a>
-        <div class="date-display">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
-            <line x1="16" x2="16" y1="2" y2="6"></line>
-            <line x1="8" x2="8" y1="2" y2="6"></line>
-            <line x1="3" x2="21" y1="10" y2="10"></line>
-          </svg>
-          <span id="currentDate"></span>
-        </div>
       </div>
-    </header>
+    </aside>
 
-    <!-- Stats Cards -->
-    <div class="hero-cards" style="grid-template-columns: repeat(4, 1fr);">
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div class="stat-card-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5"></path>
-              <path d="M2 12l10 5 10-5"></path>
-            </svg>
+    <main class="main-content">
+      <!-- Announcements Section -->
+      <section id="announcements" class="section active">
+        <div class="page-header">
+          <div class="page-header-text">
+            <h1>Announcements</h1>
+            <p>Manage announcements displayed on the director dashboard.</p>
           </div>
+          <button class="btn btn-primary" onclick="openAnnouncementModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Announcement
+          </button>
         </div>
-        <div class="stat-card-value" id="promoCount">0</div>
-        <div class="stat-card-label">Active Promos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div class="stat-card-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </div>
+        <div class="connection-status">
+          <div class="connection-dot" id="connectionDot"></div>
+          <span id="connectionText">Checking connection...</span>
         </div>
-        <div class="stat-card-value" id="teamCount">0</div>
-        <div class="stat-card-label">Team Members</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div class="stat-card-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-            </svg>
-          </div>
+        <div class="card">
+          <table class="data-table"><thead><tr>
+            <th style="width: 40px;"></th><th>Title</th><th>Date</th><th>Status</th><th style="width: 120px; text-align: right;">Actions</th>
+          </tr></thead><tbody id="announcementsList"></tbody></table>
         </div>
-        <div class="stat-card-value" id="policyCount">0</div>
-        <div class="stat-card-label">Active Policies</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div class="stat-card-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-            </svg>
-          </div>
-        </div>
-        <div class="stat-card-value" id="linkCount">0</div>
-        <div class="stat-card-label">Quick Links</div>
-      </div>
-    </div>
+      </section>
 
-    <!-- Main Content Card -->
-    <div class="main-card">
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab('announcements')">Announcements</button>
-        <button class="tab" onclick="switchTab('policies')">Policies</button>
-        <button class="tab" onclick="switchTab('script')">Enrollment Script</button>
-        <button class="tab" onclick="switchTab('links')">Links</button>
-        <button class="tab" onclick="switchTab('team')">Team</button>
-        <button class="tab" onclick="switchTab('zones')">Zones</button>
-      </div>
-
-      <div class="content">
-        <!-- Announcements Section -->
-        <div id="announcements" class="section">
-          <!-- Promos Subsection -->
-          <div class="subsection">
-            <div class="subsection-header">
-              <h3 class="subsection-title">
-                <span class="subsection-title-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                    <path d="M2 17l10 5 10-5"></path>
-                    <path d="M2 12l10 5 10-5"></path>
-                  </svg>
-                </span>
-                Active Promotions
-              </h3>
-              <button class="add-btn" onclick="openPromoModal()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 5v14M5 12h14"></path>
-                </svg>
-                Add Promo
-              </button>
-            </div>
-            <div id="promosContainer">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                  </svg>
-                </div>
-                <h3>No promotions yet</h3>
-                <p>Create promotional offers for enrollment</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Announcements Subsection -->
-          <div class="subsection">
-            <div class="subsection-header">
-              <h3 class="subsection-title">
-                <span class="subsection-title-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="m3 11 18-5v12L3 13v-2z"></path>
-                    <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
-                  </svg>
-                </span>
-                Announcements
-              </h3>
-              <button class="add-btn" onclick="openAnnouncementModal()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 5v14M5 12h14"></path>
-                </svg>
-                Add Announcement
-              </button>
-            </div>
-            <div id="announcementsContainer">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="m3 11 18-5v12L3 13v-2z"></path>
-                  </svg>
-                </div>
-                <h3>No announcements yet</h3>
-                <p>Create your first announcement to get started</p>
-              </div>
-            </div>
-          </div>
+      <!-- Promos Section -->
+      <section id="promos" class="section">
+        <div class="page-header">
+          <div class="page-header-text"><h1>Promotions</h1><p>Manage promotional offers and campaigns.</p></div>
+          <button class="btn btn-primary" onclick="openPromoModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Promotion
+          </button>
         </div>
-
-        <!-- Policies Section -->
-        <div id="policies" class="section hidden">
-          <div class="section-header">
-            <h2 class="section-title">
-              <span class="section-title-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-              </span>
-              Policy Documents
-            </h2>
-            <button class="add-btn" onclick="openPolicyModal()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"></path>
-              </svg>
-              Add Policy
-            </button>
-          </div>
-          <div id="policiesContainer" class="policy-list">
-            <div class="empty-state">
-              <div class="empty-state-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                </svg>
-              </div>
-              <h3>No policies yet</h3>
-              <p>Add policy documents for directors to reference</p>
-            </div>
-          </div>
+        <div class="card">
+          <table class="data-table"><thead><tr>
+            <th>Title</th><th>Discount</th><th>Start</th><th>End</th><th>Status</th><th style="width: 120px; text-align: right;">Actions</th>
+          </tr></thead><tbody id="promosList"></tbody></table>
         </div>
+      </section>
 
-        <!-- Script Section -->
-        <div id="script" class="section hidden">
-          <div class="section-header">
-            <h2 class="section-title">
-              <span class="section-title-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-                </svg>
-              </span>
-              Enrollment Script
-            </h2>
-            <button class="btn btn-primary" onclick="saveScript()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-              </svg>
-              Save Changes
-            </button>
-          </div>
-          <div class="script-editor">
-            <div class="script-toolbar">
-              <button class="toolbar-btn" onclick="formatText('bold')" title="Bold">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                  <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                </svg>
-              </button>
-              <button class="toolbar-btn" onclick="formatText('italic')" title="Italic">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="19" x2="10" y1="4" y2="4"></line>
-                  <line x1="14" x2="5" y1="20" y2="20"></line>
-                  <line x1="15" x2="9" y1="4" y2="20"></line>
-                </svg>
-              </button>
-              <button class="toolbar-btn" onclick="formatText('underline')" title="Underline">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M6 4v6a6 6 0 0 0 12 0V4"></path>
-                  <line x1="4" x2="20" y1="20" y2="20"></line>
-                </svg>
-              </button>
-            </div>
-            <div class="script-content" contenteditable="true" id="scriptEditor">
-              <p>Loading script content...</p>
-            </div>
-          </div>
+      <!-- Policies Section -->
+      <section id="policies" class="section">
+        <div class="page-header">
+          <div class="page-header-text"><h1>Policies</h1><p>Manage policy documents and guidelines.</p></div>
+          <button class="btn btn-primary" onclick="openPolicyModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Policy
+          </button>
         </div>
-
-        <!-- Links Section -->
-        <div id="links" class="section hidden">
-          <!-- Link Categories Subsection -->
-          <div class="subsection">
-            <div class="subsection-header">
-              <h3 class="subsection-title">
-                <span class="subsection-title-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                </span>
-                Link Categories
-              </h3>
-              <button class="add-btn" onclick="openLinkCategoryModal()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 5v14M5 12h14"></path>
-                </svg>
-                Add Category
-              </button>
-            </div>
-            <div id="linkCategoriesContainer" class="categories-grid">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                </div>
-                <h3>No categories yet</h3>
-                <p>Create categories to organize your links</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Links Subsection -->
-          <div class="subsection">
-            <div class="subsection-header">
-              <h3 class="subsection-title">
-                <span class="subsection-title-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                  </svg>
-                </span>
-                Quick Links
-              </h3>
-              <button class="add-btn" onclick="openLinkModal()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 5v14M5 12h14"></path>
-                </svg>
-                Add Link
-              </button>
-            </div>
-            <div id="linksContainer" class="links-grid">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  </svg>
-                </div>
-                <h3>No links yet</h3>
-                <p>Add quick links for easy access</p>
-              </div>
-            </div>
-          </div>
+        <div class="card">
+          <table class="data-table"><thead><tr>
+            <th style="width: 40px;"></th><th>Title</th><th>Category</th><th>URL</th><th style="width: 120px; text-align: right;">Actions</th>
+          </tr></thead><tbody id="policiesList"></tbody></table>
         </div>
+      </section>
 
-        <!-- Team Section -->
-        <div id="team" class="section hidden">
-          <div class="section-header">
-            <h2 class="section-title">
-              <span class="section-title-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </span>
-              Enrollment Team
-            </h2>
-            <button class="add-btn" onclick="openTeamModal()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"></path>
-              </svg>
-              Add Team Member
-            </button>
-          </div>
-          
-          <!-- Bulk Action Bar -->
-          <div id="bulkActionBar-team" class="bulk-action-bar">
-            <span class="selected-count">0 selected</span>
-            <button class="bulk-btn delete" onclick="bulkDelete('team')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              </svg>
-              Delete Selected
-            </button>
-            <button class="bulk-btn clear" onclick="clearBulkSelection('team')">Clear Selection</button>
-          </div>
-          
-          <div id="teamContainer" class="team-grid">
-            <div class="empty-state">
-              <div class="empty-state-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                </svg>
-              </div>
-              <h3>No team members yet</h3>
-              <p>Add enrollment team members</p>
-            </div>
-          </div>
+      <!-- Links Section -->
+      <section id="links" class="section">
+        <div class="page-header">
+          <div class="page-header-text"><h1>Resources & Links</h1><p>Manage quick links and resources for directors.</p></div>
+          <button class="btn btn-primary" onclick="openLinkModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Resource
+          </button>
         </div>
+        <div class="card">
+          <table class="data-table"><thead><tr>
+            <th style="width: 40px;"></th><th>Title</th><th>Category</th><th>URL</th><th style="width: 120px; text-align: right;">Actions</th>
+          </tr></thead><tbody id="linksList"></tbody></table>
+        </div>
+      </section>
 
-        <!-- Zones Section -->
-        <div id="zones" class="section hidden">
-          <div class="section-header">
-            <h2 class="section-title">
-              <span class="section-title-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-              </span>
-              Zones
-            </h2>
-            <button class="add-btn" onclick="openZoneModal()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"></path>
-              </svg>
-              Add Zone
-            </button>
-          </div>
-          <p style="color: var(--color-text-muted); margin-bottom: 20px;">Manage geographic zones for team members and scheduling links.</p>
-          <div id="zonesContainer" class="zones-grid">
-            <div class="empty-state">
-              <div class="empty-state-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-              </div>
-              <h3>No zones yet</h3>
-              <p>Add zones to organize team members and links</p>
-            </div>
-          </div>
+      <!-- Script Section -->
+      <section id="script" class="section">
+        <div class="page-header">
+          <div class="page-header-text"><h1>Enrollment Script</h1><p>Edit the enrollment script displayed to directors.</p></div>
+          <button class="btn btn-primary" onclick="saveScript()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Save Script
+          </button>
         </div>
-      </div>
-    </div>
+        <div class="card">
+          <div class="editor-toolbar">
+            <button class="editor-btn" onclick="formatText('h2')" title="Heading 2">H2</button>
+            <button class="editor-btn" onclick="formatText('h3')" title="Heading 3">H3</button>
+            <button class="editor-btn" onclick="formatText('p')" title="Paragraph">P</button>
+            <button class="editor-btn" onclick="document.execCommand('bold')" title="Bold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg></button>
+            <button class="editor-btn" onclick="document.execCommand('italic')" title="Italic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="4" x2="10" y2="4"></line><line x1="14" y1="20" x2="5" y2="20"></line><line x1="15" y1="4" x2="9" y2="20"></line></svg></button>
+            <button class="editor-btn" onclick="document.execCommand('insertUnorderedList')" title="Bullet List">•</button>
+            <button class="editor-btn" onclick="document.execCommand('insertOrderedList')" title="Numbered List">1.</button>
+            <button class="editor-btn" onclick="formatText('blockquote')" title="Quote">"</button>
+          </div>
+          <div class="editor-content" id="scriptEditor" contenteditable="true"></div>
+        </div>
+      </section>
+
+      <!-- Team Section -->
+      <section id="team" class="section">
+        <div class="page-header">
+          <div class="page-header-text"><h1>Team Members</h1><p>Manage enrollment team members.</p></div>
+          <button class="btn btn-primary" onclick="openTeamModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Team Member
+          </button>
+        </div>
+        <div class="card">
+          <table class="data-table"><thead><tr>
+            <th style="width: 40px;"></th><th>Member</th><th>Role</th><th>Email</th><th>Ext.</th><th>Zone</th><th style="width: 120px; text-align: right;">Actions</th>
+          </tr></thead><tbody id="teamList"></tbody></table>
+        </div>
+      </section>
+
+      <!-- Zones Section -->
+      <section id="zones" class="section">
+        <div class="page-header">
+          <div class="page-header-text"><h1>Zones</h1><p>Manage geographic zones for team organization.</p></div>
+          <button class="btn btn-primary" onclick="openZoneModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Zone
+          </button>
+        </div>
+        <div class="card">
+          <table class="data-table"><thead><tr>
+            <th style="width: 40px;"></th><th>Zone Name</th><th>Color</th><th>Members</th><th style="width: 120px; text-align: right;">Actions</th>
+          </tr></thead><tbody id="zonesList"></tbody></table>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <!-- Modal Overlay -->
-  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <!-- Modals (Announcement, Promo, Policy, Link, Team, Zone, Delete) -->
+  <div class="modal-overlay" id="announcementModal" onclick="closeModal('announcementModal', event)">
     <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <h3 class="modal-title" id="modalTitle">Modal Title</h3>
-        <button class="modal-close" onclick="closeModal()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6 6 18M6 6l12 12"></path>
-          </svg>
-        </button>
+      <div class="modal-header"><h3 id="announcementModalTitle">Add Announcement</h3><button class="modal-close" onclick="closeModal('announcementModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="announcementId">
+        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="announcementTitle" placeholder="Enter title"></div>
+        <div class="form-group"><label>Content</label><textarea class="form-textarea" id="announcementContent" placeholder="Enter details"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Date</label><input type="date" class="form-input" id="announcementDate"></div>
+          <div class="form-group"><label>Status</label><div class="form-switch" style="margin-top: 8px;"><label class="switch"><input type="checkbox" id="announcementActive" checked><span class="switch-slider"></span></label><span>Active</span></div></div>
+        </div>
       </div>
-      <div class="modal-body" id="modalBody">
-        <!-- Dynamic content -->
-      </div>
-      <div class="modal-footer" id="modalFooter">
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" id="modalSaveBtn">Save</button>
-      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('announcementModal')">Cancel</button><button class="btn btn-primary" onclick="saveAnnouncement()">Save</button></div>
     </div>
   </div>
 
-  <!-- Toast Container -->
-  <div class="toast-container" id="toastContainer"></div>
+  <div class="modal-overlay" id="promoModal" onclick="closeModal('promoModal', event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3 id="promoModalTitle">Add Promotion</h3><button class="modal-close" onclick="closeModal('promoModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="promoId">
+        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="promoTitle" placeholder="e.g., Spring Enrollment Special"></div>
+        <div class="form-group"><label>Discount/Offer</label><input type="text" class="form-input" id="promoDiscount" placeholder="e.g., 50% Off Registration"></div>
+        <div class="form-group"><label>Description</label><textarea class="form-textarea" id="promoDescription" placeholder="Brief description"></textarea></div>
+        <div class="form-group"><label>Additional Details</label><textarea class="form-textarea" id="promoDetails" placeholder="Terms, conditions, etc."></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Start Date *</label><input type="date" class="form-input" id="promoStartDate"></div>
+          <div class="form-group"><label>End Date</label><input type="date" class="form-input" id="promoEndDate"><p class="hint">Leave blank for ongoing</p></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('promoModal')">Cancel</button><button class="btn btn-primary" onclick="savePromo()">Save</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="policyModal" onclick="closeModal('policyModal', event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3 id="policyModalTitle">Add Policy</h3><button class="modal-close" onclick="closeModal('policyModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="policyId">
+        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="policyTitle" placeholder="Policy name"></div>
+        <div class="form-group"><label>Category *</label><input type="text" class="form-input" id="policyCategory" placeholder="e.g., Enrollment, Safety"></div>
+        <div class="form-group"><label>Document URL *</label><input type="url" class="form-input" id="policyUrl" placeholder="https://..."></div>
+        <div class="form-group"><label>Description</label><textarea class="form-textarea" id="policyDescription" placeholder="Brief description (optional)"></textarea></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('policyModal')">Cancel</button><button class="btn btn-primary" onclick="savePolicy()">Save</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="linkModal" onclick="closeModal('linkModal', event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3 id="linkModalTitle">Add Resource</h3><button class="modal-close" onclick="closeModal('linkModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="linkId">
+        <div class="form-group"><label>Title *</label><input type="text" class="form-input" id="linkTitle" placeholder="Resource name"></div>
+        <div class="form-group"><label>Category</label><input type="text" class="form-input" id="linkCategory" placeholder="e.g., Forms, Tools"></div>
+        <div class="form-group"><label>URL *</label><input type="url" class="form-input" id="linkUrl" placeholder="https://..."></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('linkModal')">Cancel</button><button class="btn btn-primary" onclick="saveLink()">Save</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="teamModal" onclick="closeModal('teamModal', event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3 id="teamModalTitle">Add Team Member</h3><button class="modal-close" onclick="closeModal('teamModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="teamMemberId">
+        <div class="form-group">
+          <label>Avatar</label>
+          <div class="avatar-upload">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" class="avatar-preview" id="teamAvatarPreview">
+            <div class="avatar-actions">
+              <input type="file" id="teamAvatarFile" accept="image/*" style="display: none;" onchange="previewAvatar(this)">
+              <button class="btn btn-sm btn-secondary" onclick="document.getElementById('teamAvatarFile').click()">Upload Image</button>
+              <input type="text" class="form-input" id="teamAvatarUrl" placeholder="Or paste image URL" style="font-size: 12px; padding: 6px 10px;">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Name *</label><input type="text" class="form-input" id="teamName" placeholder="Full name"></div>
+          <div class="form-group"><label>Role</label><input type="text" class="form-input" id="teamRole" placeholder="e.g., Enrollment Specialist"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Email *</label><input type="email" class="form-input" id="teamEmail" placeholder="email@example.com"></div>
+          <div class="form-group"><label>Phone Extension</label><input type="text" class="form-input" id="teamExtension" placeholder="e.g., 1234"></div>
+        </div>
+        <div class="form-group"><label>Zone</label><select class="form-select" id="teamZone"><option value="">Select zone...</option></select></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('teamModal')">Cancel</button><button class="btn btn-primary" onclick="saveTeamMember()">Save</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="zoneModal" onclick="closeModal('zoneModal', event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3 id="zoneModalTitle">Add Zone</h3><button class="modal-close" onclick="closeModal('zoneModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="zoneId">
+        <div class="form-group"><label>Zone Name *</label><input type="text" class="form-input" id="zoneName" placeholder="e.g., Northeast"></div>
+        <div class="form-group"><label>Color</label><input type="color" class="form-input" id="zoneColor" value="#F97B5F" style="height: 44px; padding: 4px;"></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('zoneModal')">Cancel</button><button class="btn btn-primary" onclick="saveZone()">Save</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="deleteModal" onclick="closeModal('deleteModal', event)">
+    <div class="modal" style="max-width: 400px;" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3>Confirm Delete</h3><button class="modal-close" onclick="closeModal('deleteModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+      <div class="modal-body"><p>Are you sure you want to delete this item? This action cannot be undone.</p></div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button><button class="btn btn-danger" onclick="confirmDelete()">Delete</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
   <script>
-    // ============================================
-    // SUPABASE CONFIGURATION
-    // ============================================
-    // Replace these with your actual Supabase credentials
     const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
 
-    let supabaseClient = null;
-    let isConnected = false;
+    let supabaseClient = null, isConnected = false, deleteCallback = null;
+    let announcements = [], promos = [], policies = [], links = [], team = [], zones = [], scriptContent = '';
 
-    // Data stores
-    let announcements = [];
-    let promos = [];
-    let policies = [];
-    let links = [];
-    let linkCategories = [];
-    let team = [];
-    let zones = [];
-    let scriptContent = '';
-    
-    // Zone colors palette
-    const zoneColors = [
-      '#2196F3', '#10B981', '#F59E0B', '#EF4444', 
-      '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16'
-    ];
-    
-    // Bulk selection tracking
-    let selectedItems = {
-      announcements: new Set(),
-      promos: new Set(),
-      policies: new Set(),
-      links: new Set(),
-      team: new Set()
-    };
-    
-    // Sortable instances
-    let sortableInstances = {};
-
-    // ============================================
-    // INITIALIZATION
-    // ============================================
-    async function initSupabase() {
+    async function init() {
       try {
-        // Set current date
-        const now = new Date();
-        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { 
-          weekday: 'long', 
-          month: 'short', 
-          day: 'numeric', 
-          year: 'numeric' 
-        });
-
-        if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-          // Demo mode - use localStorage
-          loadFromLocalStorage();
-          return;
-        }
-
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // Test connection
-        const { data, error } = await supabaseClient.from('announcements').select('count');
-        
-        if (error) throw error;
-        
-        isConnected = true;
-        await loadAllData();
-      } catch (error) {
-        console.error('Supabase connection error:', error);
-        loadFromLocalStorage();
-      }
+        const { error } = await supabaseClient.from('announcements').select('count');
+        if (!error) { isConnected = true; updateConnectionStatus(true); await loadAllData(); return; }
+      } catch (e) { console.error(e); }
+      updateConnectionStatus(false);
+      loadFromLocalStorage();
     }
 
-    // ============================================
-    // LOCAL STORAGE FALLBACK
-    // ============================================
+    function updateConnectionStatus(connected) {
+      document.getElementById('connectionDot').className = 'connection-dot ' + (connected ? 'connected' : 'disconnected');
+      document.getElementById('connectionText').textContent = connected ? 'Connected to Supabase' : 'Demo Mode (localStorage)';
+    }
+
+    async function loadAllData() {
+      try {
+        const [r1, r2, r3, r4, r5, r6, r7] = await Promise.all([
+          supabaseClient.from('announcements').select('*').order('created_at', { ascending: false }),
+          supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
+          supabaseClient.from('policies').select('*').order('sort_order'),
+          supabaseClient.from('links').select('*').order('sort_order'),
+          supabaseClient.from('team_members').select('*').order('sort_order'),
+          supabaseClient.from('zones').select('*').order('sort_order'),
+          supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single()
+        ]);
+        announcements = r1.data || []; promos = r2.data || []; policies = r3.data || [];
+        links = r4.data || []; team = r5.data || []; zones = r6.data || [];
+        scriptContent = r7.data?.value || getDefaultScript();
+        renderAll();
+      } catch (e) { console.error(e); loadFromLocalStorage(); }
+    }
+
     function loadFromLocalStorage() {
       announcements = JSON.parse(localStorage.getItem('admin_announcements') || '[]');
       promos = JSON.parse(localStorage.getItem('admin_promos') || '[]');
       policies = JSON.parse(localStorage.getItem('admin_policies') || '[]');
       links = JSON.parse(localStorage.getItem('admin_links') || '[]');
-      linkCategories = JSON.parse(localStorage.getItem('admin_link_categories') || '[]');
       team = JSON.parse(localStorage.getItem('admin_team') || '[]');
       zones = JSON.parse(localStorage.getItem('admin_zones') || '[]');
       scriptContent = localStorage.getItem('admin_script') || getDefaultScript();
-      
       renderAll();
     }
 
@@ -2509,1577 +968,123 @@
       localStorage.setItem('admin_promos', JSON.stringify(promos));
       localStorage.setItem('admin_policies', JSON.stringify(policies));
       localStorage.setItem('admin_links', JSON.stringify(links));
-      localStorage.setItem('admin_link_categories', JSON.stringify(linkCategories));
       localStorage.setItem('admin_team', JSON.stringify(team));
       localStorage.setItem('admin_zones', JSON.stringify(zones));
       localStorage.setItem('admin_script', scriptContent);
     }
 
     function getDefaultScript() {
-      return `<h2>Welcome Script</h2>
-<p>Hello and thank you for your interest in our school! My name is [Your Name], and I'm here to help you through the enrollment process.</p>
-
-<h3>Key Points to Cover:</h3>
-<ul>
-  <li>Our school's mission and values</li>
-  <li>Academic programs and curriculum</li>
-  <li>Enrollment requirements</li>
-  <li>Tuition and payment options</li>
-  <li>Important dates and deadlines</li>
-</ul>
-
-<p>Do you have any questions so far?</p>`;
+      return `<h2>Welcome Script</h2><p>Hello! My name is [Your Name], and I'm excited to show you around today.</p><h3>Opening Questions</h3><ul><li>What brings you to us today?</li><li>Tell me about your child</li><li>What's most important to you?</li></ul><h3>Tour Flow</h3><ol><li>Classroom your child would be in</li><li>Outdoor play areas</li><li>Safety features</li><li>Meal preparation area</li></ol><blockquote>"What makes us different is our focus on [unique value]. Parents tell us they chose us because..."</blockquote><h3>Closing</h3><p>Based on everything we've discussed, I think your child would thrive here. Would you like to secure your spot today?</p>`;
     }
 
-    // ============================================
-    // DATA LOADING (SUPABASE)
-    // ============================================
-    async function loadAllData() {
-      if (!isConnected) return;
-
-      try {
-        const [promosRes, announcementsRes, policiesRes, linkCategoriesRes, linksRes, teamRes, zonesRes, scriptRes] = await Promise.all([
-          supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
-          supabaseClient.from('announcements').select('*').order('created_at', { ascending: false }),
-          supabaseClient.from('policies').select('*').order('category'),
-          supabaseClient.from('link_categories').select('*').order('name'),
-          supabaseClient.from('links').select('*').order('category'),
-          supabaseClient.from('team_members').select('*').order('name'),
-          supabaseClient.from('zones').select('*').order('name'),
-          supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single()
-        ]);
-
-        promos = promosRes.data || [];
-        announcements = announcementsRes.data || [];
-        policies = policiesRes.data || [];
-        linkCategories = linkCategoriesRes.data || [];
-        links = linksRes.data || [];
-        team = teamRes.data || [];
-        zones = zonesRes.data || [];
-        scriptContent = scriptRes.data?.value || getDefaultScript();
-
-        renderAll();
-      } catch (error) {
-        console.error('Error loading data:', error);
-        showToast('Error loading data', 'error');
-      }
-    }
-
-    // ============================================
-    // RENDERING
-    // ============================================
     function renderAll() {
-      renderPromos();
-      renderAnnouncements();
-      renderPolicies();
-      renderLinkCategories();
-      renderLinks();
-      renderTeam();
-      renderZones();
-      renderScript();
-      updateStats();
-    }
-
-    function updateStats() {
-      document.getElementById('teamCount').textContent = team.length;
-      document.getElementById('policyCount').textContent = policies.length;
-      document.getElementById('linkCount').textContent = links.length;
-      
-      // Update promo count if element exists
-      const promoCountEl = document.getElementById('promoCount');
-      if (promoCountEl) {
-        const activePromos = promos.filter(p => {
-          const now = new Date();
-          const start = new Date(p.start_date);
-          const end = new Date(p.end_date);
-          return now >= start && now <= end;
-        }).length;
-        promoCountEl.textContent = activePromos;
-      }
-    }
-
-    function renderPromos() {
-      const container = document.getElementById('promosContainer');
-      
-      if (promos.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              </svg>
-            </div>
-            <h3>No promotions yet</h3>
-            <p>Create promotional offers for enrollment</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = promos.map(p => {
-        const now = new Date();
-        const start = new Date(p.start_date);
-        const end = new Date(p.end_date);
-        let status = 'active';
-        if (now < start) status = 'scheduled';
-        if (now > end) status = 'expired';
-        
-        return `
-          <div class="promo-card">
-            <div class="promo-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                <path d="M2 17l10 5 10-5"></path>
-                <path d="M2 12l10 5 10-5"></path>
-              </svg>
-            </div>
-            <div class="promo-info">
-              <h4>${escapeHtml(p.title)}</h4>
-              <p>${escapeHtml(p.description || '')}</p>
-              <span class="promo-dates">${formatDate(p.start_date)} - ${formatDate(p.end_date)}</span>
-            </div>
-            <span class="promo-badge ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
-            <div class="table-actions">
-              <button class="action-btn" onclick="editPromo('${p.id}')" title="Edit">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-                </svg>
-              </button>
-              <button class="action-btn delete" onclick="confirmDelete('promo', '${p.id}')" title="Delete">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
+      renderAnnouncements(); renderPromos(); renderPolicies(); renderLinks(); renderTeam(); renderZones();
+      document.getElementById('scriptEditor').innerHTML = scriptContent;
+      initSortables();
     }
 
     function renderAnnouncements() {
-      const container = document.getElementById('announcementsContainer');
-      const filtered = filterBySearch(announcements, ['title', 'content']);
-      
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="m3 11 18-5v12L3 13v-2z"></path>
-              </svg>
-            </div>
-            <h3>${searchQuery ? 'No matching announcements' : 'No announcements yet'}</h3>
-            <p>${searchQuery ? 'Try a different search term' : 'Create your first announcement to get started'}</p>
-          </div>
-        `;
-        return;
-      }
+      const tbody = document.getElementById('announcementsList');
+      if (!announcements.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No announcements yet</p><button class="btn btn-primary btn-sm" onclick="openAnnouncementModal()">Add your first</button></div></td></tr>'; return; }
+      tbody.innerHTML = announcements.map(a => `<tr data-id="${a.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(a.title)}</strong></td><td>${formatDate(a.date || a.created_at)}</td><td><span class="status-badge ${a.active ? 'active' : 'inactive'}">${a.active ? 'Active' : 'Inactive'}</span></td><td class="actions"><button class="btn-icon" onclick="editAnnouncement('${a.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('announcement', '${a.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
+    }
 
-      container.innerHTML = `
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filtered.map(a => `
-              <tr>
-                <td>
-                  <div class="table-title">${escapeHtml(a.title)}</div>
-                  <div class="table-subtitle">${escapeHtml(a.content?.substring(0, 60) || '')}...</div>
-                </td>
-                <td>${formatDate(a.date || a.created_at)}</td>
-                <td><span class="table-badge ${a.active !== false ? 'active' : 'inactive'}">${a.active !== false ? 'Active' : 'Inactive'}</span></td>
-                <td>
-                  <div class="table-actions">
-                    <button class="action-btn" onclick="editAnnouncement('${a.id}')" title="Edit">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-                      </svg>
-                    </button>
-                    <button class="action-btn delete" onclick="confirmDelete('announcement', '${a.id}')" title="Delete">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
+    function renderPromos() {
+      const tbody = document.getElementById('promosList');
+      if (!promos.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>No promotions yet</p><button class="btn btn-primary btn-sm" onclick="openPromoModal()">Add your first</button></div></td></tr>'; return; }
+      tbody.innerHTML = promos.map(p => { const s = getPromoStatus(p); return `<tr data-id="${p.id}"><td><strong>${esc(p.title)}</strong></td><td>${esc(p.discount || '-')}</td><td>${formatDate(p.start_date)}</td><td>${p.end_date ? formatDate(p.end_date) : 'Ongoing'}</td><td><span class="status-badge ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span></td><td class="actions"><button class="btn-icon" onclick="editPromo('${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('promo', '${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`; }).join('');
     }
 
     function renderPolicies() {
-      const container = document.getElementById('policiesContainer');
-      
-      if (policies.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-              </svg>
-            </div>
-            <h3>No policies yet</h3>
-            <p>Add policy documents for directors to reference</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = policies.map(p => `
-        <div class="policy-item">
-          <div class="policy-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-            </svg>
-          </div>
-          <div class="policy-info">
-            <h4>${escapeHtml(p.title)}</h4>
-            <p>${escapeHtml(p.category || 'General')}</p>
-          </div>
-          <div class="table-actions">
-            <button class="action-btn" onclick="editPolicy('${p.id}')" title="Edit">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-              </svg>
-            </button>
-            <button class="action-btn delete" onclick="confirmDelete('policy', '${p.id}')" title="Delete">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderLinkCategories() {
-      const container = document.getElementById('linkCategoriesContainer');
-      
-      if (linkCategories.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-              </svg>
-            </div>
-            <h3>No categories yet</h3>
-            <p>Create categories to organize your links</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = linkCategories.map(c => {
-        const linkCount = links.filter(l => l.category === c.name).length;
-        return `
-          <div class="category-tag">
-            <span class="category-tag-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-              </svg>
-            </span>
-            ${escapeHtml(c.name)}
-            <span class="category-tag-count">${linkCount}</span>
-            <div class="category-tag-actions">
-              <button class="action-btn" onclick="editLinkCategory('${c.id}')" title="Edit">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-                </svg>
-              </button>
-              <button class="action-btn delete" onclick="confirmDelete('linkCategory', '${c.id}')" title="Delete">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
+      const tbody = document.getElementById('policiesList');
+      if (!policies.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No policies yet</p><button class="btn btn-primary btn-sm" onclick="openPolicyModal()">Add your first</button></div></td></tr>'; return; }
+      tbody.innerHTML = policies.map(p => `<tr data-id="${p.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(p.title)}</strong></td><td><span class="zone-badge">${esc(p.category || 'General')}</span></td><td><a href="${esc(p.url)}" target="_blank" style="color: var(--color-coral);">${truncate(p.url, 30)}</a></td><td class="actions"><button class="btn-icon" onclick="editPolicy('${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('policy', '${p.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
     }
 
     function renderLinks() {
-      const container = document.getElementById('linksContainer');
-      
-      if (links.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              </svg>
-            </div>
-            <h3>No links yet</h3>
-            <p>Add quick links for easy access</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = links.map(l => `
-        <div class="link-item">
-          <div class="link-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-            </svg>
-          </div>
-          <div class="link-info">
-            <h4>${escapeHtml(l.title)}</h4>
-            <p>${escapeHtml(l.url)}</p>
-          </div>
-          <span class="table-badge zone">${escapeHtml(l.category || 'General')}</span>
-          <div class="table-actions">
-            <button class="action-btn" onclick="editLink('${l.id}')" title="Edit">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-              </svg>
-            </button>
-            <button class="action-btn delete" onclick="confirmDelete('link', '${l.id}')" title="Delete">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `).join('');
+      const tbody = document.getElementById('linksList');
+      if (!links.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No resources yet</p><button class="btn btn-primary btn-sm" onclick="openLinkModal()">Add your first</button></div></td></tr>'; return; }
+      tbody.innerHTML = links.map(l => `<tr data-id="${l.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(l.title)}</strong></td><td><span class="zone-badge">${esc(l.category || 'Resource')}</span></td><td><a href="${esc(l.url)}" target="_blank" style="color: var(--color-coral);">${truncate(l.url, 30)}</a></td><td class="actions"><button class="btn-icon" onclick="editLink('${l.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('link', '${l.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
     }
 
     function renderTeam() {
-      const container = document.getElementById('teamContainer');
-      const filtered = filterBySearch(team, ['name', 'role', 'email', 'zone', 'description']);
-      
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <h3>${searchQuery ? 'No matching team members' : 'No team members yet'}</h3>
-            <p>${searchQuery ? 'Try a different search term' : 'Add enrollment team members'}</p>
-          </div>
-        `;
-        updateBulkActionBar('team', 0);
-        return;
-      }
-
-      container.innerHTML = filtered.map((t, index) => {
-        const zoneColor = getZoneColor(t.zone);
-        const isSelected = selectedItems.team.has(t.id);
-        return `
-        <div class="team-card draggable" draggable="true" data-id="${t.id}" data-index="${index}">
-          <div class="drag-handle" title="Drag to reorder">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="19" r="1"></circle>
-              <circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="19" r="1"></circle>
-            </svg>
-          </div>
-          <input type="checkbox" class="bulk-checkbox" ${isSelected ? 'checked' : ''} onchange="toggleBulkSelect('team', '${t.id}')">
-          <img src="${escapeHtml(t.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" alt="${escapeHtml(t.name)}" class="team-avatar">
-          <div class="team-info">
-            <h3 class="team-name">${escapeHtml(t.name)}</h3>
-            <p class="team-role">${escapeHtml(t.role)}</p>
-            ${t.description ? `<p class="team-description">${escapeHtml(t.description)}</p>` : ''}
-          </div>
-          <span class="team-zone" style="background: ${zoneColor}20; color: ${zoneColor}; border: 1px solid ${zoneColor}40;">
-            <span class="zone-color-dot" style="background: ${zoneColor}"></span>
-            ${escapeHtml(t.zone || 'Central')}
-          </span>
-          <div class="team-contact-info">
-            <span>${escapeHtml(t.email)}</span>
-            <span>Ext. ${escapeHtml(t.extension || '0000')}</span>
-          </div>
-          <div class="table-actions">
-            <button class="action-btn" onclick="editTeamMember('${t.id}')" title="Edit">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-              </svg>
-            </button>
-            <button class="action-btn delete" onclick="confirmDelete('team', '${t.id}')" title="Delete">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `}).join('');
-      
-      updateBulkActionBar('team', selectedItems.team.size);
-      initDragDrop('teamContainer', 'team');
+      const tbody = document.getElementById('teamList');
+      if (!team.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No team members yet</p><button class="btn btn-primary btn-sm" onclick="openTeamModal()">Add your first</button></div></td></tr>'; return; }
+      tbody.innerHTML = team.map(t => `<tr data-id="${t.id}"><td><span class="drag-handle">⋮⋮</span></td><td><div style="display: flex; align-items: center; gap: 12px;"><img src="${esc(t.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="avatar avatar-sm"><strong>${esc(t.name)}</strong></div></td><td>${esc(t.role || '-')}</td><td>${esc(t.email || '-')}</td><td>${esc(t.extension || '-')}</td><td><span class="zone-badge">${esc(t.zone || 'General')}</span></td><td class="actions"><button class="btn-icon" onclick="editTeamMember('${t.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('team', '${t.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
+      updateZoneDropdowns();
     }
 
     function renderZones() {
-      const container = document.getElementById('zonesContainer');
-      
-      if (zones.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-            </div>
-            <h3>No zones yet</h3>
-            <p>Add zones to organize team members and links</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = zones.map((z, index) => {
-        const teamCount = team.filter(t => t.zone === z.name).length;
-        const linkCount = links.filter(l => l.zone === z.name.toLowerCase()).length;
-        const zoneColor = z.color || zoneColors[index % zoneColors.length];
-        
-        return `
-          <div class="zone-card" style="border-top: 4px solid ${zoneColor};">
-            <div class="zone-card-header">
-              <div class="zone-card-title">
-                <div class="zone-card-icon" style="background: ${zoneColor}20; color: ${zoneColor};">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                </div>
-                <h4>${escapeHtml(z.name)}</h4>
-              </div>
-              <div class="table-actions">
-                <button class="action-btn" onclick="editZone('${z.id}')" title="Edit">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-                  </svg>
-                </button>
-                <button class="action-btn delete" onclick="confirmDelete('zone', '${z.id}')" title="Delete">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            ${z.description ? `<p class="zone-card-description">${escapeHtml(z.description)}</p>` : ''}
-            <div class="zone-card-stats">
-              <span class="zone-stat">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                </svg>
-                ${teamCount} team member${teamCount !== 1 ? 's' : ''}
-              </span>
-              <span class="zone-stat">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-                ${linkCount} link${linkCount !== 1 ? 's' : ''}
-              </span>
-            </div>
-          </div>
-        `;
-      }).join('');
+      const tbody = document.getElementById('zonesList');
+      if (!zones.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No zones yet</p><button class="btn btn-primary btn-sm" onclick="openZoneModal()">Add your first</button></div></td></tr>'; return; }
+      tbody.innerHTML = zones.map(z => { const mc = team.filter(t => t.zone === z.name).length; return `<tr data-id="${z.id}"><td><span class="drag-handle">⋮⋮</span></td><td><strong>${esc(z.name)}</strong></td><td><div style="width: 24px; height: 24px; border-radius: 6px; background: ${esc(z.color || '#F97B5F')};"></div></td><td>${mc} member${mc !== 1 ? 's' : ''}</td><td class="actions"><button class="btn-icon" onclick="editZone('${z.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button><button class="btn-icon danger" onclick="deleteItem('zone', '${z.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`; }).join('');
     }
 
-    function renderScript() {
-      document.getElementById('scriptEditor').innerHTML = scriptContent;
-    }
+    function updateZoneDropdowns() { document.getElementById('teamZone').innerHTML = '<option value="">Select zone...</option>' + zones.map(z => `<option value="${esc(z.name)}">${esc(z.name)}</option>`).join(''); }
 
-    // ============================================
-    // TAB SWITCHING
-    // ============================================
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-      
-      event.target.classList.add('active');
-      document.getElementById(tabName).classList.remove('hidden');
-    }
-
-    // ============================================
-    // MODAL HANDLING
-    // ============================================
-    let currentEditId = null;
-    let currentEditType = null;
-
-    function openModal() {
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-
-    function closeModal(e) {
-      if (e && e.target !== e.currentTarget) return;
-      document.getElementById('modalOverlay').classList.remove('active');
-      currentEditId = null;
-      currentEditType = null;
-    }
-
-    // Promo Modal
-    function openPromoModal(id = null) {
-      currentEditType = 'promo';
-      currentEditId = id;
-      
-      const promo = id ? promos.find(p => p.id === id) : null;
-      const today = new Date().toISOString().split('T')[0];
-      const nextMonth = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      
-      document.getElementById('modalTitle').textContent = id ? 'Edit Promotion' : 'Add Promotion';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Promotion Title</label>
-          <input type="text" class="form-input" id="promoTitle" value="${escapeHtml(promo?.title || '')}" placeholder="e.g., Early Bird Discount">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea class="form-textarea" id="promoDescription" placeholder="Describe the promotion details">${escapeHtml(promo?.description || '')}</textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Start Date</label>
-            <input type="date" class="form-input" id="promoStartDate" value="${promo?.start_date || today}">
-          </div>
-          <div class="form-group">
-            <label class="form-label">End Date</label>
-            <input type="date" class="form-input" id="promoEndDate" value="${promo?.end_date || nextMonth}">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Discount/Offer</label>
-          <input type="text" class="form-input" id="promoDiscount" value="${escapeHtml(promo?.discount || '')}" placeholder="e.g., 15% off, $100 credit">
-        </div>
-      `;
-      
-      document.getElementById('modalSaveBtn').onclick = savePromo;
-      document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" id="modalSaveBtn" onclick="savePromo()">Save</button>
-      `;
-      openModal();
-    }
-
-    function editPromo(id) {
-      openPromoModal(id);
-    }
-
-    async function savePromo() {
-      const data = {
-        title: document.getElementById('promoTitle').value,
-        description: document.getElementById('promoDescription').value,
-        start_date: document.getElementById('promoStartDate').value,
-        end_date: document.getElementById('promoEndDate').value,
-        discount: document.getElementById('promoDiscount').value
-      };
-
-      if (!data.title) {
-        showToast('Please enter a title', 'error');
-        return;
-      }
-
-      try {
-        if (isConnected) {
-          if (currentEditId) {
-            await supabaseClient.from('promos').update(data).eq('id', currentEditId);
-          } else {
-            await supabaseClient.from('promos').insert(data);
-          }
-          await loadAllData();
-        } else {
-          if (currentEditId) {
-            const idx = promos.findIndex(p => p.id === currentEditId);
-            promos[idx] = { ...promos[idx], ...data };
-          } else {
-            data.id = Date.now().toString();
-            data.created_at = new Date().toISOString();
-            promos.push(data);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-        
-        showToast(currentEditId ? 'Promotion updated' : 'Promotion created', 'success');
-        closeModal();
-      } catch (error) {
-        console.error('Error saving promo:', error);
-        showToast('Error saving promotion', 'error');
-      }
-    }
-
-    // Announcement Modal
-    function openAnnouncementModal(id = null) {
-      currentEditType = 'announcement';
-      currentEditId = id;
-      
-      const announcement = id ? announcements.find(a => a.id === id) : null;
-      
-      document.getElementById('modalTitle').textContent = id ? 'Edit Announcement' : 'Add Announcement';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input type="text" class="form-input" id="announcementTitle" value="${escapeHtml(announcement?.title || '')}" placeholder="Announcement title">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Content</label>
-          <textarea class="form-textarea" id="announcementContent" placeholder="Announcement content">${escapeHtml(announcement?.content || '')}</textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Date</label>
-            <input type="date" class="form-input" id="announcementDate" value="${announcement?.date || new Date().toISOString().split('T')[0]}">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Status</label>
-            <select class="form-select" id="announcementActive">
-              <option value="true" ${announcement?.active !== false ? 'selected' : ''}>Active</option>
-              <option value="false" ${announcement?.active === false ? 'selected' : ''}>Inactive</option>
-            </select>
-          </div>
-        </div>
-      `;
-      
-      document.getElementById('modalSaveBtn').onclick = saveAnnouncement;
-      openModal();
-    }
-
-    function editAnnouncement(id) {
-      openAnnouncementModal(id);
-    }
-
-    async function saveAnnouncement() {
-      const data = {
-        title: document.getElementById('announcementTitle').value,
-        content: document.getElementById('announcementContent').value,
-        date: document.getElementById('announcementDate').value,
-        active: document.getElementById('announcementActive').value === 'true'
-      };
-
-      if (!data.title) {
-        showToast('Please enter a title', 'error');
-        return;
-      }
-
-      try {
-        if (isConnected) {
-          if (currentEditId) {
-            await supabaseClient.from('announcements').update(data).eq('id', currentEditId);
-          } else {
-            await supabaseClient.from('announcements').insert(data);
-          }
-          await loadAllData();
-        } else {
-          if (currentEditId) {
-            const idx = announcements.findIndex(a => a.id === currentEditId);
-            announcements[idx] = { ...announcements[idx], ...data };
-          } else {
-            data.id = Date.now().toString();
-            data.created_at = new Date().toISOString();
-            announcements.unshift(data);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-        
-        showToast(currentEditId ? 'Announcement updated' : 'Announcement created', 'success');
-        closeModal();
-      } catch (error) {
-        console.error('Error saving announcement:', error);
-        showToast('Error saving announcement', 'error');
-      }
-    }
-
-    // Policy Modal
-    function openPolicyModal(id = null) {
-      currentEditType = 'policy';
-      currentEditId = id;
-      
-      const policy = id ? policies.find(p => p.id === id) : null;
-      
-      document.getElementById('modalTitle').textContent = id ? 'Edit Policy' : 'Add Policy';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input type="text" class="form-input" id="policyTitle" value="${escapeHtml(policy?.title || '')}" placeholder="Policy title">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-select" id="policyCategory">
-            <option value="Enrollment & Registration" ${policy?.category === 'Enrollment & Registration' ? 'selected' : ''}>Enrollment & Registration</option>
-            <option value="Health & Safety" ${policy?.category === 'Health & Safety' ? 'selected' : ''}>Health & Safety</option>
-            <option value="Tuition & Payment" ${policy?.category === 'Tuition & Payment' ? 'selected' : ''}>Tuition & Payment</option>
-            <option value="Parent Communication" ${policy?.category === 'Parent Communication' ? 'selected' : ''}>Parent Communication</option>
-            <option value="General" ${policy?.category === 'General' ? 'selected' : ''}>General</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Document URL</label>
-          <input type="url" class="form-input" id="policyUrl" value="${escapeHtml(policy?.url || '')}" placeholder="https://...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea class="form-textarea" id="policyDescription" placeholder="Brief description">${escapeHtml(policy?.description || '')}</textarea>
-        </div>
-      `;
-      
-      document.getElementById('modalSaveBtn').onclick = savePolicy;
-      openModal();
-    }
-
-    function editPolicy(id) {
-      openPolicyModal(id);
-    }
-
-    async function savePolicy() {
-      const data = {
-        title: document.getElementById('policyTitle').value,
-        category: document.getElementById('policyCategory').value,
-        url: document.getElementById('policyUrl').value,
-        description: document.getElementById('policyDescription').value
-      };
-
-      if (!data.title) {
-        showToast('Please enter a title', 'error');
-        return;
-      }
-
-      try {
-        if (isConnected) {
-          if (currentEditId) {
-            await supabaseClient.from('policies').update(data).eq('id', currentEditId);
-          } else {
-            await supabaseClient.from('policies').insert(data);
-          }
-          await loadAllData();
-        } else {
-          if (currentEditId) {
-            const idx = policies.findIndex(p => p.id === currentEditId);
-            policies[idx] = { ...policies[idx], ...data };
-          } else {
-            data.id = Date.now().toString();
-            policies.push(data);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-        
-        showToast(currentEditId ? 'Policy updated' : 'Policy created', 'success');
-        closeModal();
-      } catch (error) {
-        console.error('Error saving policy:', error);
-        showToast('Error saving policy', 'error');
-      }
-    }
-
-    // Link Category Modal
-    function openLinkCategoryModal(id = null) {
-      currentEditType = 'linkCategory';
-      currentEditId = id;
-      
-      const category = id ? linkCategories.find(c => c.id === id) : null;
-      
-      document.getElementById('modalTitle').textContent = id ? 'Edit Category' : 'Add Category';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Category Name</label>
-          <input type="text" class="form-input" id="categoryName" value="${escapeHtml(category?.name || '')}" placeholder="e.g., Resources, Forms, Training">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Description (optional)</label>
-          <input type="text" class="form-input" id="categoryDescription" value="${escapeHtml(category?.description || '')}" placeholder="Brief description of this category">
-        </div>
-      `;
-      
-      document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveLinkCategory()">Save</button>
-      `;
-      openModal();
-    }
-
-    function editLinkCategory(id) {
-      openLinkCategoryModal(id);
-    }
-
-    async function saveLinkCategory() {
-      const data = {
-        name: document.getElementById('categoryName').value,
-        description: document.getElementById('categoryDescription').value
-      };
-
-      if (!data.name) {
-        showToast('Please enter a category name', 'error');
-        return;
-      }
-
-      try {
-        if (isConnected) {
-          if (currentEditId) {
-            await supabaseClient.from('link_categories').update(data).eq('id', currentEditId);
-          } else {
-            await supabaseClient.from('link_categories').insert(data);
-          }
-          await loadAllData();
-        } else {
-          if (currentEditId) {
-            const idx = linkCategories.findIndex(c => c.id === currentEditId);
-            linkCategories[idx] = { ...linkCategories[idx], ...data };
-          } else {
-            data.id = Date.now().toString();
-            linkCategories.push(data);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-        
-        showToast(currentEditId ? 'Category updated' : 'Category created', 'success');
-        closeModal();
-      } catch (error) {
-        console.error('Error saving category:', error);
-        showToast('Error saving category', 'error');
-      }
-    }
-
-    // Link Modal
-    function openLinkModal(id = null) {
-      currentEditType = 'link';
-      currentEditId = id;
-      
-      const link = id ? links.find(l => l.id === id) : null;
-      
-      // Build category options from linkCategories array
-      const defaultCategories = ['Resources', 'Scheduling', 'Forms', 'Training', 'General'];
-      const allCategories = [...new Set([...defaultCategories, ...linkCategories.map(c => c.name)])];
-      const categoryOptions = allCategories.map(cat => 
-        `<option value="${escapeHtml(cat)}" ${link?.category === cat ? 'selected' : ''}>${escapeHtml(cat)}</option>`
-      ).join('');
-      
-      // Build zone options from zones array (with fallback defaults)
-      const defaultZones = ['north', 'south', 'east', 'west', 'central'];
-      const allZones = zones.length > 0 ? zones.map(z => z.name.toLowerCase()) : defaultZones;
-      const zoneOptions = allZones.map(zone => 
-        `<option value="${escapeHtml(zone)}" ${link?.zone === zone ? 'selected' : ''}>${escapeHtml(zone.charAt(0).toUpperCase() + zone.slice(1))}</option>`
-      ).join('');
-      
-      document.getElementById('modalTitle').textContent = id ? 'Edit Link' : 'Add Link';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input type="text" class="form-input" id="linkTitle" value="${escapeHtml(link?.title || '')}" placeholder="Link title">
-        </div>
-        <div class="form-group">
-          <label class="form-label">URL</label>
-          <input type="url" class="form-input" id="linkUrl" value="${escapeHtml(link?.url || '')}" placeholder="https://...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-select" id="linkCategory">
-            ${categoryOptions}
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Zone (for scheduling links)</label>
-          <select class="form-select" id="linkZone">
-            <option value="" ${!link?.zone ? 'selected' : ''}>All Zones</option>
-            ${zoneOptions}
-          </select>
-          ${zones.length === 0 ? '<p style="font-size: 12px; color: var(--color-text-muted); margin-top: 6px;">Add zones in the Zones tab to customize this list</p>' : ''}
-        </div>
-      `;
-      
-      document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveLink()">Save</button>
-      `;
-      openModal();
-    }
-
-    function editLink(id) {
-      openLinkModal(id);
-    }
-
-    async function saveLink() {
-      const data = {
-        title: document.getElementById('linkTitle').value,
-        url: document.getElementById('linkUrl').value,
-        category: document.getElementById('linkCategory').value,
-        zone: document.getElementById('linkZone').value || null
-      };
-
-      if (!data.title || !data.url) {
-        showToast('Please enter title and URL', 'error');
-        return;
-      }
-
-      try {
-        if (isConnected) {
-          if (currentEditId) {
-            await supabaseClient.from('links').update(data).eq('id', currentEditId);
-          } else {
-            await supabaseClient.from('links').insert(data);
-          }
-          await loadAllData();
-        } else {
-          if (currentEditId) {
-            const idx = links.findIndex(l => l.id === currentEditId);
-            links[idx] = { ...links[idx], ...data };
-          } else {
-            data.id = Date.now().toString();
-            links.push(data);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-        
-        showToast(currentEditId ? 'Link updated' : 'Link created', 'success');
-        closeModal();
-      } catch (error) {
-        console.error('Error saving link:', error);
-        showToast('Error saving link', 'error');
-      }
-    }
-
-    // Team Modal
-    function openTeamModal(id = null) {
-      currentEditType = 'team';
-      currentEditId = id;
-      
-      const member = id ? team.find(t => t.id === id) : null;
-      
-      // Build zone options from zones array (with fallback defaults)
-      const defaultZones = ['North', 'South', 'East', 'West', 'Central'];
-      const allZones = zones.length > 0 ? zones.map(z => z.name) : defaultZones;
-      const zoneOptions = allZones.map(zone => {
-        const zoneColor = getZoneColor(zone);
-        return `<option value="${escapeHtml(zone)}" ${member?.zone === zone ? 'selected' : ''}>${escapeHtml(zone)}</option>`;
-      }).join('');
-      
-      document.getElementById('modalTitle').textContent = id ? 'Edit Team Member' : 'Add Team Member';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Photo</label>
-          <div class="avatar-upload-wrapper">
-            <img src="${escapeHtml(member?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="avatar-upload-preview" id="avatarPreview">
-            <div class="avatar-upload-actions">
-              <label class="avatar-upload-btn primary">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                Upload
-                <input type="file" class="avatar-file-input" accept="image/*" onchange="handleImageUpload(this)">
-              </label>
-              <button type="button" class="avatar-upload-btn" onclick="toggleUrlInput()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-                URL
-              </button>
-            </div>
-            <div id="urlInputWrapper" style="display: none; width: 100%; margin-top: 8px;">
-              <input type="url" class="form-input" id="teamAvatar" value="${escapeHtml(member?.avatar_url || '')}" placeholder="https://..." oninput="updateAvatarFromUrl(this.value)">
-            </div>
-            <input type="hidden" id="teamAvatarData" value="">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input type="text" class="form-input" id="teamName" value="${escapeHtml(member?.name || '')}" placeholder="John Doe">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Role</label>
-            <input type="text" class="form-input" id="teamRole" value="${escapeHtml(member?.role || '')}" placeholder="Enrollment Specialist">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea class="form-textarea" id="teamDescription" placeholder="Brief bio or specialization...">${escapeHtml(member?.description || '')}</textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-input" id="teamEmail" value="${escapeHtml(member?.email || '')}" placeholder="john@school.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Extension</label>
-            <input type="text" class="form-input" id="teamExtension" value="${escapeHtml(member?.extension || '')}" placeholder="1234">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Zone</label>
-          <select class="form-select" id="teamZone">
-            ${zoneOptions}
-          </select>
-          ${zones.length === 0 ? '<p style="font-size: 12px; color: var(--color-text-muted); margin-top: 6px;">Add zones in the Zones tab to customize this list</p>' : ''}
-        </div>
-      `;
-      
-      document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveTeamMember()">Save</button>
-      `;
-      openModal();
-    }
-
-    function editTeamMember(id) {
-      openTeamModal(id);
-    }
-
-    function toggleUrlInput() {
-      const wrapper = document.getElementById('urlInputWrapper');
-      wrapper.style.display = wrapper.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function handleImageUpload(input) {
-      const file = input.files[0];
-      if (!file) return;
-      
-      if (!file.type.startsWith('image/')) {
-        showToast('Please select an image file', 'error');
-        return;
-      }
-      
-      if (file.size > 2 * 1024 * 1024) {
-        showToast('Image must be less than 2MB', 'error');
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('avatarPreview').src = e.target.result;
-        document.getElementById('teamAvatarData').value = e.target.result;
-        document.getElementById('teamAvatar').value = '';
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function updateAvatarFromUrl(url) {
-      if (url) {
-        document.getElementById('avatarPreview').src = url;
-        document.getElementById('teamAvatarData').value = '';
-      } else {
-        document.getElementById('avatarPreview').src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
-      }
-    }
-
-    async function saveTeamMember() {
-      // Get avatar from either uploaded data or URL
-      const avatarData = document.getElementById('teamAvatarData').value;
-      const avatarUrl = document.getElementById('teamAvatar').value;
-      
-      const data = {
-        name: document.getElementById('teamName').value,
-        role: document.getElementById('teamRole').value,
-        description: document.getElementById('teamDescription').value,
-        email: document.getElementById('teamEmail').value,
-        extension: document.getElementById('teamExtension').value,
-        zone: document.getElementById('teamZone').value,
-        avatar_url: avatarData || avatarUrl || null
-      };
-
-      if (!data.name || !data.email) {
-        showToast('Please enter name and email', 'error');
-        return;
-      }
-
-      try {
-        if (isConnected) {
-          if (currentEditId) {
-            await supabaseClient.from('team_members').update(data).eq('id', currentEditId);
-          } else {
-            await supabaseClient.from('team_members').insert(data);
-          }
-          await loadAllData();
-        } else {
-          if (currentEditId) {
-            const idx = team.findIndex(t => t.id === currentEditId);
-            team[idx] = { ...team[idx], ...data };
-          } else {
-            data.id = Date.now().toString();
-            team.push(data);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-        
-        showToast(currentEditId ? 'Team member updated' : 'Team member added', 'success');
-        closeModal();
-      } catch (error) {
-        console.error('Error saving team member:', error);
-        showToast('Error saving team member', 'error');
-      }
-    }
-
-    // Zone Modal
-    function openZoneModal(id = null) {
-      currentEditType = 'zone';
-      currentEditId = id;
-      
-      const zone = id ? zones.find(z => z.id === id) : null;
-      const defaultColor = zone?.color || zoneColors[zones.length % zoneColors.length];
-      
-      document.getElementById('modalTitle').textContent = id ? 'Edit Zone' : 'Add Zone';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="form-group">
-          <label class="form-label">Zone Name</label>
-          <input type="text" class="form-input" id="zoneName" value="${escapeHtml(zone?.name || '')}" placeholder="e.g., North, South, Downtown">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Zone Color</label>
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <input type="color" class="zone-color-picker" id="zoneColor" value="${defaultColor}">
-            <div style="display: flex; gap: 6px;">
-              ${zoneColors.map(color => `
-                <button type="button" onclick="document.getElementById('zoneColor').value='${color}'" 
-                  style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid ${color === defaultColor ? '#333' : 'transparent'}; background: ${color}; cursor: pointer;"
-                  title="${color}"></button>
-              `).join('')}
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Description (optional)</label>
-          <textarea class="form-textarea" id="zoneDescription" placeholder="Describe this zone's coverage area...">${escapeHtml(zone?.description || '')}</textarea>
-        </div>
-      `;
-      
-      document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveZone()">Save</button>
-      `;
-      openModal();
-    }
-
-    function editZone(id) {
-      openZoneModal(id);
-    }
-
-    async function saveZone() {
-      const data = {
-        name: document.getElementById('zoneName').value,
-        description: document.getElementById('zoneDescription').value,
-        color: document.getElementById('zoneColor').value
-      };
-
-      if (!data.name) {
-        showToast('Please enter a zone name', 'error');
-        return;
-      }
-
-      try {
-        if (isConnected) {
-          if (currentEditId) {
-            await supabaseClient.from('zones').update(data).eq('id', currentEditId);
-          } else {
-            await supabaseClient.from('zones').insert(data);
-          }
-          await loadAllData();
-        } else {
-          if (currentEditId) {
-            const idx = zones.findIndex(z => z.id === currentEditId);
-            zones[idx] = { ...zones[idx], ...data };
-          } else {
-            data.id = Date.now().toString();
-            zones.push(data);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-        
-        showToast(currentEditId ? 'Zone updated' : 'Zone created', 'success');
-        closeModal();
-      } catch (error) {
-        console.error('Error saving zone:', error);
-        showToast('Error saving zone', 'error');
-      }
-    }
-
-    // Delete Confirmation
-    function confirmDelete(type, id) {
-      currentEditType = type;
-      currentEditId = id;
-      
-      const typeNames = {
-        promo: 'promotion',
-        announcement: 'announcement',
-        policy: 'policy',
-        linkCategory: 'category',
-        link: 'link',
-        team: 'team member',
-        zone: 'zone'
-      };
-
-      document.getElementById('modalTitle').textContent = 'Confirm Delete';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="delete-confirm">
-          <div class="delete-confirm-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg>
-          </div>
-          <h3>Delete this ${typeNames[type]}?</h3>
-          <p>This action cannot be undone.</p>
-        </div>
-      `;
-      
-      document.getElementById('modalFooter').innerHTML = `
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-danger" onclick="executeDelete()">Delete</button>
-      `;
-      
-      openModal();
-    }
-
-    async function executeDelete() {
-      try {
-        const tables = {
-          promo: 'promos',
-          announcement: 'announcements',
-          policy: 'policies',
-          linkCategory: 'link_categories',
-          link: 'links',
-          team: 'team_members',
-          zone: 'zones'
-        };
-
-        if (isConnected) {
-          await supabaseClient.from(tables[currentEditType]).delete().eq('id', currentEditId);
-          await loadAllData();
-        } else {
-          if (currentEditType === 'promo') {
-            promos = promos.filter(p => p.id !== currentEditId);
-          } else if (currentEditType === 'announcement') {
-            announcements = announcements.filter(a => a.id !== currentEditId);
-          } else if (currentEditType === 'policy') {
-            policies = policies.filter(p => p.id !== currentEditId);
-          } else if (currentEditType === 'linkCategory') {
-            linkCategories = linkCategories.filter(c => c.id !== currentEditId);
-          } else if (currentEditType === 'link') {
-            links = links.filter(l => l.id !== currentEditId);
-          } else if (currentEditType === 'team') {
-            team = team.filter(t => t.id !== currentEditId);
-          } else if (currentEditType === 'zone') {
-            zones = zones.filter(z => z.id !== currentEditId);
-          }
-          saveToLocalStorage();
-          renderAll();
-        }
-
-        showToast('Item deleted', 'success');
-        closeModal();
-        
-        // Reset footer
-        document.getElementById('modalFooter').innerHTML = `
-          <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-          <button class="btn btn-primary" id="modalSaveBtn">Save</button>
-        `;
-      } catch (error) {
-        console.error('Error deleting:', error);
-        showToast('Error deleting item', 'error');
-      }
-    }
-
-    // Script Editing
-    function formatText(command) {
-      document.execCommand(command, false, null);
-    }
-
-    async function saveScript() {
-      scriptContent = document.getElementById('scriptEditor').innerHTML;
-
-      try {
-        if (isConnected) {
-          await supabaseClient.from('settings').upsert({
-            key: 'enrollment_script',
-            value: scriptContent
-          });
-        } else {
-          saveToLocalStorage();
-        }
-        showToast('Script saved successfully', 'success');
-      } catch (error) {
-        console.error('Error saving script:', error);
-        showToast('Error saving script', 'error');
-      }
-    }
-
-    // ============================================
-    // UTILITIES
-    // ============================================
-    function escapeHtml(text) {
-      if (!text) return '';
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          ${type === 'success' ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>' : 
-            type === 'error' ? '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>' :
-            '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>'}
-        </svg>
-        ${message}
-      `;
-      container.appendChild(toast);
-      
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-
-    // Search functionality
-    let searchQuery = '';
-    
-    function handleSearch(query) {
-      searchQuery = query.toLowerCase();
-      renderAll();
-    }
-
-    function filterBySearch(items, fields) {
-      if (!searchQuery) return items;
-      return items.filter(item => 
-        fields.some(field => 
-          (item[field] || '').toLowerCase().includes(searchQuery)
-        )
-      );
-    }
-
-    // ============================================
-    // ZONE COLOR HELPERS
-    // ============================================
-    function getZoneColor(zoneName) {
-      if (!zoneName) return zoneColors[0];
-      const zoneIndex = zones.findIndex(z => z.name.toLowerCase() === zoneName.toLowerCase());
-      if (zoneIndex >= 0 && zones[zoneIndex].color) {
-        return zones[zoneIndex].color;
-      }
-      // Hash the zone name to get consistent color
-      let hash = 0;
-      for (let i = 0; i < zoneName.length; i++) {
-        hash = zoneName.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      return zoneColors[Math.abs(hash) % zoneColors.length];
-    }
-
-    function getZoneBadgeStyle(zoneName) {
-      const color = getZoneColor(zoneName);
-      return `background: ${color}20; color: ${color}; border: 1px solid ${color}40;`;
-    }
-
-    // ============================================
-    // BULK ACTION HELPERS
-    // ============================================
-    function toggleSelectAll(type, checked) {
-      const items = type === 'announcements' ? announcements :
-                    type === 'promos' ? promos :
-                    type === 'policies' ? policies :
-                    type === 'links' ? links :
-                    type === 'team' ? team : [];
-      
-      if (checked) {
-        items.forEach(item => selectedItems[type].add(item.id));
-      } else {
-        selectedItems[type].clear();
-      }
-      renderAll();
-    }
-
-    function toggleBulkSelect(type, id) {
-      if (selectedItems[type].has(id)) {
-        selectedItems[type].delete(id);
-      } else {
-        selectedItems[type].add(id);
-      }
-      updateBulkActionBar(type, selectedItems[type].size);
-    }
-
-    function updateBulkActionBar(type, count) {
-      const toolbar = document.getElementById(`bulkActionBar-${type}`);
-      if (toolbar) {
-        if (count > 0) {
-          toolbar.classList.add('active');
-          toolbar.querySelector('.selected-count').textContent = `${count} selected`;
-        } else {
-          toolbar.classList.remove('active');
-        }
-      }
-    }
-
-    function clearBulkSelection(type) {
-      selectedItems[type].clear();
-      renderAll();
-      updateBulkActionBar(type, 0);
-    }
-
-    async function bulkDelete(type) {
-      const count = selectedItems[type].size;
-      if (count === 0) return;
-      
-      if (!confirm(`Are you sure you want to delete ${count} item(s)?`)) return;
-      
-      const tables = {
-        announcements: 'announcements',
-        promos: 'promos',
-        policies: 'policies',
-        links: 'links',
-        team: 'team_members'
-      };
-      
-      try {
-        const ids = Array.from(selectedItems[type]);
-        
-        if (isConnected) {
-          await supabaseClient.from(tables[type]).delete().in('id', ids);
-          await loadAllData();
-        } else {
-          if (type === 'announcements') {
-            announcements = announcements.filter(a => !ids.includes(a.id));
-          } else if (type === 'promos') {
-            promos = promos.filter(p => !ids.includes(p.id));
-          } else if (type === 'policies') {
-            policies = policies.filter(p => !ids.includes(p.id));
-          } else if (type === 'links') {
-            links = links.filter(l => !ids.includes(l.id));
-          } else if (type === 'team') {
-            team = team.filter(t => !ids.includes(t.id));
-          }
-          saveToLocalStorage();
-        }
-        
-        selectedItems[type].clear();
-        renderAll();
-        showToast(`${count} item(s) deleted`, 'success');
-      } catch (error) {
-        console.error('Bulk delete error:', error);
-        showToast('Error deleting items', 'error');
-      }
-    }
-
-    // ============================================
-    // DRAG AND DROP HELPERS
-    // ============================================
-    function initDragDrop(containerId, type) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      
-      const items = container.querySelectorAll('.draggable');
-      
-      items.forEach(item => {
-        item.addEventListener('dragstart', handleDragStart);
-        item.addEventListener('dragend', handleDragEnd);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('drop', (e) => handleDrop(e, type));
-        item.addEventListener('dragleave', handleDragLeave);
+    function initSortables() {
+      ['announcementsList', 'policiesList', 'linksList', 'teamList', 'zonesList'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.querySelector('.drag-handle')) new Sortable(el, { handle: '.drag-handle', animation: 150, onEnd: (evt) => handleReorder(id, evt) });
       });
     }
 
-    let draggedItem = null;
-    let draggedIndex = null;
-
-    function handleDragStart(e) {
-      draggedItem = this;
-      draggedIndex = parseInt(this.dataset.index);
-      this.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
+    async function handleReorder(listId, evt) {
+      const map = { announcementsList: ['announcements', announcements], policiesList: ['policies', policies], linksList: ['links', links], teamList: ['team_members', team], zonesList: ['zones', zones] };
+      const [table, data] = map[listId];
+      const item = data.splice(evt.oldIndex, 1)[0];
+      data.splice(evt.newIndex, 0, item);
+      data.forEach((d, i) => d.sort_order = i);
+      if (isConnected) { for (const d of data) await supabaseClient.from(table).update({ sort_order: d.sort_order }).eq('id', d.id); }
+      saveToLocalStorage();
+      showToast('Order updated');
     }
 
-    function handleDragEnd(e) {
-      this.classList.remove('dragging');
-      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-    }
+    // CRUD Functions
+    function openAnnouncementModal(data = null) { document.getElementById('announcementModalTitle').textContent = data ? 'Edit Announcement' : 'Add Announcement'; document.getElementById('announcementId').value = data?.id || ''; document.getElementById('announcementTitle').value = data?.title || ''; document.getElementById('announcementContent').value = data?.content || ''; document.getElementById('announcementDate').value = data?.date || new Date().toISOString().split('T')[0]; document.getElementById('announcementActive').checked = data?.active !== false; document.getElementById('announcementModal').classList.add('active'); }
+    function editAnnouncement(id) { const a = announcements.find(x => x.id === id); if (a) openAnnouncementModal(a); }
+    async function saveAnnouncement() { const id = document.getElementById('announcementId').value; const data = { title: document.getElementById('announcementTitle').value.trim(), content: document.getElementById('announcementContent').value.trim(), date: document.getElementById('announcementDate').value, active: document.getElementById('announcementActive').checked }; if (!data.title) { showToast('Title is required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('announcements').update(data).eq('id', id); else { data.sort_order = announcements.length; await supabaseClient.from('announcements').insert(data); } await loadAllData(); } else { if (id) { const idx = announcements.findIndex(a => a.id === id); if (idx >= 0) announcements[idx] = { ...announcements[idx], ...data }; } else { data.id = Date.now().toString(); data.created_at = new Date().toISOString(); data.sort_order = announcements.length; announcements.unshift(data); } saveToLocalStorage(); renderAnnouncements(); } closeModal('announcementModal'); showToast(id ? 'Announcement updated' : 'Announcement added', 'success'); }
 
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      if (this !== draggedItem) {
-        this.classList.add('drag-over');
-      }
-    }
+    function openPromoModal(data = null) { document.getElementById('promoModalTitle').textContent = data ? 'Edit Promotion' : 'Add Promotion'; document.getElementById('promoId').value = data?.id || ''; document.getElementById('promoTitle').value = data?.title || ''; document.getElementById('promoDiscount').value = data?.discount || ''; document.getElementById('promoDescription').value = data?.description || ''; document.getElementById('promoDetails').value = data?.details || ''; document.getElementById('promoStartDate').value = data?.start_date || ''; document.getElementById('promoEndDate').value = data?.end_date || ''; document.getElementById('promoModal').classList.add('active'); }
+    function editPromo(id) { const p = promos.find(x => x.id === id); if (p) openPromoModal(p); }
+    async function savePromo() { const id = document.getElementById('promoId').value; const data = { title: document.getElementById('promoTitle').value.trim(), discount: document.getElementById('promoDiscount').value.trim(), description: document.getElementById('promoDescription').value.trim(), details: document.getElementById('promoDetails').value.trim(), start_date: document.getElementById('promoStartDate').value, end_date: document.getElementById('promoEndDate').value || null }; if (!data.title || !data.start_date) { showToast('Title and start date are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('promos').update(data).eq('id', id); else await supabaseClient.from('promos').insert(data); await loadAllData(); } else { if (id) { const idx = promos.findIndex(p => p.id === id); if (idx >= 0) promos[idx] = { ...promos[idx], ...data }; } else { data.id = Date.now().toString(); promos.unshift(data); } saveToLocalStorage(); renderPromos(); } closeModal('promoModal'); showToast(id ? 'Promotion updated' : 'Promotion added', 'success'); }
 
-    function handleDragLeave(e) {
-      this.classList.remove('drag-over');
-    }
+    function openPolicyModal(data = null) { document.getElementById('policyModalTitle').textContent = data ? 'Edit Policy' : 'Add Policy'; document.getElementById('policyId').value = data?.id || ''; document.getElementById('policyTitle').value = data?.title || ''; document.getElementById('policyCategory').value = data?.category || ''; document.getElementById('policyUrl').value = data?.url || ''; document.getElementById('policyDescription').value = data?.description || ''; document.getElementById('policyModal').classList.add('active'); }
+    function editPolicy(id) { const p = policies.find(x => x.id === id); if (p) openPolicyModal(p); }
+    async function savePolicy() { const id = document.getElementById('policyId').value; const data = { title: document.getElementById('policyTitle').value.trim(), category: document.getElementById('policyCategory').value.trim(), url: document.getElementById('policyUrl').value.trim(), description: document.getElementById('policyDescription').value.trim() }; if (!data.title || !data.url) { showToast('Title and URL are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('policies').update(data).eq('id', id); else { data.sort_order = policies.length; await supabaseClient.from('policies').insert(data); } await loadAllData(); } else { if (id) { const idx = policies.findIndex(p => p.id === id); if (idx >= 0) policies[idx] = { ...policies[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = policies.length; policies.push(data); } saveToLocalStorage(); renderPolicies(); } closeModal('policyModal'); showToast(id ? 'Policy updated' : 'Policy added', 'success'); }
 
-    function handleDrop(e, type) {
-      e.preventDefault();
-      this.classList.remove('drag-over');
-      
-      if (this === draggedItem) return;
-      
-      const dropIndex = parseInt(this.dataset.index);
-      
-      if (draggedIndex !== dropIndex) {
-        reorderItems(type, draggedIndex, dropIndex);
-      }
-    }
+    function openLinkModal(data = null) { document.getElementById('linkModalTitle').textContent = data ? 'Edit Resource' : 'Add Resource'; document.getElementById('linkId').value = data?.id || ''; document.getElementById('linkTitle').value = data?.title || ''; document.getElementById('linkCategory').value = data?.category || ''; document.getElementById('linkUrl').value = data?.url || ''; document.getElementById('linkModal').classList.add('active'); }
+    function editLink(id) { const l = links.find(x => x.id === id); if (l) openLinkModal(l); }
+    async function saveLink() { const id = document.getElementById('linkId').value; const data = { title: document.getElementById('linkTitle').value.trim(), category: document.getElementById('linkCategory').value.trim(), url: document.getElementById('linkUrl').value.trim() }; if (!data.title || !data.url) { showToast('Title and URL are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('links').update(data).eq('id', id); else { data.sort_order = links.length; await supabaseClient.from('links').insert(data); } await loadAllData(); } else { if (id) { const idx = links.findIndex(l => l.id === id); if (idx >= 0) links[idx] = { ...links[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = links.length; links.push(data); } saveToLocalStorage(); renderLinks(); } closeModal('linkModal'); showToast(id ? 'Resource updated' : 'Resource added', 'success'); }
 
-    async function reorderItems(type, fromIndex, toIndex) {
-      let items;
-      if (type === 'announcements') items = announcements;
-      else if (type === 'promos') items = promos;
-      else if (type === 'links') items = links;
-      else if (type === 'team') items = team;
-      else if (type === 'policies') items = policies;
-      else return;
-      
-      // Reorder array
-      const [removed] = items.splice(fromIndex, 1);
-      items.splice(toIndex, 0, removed);
-      
-      // Update sort_order for all items
-      items.forEach((item, index) => {
-        item.sort_order = index;
-      });
-      
-      if (isConnected) {
-        const tables = {
-          announcements: 'announcements',
-          promos: 'promos',
-          policies: 'policies',
-          links: 'links',
-          team: 'team_members'
-        };
-        
-        try {
-          for (const item of items) {
-            await supabaseClient.from(tables[type]).update({ sort_order: item.sort_order }).eq('id', item.id);
-          }
-        } catch (error) {
-          console.error('Reorder error:', error);
-        }
-      } else {
-        saveToLocalStorage();
-      }
-      
-      renderAll();
-      showToast('Order updated', 'success');
-    }
+    function openTeamModal(data = null) { document.getElementById('teamModalTitle').textContent = data ? 'Edit Team Member' : 'Add Team Member'; document.getElementById('teamMemberId').value = data?.id || ''; document.getElementById('teamName').value = data?.name || ''; document.getElementById('teamRole').value = data?.role || ''; document.getElementById('teamEmail').value = data?.email || ''; document.getElementById('teamExtension').value = data?.extension || ''; document.getElementById('teamZone').value = data?.zone || ''; document.getElementById('teamAvatarUrl').value = data?.avatar_url || ''; document.getElementById('teamAvatarPreview').src = data?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'; document.getElementById('teamModal').classList.add('active'); }
+    function editTeamMember(id) { const t = team.find(x => x.id === id); if (t) openTeamModal(t); }
+    function previewAvatar(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = (e) => { document.getElementById('teamAvatarPreview').src = e.target.result; document.getElementById('teamAvatarUrl').value = e.target.result; }; reader.readAsDataURL(input.files[0]); } }
+    async function saveTeamMember() { const id = document.getElementById('teamMemberId').value; const data = { name: document.getElementById('teamName').value.trim(), role: document.getElementById('teamRole').value.trim(), email: document.getElementById('teamEmail').value.trim(), extension: document.getElementById('teamExtension').value.trim(), zone: document.getElementById('teamZone').value, avatar_url: document.getElementById('teamAvatarUrl').value.trim() }; if (!data.name || !data.email) { showToast('Name and email are required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('team_members').update(data).eq('id', id); else { data.sort_order = team.length; await supabaseClient.from('team_members').insert(data); } await loadAllData(); } else { if (id) { const idx = team.findIndex(t => t.id === id); if (idx >= 0) team[idx] = { ...team[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = team.length; team.push(data); } saveToLocalStorage(); renderTeam(); } closeModal('teamModal'); showToast(id ? 'Team member updated' : 'Team member added', 'success'); }
 
-    // Initialize on load
-    document.addEventListener('DOMContentLoaded', initSupabase);
+    function openZoneModal(data = null) { document.getElementById('zoneModalTitle').textContent = data ? 'Edit Zone' : 'Add Zone'; document.getElementById('zoneId').value = data?.id || ''; document.getElementById('zoneName').value = data?.name || ''; document.getElementById('zoneColor').value = data?.color || '#F97B5F'; document.getElementById('zoneModal').classList.add('active'); }
+    function editZone(id) { const z = zones.find(x => x.id === id); if (z) openZoneModal(z); }
+    async function saveZone() { const id = document.getElementById('zoneId').value; const data = { name: document.getElementById('zoneName').value.trim(), color: document.getElementById('zoneColor').value }; if (!data.name) { showToast('Zone name is required', 'error'); return; } if (isConnected) { if (id) await supabaseClient.from('zones').update(data).eq('id', id); else { data.sort_order = zones.length; await supabaseClient.from('zones').insert(data); } await loadAllData(); } else { if (id) { const idx = zones.findIndex(z => z.id === id); if (idx >= 0) zones[idx] = { ...zones[idx], ...data }; } else { data.id = Date.now().toString(); data.sort_order = zones.length; zones.push(data); } saveToLocalStorage(); renderZones(); updateZoneDropdowns(); } closeModal('zoneModal'); showToast(id ? 'Zone updated' : 'Zone added', 'success'); }
+
+    async function saveScript() { scriptContent = document.getElementById('scriptEditor').innerHTML; if (isConnected) { const { data } = await supabaseClient.from('settings').select('id').eq('key', 'enrollment_script').single(); if (data) await supabaseClient.from('settings').update({ value: scriptContent }).eq('key', 'enrollment_script'); else await supabaseClient.from('settings').insert({ key: 'enrollment_script', value: scriptContent }); } saveToLocalStorage(); showToast('Script saved', 'success'); }
+
+    function formatText(tag) { document.execCommand('formatBlock', false, tag); }
+
+    function deleteItem(type, id) { deleteCallback = async () => { const map = { announcement: ['announcements', announcements], promo: ['promos', promos], policy: ['policies', policies], link: ['links', links], team: ['team_members', team], zone: ['zones', zones] }; const [table, arr] = map[type]; if (isConnected) { await supabaseClient.from(table).delete().eq('id', id); await loadAllData(); } else { const idx = arr.findIndex(x => x.id === id); if (idx >= 0) arr.splice(idx, 1); saveToLocalStorage(); renderAll(); } showToast('Item deleted', 'success'); }; document.getElementById('deleteModal').classList.add('active'); }
+    function confirmDelete() { if (deleteCallback) deleteCallback(); closeModal('deleteModal'); deleteCallback = null; }
+
+    function getPromoStatus(p) { const now = new Date(), s = new Date(p.start_date), e = p.end_date ? new Date(p.end_date) : null; if (s > now) return 'upcoming'; if (e && e < now) return 'ended'; return 'active'; }
+    function formatDate(d) { if (!d) return '-'; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    function truncate(s, l) { if (!s) return ''; return s.length > l ? s.substring(0, l) + '...' : s; }
+    function esc(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+    function closeModal(id, e) { if (e && e.target !== e.currentTarget) return; document.getElementById(id).classList.remove('active'); }
+    function switchSection(id) { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); event.currentTarget.classList.add('active'); document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); closeSidebar(); }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('open'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+    function showToast(msg, type = '') { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show ' + type; setTimeout(() => t.classList.remove('show'), 3000); }
+
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>

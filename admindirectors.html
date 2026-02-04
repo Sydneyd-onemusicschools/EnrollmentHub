@@ -613,7 +613,17 @@
     async function addLinkCategory(){
       const name=document.getElementById('newCategoryName').value.trim();
       if(!name){toast('Enter a category name','error');return;}
-      try{await sb.from('link_categories').insert({name,sort_order:D.linkCategories.length});document.getElementById('newCategoryName').value='';await loadAll();renderCategoryList();renderCategoryDropdown();toast('Category added!','success');}catch(e){toast('Error adding category','error');}
+      try{
+        console.log('Adding category:', name);
+        const res = await sb.from('link_categories').insert({name,sort_order:D.linkCategories.length});
+        console.log('Insert result:', res);
+        if(res.error){console.error('Insert error:', res.error);toast('Error: '+res.error.message,'error');return;}
+        document.getElementById('newCategoryName').value='';
+        await loadAll();
+        renderCategoryList();
+        renderCategoryDropdown();
+        toast('Category added!','success');
+      }catch(e){console.error('addLinkCategory error:', e);toast('Error adding category','error');}
     }
     async function deleteLinkCategory(id){
       if(!confirm('Delete this category? Links in this category will become uncategorized.'))return;

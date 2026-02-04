@@ -480,6 +480,7 @@
     const defScript='<h2>Welcome Script</h2><p>Hello! I\'m [Name], excited to show you around.</p><h3>Opening Questions</h3><ul><li>What brings you here?</li><li>Tell me about your child</li></ul>';
 
     async function init(){
+      if(!window.supabase){toast('Supabase library not loaded','error');return;}
       try{
         sb=window.supabase.createClient(SB_URL,SB_KEY);
         await loadAll();
@@ -500,21 +501,15 @@
           sb.from('team_members').select('*').order('sort_order'),
           sb.from('zones').select('*').order('sort_order')
         ]);
-        if(r1.error)console.error('announcements:',r1.error);
-        if(r2.error)console.error('promos:',r2.error);
-        if(r3.error)console.error('discounts:',r3.error);
-        if(r4.error)console.error('policies:',r4.error);
-        if(r5.error)console.error('links:',r5.error);
-        if(r6.error)console.error('team:',r6.error);
-        if(r7.error)console.error('zones:',r7.error);
         D.announcements=r1.data||[];D.promos=r2.data||[];D.discounts=r3.data||[];D.policies=r4.data||[];D.links=r5.data||[];D.team=r6.data||[];D.zones=r7.data||[];
         const settings=await sb.from('settings').select('*');
         if(settings.error)console.error('settings:',settings.error);
         if(settings.data)settings.data.forEach(s=>{
+          console.log('Setting loaded:', s.key, s.value);
           if(s.key==='practices')D.practices=JSON.parse(s.value||'[]');
           if(s.key==='we_handle')D.weHandle=JSON.parse(s.value||'[]');
           if(s.key==='you_handle')D.youHandle=JSON.parse(s.value||'[]');
-          if(s.key==='contact')D.contact=JSON.parse(s.value||'{}');
+          if(s.key==='contact'){D.contact=JSON.parse(s.value||'{}');console.log('Contact loaded:',D.contact);}
           if(s.key==='enrollment_script')D.script=s.value||'';
         });
         applyDefaults();render();
@@ -522,7 +517,13 @@
     }
 
     function applyDefaults(){if(!D.practices.length)D.practices=defPractices;if(!D.weHandle.length)D.weHandle=defWeHandle;if(!D.youHandle.length)D.youHandle=defYouHandle;if(!Object.keys(D.contact).length)D.contact=defContact;if(!D.script)D.script=defScript;}
-    async function saveSetting(k,v){const{data}=await sb.from('settings').select('id').eq('key',k).single();if(data)await sb.from('settings').update({value:v}).eq('key',k);else await sb.from('settings').insert({key:k,value:v});}
+    async function saveSetting(k,v){
+      try{
+        const res = await sb.from('settings').upsert({key:k, value:v}, {onConflict:'key'});
+        if(res.error){console.error('Settings save error:',res.error);toast('Error saving: '+res.error.message,'error');return false;}
+        return true;
+      }catch(e){console.error('saveSetting error:',e);return false;}
+    }
 
     function render(){renderHero();renderStats();renderAnn();renderPromos();renderDiscounts();renderContact();renderResp();renderPractices();renderPolicies();renderLinks();renderTeam();renderZoneFilter();document.getElementById('scriptContent').innerHTML=D.script;}
     function esc(t){if(!t)return'';const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
@@ -598,8 +599,8 @@
     function editResp(type,i){const arr=type==='we'?D.weHandle:D.youHandle;const t=prompt('Edit:',arr[i]);if(t&&t.trim()){arr[i]=t.trim();renderResp();}}
     function delResp(type,i){if(type==='we')D.weHandle.splice(i,1);else D.youHandle.splice(i,1);renderResp();}
 
-    async function saveWorking(){D.contact={email:document.getElementById('cEmail').value,emailDesc:document.getElementById('cEmailDesc').value,phone:document.getElementById('cPhone').value,phoneDesc:document.getElementById('cPhoneDesc').value,meetDesc:document.getElementById('cMeetDesc').value,meetUrl:document.getElementById('cMeetUrl').value};await saveSetting('contact',JSON.stringify(D.contact));await saveSetting('we_handle',JSON.stringify(D.weHandle));await saveSetting('you_handle',JSON.stringify(D.youHandle));toast('Saved!','success');}
-    async function saveScript(){D.script=document.getElementById('scriptContent').innerHTML;await saveSetting('enrollment_script',D.script);toast('Script saved!','success');}
+    async function saveWorking(){D.contact={email:document.getElementById('cEmail').value,emailDesc:document.getElementById('cEmailDesc').value,phone:document.getElementById('cPhone').value,phoneDesc:document.getElementById('cPhoneDesc').value,meetDesc:document.getElementById('cMeetDesc').value,meetUrl:document.getElementById('cMeetUrl').value};console.log('Saving contact:',D.contact);const r1=await saveSetting('contact',JSON.stringify(D.contact));const r2=await saveSetting('we_handle',JSON.stringify(D.weHandle));const r3=await saveSetting('you_handle',JSON.stringify(D.youHandle));if(r1&&r2&&r3)toast('Saved!','success');}
+    async function saveScript(){D.script=document.getElementById('scriptContent').innerHTML;const ok=await saveSetting('enrollment_script',D.script);if(ok)toast('Script saved!','success');}
     function fmt(tag){document.execCommand('formatBlock',false,tag);}
 
     function del(type,id){delCb=async()=>{const map={ann:['announcements'],promo:['promos'],discount:['discounts'],policy:['policies'],link:['links'],team:['team_members'],zone:['zones']};const tbl=map[type][0];try{await sb.from(tbl).delete().eq('id',id);await loadAll();toast('Deleted','success');}catch(e){toast('Error deleting','error');}};openModal('delete');}

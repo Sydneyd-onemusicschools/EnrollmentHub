@@ -1323,19 +1323,24 @@
           <p>Quick access to tools, documents, and helpful resources.</p>
         </div>
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-              </svg>
+          <div class="card-header" style="flex-wrap:wrap;gap:12px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="card-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="card-title">Quick Links</div>
+                <div class="card-subtitle">Frequently used resources and tools</div>
+              </div>
             </div>
-            <div>
-              <div class="card-title">Quick Links</div>
-              <div class="card-subtitle">Frequently used resources and tools</div>
+            <div style="flex:1;max-width:300px">
+              <input type="text" class="form-input" id="linkSearch" placeholder="Search resources..." oninput="filterLinks()" style="margin:0;padding:10px 14px;border-radius:var(--radius-sm)">
             </div>
           </div>
-          <div class="links-grid" id="linksGrid"></div>
+          <div id="linksContainer"></div>
         </div>
       </section>
 
@@ -1386,22 +1391,26 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
 
     let supabaseClient = null;
-    let announcements = [], promos = [], discounts = [], policies = [], links = [], team = [], zones = [], scriptContent = '';
+    let announcements = [], promos = [], discounts = [], policies = [], links = [], linkCategories = [], team = [], zones = [], scriptContent = '';
     let currentPromoTab = 'active';
     let currentDiscountTab = 'active';
 
     async function init() {
+      console.log('Director init starting...');
       try {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('Supabase client created');
         const { error } = await supabaseClient.from('announcements').select('count');
+        console.log('Test query result:', error ? 'error' : 'success');
         if (!error) { await loadAllData(); return; }
-      } catch (e) { console.error(e); }
+      } catch (e) { console.error('Init error:', e); }
       loadFromLocalStorage();
     }
 
     async function loadAllData() {
+      console.log('loadAllData starting...');
       try {
-        const [p1, p2, p3, p4, p5, p6, p7, p8] = await Promise.all([
+        const [p1, p2, p3, p4, p5, p6, p7, p8, p9] = await Promise.all([
           supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
           supabaseClient.from('announcements').select('*').eq('active', true).order('created_at', { ascending: false }),
           supabaseClient.from('policies').select('*').order('category'),
@@ -1409,14 +1418,18 @@
           supabaseClient.from('team_members').select('*').order('sort_order'),
           supabaseClient.from('zones').select('*').order('sort_order'),
           supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single(),
-          supabaseClient.from('discounts').select('*').order('start_date', { ascending: false })
+          supabaseClient.from('discounts').select('*').order('start_date', { ascending: false }),
+          supabaseClient.from('link_categories').select('*').order('sort_order')
         ]);
+        console.log('Data loaded:', {promos: p1.data?.length, announcements: p2.data?.length, policies: p3.data?.length, links: p4.data?.length, team: p5.data?.length});
         promos = p1.data || []; announcements = p2.data || []; policies = p3.data || [];
         links = p4.data || []; team = p5.data || []; zones = p6.data || [];
         scriptContent = p7.data?.value || getDefaultScript();
         discounts = p8.data || [];
+        linkCategories = p9.data || [];
+        console.log('Calling renderAll...');
         renderAll();
-      } catch (e) { console.error(e); loadFromLocalStorage(); }
+      } catch (e) { console.error('loadAllData error:', e); loadFromLocalStorage(); }
     }
 
     function loadFromLocalStorage() {
@@ -1427,6 +1440,7 @@
       team = JSON.parse(localStorage.getItem('admin_team') || '[]');
       zones = JSON.parse(localStorage.getItem('admin_zones') || '[]');
       discounts = JSON.parse(localStorage.getItem('admin_discounts') || '[]');
+      linkCategories = JSON.parse(localStorage.getItem('admin_link_categories') || '[]');
       scriptContent = localStorage.getItem('admin_script') || getDefaultScript();
       renderAll();
     }
@@ -1600,7 +1614,7 @@
       const g = policies.reduce((a,p) => { const cat = p.category||'General'; if(!a[cat])a[cat]=[]; a[cat].push(p); return a; }, {});
       c.innerHTML = Object.entries(g).map(([cat, items]) => `
         <div class="policy-category"><div class="policy-category-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>${esc(cat)}</div>
-        <div class="policy-list">${items.map(p => `<a href="${esc(p.url||'#')}" target="_blank" class="policy-item" style="flex-direction:column;align-items:stretch"><div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="policy-item-info"><div class="policy-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div><h4>${esc(p.title)}</h4></div><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></div>${p.description?`<p style="font-size:13px;color:var(--color-text-muted);margin-top:8px;line-height:1.5">${esc(p.description)}</p>`:''}</a>`).join('')}</div></div>
+        <div class="policy-list">${items.map(p => `<a href="${esc(p.url||'#')}" target="_blank" class="policy-item" style="flex-direction:column;align-items:stretch"><div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="policy-item-info"><div class="policy-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div><h4>${esc(p.title)}</h4></div><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></div>${p.description?`<div style="font-size:13px;color:var(--color-text-muted);margin-top:8px;line-height:1.5">${p.description}</div>`:''}</a>`).join('')}</div></div>
       `).join('');
     }
 
@@ -1609,10 +1623,39 @@
     }
 
     function renderLinks() {
-      const c = document.getElementById('linksGrid');
-      if (!links.length) { c.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><p>No links added yet</p></div>'; return; }
-      c.innerHTML = links.map(l => `<a href="${esc(l.url)}" target="_blank" class="link-card"><div class="link-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div><div><h4>${esc(l.title)}</h4><p>${esc(l.category||'Resource')}</p></div></a>`).join('');
+      const c = document.getElementById('linksContainer');
+      const search = (document.getElementById('linkSearch')?.value || '').toLowerCase();
+      let filteredLinks = links;
+      if (search) filteredLinks = links.filter(l => (l.title || '').toLowerCase().includes(search) || (l.category || '').toLowerCase().includes(search));
+      
+      if (!filteredLinks.length && !linkCategories.length) { 
+        c.innerHTML = '<div class="empty-state"><p>No links added yet</p></div>'; 
+        return; 
+      }
+      
+      const grouped = {};
+      linkCategories.forEach(cat => { grouped[cat.name] = []; });
+      grouped['Uncategorized'] = [];
+      filteredLinks.forEach(l => {
+        const cat = l.category || 'Uncategorized';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(l);
+      });
+      
+      c.innerHTML = Object.entries(grouped).filter(([cat, items]) => items.length > 0).map(([cat, items]) => `
+        <div class="link-category" style="margin-bottom:24px">
+          <div style="font-weight:600;font-size:14px;color:var(--color-text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            ${esc(cat)} (${items.length})
+          </div>
+          <div class="links-grid">${items.map(l => `<a href="${esc(l.url)}" target="_blank" class="link-card"><div class="link-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div><div><h4>${esc(l.title)}</h4></div></a>`).join('')}</div>
+        </div>
+      `).join('');
+      
+      if (!c.innerHTML) c.innerHTML = '<div class="empty-state"><p>No matching resources found</p></div>';
     }
+    
+    function filterLinks() { renderLinks(); }
 
     function renderTeam() {
       const c = document.getElementById('teamGrid');

@@ -3,947 +3,525 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teachers - Enrollment Hub</title>
+    <title>Teacher Directory - Enrollment Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #FA8072;
             --primary-light: #FFB4A2;
-            --accent: #FF6B9D;
-            --accent-light: #FFB6C1;
+            --primary-dark: #E96E5D;
             --secondary: #FF6B9D;
-            --gray-50: #F9FAFB;
-            --gray-100: #F3F4F6;
-            --gray-200: #E5E7EB;
-            --gray-300: #D1D5DB;
-            --gray-400: #9CA3AF;
-            --text-primary: #111827;
-            --text-secondary: #6B7280;
-            --text-light: #9CA3AF;
+            --secondary-light: #FFB6C1;
+            --accent: #FFA07A;
+            --accent-light: #FFCBA4;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+            --text-light: #A0AEC0;
             --white: #FFFFFF;
-            --background: #F8F9FA;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --transition-speed: 0.3s;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
-            background: var(--background);
-            color: var(--text-primary);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            display: flex;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #F8F9FA;
             min-height: 100vh;
-        }
-
-        /* Sidebar - EXACT MATCH TO DASHBOARD */
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #FA8072 0%, #FF6B9D 100%);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 0;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .sidebar-header {
-            padding: 0 2rem 2rem 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .sidebar.collapsed .sidebar-header {
-            padding: 0 1rem 1rem 1rem;
-        }
-
-        .sidebar-logo {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: white;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-logo {
-            font-size: 1.25rem;
-        }
-
-        .sidebar-subtitle {
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.9);
-            text-align: center;
-            transition: all 0.3s ease;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .sidebar-subtitle {
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .sidebar-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: -15px;
-            width: 30px;
-            height: 30px;
-            background: white;
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar-toggle i {
-            color: var(--primary);
-            font-size: 0.875rem;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-toggle i {
-            transform: rotate(180deg);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 2rem 0;
-            overflow-y: auto;
+            color: var(--text-primary);
             overflow-x: hidden;
         }
 
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 2rem;
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
-            font-size: 0.9375rem;
-        }
-
-        .sidebar.collapsed .sidebar-link {
-            padding: 1rem;
-            justify-content: center;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-left-color: white;
-        }
-
-        .sidebar-link.active {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border-left-color: white;
-            font-weight: 700;
-        }
-
-        .sidebar-link i {
-            width: 20px;
-            min-width: 20px;
-            margin-right: 1rem;
-            font-size: 1.125rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sidebar.collapsed .sidebar-link i {
-            margin-right: 0;
-        }
-
-        .sidebar-link-text {
-            transition: all 0.3s ease;
-            opacity: 1;
-            white-space: nowrap;
-        }
-
-        .sidebar.collapsed .sidebar-link-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
-        .hamburger {
-            display: none;
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            z-index: 1001;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: white;
-            margin: 5px 0;
-        }
-
-        /* Main Content */
-        .main-wrapper {
-            margin-left: 280px;
-            flex: 1;
-            padding: 3rem;
-            width: calc(100% - 280px);
-            transition: all 0.3s ease;
-        }
-
-        .sidebar.collapsed ~ .main-wrapper {
-            margin-left: 80px;
-            width: calc(100% - 80px);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-
-        .page-subtitle {
-            color: var(--text-secondary);
-            font-size: 1.0625rem;
-            font-weight: 400;
-        }
-
-        /* Filters Section */
-        .filters-section {
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
             background: var(--white);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-md);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
+            z-index: 1000;
+            display: flex; flex-direction: column;
         }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
-        .search-container {
-            margin-bottom: 1.5rem;
-            position: relative;
+        .sidebar-header {
+            padding: 1.5rem 1.25rem;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
         }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1.125rem;
+        .logo-section { display: flex; align-items: center; gap: 0.75rem; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; flex-shrink: 0; color: var(--white); font-weight: 700;
         }
-
-        .search-bar {
-            width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
-            background: var(--gray-50);
-            border: 1.5px solid var(--gray-200);
-            border-radius: 12px;
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+        .toggle-btn {
+            width: 32px; height: 32px; border: 1px solid var(--gray-200);
+            background: var(--white); color: var(--text-secondary); border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; flex-shrink: 0;
         }
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
 
-        .search-bar:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--white);
-            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 0.875rem;
+            padding: 0.875rem 1.5rem; margin: 0.25rem 0.75rem;
+            color: var(--text-secondary); text-decoration: none; border-radius: 10px;
+            transition: all 0.2s ease; cursor: pointer; border: none;
+            background: transparent; width: calc(100% - 1.5rem);
+            font-size: 0.9375rem; font-weight: 500;
         }
-
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white); box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
         }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        .nav-icon { font-size: 1.25rem; flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--secondary) !important; }
+        .logout-btn:hover { background: rgba(255, 107, 157, 0.1) !important; }
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 999;
+            opacity: 0; pointer-events: none; transition: opacity var(--transition-speed) ease;
         }
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
 
-        .filter-label {
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .main-content {
+            margin-left: var(--sidebar-width); min-height: 100vh; padding: 2rem 2.5rem;
+            transition: margin-left var(--transition-speed) ease;
         }
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
 
+        /* Page Header */
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2rem; color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700; letter-spacing: -0.02em; }
+        .page-header p { color: var(--text-secondary); font-size: 1rem; }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--white); border-radius: 16px; padding: 1.5rem;
+            box-shadow: var(--shadow-md); margin-bottom: 1.5rem;
+        }
+        .filter-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1rem; cursor: pointer; user-select: none;
+        }
+        .filter-header h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; }
+        .filter-header h3 i { color: var(--primary); }
+        .filter-toggle { color: var(--text-secondary); font-size: 0.875rem; transition: transform 0.2s ease; }
+        .filter-toggle.collapsed { transform: rotate(-90deg); }
+
+        .filter-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        .filter-body.collapsed { display: none; }
+
+        .search-input-wrapper { position: relative; grid-column: 1 / -1; }
+        .search-input-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--primary); }
+        .search-input {
+            width: 100%; padding: 0.75rem 1rem 0.75rem 2.75rem;
+            background: var(--gray-50); border: 1.5px solid var(--gray-200);
+            border-radius: 10px; font-size: 0.9375rem; color: var(--text-primary); transition: all 0.2s ease;
+        }
+        .search-input:focus { outline: none; border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1); }
+
+        .filter-group label {
+            display: block; font-size: 0.75rem; font-weight: 600;
+            color: var(--text-secondary); margin-bottom: 0.375rem; text-transform: uppercase; letter-spacing: 0.03em;
+        }
         .filter-select {
-            padding: 0.75rem 1rem;
-            border: 1.5px solid var(--gray-200);
-            border-radius: 12px;
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            background: var(--white);
-            cursor: pointer;
-            transition: all 0.2s ease;
+            width: 100%; padding: 0.625rem 0.875rem;
+            border: 1.5px solid var(--gray-200); border-radius: 10px;
+            font-size: 0.875rem; color: var(--text-primary); background: var(--white); transition: all 0.2s ease;
+        }
+        .filter-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1); }
+
+        .active-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; grid-column: 1 / -1; }
+        .active-filters:empty { display: none; }
+        .filter-chip {
+            display: inline-flex; align-items: center; gap: 0.375rem;
+            padding: 0.375rem 0.75rem; background: rgba(250, 128, 114, 0.1);
+            color: var(--primary-dark); border-radius: 20px; font-size: 0.8125rem; font-weight: 600;
+        }
+        .filter-chip button {
+            background: none; border: none; color: var(--primary-dark); cursor: pointer;
+            font-size: 0.875rem; padding: 0; line-height: 1; opacity: 0.7; transition: opacity 0.2s;
+        }
+        .filter-chip button:hover { opacity: 1; }
+        .clear-all-btn {
+            background: none; border: 1.5px solid var(--gray-200); color: var(--text-secondary);
+            padding: 0.375rem 0.75rem; border-radius: 20px; font-size: 0.8125rem;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .clear-all-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+        /* Zone Filter Tabs */
+        .zone-filter-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; grid-column: 1 / -1; margin-bottom: 0.25rem; }
+        .zone-tab {
+            padding: 0.5rem 1rem; font-size: 0.8125rem; font-weight: 600;
+            color: var(--text-secondary); background: var(--gray-50);
+            border: 1.5px solid var(--gray-200); border-radius: 20px;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .zone-tab:hover { border-color: var(--primary); color: var(--primary); }
+        .zone-tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white; border-color: transparent;
+            box-shadow: 0 2px 8px rgba(250, 128, 114, 0.3);
         }
 
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(250, 128, 114, 0.1);
+        /* Results Info */
+        .results-info {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
         }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0;
+        .results-count { font-size: 0.9375rem; color: var(--text-secondary); font-weight: 500; }
+        .results-count strong { color: var(--text-primary); }
+        .view-toggle { display: flex; gap: 0.25rem; }
+        .view-btn {
+            width: 36px; height: 36px; border: 1.5px solid var(--gray-200);
+            background: var(--white); color: var(--text-secondary); border-radius: 8px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
+        .view-btn.active { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border-color: transparent; }
+        .view-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
 
-        .checkbox-input {
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--gray-300);
-            border-radius: 4px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .checkbox-label {
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        /* Instrument Checkboxes Special Section */
-        .instruments-section {
-            grid-column: 1 / -1;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: 12px;
-            border: 1px solid var(--gray-200);
-        }
-
-        .instruments-label {
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .instruments-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .clear-filters-btn {
-            padding: 0.875rem 1.5rem;
-            background: var(--gray-100);
-            border: none;
-            border-radius: 12px;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.9375rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .clear-filters-btn:hover {
-            background: var(--gray-200);
-            color: var(--text-primary);
-        }
-
-        .results-count {
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-        }
-
-        /* Teacher Cards */
+        /* Teachers Grid */
         .teachers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .teacher-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 16px;
-            padding: 1.75rem;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .teacher-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
-        }
-
-        .teacher-header {
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--gray-100);
-        }
-
-        .teacher-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .teacher-studio {
-            font-size: 0.9375rem;
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .teacher-location {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
-
-        .teacher-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .badge {
-            padding: 0.25rem 0.75rem;
-            background: var(--gray-100);
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .badge.primary {
-            background: linear-gradient(135deg, rgba(250, 128, 114, 0.1) 0%, rgba(255, 107, 157, 0.1) 100%);
-            color: var(--primary);
-            border: 1px solid rgba(250, 128, 114, 0.3);
-        }
-
-        .teacher-instruments {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .instrument-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--text-primary);
-        }
-
-        .instrument-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.625rem;
-            flex-shrink: 0;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 2rem;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 24px;
-            max-width: 900px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal::-webkit-scrollbar-track {
-            background: var(--gray-100);
-            border-radius: 0 24px 24px 0;
-        }
-
-        .modal::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        .modal-header {
-            position: sticky;
-            top: 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            padding: 2rem;
-            border-radius: 24px 24px 0 0;
-            color: white;
-            z-index: 10;
-        }
-
-        .modal-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-subtitle {
-            font-size: 1.125rem;
-            opacity: 0.95;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 1.25rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .modal-section {
-            margin-bottom: 2rem;
-        }
-
-        .modal-section-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .modal-section-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.875rem;
-        }
-
-        .modal-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .modal-info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .modal-info-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .modal-info-value {
-            font-size: 1rem;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .instrument-detail-card {
-            background: var(--gray-50);
-            border-left: 3px solid var(--primary);
-            padding: 1rem 1rem 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .instrument-detail-title {
-            font-size: 1.0625rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-        }
-
-        .instrument-detail-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 1rem;
         }
+        .teachers-grid.list-view { grid-template-columns: 1fr; }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
+        /* Teacher Card */
+        .teacher-card {
+            background: var(--white); border: 1px solid var(--gray-200);
+            border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease; display: flex; flex-direction: column;
         }
+        .teacher-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-md); transform: translateY(-2px); }
 
-        .empty-state i {
-            font-size: 4rem;
-            color: var(--gray-300);
-            margin-bottom: 1rem;
+        .teacher-card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1.25rem; color: white; position: relative;
         }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            color: var(--text-secondary);
-            font-size: 1.125rem;
+        .teacher-card-name { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.125rem; }
+        .teacher-card-brand { font-size: 0.8125rem; opacity: 0.9; }
+        .teacher-card-status {
+            position: absolute; top: 1rem; right: 1rem;
+            padding: 0.2rem 0.625rem; border-radius: 12px; font-size: 0.6875rem;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
         }
+        .status-active { background: rgba(255,255,255,0.25); color: white; }
+        .status-inactive { background: rgba(0,0,0,0.15); color: rgba(255,255,255,0.8); }
 
-        /* Responsive */
+        .teacher-card-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+
+        .teacher-info-row {
+            display: flex; align-items: center; gap: 0.625rem;
+            padding: 0.4rem 0; font-size: 0.875rem;
+        }
+        .teacher-info-row i { color: var(--primary); width: 16px; text-align: center; font-size: 0.8125rem; }
+        .teacher-info-row span { color: var(--text-secondary); line-height: 1.4; }
+
+        .teacher-instruments-list { margin-top: 0.75rem; }
+        .teacher-instruments-label { font-size: 0.75rem; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.5rem; }
+
+        .instrument-chip-row { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+        .instrument-chip {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            padding: 0.3rem 0.625rem; background: var(--gray-50);
+            border: 1px solid var(--gray-200); border-radius: 8px;
+            font-size: 0.75rem; font-weight: 600; color: var(--text-primary); transition: all 0.2s;
+        }
+        .instrument-chip .level-dot {
+            width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+        }
+        .level-beginner { background: var(--success); }
+        .level-intermediate { background: var(--warning); }
+        .level-advanced { background: var(--primary); }
+
+        .teacher-badges { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: auto; padding-top: 0.75rem; }
+        .teacher-badge {
+            padding: 0.2rem 0.5rem; border-radius: 6px;
+            font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-info { background: rgba(250, 128, 114, 0.1); color: var(--primary); }
+        .badge-purple { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
+
+        /* Teacher Detail Modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            align-items: center; justify-content: center; padding: 1rem;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; border-radius: 16px; max-width: 700px; width: 100%;
+            max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl);
+        }
+        .modal-header {
+            padding: 1.5rem; border-bottom: 1px solid var(--gray-200);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; background: white; z-index: 10;
+        }
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .modal-close {
+            width: 32px; height: 32px; border: none; background: var(--gray-100);
+            color: var(--text-secondary); border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .modal-close:hover { background: var(--gray-200); }
+        .modal-body { padding: 1.5rem; }
+
+        .detail-section { margin-bottom: 1.5rem; }
+        .detail-section-title {
+            font-size: 0.8125rem; font-weight: 700; color: var(--primary);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem; border-bottom: 2px solid var(--gray-100);
+        }
+        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        .detail-item label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-light); margin-bottom: 0.125rem; }
+        .detail-item p { font-size: 0.9375rem; color: var(--text-primary); }
+
+        .detail-instrument-card {
+            background: var(--gray-50); border: 1px solid var(--gray-200);
+            border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem;
+        }
+        .detail-instrument-name { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+        .detail-instrument-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+        .detail-instrument-grid label { font-size: 0.6875rem; }
+        .detail-instrument-grid p { font-size: 0.8125rem; }
+
+        .strength-item {
+            display: flex; align-items: flex-start; gap: 0.5rem;
+            padding: 0.5rem 0; font-size: 0.9375rem; color: var(--text-primary);
+        }
+        .strength-item i { color: var(--primary); margin-top: 0.125rem; font-size: 0.75rem; }
+
+        /* Empty & Loading */
+        .empty-state { text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary); }
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 0.75rem; }
+        .empty-state p { font-size: 1rem; }
+        .loading { display: flex; align-items: center; justify-content: center; min-height: 400px; color: var(--text-secondary); font-size: 1.125rem; }
+
+        /* List view card adjustments */
+        .teachers-grid.list-view .teacher-card { flex-direction: row; }
+        .teachers-grid.list-view .teacher-card-header { min-width: 220px; display: flex; flex-direction: column; justify-content: center; }
+        .teachers-grid.list-view .teacher-card-body { flex-direction: row; flex-wrap: wrap; gap: 1rem; align-items: center; }
+
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .teachers-grid { grid-template-columns: 1fr; }
+            .teachers-grid.list-view .teacher-card { flex-direction: column; }
+            .teachers-grid.list-view .teacher-card-header { min-width: unset; }
+            .filter-body { grid-template-columns: 1fr 1fr; }
+            .detail-grid, .detail-instrument-grid { grid-template-columns: 1fr; }
+        }
 
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-                width: 100%;
-                padding: 1.5rem;
-                padding-top: 5rem;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .filters-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .instruments-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .teachers-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal {
-                margin: 1rem;
-            }
+        @media (max-width: 500px) {
+            .filter-body { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Hamburger Menu -->
-    <button class="hamburger" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <button class="sidebar-toggle" onclick="toggleSidebarCollapse()">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-
+    <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo">Enrollment Hub</div>
-            <div class="sidebar-subtitle">One Music Schools</div>
+            <div class="logo-section">
+                <div class="logo-icon">EH</div>
+                <span class="logo-text">Enrollment Hub</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn">
+                <span class="toggle-icon">‹</span>
+            </button>
         </div>
-
         <nav class="sidebar-nav">
-            <a href="teamdashboard.html" class="sidebar-link">
-                <i class="fas fa-th-large"></i>
-                <span class="sidebar-link-text">Dashboard</span>
+            <a href="teamdashboard.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                <span class="nav-text">Dashboard</span>
             </a>
-            <a href="teamquicklinks.html" class="sidebar-link">
-                <i class="fas fa-link"></i>
-                <span class="sidebar-link-text">Quick Links</span>
+            <a href="teamquicklinks.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-link"></i></span>
+                <span class="nav-text">Quick Links</span>
             </a>
-            <a href="teamsnippets.html" class="sidebar-link">
-                <i class="fas fa-clipboard"></i>
-                <span class="sidebar-link-text">Snippets</span>
+            <a href="teamstudio-directory.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-building"></i></span>
+                <span class="nav-text">Studio Directory</span>
             </a>
-            <a href="teamprofile.html" class="sidebar-link">
-                <i class="fas fa-users"></i>
-                <span class="sidebar-link-text">Profiles</span>
+            <a href="teamteacher.html" class="nav-item active">
+                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span class="nav-text">Teacher Directory</span>
             </a>
-            <a href="teamstudios.html" class="sidebar-link">
-                <i class="fas fa-map-marker-alt"></i>
-                <span class="sidebar-link-text">Studio Directory</span>
+            <a href="teamsnippets.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                <span class="nav-text">Snippets</span>
             </a>
-            <a href="teamteacher.html" class="sidebar-link active">
-                <i class="fas fa-book-open"></i>
-                <span class="sidebar-link-text">Teacher Selling Points</span>
+            <a href="teammap.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-star"></i></span>
+                <span class="nav-text">Map</span>
             </a>
-            <a href="teamprograms.html" class="sidebar-link">
-                <i class="fas fa-star"></i>
-                <span class="sidebar-link-text">Programs</span>
+            <a href="teamprograms.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
+                <span class="nav-text">Programs</span>
             </a>
-            <a href="teamtraining.html" class="sidebar-link">
-                <i class="fas fa-graduation-cap"></i>
-                <span class="sidebar-link-text">Training Hub</span>
+            <a href="teamtraining-hub.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-book-open"></i></span>
+                <span class="nav-text">Training Hub</span>
             </a>
-            <a href="teampolicies.html" class="sidebar-link">
-                <i class="fas fa-file-alt"></i>
-                <span class="sidebar-link-text">Policies</span>
+            <a href="teampolicies.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-file-alt"></i></span>
+                <span class="nav-text">Policies</span>
             </a>
-            <a href="teamcalendar.html" class="sidebar-link">
-                <i class="far fa-calendar-alt"></i>
-                <span class="sidebar-link-text">Calendar</span>
+            <a href="teamprofile.html" class="nav-item">
+                <span class="nav-icon"><i class="far fa-user"></i></span>
+                <span class="nav-text">Profiles</span>
             </a>
-            <a href="teamprofile.html" class="sidebar-link">
-                <i class="fas fa-user"></i>
-                <span class="sidebar-link-text">My Profile</span>
+            <a href="EnsembleDirectors.html" class="nav-item">
+                <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
+                <span class="nav-text">Directors Page</span>
             </a>
         </nav>
-    </div>
-
-    <div class="main-wrapper">
-        <div class="container">
-            <!-- Header -->
-            <div class="page-header">
-                <h1 class="page-title">Teacher Selling Points</h1>
-                <p class="page-subtitle">Find the perfect teacher for your students</p>
-            </div>
-
-            <div id="loading" class="loading">
-                <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
-                Loading teachers...
-            </div>
-
-            <div id="content" style="display: none;">
-                <!-- Filters Section -->
-                <div class="filters-section">
-                    <!-- Search Bar -->
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="searchBar" class="search-bar" placeholder="Search teachers by name...">
-                    </div>
-
-                    <!-- Filters -->
-                    <div class="filters-grid">
-                        <div class="filter-group">
-                            <label class="filter-label">Studio</label>
-                            <select id="studioFilter" class="filter-select">
-                                <option value="">All Studios</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">State</label>
-                            <select id="stateFilter" class="filter-select">
-                                <option value="">All States</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">City</label>
-                            <select id="cityFilter" class="filter-select">
-                                <option value="">All Cities</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">Gender</label>
-                            <select id="genderFilter" class="filter-select">
-                                <option value="">All Genders</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Non-binary">Non-binary</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">Teacher Level</label>
-                            <select id="levelFilter" class="filter-select">
-                                <option value="">All Levels</option>
-                                <option value="beginner">Beginner</option>
-                                <option value="intermediate">Intermediate</option>
-                                <option value="advanced">Advanced</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">Min Age Taught</label>
-                            <select id="ageFilter" class="filter-select">
-                                <option value="">Any Age</option>
-                                <option value="3">3+</option>
-                                <option value="5">5+</option>
-                                <option value="7">7+</option>
-                                <option value="10">10+</option>
-                                <option value="12">12+</option>
-                                <option value="15">15+</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="formalEducationFilter" class="checkbox-input">
-                                <label for="formalEducationFilter" class="checkbox-label">Formal Music Education</label>
-                            </div>
-                        </div>
-
-                        <!-- Instruments Section -->
-                        <div class="instruments-section">
-                            <label class="instruments-label">Instruments (Select multiple - teachers must teach ALL selected)</label>
-                            <div class="instruments-grid" id="instrumentsGrid"></div>
-                        </div>
-                    </div>
-
-                    <button class="clear-filters-btn" onclick="clearFilters()">
-                        <i class="fas fa-times"></i> Clear All Filters
-                    </button>
-                </div>
-
-                <div class="results-count" id="resultsCount"></div>
-
-                <!-- Teachers Grid -->
-                <div id="teachersGrid" class="teachers-grid"></div>
-            </div>
+        <div class="sidebar-footer">
+            <button id="logoutBtn" class="nav-item logout-btn">
+                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span class="nav-text">Logout</span>
+            </button>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-        <div class="modal" onclick="event.stopPropagation()">
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Teacher Directory</h1>
+            <p>Find the right teacher by instrument, level, location, and more</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-header" onclick="toggleFilters()">
+                <h3><i class="fas fa-sliders-h"></i> Filters</h3>
+                <i id="filterToggleIcon" class="fas fa-chevron-down filter-toggle"></i>
+            </div>
+            <div id="filterBody" class="filter-body">
+                <!-- Search -->
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="teacherSearch" class="search-input" placeholder="Search by teacher name...">
+                </div>
+
+                <!-- Zone Tabs -->
+                <div class="zone-filter-tabs" id="zoneFilterTabs"></div>
+
+                <!-- Dropdowns -->
+                <div class="filter-group">
+                    <label>State</label>
+                    <select id="filterState" class="filter-select"><option value="">All States</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>Brand / Studio</label>
+                    <select id="filterBrand" class="filter-select"><option value="">All Brands</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>City</label>
+                    <select id="filterCity" class="filter-select"><option value="">All Cities</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>Instrument</label>
+                    <select id="filterInstrument" class="filter-select"><option value="">All Instruments</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>Level</label>
+                    <select id="filterLevel" class="filter-select">
+                        <option value="">All Levels</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Genre</label>
+                    <select id="filterGenre" class="filter-select"><option value="">All Genres</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>Student Age</label>
+                    <select id="filterAge" class="filter-select">
+                        <option value="">Any Age</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                    </select>
+                </div>
+
+                <!-- Active Filters -->
+                <div id="activeFilters" class="active-filters"></div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading...
+        </div>
+
+        <!-- Results -->
+        <div id="content" style="display: none;">
+            <div class="results-info">
+                <span id="resultsCount" class="results-count"></span>
+                <div class="view-toggle">
+                    <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')" title="Grid view">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" id="listViewBtn" onclick="setView('list')" title="List view">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="teachersGrid" class="teachers-grid"></div>
+        </div>
+    </main>
+
+    <!-- Teacher Detail Modal -->
+    <div id="teacherModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
-                <button class="modal-close" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="modal-title" id="modalTitle"></div>
-                <div class="modal-subtitle" id="modalSubtitle"></div>
+                <h3 class="modal-title" id="modalTeacherName"></h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body" id="modalBody"></div>
         </div>
@@ -952,485 +530,441 @@
     <script>
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-        
+
         let supabaseClient;
-        let allTeachers = [];
-        let teacherCities = [];
-        let teacherLanguages = [];
-        let teacherInstruments = [];
+        let teachers = [];
+        let brands = [];
+        let zones = [];
+        let currentView = 'grid';
+        let activeZone = 'all';
 
         document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            loadSidebarState();
+            setupSidebar();
+            setupFilterListeners();
             loadData();
         });
 
-        // Sidebar Functions
-        function toggleSidebar() {
+        function setupSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+                    overlay.classList.add('active');
+                } else {
+                    overlay.classList.remove('active');
+                }
+            });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('collapsed');
+                overlay.classList.remove('active');
+            });
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
         }
 
-        function toggleSidebarCollapse() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        function setupFilterListeners() {
+            document.getElementById('teacherSearch').addEventListener('input', applyFilters);
+            ['filterState', 'filterBrand', 'filterCity', 'filterInstrument', 'filterLevel', 'filterGenre', 'filterAge'].forEach(id => {
+                document.getElementById(id).addEventListener('change', applyFilters);
+            });
         }
 
-        function loadSidebarState() {
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                document.getElementById('sidebar').classList.add('collapsed');
-            }
-        }
-
-        // Load Data
         async function loadData() {
             try {
-                const [teachersResult, citiesResult, languagesResult, instrumentsResult] = await Promise.all([
+                const [teachersRes, citiesRes, languagesRes, instrumentsRes, brandsRes, zonesRes] = await Promise.all([
                     supabaseClient.from('teachers').select('*').eq('status', 'active').order('first_name'),
                     supabaseClient.from('teacher_cities').select('*'),
                     supabaseClient.from('teacher_languages').select('*'),
-                    supabaseClient.from('teacher_instruments').select('*')
+                    supabaseClient.from('teacher_instruments').select('*'),
+                    supabaseClient.from('brands').select('*'),
+                    supabaseClient.from('zones').select('*')
                 ]);
 
-                if (teachersResult.error) throw teachersResult.error;
-                if (citiesResult.error) throw citiesResult.error;
-                if (languagesResult.error) throw languagesResult.error;
-                if (instrumentsResult.error) throw instrumentsResult.error;
+                if (teachersRes.error) throw teachersRes.error;
 
-                allTeachers = teachersResult.data || [];
-                teacherCities = citiesResult.data || [];
-                teacherLanguages = languagesResult.data || [];
-                teacherInstruments = instrumentsResult.data || [];
+                zones = zonesRes.data || [];
+                brands = (brandsRes.data || []).map(b => ({
+                    ...b,
+                    zone: zones.find(z => z.id === b.zone_id)
+                }));
+
+                teachers = (teachersRes.data || []).map(t => {
+                    const matchedBrand = brands.find(b => b.name === t.brand);
+                    return {
+                        ...t,
+                        cities: (citiesRes.data || []).filter(c => c.teacher_id === t.id),
+                        languages: (languagesRes.data || []).filter(l => l.teacher_id === t.id),
+                        instruments: (instrumentsRes.data || []).filter(i => i.teacher_id === t.id),
+                        brandData: matchedBrand || null,
+                        zone: matchedBrand?.zone || null
+                    };
+                });
+
+                populateFilterOptions();
+                renderZoneTabs();
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
-
-                populateFilters();
-                renderTeachers(allTeachers);
-                setupEventListeners();
+                applyFilters();
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('loading').innerHTML = `
-                    <p style="color: red;">Error loading teachers. Please refresh the page.</p>
-                `;
+                document.getElementById('loading').innerHTML = '<p style="color: red;">Error loading data. Please refresh.</p>';
             }
         }
 
-        // Populate Filters
-        function populateFilters() {
-            // Studio filter
-            const studios = [...new Set(allTeachers.map(t => t.brand).filter(Boolean))].sort();
-            const studioFilter = document.getElementById('studioFilter');
-            studios.forEach(studio => {
-                const option = document.createElement('option');
-                option.value = studio;
-                option.textContent = studio;
-                studioFilter.appendChild(option);
-            });
+        function populateFilterOptions() {
+            // States
+            const states = [...new Set(teachers.map(t => t.state).filter(Boolean))].sort();
+            populateSelect('filterState', states, 'All States');
 
-            // State filter
-            const states = [...new Set(allTeachers.map(t => t.state).filter(Boolean))].sort();
-            const stateFilter = document.getElementById('stateFilter');
-            states.forEach(state => {
-                const option = document.createElement('option');
-                option.value = state;
-                option.textContent = state;
-                stateFilter.appendChild(option);
-            });
+            // Brands
+            const brandNames = [...new Set(teachers.map(t => t.brand).filter(Boolean))].sort();
+            populateSelect('filterBrand', brandNames, 'All Brands');
 
-            // City filter
-            const cities = [...new Set(teacherCities.map(c => c.city).filter(Boolean))].sort();
-            const cityFilter = document.getElementById('cityFilter');
-            cities.forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                cityFilter.appendChild(option);
-            });
+            // Cities
+            const cityNames = [...new Set(teachers.flatMap(t => t.cities.map(c => c.city)).filter(Boolean))].sort();
+            populateSelect('filterCity', cityNames, 'All Cities');
 
-            // Instruments checkboxes
-            const instruments = [...new Set(teacherInstruments.map(i => i.instrument).filter(Boolean))].sort();
-            const instrumentsGrid = document.getElementById('instrumentsGrid');
-            instruments.forEach(instrument => {
-                const div = document.createElement('div');
-                div.className = 'checkbox-group';
-                div.innerHTML = `
-                    <input type="checkbox" id="instrument-${instrument}" class="checkbox-input instrument-checkbox" value="${instrument}">
-                    <label for="instrument-${instrument}" class="checkbox-label">${instrument}</label>
-                `;
-                instrumentsGrid.appendChild(div);
+            // Instruments
+            const instrumentNames = [...new Set(teachers.flatMap(t => t.instruments.map(i => i.instrument)).filter(Boolean))].sort();
+            populateSelect('filterInstrument', instrumentNames, 'All Instruments');
+
+            // Genres — split comma-separated values
+            const allGenres = new Set();
+            teachers.forEach(t => {
+                t.instruments.forEach(i => {
+                    if (i.genres) {
+                        i.genres.split(',').forEach(g => {
+                            const trimmed = g.trim();
+                            if (trimmed) allGenres.add(trimmed);
+                        });
+                    }
+                });
+            });
+            populateSelect('filterGenre', [...allGenres].sort(), 'All Genres');
+        }
+
+        function populateSelect(id, values, defaultLabel) {
+            const select = document.getElementById(id);
+            select.innerHTML = `<option value="">${defaultLabel}</option>`;
+            values.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v;
+                opt.textContent = v;
+                select.appendChild(opt);
             });
         }
 
-        // Setup Event Listeners
-        function setupEventListeners() {
-            document.getElementById('searchBar').addEventListener('input', applyFilters);
-            document.getElementById('studioFilter').addEventListener('change', applyFilters);
-            document.getElementById('stateFilter').addEventListener('change', applyFilters);
-            document.getElementById('cityFilter').addEventListener('change', applyFilters);
-            document.getElementById('genderFilter').addEventListener('change', applyFilters);
-            document.getElementById('levelFilter').addEventListener('change', applyFilters);
-            document.getElementById('ageFilter').addEventListener('change', applyFilters);
-            document.getElementById('formalEducationFilter').addEventListener('change', applyFilters);
+        function renderZoneTabs() {
+            const container = document.getElementById('zoneFilterTabs');
+            const zonesWithTeachers = zones.filter(z =>
+                teachers.some(t => t.zone && t.zone.id === z.id)
+            );
 
-            // Instrument checkboxes
-            document.querySelectorAll('.instrument-checkbox').forEach(cb => {
-                cb.addEventListener('change', applyFilters);
-            });
+            let html = `<button class="zone-tab ${activeZone === 'all' ? 'active' : ''}" onclick="filterByZone('all')">All Zones</button>`;
+            html += zonesWithTeachers.map(z => `
+                <button class="zone-tab ${activeZone === z.id ? 'active' : ''}" onclick="filterByZone('${z.id}')">
+                    ${z.zone_name}
+                </button>
+            `).join('');
+            container.innerHTML = html;
         }
 
-        // Apply Filters
+        function filterByZone(zoneId) {
+            activeZone = zoneId;
+            renderZoneTabs();
+            applyFilters();
+        }
+
+        function toggleFilters() {
+            const body = document.getElementById('filterBody');
+            const icon = document.getElementById('filterToggleIcon');
+            body.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+        }
+
+        function getActiveFilters() {
+            const filters = {};
+            const search = document.getElementById('teacherSearch').value.trim();
+            if (search) filters.search = search;
+            if (activeZone !== 'all') filters.zone = activeZone;
+
+            ['filterState', 'filterBrand', 'filterCity', 'filterInstrument', 'filterLevel', 'filterGenre', 'filterAge'].forEach(id => {
+                const val = document.getElementById(id).value;
+                if (val) filters[id] = val;
+            });
+            return filters;
+        }
+
         function applyFilters() {
-            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-            const studioFilter = document.getElementById('studioFilter').value;
-            const stateFilter = document.getElementById('stateFilter').value;
-            const cityFilter = document.getElementById('cityFilter').value;
-            const genderFilter = document.getElementById('genderFilter').value;
-            const levelFilter = document.getElementById('levelFilter').value;
-            const ageFilter = parseInt(document.getElementById('ageFilter').value) || 0;
-            const formalEducation = document.getElementById('formalEducationFilter').checked;
+            const filters = getActiveFilters();
+            const searchLower = (filters.search || '').toLowerCase();
 
-            // Get selected instruments
-            const selectedInstruments = Array.from(document.querySelectorAll('.instrument-checkbox:checked'))
-                .map(cb => cb.value);
+            const filtered = teachers.filter(t => {
+                // Name search
+                if (searchLower && !`${t.first_name} ${t.last_name}`.toLowerCase().includes(searchLower)) return false;
 
-            const filtered = allTeachers.filter(teacher => {
-                // Search
-                const matchesSearch = !searchTerm || 
-                    `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchTerm);
-
-                // Studio
-                const matchesStudio = !studioFilter || teacher.brand === studioFilter;
+                // Zone
+                if (filters.zone && (!t.zone || t.zone.id !== filters.zone)) return false;
 
                 // State
-                const matchesState = !stateFilter || teacher.state === stateFilter;
+                if (filters.filterState && t.state !== filters.filterState) return false;
+
+                // Brand
+                if (filters.filterBrand && t.brand !== filters.filterBrand) return false;
 
                 // City
-                const teacherCitiesList = teacherCities.filter(c => c.teacher_id === teacher.id).map(c => c.city);
-                const matchesCity = !cityFilter || teacherCitiesList.includes(cityFilter);
+                if (filters.filterCity && !t.cities.some(c => c.city === filters.filterCity)) return false;
 
-                // Gender
-                const matchesGender = !genderFilter || teacher.gender === genderFilter;
+                // Instrument
+                if (filters.filterInstrument && !t.instruments.some(i => i.instrument === filters.filterInstrument)) return false;
 
-                // Formal Education
-                const matchesFormalEducation = !formalEducation || teacher.formal_music_education === true;
-
-                // Instruments (AND logic - teacher must teach ALL selected instruments)
-                let matchesInstruments = true;
-                if (selectedInstruments.length > 0) {
-                    const teacherInstrumentsList = teacherInstruments
-                        .filter(i => i.teacher_id === teacher.id)
-                        .map(i => i.instrument);
-                    matchesInstruments = selectedInstruments.every(inst => teacherInstrumentsList.includes(inst));
+                // Level — teacher has at least one instrument at or above this level
+                if (filters.filterLevel) {
+                    const levelOrder = { beginner: 1, intermediate: 2, advanced: 3 };
+                    const targetLevel = levelOrder[filters.filterLevel] || 0;
+                    let relevantInstruments = t.instruments;
+                    if (filters.filterInstrument) {
+                        relevantInstruments = relevantInstruments.filter(i => i.instrument === filters.filterInstrument);
+                    }
+                    const hasLevel = relevantInstruments.some(i => (levelOrder[i.teacher_level] || 0) >= targetLevel);
+                    if (!hasLevel) return false;
                 }
 
-                // Level (at least one instrument at this level)
-                let matchesLevel = true;
-                if (levelFilter) {
-                    const teacherLevels = teacherInstruments
-                        .filter(i => i.teacher_id === teacher.id)
-                        .map(i => i.teacher_level);
-                    matchesLevel = teacherLevels.includes(levelFilter);
+                // Genre
+                if (filters.filterGenre) {
+                    const hasGenre = t.instruments.some(i =>
+                        i.genres && i.genres.split(',').map(g => g.trim()).includes(filters.filterGenre)
+                    );
+                    if (!hasGenre) return false;
                 }
 
-                // Age (at least one instrument with youngest_age_preference <= filter)
-                let matchesAge = true;
-                if (ageFilter > 0) {
-                    const teacherAges = teacherInstruments
-                        .filter(i => i.teacher_id === teacher.id && i.youngest_age_preference)
-                        .map(i => i.youngest_age_preference);
-                    matchesAge = teacherAges.some(age => age <= ageFilter);
+                // Age — teacher accepts students at this age (youngest_age_preference <= selected age)
+                if (filters.filterAge) {
+                    const age = parseInt(filters.filterAge);
+                    let relevantInstruments = t.instruments;
+                    if (filters.filterInstrument) {
+                        relevantInstruments = relevantInstruments.filter(i => i.instrument === filters.filterInstrument);
+                    }
+                    const acceptsAge = relevantInstruments.some(i =>
+                        i.youngest_age_preference && parseInt(i.youngest_age_preference) <= age
+                    );
+                    if (!acceptsAge) return false;
                 }
 
-                return matchesSearch && matchesStudio && matchesState && matchesCity && 
-                       matchesGender && matchesFormalEducation && matchesInstruments && 
-                       matchesLevel && matchesAge;
+                return true;
             });
 
+            renderActiveFilters(filters);
             renderTeachers(filtered);
         }
 
-        // Clear Filters
-        function clearFilters() {
-            document.getElementById('searchBar').value = '';
-            document.getElementById('studioFilter').value = '';
-            document.getElementById('stateFilter').value = '';
-            document.getElementById('cityFilter').value = '';
-            document.getElementById('genderFilter').value = '';
-            document.getElementById('levelFilter').value = '';
-            document.getElementById('ageFilter').value = '';
-            document.getElementById('formalEducationFilter').checked = false;
-            document.querySelectorAll('.instrument-checkbox').forEach(cb => cb.checked = false);
-            
-            renderTeachers(allTeachers);
+        function renderActiveFilters(filters) {
+            const container = document.getElementById('activeFilters');
+            const chips = [];
+
+            const labels = {
+                zone: () => { const z = zones.find(z => z.id === filters.zone); return z ? `Zone: ${z.zone_name}` : null; },
+                filterState: () => `State: ${filters.filterState}`,
+                filterBrand: () => `Brand: ${filters.filterBrand}`,
+                filterCity: () => `City: ${filters.filterCity}`,
+                filterInstrument: () => `Instrument: ${filters.filterInstrument}`,
+                filterLevel: () => `Level: ${filters.filterLevel}`,
+                filterGenre: () => `Genre: ${filters.filterGenre}`,
+                filterAge: () => `Age: ${filters.filterAge}`,
+            };
+
+            Object.keys(labels).forEach(key => {
+                if (filters[key]) {
+                    const label = labels[key]();
+                    if (label) {
+                        const clearAction = key === 'zone'
+                            ? `filterByZone('all')`
+                            : `clearFilter('${key}')`;
+                        chips.push(`<span class="filter-chip">${label}<button onclick="${clearAction}">&times;</button></span>`);
+                    }
+                }
+            });
+
+            if (chips.length > 1) {
+                chips.push(`<button class="clear-all-btn" onclick="clearAllFilters()">Clear All</button>`);
+            }
+
+            container.innerHTML = chips.join('');
         }
 
-        // Render Teachers
-        function renderTeachers(teachers) {
+        function clearFilter(filterId) {
+            document.getElementById(filterId).value = '';
+            applyFilters();
+        }
+
+        function clearAllFilters() {
+            document.getElementById('teacherSearch').value = '';
+            activeZone = 'all';
+            renderZoneTabs();
+            ['filterState', 'filterBrand', 'filterCity', 'filterInstrument', 'filterLevel', 'filterGenre', 'filterAge'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            applyFilters();
+        }
+
+        function setView(view) {
+            currentView = view;
+            const grid = document.getElementById('teachersGrid');
+            grid.classList.toggle('list-view', view === 'list');
+            document.getElementById('gridViewBtn').classList.toggle('active', view === 'grid');
+            document.getElementById('listViewBtn').classList.toggle('active', view === 'list');
+        }
+
+        function renderTeachers(teachersList) {
             const container = document.getElementById('teachersGrid');
-            const resultsCount = document.getElementById('resultsCount');
+            document.getElementById('resultsCount').innerHTML = `<strong>${teachersList.length}</strong> teacher${teachersList.length !== 1 ? 's' : ''} found`;
 
-            resultsCount.textContent = `Showing ${teachers.length} teacher${teachers.length !== 1 ? 's' : ''}`;
-
-            if (teachers.length === 0) {
+            if (teachersList.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1 / -1;">
-                        <i class="fas fa-user-friends"></i>
-                        <p>No teachers found matching your filters</p>
-                    </div>
-                `;
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <p>No teachers match your filters</p>
+                    </div>`;
                 return;
             }
 
-            container.innerHTML = teachers.map(teacher => {
-                const teacherCitiesList = teacherCities.filter(c => c.teacher_id === teacher.id);
-                const teacherInstrumentsList = teacherInstruments.filter(i => i.teacher_id === teacher.id);
+            container.innerHTML = teachersList.map(t => {
+                const instrumentChips = t.instruments.map(i => `
+                    <span class="instrument-chip">
+                        <span class="level-dot level-${i.teacher_level || 'beginner'}"></span>
+                        ${i.instrument}${i.teacher_level ? ` (${i.teacher_level})` : ''}
+                    </span>
+                `).join('');
+
+                const cityList = t.cities.map(c => c.city).join(', ');
+                const languageList = t.languages.map(l => l.language).join(', ');
 
                 return `
-                    <div class="teacher-card" onclick="openModal('${teacher.id}')">
-                        <div class="teacher-header">
-                            <div class="teacher-name">${teacher.first_name} ${teacher.last_name}</div>
-                            <div class="teacher-studio">${teacher.brand || 'N/A'}</div>
-                            ${teacher.state ? `
-                                <div class="teacher-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    ${teacher.state}
+                    <div class="teacher-card" onclick="openTeacherDetail('${t.id}')" style="cursor:pointer;">
+                        <div class="teacher-card-header">
+                            <div class="teacher-card-name">${t.first_name} ${t.last_name}</div>
+                            <div class="teacher-card-brand">${t.brand || ''}${t.zone ? ' · ' + t.zone.zone_name : ''}</div>
+                        </div>
+                        <div class="teacher-card-body">
+                            ${t.state ? `<div class="teacher-info-row"><i class="fas fa-map-marker-alt"></i><span>${t.state}${cityList ? ' — ' + cityList : ''}</span></div>` : ''}
+                            ${languageList ? `<div class="teacher-info-row"><i class="fas fa-language"></i><span>${languageList}</span></div>` : ''}
+                            ${t.instruments.length > 0 ? `
+                                <div class="teacher-instruments-list">
+                                    <div class="teacher-instruments-label">Instruments</div>
+                                    <div class="instrument-chip-row">${instrumentChips}</div>
                                 </div>
                             ` : ''}
-                        </div>
-
-                        <div class="teacher-badges">
-                            ${teacher.gender ? `<span class="badge">${teacher.gender}</span>` : ''}
-                            ${teacher.formal_music_education ? `<span class="badge primary">Formal Education</span>` : ''}
-                            ${teacher.year_started_at_studio ? `<span class="badge">Since ${teacher.year_started_at_studio}</span>` : ''}
-                        </div>
-
-                        <div class="teacher-instruments">
-                            ${teacherInstrumentsList.slice(0, 3).map(inst => `
-                                <div class="instrument-item">
-                                    <div class="instrument-icon">
-                                        <i class="fas fa-music"></i>
-                                    </div>
-                                    <strong>${inst.instrument}</strong>
-                                    ${inst.teacher_level ? `- ${inst.teacher_level}` : ''}
-                                </div>
-                            `).join('')}
-                            ${teacherInstrumentsList.length > 3 ? `
-                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                                    +${teacherInstrumentsList.length - 3} more
-                                </div>
-                            ` : ''}
+                            <div class="teacher-badges">
+                                ${t.formal_music_education ? '<span class="teacher-badge badge-info">Formal Education</span>' : ''}
+                                ${t.special_needs_willing ? '<span class="teacher-badge badge-success">Special Needs</span>' : ''}
+                                ${t.online_willing ? '<span class="teacher-badge badge-info">Online</span>' : ''}
+                                ${t.online_only ? '<span class="teacher-badge badge-purple">Online Only</span>' : ''}
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Open Modal
-        function openModal(teacherId) {
-            const teacher = allTeachers.find(t => t.id === teacherId);
-            if (!teacher) return;
+        // ============ DETAIL MODAL ============
+        function openTeacherDetail(teacherId) {
+            const t = teachers.find(x => x.id === teacherId);
+            if (!t) return;
 
-            const cities = teacherCities.filter(c => c.teacher_id === teacher.id);
-            const languages = teacherLanguages.filter(l => l.teacher_id === teacher.id);
-            const instruments = teacherInstruments.filter(i => i.teacher_id === teacher.id);
+            document.getElementById('modalTeacherName').textContent = `${t.first_name} ${t.last_name}`;
 
-            // Set modal header
-            document.getElementById('modalTitle').textContent = `${teacher.first_name} ${teacher.last_name}`;
-            document.getElementById('modalSubtitle').textContent = teacher.brand || '';
+            const strengths = [t.teaching_strength_1, t.teaching_strength_2, t.teaching_strength_3].filter(Boolean);
+            const cityList = t.cities.map(c => c.city).join(', ') || 'N/A';
+            const languageList = t.languages.map(l => l.language).join(', ') || 'N/A';
 
-            // Build modal body
-            const modalBody = document.getElementById('modalBody');
-            modalBody.innerHTML = `
-                <!-- Basic Info -->
-                <div class="modal-section">
-                    <div class="modal-section-title">
-                        <div class="modal-section-icon"><i class="fas fa-info-circle"></i></div>
-                        Basic Information
-                    </div>
-                    <div class="modal-info-grid">
-                        ${teacher.gender ? `
-                            <div class="modal-info-item">
-                                <div class="modal-info-label">Gender</div>
-                                <div class="modal-info-value">${teacher.gender}</div>
-                            </div>
-                        ` : ''}
-                        ${teacher.state ? `
-                            <div class="modal-info-item">
-                                <div class="modal-info-label">State</div>
-                                <div class="modal-info-value">${teacher.state}</div>
-                            </div>
-                        ` : ''}
-                        ${teacher.year_started_at_studio ? `
-                            <div class="modal-info-item">
-                                <div class="modal-info-label">Started at Studio</div>
-                                <div class="modal-info-value">${teacher.year_started_at_studio}</div>
-                            </div>
-                        ` : ''}
-                        <div class="modal-info-item">
-                            <div class="modal-info-label">Formal Education</div>
-                            <div class="modal-info-value">${teacher.formal_music_education ? 'Yes' : 'No'}</div>
-                        </div>
-                        ${teacher.special_needs_willing ? `
-                            <div class="modal-info-item">
-                                <div class="modal-info-label">Special Needs</div>
-                                <div class="modal-info-value">Willing</div>
-                            </div>
-                        ` : ''}
-                        ${teacher.online_willing ? `
-                            <div class="modal-info-item">
-                                <div class="modal-info-label">Online Lessons</div>
-                                <div class="modal-info-value">Available</div>
-                            </div>
-                        ` : ''}
+            let html = `
+                <div class="detail-section">
+                    <div class="detail-section-title">Overview</div>
+                    <div class="detail-grid">
+                        <div class="detail-item"><label>Brand</label><p>${t.brand || 'N/A'}</p></div>
+                        <div class="detail-item"><label>State</label><p>${t.state || 'N/A'}</p></div>
+                        <div class="detail-item"><label>Cities</label><p>${cityList}</p></div>
+                        <div class="detail-item"><label>Gender</label><p>${t.gender || 'N/A'}</p></div>
+                        <div class="detail-item"><label>Languages</label><p>${languageList}</p></div>
+                        <div class="detail-item"><label>Year Started</label><p>${t.year_started_at_studio || 'N/A'}</p></div>
+                        ${t.zone ? `<div class="detail-item"><label>Zone</label><p>${t.zone.zone_name}</p></div>` : ''}
                     </div>
                 </div>
-
-                ${teacher.formal_education_details ? `
-                    <div class="modal-section">
-                        <div class="modal-section-title">
-                            <div class="modal-section-icon"><i class="fas fa-graduation-cap"></i></div>
-                            Education Details
-                        </div>
-                        <p style="color: var(--text-secondary); line-height: 1.6;">${teacher.formal_education_details}</p>
-                    </div>
-                ` : ''}
-
-                ${cities.length > 0 ? `
-                    <div class="modal-section">
-                        <div class="modal-section-title">
-                            <div class="modal-section-icon"><i class="fas fa-map-marker-alt"></i></div>
-                            Cities
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                            ${cities.map(c => `<span class="badge">${c.city}</span>`).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${languages.length > 0 ? `
-                    <div class="modal-section">
-                        <div class="modal-section-title">
-                            <div class="modal-section-icon"><i class="fas fa-language"></i></div>
-                            Languages
-                        </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                            ${languages.map(l => `<span class="badge primary">${l.language}</span>`).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${teacher.teaching_strength_1 || teacher.teaching_strength_2 || teacher.teaching_strength_3 ? `
-                    <div class="modal-section">
-                        <div class="modal-section-title">
-                            <div class="modal-section-icon"><i class="fas fa-star"></i></div>
-                            Teaching Strengths
-                        </div>
-                        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-                            ${teacher.teaching_strength_1 ? `
-                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fas fa-check-circle" style="color: var(--primary);"></i>
-                                    ${teacher.teaching_strength_1}
-                                </li>
-                            ` : ''}
-                            ${teacher.teaching_strength_2 ? `
-                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fas fa-check-circle" style="color: var(--primary);"></i>
-                                    ${teacher.teaching_strength_2}
-                                </li>
-                            ` : ''}
-                            ${teacher.teaching_strength_3 ? `
-                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fas fa-check-circle" style="color: var(--primary);"></i>
-                                    ${teacher.teaching_strength_3}
-                                </li>
-                            ` : ''}
-                        </ul>
-                    </div>
-                ` : ''}
-
-                ${instruments.length > 0 ? `
-                    <div class="modal-section">
-                        <div class="modal-section-title">
-                            <div class="modal-section-icon"><i class="fas fa-music"></i></div>
-                            Instruments & Details
-                        </div>
-                        ${instruments.map(inst => `
-                            <div class="instrument-detail-card">
-                                <div class="instrument-detail-title">${inst.instrument}</div>
-                                <div class="instrument-detail-grid">
-                                    ${inst.teacher_level ? `
-                                        <div class="modal-info-item">
-                                            <div class="modal-info-label">Level</div>
-                                            <div class="modal-info-value">${inst.teacher_level}</div>
-                                        </div>
-                                    ` : ''}
-                                    ${inst.youngest_age_preference ? `
-                                        <div class="modal-info-item">
-                                            <div class="modal-info-label">Youngest Age</div>
-                                            <div class="modal-info-value">${inst.youngest_age_preference}+</div>
-                                        </div>
-                                    ` : ''}
-                                    ${inst.year_started ? `
-                                        <div class="modal-info-item">
-                                            <div class="modal-info-label">Started Playing</div>
-                                            <div class="modal-info-value">${inst.year_started}</div>
-                                        </div>
-                                    ` : ''}
-                                    ${inst.genres ? `
-                                        <div class="modal-info-item">
-                                            <div class="modal-info-label">Genres</div>
-                                            <div class="modal-info-value">${inst.genres}</div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                                ${inst.achievements_credentials ? `
-                                    <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
-                                        <strong>Achievements:</strong> ${inst.achievements_credentials}
-                                    </p>
-                                ` : ''}
-                                ${inst.notes ? `
-                                    <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
-                                        ${inst.notes}
-                                    </p>
-                                ` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-
-                ${teacher.additional_notes ? `
-                    <div class="modal-section">
-                        <div class="modal-section-title">
-                            <div class="modal-section-icon"><i class="fas fa-sticky-note"></i></div>
-                            Additional Notes
-                        </div>
-                        <p style="color: var(--text-secondary); line-height: 1.6;">${teacher.additional_notes}</p>
-                    </div>
-                ` : ''}
             `;
 
-            // Show modal
-            document.getElementById('modalOverlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Close Modal
-        function closeModal(event) {
-            if (event && event.target !== event.currentTarget && !event.target.closest('.modal-close')) {
-                return;
+            // Education & Strengths
+            if (t.formal_music_education || t.formal_education_details || strengths.length > 0) {
+                html += `<div class="detail-section"><div class="detail-section-title">Education & Strengths</div>`;
+                if (t.formal_education_details) {
+                    html += `<div style="margin-bottom: 1rem; font-size: 0.9375rem; color: var(--text-primary); line-height: 1.6;">${t.formal_education_details}</div>`;
+                }
+                if (strengths.length > 0) {
+                    html += strengths.map(s => `<div class="strength-item"><i class="fas fa-check-circle"></i><span>${s}</span></div>`).join('');
+                }
+                html += `</div>`;
             }
-            document.getElementById('modalOverlay').classList.remove('active');
-            document.body.style.overflow = 'auto';
+
+            // Instruments
+            if (t.instruments.length > 0) {
+                html += `<div class="detail-section"><div class="detail-section-title">Instruments</div>`;
+                html += t.instruments.map(i => `
+                    <div class="detail-instrument-card">
+                        <div class="detail-instrument-name">${i.instrument}</div>
+                        <div class="detail-instrument-grid">
+                            <div class="detail-item"><label>Level</label><p>${i.teacher_level || 'N/A'}</p></div>
+                            <div class="detail-item"><label>Youngest Age</label><p>${i.youngest_age_preference ? i.youngest_age_preference + '+' : 'N/A'}</p></div>
+                            <div class="detail-item"><label>Year Started</label><p>${i.year_started || 'N/A'}</p></div>
+                            <div class="detail-item"><label>Genres</label><p>${i.genres || 'N/A'}</p></div>
+                            ${i.achievements_credentials ? `<div class="detail-item" style="grid-column: 1/-1;"><label>Achievements</label><p>${i.achievements_credentials}</p></div>` : ''}
+                            ${i.notes ? `<div class="detail-item" style="grid-column: 1/-1;"><label>Notes</label><div style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5;">${i.notes}</div></div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+                html += `</div>`;
+            }
+
+            // Preferences
+            const prefs = [];
+            if (t.special_needs_willing) prefs.push('Willing to teach special needs students');
+            if (t.online_willing) prefs.push('Available for online lessons');
+            if (t.online_only) prefs.push('Online only');
+
+            if (prefs.length > 0 || t.additional_notes) {
+                html += `<div class="detail-section"><div class="detail-section-title">Preferences & Notes</div>`;
+                if (prefs.length > 0) {
+                    html += prefs.map(p => `<div class="strength-item"><i class="fas fa-star"></i><span>${p}</span></div>`).join('');
+                }
+                if (t.additional_notes) {
+                    html += `<div style="margin-top: 0.75rem; font-size: 0.9375rem; color: var(--text-primary); line-height: 1.6;">${t.additional_notes}</div>`;
+                }
+                html += `</div>`;
+            }
+
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('teacherModal').classList.add('active');
         }
 
-        // Close modal on ESC key
+        function closeModal() {
+            document.getElementById('teacherModal').classList.remove('active');
+        }
+
+        // Close modal on backdrop click
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'teacherModal') closeModal();
+        });
+
+        // Close modal on Escape
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
+            if (e.key === 'Escape') closeModal();
         });
     </script>
 </body>

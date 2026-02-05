@@ -26,6 +26,7 @@
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
+            --pending: #8B5CF6;
             --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
@@ -47,770 +48,435 @@
 
         /* SIDEBAR */
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
             background: var(--white);
             border-right: 1px solid var(--gray-200);
             box-shadow: var(--shadow-sm);
             transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
+            z-index: 1000; display: flex; flex-direction: column;
         }
-
         .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-header {
-            padding: 1.5rem 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--gray-200);
+            padding: 1.5rem 1.25rem; display: flex; align-items: center;
+            justify-content: space-between; border-bottom: 1px solid var(--gray-200);
         }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: opacity var(--transition-speed) ease;
-        }
-
+        .logo-section { display: flex; align-items: center; gap: 0.75rem; transition: opacity var(--transition-speed) ease; }
         .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
-
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            color: var(--white);
-            font-weight: 700;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; flex-shrink: 0; color: var(--white); font-weight: 700;
         }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            white-space: nowrap;
-        }
-
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
         .admin-badge {
             display: inline-block;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            font-size: 0.625rem;
-            font-weight: 700;
-            padding: 0.125rem 0.5rem;
-            border-radius: 4px;
-            margin-left: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            color: white; font-size: 0.625rem; font-weight: 700;
+            padding: 0.125rem 0.5rem; border-radius: 4px; margin-left: 0.5rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
         }
-
         .toggle-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--gray-200);
-            background: var(--white);
-            color: var(--text-secondary);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
+            width: 32px; height: 32px; border: 1px solid var(--gray-200);
+            background: var(--white); color: var(--text-secondary); border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; flex-shrink: 0;
         }
-
         .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
         .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
         .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
 
-        .sidebar-nav {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 1rem 0;
-        }
-
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
         .sidebar-nav::-webkit-scrollbar { width: 4px; }
         .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
         .sidebar-nav::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
 
         .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
-            padding: 0.875rem 1.5rem;
-            margin: 0.25rem 0.75rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            width: calc(100% - 1.5rem);
-            font-size: 0.9375rem;
-            font-weight: 500;
+            display: flex; align-items: center; gap: 0.875rem;
+            padding: 0.875rem 1.5rem; margin: 0.25rem 0.75rem;
+            color: var(--text-secondary); text-decoration: none; border-radius: 10px;
+            transition: all 0.2s ease; cursor: pointer; border: none;
+            background: transparent; width: calc(100% - 1.5rem);
+            font-size: 0.9375rem; font-weight: 500;
         }
-
         .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
-
         .nav-item.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: var(--white);
-            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+            color: var(--white); box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
-
-        .nav-icon {
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .nav-icon { font-size: 1.25rem; flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
         .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
         .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
         .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
-
         .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
         .logout-btn { color: var(--danger) !important; }
         .logout-btn:hover { background: rgba(239, 68, 68, 0.1) !important; }
 
         .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition-speed) ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 999;
+            opacity: 0; pointer-events: none; transition: opacity var(--transition-speed) ease;
         }
-
         .sidebar-overlay.active { opacity: 1; pointer-events: all; }
 
         .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            padding: 2rem 2.5rem;
+            margin-left: var(--sidebar-width); min-height: 100vh; padding: 2rem 2.5rem;
             transition: margin-left var(--transition-speed) ease;
         }
-
         .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
 
         /* Page Header */
-        .page-header {
-            margin-bottom: 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .page-header-left h1 {
-            font-size: 2rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-
+        .page-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
+        .page-header-left h1 { font-size: 2rem; color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700; letter-spacing: -0.02em; }
         .page-header-left p { color: var(--text-secondary); font-size: 1rem; }
-        .page-header-actions { display: flex; gap: 0.75rem; }
+        .page-header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
         /* Buttons */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            border-radius: 10px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-            text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.25rem; border-radius: 10px;
+            font-size: 0.9375rem; font-weight: 600; cursor: pointer;
+            border: none; transition: all 0.2s ease; text-decoration: none;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+            color: white; box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--white);
-            color: var(--text-primary);
-            border: 1.5px solid var(--gray-200);
-        }
-
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(96, 165, 250, 0.4); }
+        .btn-secondary { background: var(--white); color: var(--text-primary); border: 1.5px solid var(--gray-200); }
         .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
-        .btn-icon-only { width: 40px; padding: 0.5rem; justify-content: center; }
-        .btn-icon-only i { color: var(--text-secondary); }
-        .btn-icon-only:hover i { color: var(--text-primary); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #DC2626; }
         .btn-small { padding: 0.5rem 0.875rem; font-size: 0.8125rem; }
+        .btn-icon-only { width: 40px; padding: 0.5rem; justify-content: center; }
+
+        /* Status Tabs */
+        .status-tabs {
+            display: flex; gap: 0.25rem;
+            background: var(--white); border-radius: 16px;
+            padding: 1.25rem 1.5rem; box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem; flex-wrap: wrap;
+        }
+        .status-tab {
+            padding: 0.625rem 1.25rem; border: 1.5px solid var(--gray-200);
+            background: var(--white); border-radius: 10px;
+            font-size: 0.875rem; font-weight: 600; color: var(--text-secondary);
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .status-tab:hover { border-color: var(--primary); color: var(--primary); }
+        .status-tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
+        }
+        .tab-count {
+            background: rgba(255,255,255,0.25); padding: 0.125rem 0.5rem;
+            border-radius: 10px; font-size: 0.75rem; font-weight: 700;
+        }
+        .status-tab:not(.active) .tab-count {
+            background: var(--gray-100); color: var(--text-secondary);
+        }
+        .pending-pulse {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--pending); animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+        }
 
         /* Search & Filter */
         .search-section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 1.5rem;
+            background: var(--white); border-radius: 16px; padding: 1.5rem;
+            box-shadow: var(--shadow-md); margin-bottom: 1.5rem;
         }
-
         .search-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
-
         .search-input-wrapper { flex: 1; min-width: 250px; position: relative; }
-
-        .search-input-wrapper i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-        }
-
+        .search-input-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--primary); }
         .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.75rem;
-            background: var(--gray-50);
-            border: 1.5px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
+            width: 100%; padding: 0.75rem 1rem 0.75rem 2.75rem;
+            background: var(--gray-50); border: 1.5px solid var(--gray-200);
+            border-radius: 10px; font-size: 0.9375rem; color: var(--text-primary); transition: all 0.2s ease;
         }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--white);
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-        }
-
+        .search-input:focus { outline: none; border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1); }
         .filter-select {
-            padding: 0.75rem 1rem;
-            border: 1.5px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            background: var(--white);
-            min-width: 150px;
+            padding: 0.75rem 1rem; border: 1.5px solid var(--gray-200);
+            border-radius: 10px; font-size: 0.9375rem; color: var(--text-primary);
+            background: var(--white); min-width: 150px;
         }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-        }
+        .filter-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1); }
 
         /* Teachers Section */
         .teachers-section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-md);
+            background: var(--white); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-md);
         }
-
         .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
         }
-
         .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.625rem;
+            font-size: 1.25rem; font-weight: 700; color: var(--text-primary);
+            display: flex; align-items: center; gap: 0.625rem;
         }
-
         .section-title i { color: var(--primary); font-size: 1.125rem; }
 
         .teachers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1rem;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem;
         }
 
         /* Teacher Card */
         .teacher-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            background: var(--white); border: 1px solid var(--gray-200);
+            border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);
             transition: all 0.2s ease;
         }
-
-        .teacher-card:hover {
-            border-color: var(--primary-light);
-            box-shadow: var(--shadow-md);
-        }
+        .teacher-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-md); }
+        .teacher-card.pending-card { border-left: 4px solid var(--pending); }
 
         .teacher-card-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            padding: 1.25rem;
-            color: white;
-            position: relative;
+            padding: 1.25rem; color: white; position: relative;
         }
-
-        .teacher-card-name {
-            font-size: 1.125rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
+        .teacher-card-header.pending-header {
+            background: linear-gradient(135deg, var(--pending) 0%, #A78BFA 100%);
         }
-
+        .teacher-card-name { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.25rem; }
         .teacher-card-studio { font-size: 0.875rem; opacity: 0.9; }
 
         .teacher-card-body { padding: 1.25rem; }
-
         .teacher-info-row {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--gray-100);
-            font-size: 0.875rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.5rem 0; border-bottom: 1px solid var(--gray-100); font-size: 0.875rem;
         }
-
         .teacher-info-row:last-child { border-bottom: none; }
         .teacher-info-row i { color: var(--primary); width: 16px; text-align: center; }
         .teacher-info-row span { color: var(--text-secondary); }
 
         .teacher-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-
-        .teacher-badge {
-            padding: 0.25rem 0.625rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
+        .teacher-badge { padding: 0.25rem 0.625rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
         .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .badge-info { background: rgba(96, 165, 250, 0.1); color: var(--primary); }
         .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
         .badge-purple { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
+        .badge-pending { background: rgba(139, 92, 246, 0.1); color: var(--pending); }
 
-        .teacher-card-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--gray-200);
-        }
+        .teacher-card-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200); }
+
+        /* Pending Actions */
+        .pending-actions { display: flex; gap: 0.5rem; flex: 1; }
+        .pending-actions .btn { flex: 1; justify-content: center; }
 
         /* Modal */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 2000;
+            align-items: center; justify-content: center; padding: 1rem;
         }
-
         .modal.active { display: flex; }
-
         .modal-content {
-            background: white;
-            border-radius: 16px;
-            max-width: 900px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-xl);
+            background: white; border-radius: 16px; max-width: 900px; width: 100%;
+            max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl);
         }
-
         .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
+            padding: 1.5rem; border-bottom: 1px solid var(--gray-200);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; background: white; z-index: 10;
         }
-
         .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-
         .modal-close {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: var(--gray-100);
-            color: var(--text-secondary);
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+            width: 32px; height: 32px; border: none; background: var(--gray-100);
+            color: var(--text-secondary); border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;
         }
-
         .modal-close:hover { background: var(--gray-200); }
-
         .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            padding: 1.5rem; border-top: 1px solid var(--gray-200);
+            display: flex; gap: 0.75rem; justify-content: flex-end;
+            position: sticky; bottom: 0; background: white;
+        }
 
         /* Modal Tabs */
         .modal-tabs {
-            display: flex;
-            gap: 0.25rem;
-            border-bottom: 2px solid var(--gray-200);
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            display: flex; gap: 0.25rem; border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 1.5rem; flex-wrap: wrap;
         }
-
         .modal-tab {
-            padding: 0.75rem 1rem;
-            background: transparent;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: -2px;
+            padding: 0.75rem 1rem; background: transparent; border: none;
+            border-bottom: 3px solid transparent; color: var(--text-secondary);
+            font-size: 0.875rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; margin-bottom: -2px;
         }
-
         .modal-tab:hover { color: var(--text-primary); }
         .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
-
         .modal-tab-content { display: none; }
         .modal-tab-content.active { display: block; }
 
+        /* Form */
         .form-group { margin-bottom: 1.25rem; }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
+        .form-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .form-input, .form-textarea, .form-select {
+            width: 100%; padding: 0.75rem 1rem; background: var(--gray-50);
+            border: 1.5px solid var(--gray-200); border-radius: 10px;
+            font-size: 0.9375rem; color: var(--text-primary); transition: all 0.2s ease; font-family: inherit;
         }
-
-        .form-input,
-        .form-textarea,
-        .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--gray-50);
-            border: 1.5px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .form-input:focus,
-        .form-textarea:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--white);
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none; border-color: var(--primary); background: var(--white);
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
         }
-
         .form-textarea { resize: vertical; min-height: 100px; }
         .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-        .form-row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 
         /* Toggle Switch */
         .toggle-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: 10px;
-            margin-bottom: 1rem;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem; background: var(--gray-50); border-radius: 10px; margin-bottom: 1rem;
         }
-
         .toggle-label { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
-
         .toggle-switch { position: relative; width: 50px; height: 26px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
-
         .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--gray-300);
-            transition: 0.3s;
-            border-radius: 26px;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--gray-300); transition: 0.3s; border-radius: 26px;
         }
-
         .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            transition: 0.3s;
-            border-radius: 50%;
+            position: absolute; content: ""; height: 20px; width: 20px;
+            left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%;
         }
-
         .toggle-switch input:checked + .toggle-slider {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         }
-
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
 
         /* Rich Text Editor */
         .rich-editor {
-            border: 1.5px solid var(--gray-200);
-            border-radius: 10px;
-            overflow: hidden;
-            background: var(--gray-50);
-            transition: all 0.2s ease;
+            border: 1.5px solid var(--gray-200); border-radius: 10px; overflow: hidden;
+            background: var(--gray-50); transition: all 0.2s ease;
         }
-
         .rich-editor:focus-within {
-            border-color: var(--primary);
-            background: var(--white);
+            border-color: var(--primary); background: var(--white);
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
         }
-
         .rich-editor-toolbar {
-            display: flex;
-            gap: 0.25rem;
-            padding: 0.5rem;
-            background: var(--gray-100);
-            border-bottom: 1px solid var(--gray-200);
+            display: flex; gap: 0.25rem; padding: 0.5rem;
+            background: var(--gray-100); border-bottom: 1px solid var(--gray-200);
         }
-
         .toolbar-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--gray-200);
-            background: var(--white);
-            color: var(--text-secondary);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
+            width: 32px; height: 32px; border: 1px solid var(--gray-200);
+            background: var(--white); color: var(--text-secondary); border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.875rem; transition: all 0.2s ease;
         }
-
-        .toolbar-btn:hover {
-            background: var(--gray-50);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .toolbar-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
+        .toolbar-btn:hover { background: var(--gray-50); border-color: var(--primary); color: var(--primary); }
         .rich-editor-content {
-            min-height: 100px;
-            padding: 0.75rem 1rem;
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            line-height: 1.6;
-            outline: none;
+            min-height: 100px; padding: 0.75rem 1rem; font-size: 0.9375rem;
+            color: var(--text-primary); line-height: 1.6; outline: none;
         }
+        .rich-editor-content:empty:before { content: attr(data-placeholder); color: var(--text-light); pointer-events: none; }
+        .rich-editor-content.small { min-height: 60px; }
 
-        .rich-editor-content:empty:before {
-            content: attr(data-placeholder);
-            color: var(--text-light);
-            pointer-events: none;
-        }
-
-        .rich-editor-content.small {
-            min-height: 60px;
-        }
-
-        /* Dynamic Lists & Tags */
+        /* Tags */
         .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: 10px;
-            min-height: 60px;
+            display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 1rem;
+            background: var(--gray-50); border-radius: 10px; min-height: 60px;
         }
-
         .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.5rem 0.75rem;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
+            color: white; border-radius: 20px; font-size: 0.875rem; font-weight: 500;
         }
-
         .tag button {
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            color: white;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.3); border: none; color: white;
+            width: 18px; height: 18px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+            transition: all 0.2s;
         }
-
-        .tag button:hover { background: rgba(255, 255, 255, 0.5); }
-
-        .add-tag-row {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
+        .tag button:hover { background: rgba(255,255,255,0.5); }
+        .add-tag-row { display: flex; gap: 0.5rem; margin-top: 1rem; }
         .add-tag-row input {
-            flex: 1;
-            padding: 0.625rem 1rem;
-            border: 1.5px solid var(--gray-200);
-            border-radius: 8px;
-            font-size: 0.875rem;
+            flex: 1; padding: 0.625rem 1rem; border: 1.5px solid var(--gray-200);
+            border-radius: 8px; font-size: 0.875rem;
         }
-
         .add-tag-row input:focus { outline: none; border-color: var(--primary); }
 
         /* Instrument Cards */
         .instrument-card {
-            background: var(--gray-50);
-            border: 1px solid var(--gray-200);
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
+            background: var(--gray-50); border: 1px solid var(--gray-200);
+            border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
         }
-
-        .instrument-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .instrument-card-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
+        .instrument-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .instrument-card-title { font-size: 1rem; font-weight: 700; color: var(--primary); }
         .remove-instrument-btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+            width: 32px; height: 32px; border: none;
+            background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
-
         .remove-instrument-btn:hover { background: var(--danger); color: white; }
 
-        .modal-footer {
-            padding: 1.5rem;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            gap: 0.75rem;
-            justify-content: flex-end;
-            position: sticky;
-            bottom: 0;
-            background: white;
+        /* Import Section */
+        .import-section {
+            background: var(--white); border-radius: 16px; padding: 1.5rem;
+            box-shadow: var(--shadow-md); margin-bottom: 1.5rem; display: none;
         }
+        .import-section.active { display: block; }
+        .import-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .import-header h3 { font-size: 1.125rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .import-header h3 i { color: var(--primary); }
+
+        .import-dropzone {
+            border: 2px dashed var(--gray-300); border-radius: 12px;
+            padding: 2rem; text-align: center; cursor: pointer;
+            transition: all 0.2s; background: var(--gray-50);
+        }
+        .import-dropzone:hover { border-color: var(--primary); background: rgba(96, 165, 250, 0.03); }
+        .import-dropzone.dragover { border-color: var(--primary); background: rgba(96, 165, 250, 0.06); }
+        .import-dropzone i { font-size: 2rem; color: var(--gray-300); margin-bottom: 0.5rem; }
+        .import-dropzone p { color: var(--text-secondary); font-size: 0.9375rem; }
+        .import-dropzone .file-types { font-size: 0.8125rem; color: var(--text-light); margin-top: 0.25rem; }
+        .import-dropzone input { display: none; }
+
+        .import-preview { margin-top: 1rem; display: none; }
+        .import-preview.active { display: block; }
+        .import-preview-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.75rem 1rem; background: rgba(16, 185, 129, 0.08);
+            border-radius: 8px; margin-bottom: 1rem;
+        }
+        .import-preview-header span { font-size: 0.875rem; font-weight: 600; color: var(--success); }
+        .import-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        .import-table th {
+            padding: 0.625rem 0.75rem; text-align: left;
+            background: var(--gray-50); border-bottom: 2px solid var(--gray-200);
+            font-weight: 700; color: var(--text-secondary); text-transform: uppercase;
+            font-size: 0.6875rem; letter-spacing: 0.03em;
+        }
+        .import-table td { padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--gray-100); color: var(--text-primary); }
+        .import-table tr:hover td { background: var(--gray-50); }
+        .import-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; }
+
+        .template-link {
+            font-size: 0.8125rem; color: var(--primary); cursor: pointer;
+            font-weight: 600; display: flex; align-items: center; gap: 0.375rem;
+            transition: color 0.2s;
+        }
+        .template-link:hover { color: var(--primary-dark); }
 
         /* Empty & Loading States */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            color: var(--gray-300);
-            margin-bottom: 0.75rem;
-        }
-
+        .empty-state { text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary); }
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 0.75rem; }
         .empty-state p { font-size: 1rem; margin-bottom: 1rem; }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            color: var(--text-secondary);
-            font-size: 1.125rem;
-        }
+        .loading { display: flex; align-items: center; justify-content: center; min-height: 400px; color: var(--text-secondary); font-size: 1.125rem; }
 
         /* Toast */
         .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: white;
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            box-shadow: var(--shadow-xl);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            z-index: 3000;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
+            position: fixed; bottom: 2rem; right: 2rem; background: white;
+            border-radius: 12px; padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+            display: flex; align-items: center; gap: 0.75rem; z-index: 3000;
+            transform: translateY(100px); opacity: 0; transition: all 0.3s ease;
         }
-
         .toast.show { transform: translateY(0); opacity: 1; }
         .toast.success { border-left: 4px solid var(--success); }
         .toast.error { border-left: 4px solid var(--danger); }
@@ -819,7 +485,6 @@
         .toast.error .toast-icon { color: var(--danger); }
         .toast-message { font-size: 0.9375rem; color: var(--text-primary); font-weight: 500; }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar:not(.collapsed) { transform: translateX(0); }
@@ -827,8 +492,8 @@
             .sidebar.collapsed ~ .main-content { margin-left: 0; }
             .teachers-grid { grid-template-columns: 1fr; }
             .page-header { flex-direction: column; gap: 1rem; }
-            .form-row, .form-row-3 { grid-template-columns: 1fr; }
-            .modal-tab { padding: 0.625rem 0.75rem; font-size: 0.75rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .status-tabs { flex-direction: column; }
             .search-row { flex-direction: column; }
             .filter-select { width: 100%; }
         }
@@ -842,63 +507,23 @@
                 <div class="logo-icon">EH</div>
                 <span class="logo-text">Admin<span class="admin-badge">Admin</span></span>
             </div>
-            <button id="sidebarToggle" class="toggle-btn">
-                <span class="toggle-icon">‹</span>
-            </button>
+            <button id="sidebarToggle" class="toggle-btn"><span class="toggle-icon">‹</span></button>
         </div>
-
         <nav class="sidebar-nav">
-            <a href="admindashboard.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
-                <span class="nav-text">Dashboard</span>
-            </a>
-            <a href="adminquicklinks.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-link"></i></span>
-                <span class="nav-text">Quick Links</span>
-            </a>
-            <a href="adminstudio-directory.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-building"></i></span>
-                <span class="nav-text">Studio Directory</span>
-            </a>
-            <a href="adminteacher-directory.html" class="nav-item active">
-                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
-                <span class="nav-text">Teacher Directory</span>
-            </a>
-            <a href="adminsnippets.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-clipboard"></i></span>
-                <span class="nav-text">Snippets</span>
-            </a>
-            <a href="adminmap.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
-                <span class="nav-text">Map</span>
-            </a>
-            <a href="adminprograms.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
-                <span class="nav-text">Programs</span>
-            </a>
-            <a href="admintraining-hub.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-book-open"></i></span>
-                <span class="nav-text">Training Hub</span>
-            </a>
-            <a href="adminpolicies.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-file-alt"></i></span>
-                <span class="nav-text">Policies</span>
-            </a>
-            <a href="adminprofiles.html" class="nav-item">
-                <span class="nav-icon"><i class="far fa-user"></i></span>
-                <span class="nav-text">Profiles</span>
-            </a>
-            <a href="admindirectors.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
-                <span class="nav-text">DirectorsPage</span>
-            </a>
+            <a href="admindashboard.html" class="nav-item"><span class="nav-icon"><i class="fas fa-chart-line"></i></span><span class="nav-text">Dashboard</span></a>
+            <a href="adminquicklinks.html" class="nav-item"><span class="nav-icon"><i class="fas fa-link"></i></span><span class="nav-text">Quick Links</span></a>
+            <a href="adminstudio-directory.html" class="nav-item"><span class="nav-icon"><i class="fas fa-building"></i></span><span class="nav-text">Studio Directory</span></a>
+            <a href="adminteacher-directory.html" class="nav-item active"><span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span><span class="nav-text">Teacher Directory</span></a>
+            <a href="adminsnippets.html" class="nav-item"><span class="nav-icon"><i class="fas fa-clipboard"></i></span><span class="nav-text">Snippets</span></a>
+            <a href="adminmap.html" class="nav-item"><span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span><span class="nav-text">Map</span></a>
+            <a href="adminprograms.html" class="nav-item"><span class="nav-icon"><i class="fas fa-graduation-cap"></i></span><span class="nav-text">Programs</span></a>
+            <a href="admintraining-hub.html" class="nav-item"><span class="nav-icon"><i class="far fa-book-open"></i></span><span class="nav-text">Training Hub</span></a>
+            <a href="adminpolicies.html" class="nav-item"><span class="nav-icon"><i class="far fa-file-alt"></i></span><span class="nav-text">Policies</span></a>
+            <a href="adminprofiles.html" class="nav-item"><span class="nav-icon"><i class="far fa-user"></i></span><span class="nav-text">Profiles</span></a>
+            <a href="admindirectors.html" class="nav-item"><span class="nav-icon"><i class="fas fa-user-tie"></i></span><span class="nav-text">DirectorsPage</span></a>
         </nav>
-
         <div class="sidebar-footer">
-            <button id="logoutBtn" class="nav-item logout-btn">
-                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
-                <span class="nav-text">Logout</span>
-            </button>
+            <button id="logoutBtn" class="nav-item logout-btn"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span class="nav-text">Logout</span></button>
         </div>
     </div>
 
@@ -908,9 +533,12 @@
         <div class="page-header">
             <div class="page-header-left">
                 <h1>Teacher Directory Management</h1>
-                <p>Manage all teacher information and selling points</p>
+                <p>Manage all teacher information, approve submissions, and import data</p>
             </div>
             <div class="page-header-actions">
+                <button class="btn btn-secondary" onclick="toggleImport()">
+                    <i class="fas fa-file-import"></i> Import
+                </button>
                 <button class="btn btn-secondary" onclick="location.reload()">
                     <i class="fas fa-sync-alt"></i> Refresh
                 </button>
@@ -920,51 +548,88 @@
             </div>
         </div>
 
+        <!-- Import Section -->
+        <div id="importSection" class="import-section">
+            <div class="import-header">
+                <h3><i class="fas fa-file-import"></i> Bulk Import Teachers</h3>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <span class="template-link" onclick="downloadTemplate('csv')"><i class="fas fa-download"></i> CSV Template</span>
+                    <span class="template-link" onclick="downloadTemplate('json')"><i class="fas fa-download"></i> JSON Template</span>
+                    <button class="btn btn-secondary btn-small" onclick="toggleImport()"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="import-dropzone" id="importDropzone" onclick="document.getElementById('importFile').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop a file here, or click to browse</p>
+                <span class="file-types">Accepts .csv or .json files</span>
+                <input type="file" id="importFile" accept=".csv,.json" onchange="handleImportFile(this.files[0])">
+            </div>
+            <div class="import-preview" id="importPreview">
+                <div class="import-preview-header">
+                    <span><i class="fas fa-check-circle"></i> <span id="importCount">0</span> teachers ready to import</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="import-table">
+                        <thead><tr><th>Name</th><th>Brand</th><th>State</th><th>Instruments</th><th>Status</th></tr></thead>
+                        <tbody id="importTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="import-actions">
+                    <button class="btn btn-secondary" onclick="cancelImport()">Cancel</button>
+                    <button class="btn btn-primary" id="importBtn" onclick="executeImport()">
+                        <i class="fas fa-file-import"></i> Import All
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Tabs -->
+        <div class="status-tabs">
+            <button class="status-tab active" onclick="switchStatusTab('all')">
+                <i class="fas fa-users"></i> All <span class="tab-count" id="countAll">0</span>
+            </button>
+            <button class="status-tab" onclick="switchStatusTab('pending')">
+                <span class="pending-pulse"></span> Pending <span class="tab-count" id="countPending">0</span>
+            </button>
+            <button class="status-tab" onclick="switchStatusTab('active')">
+                <i class="fas fa-check-circle"></i> Active <span class="tab-count" id="countActive">0</span>
+            </button>
+            <button class="status-tab" onclick="switchStatusTab('inactive')">
+                <i class="fas fa-pause-circle"></i> Inactive <span class="tab-count" id="countInactive">0</span>
+            </button>
+        </div>
+
         <div class="search-section">
             <div class="search-row">
                 <div class="search-input-wrapper">
                     <i class="fas fa-search"></i>
                     <input type="text" id="teacherSearch" class="search-input" placeholder="Search teachers by name...">
                 </div>
-                <select id="studioFilter" class="filter-select">
-                    <option value="">All Studios</option>
-                </select>
-                <select id="statusFilter" class="filter-select">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
+                <select id="studioFilter" class="filter-select"><option value="">All Studios</option></select>
             </div>
         </div>
 
-        <div id="loading" class="loading">
-            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading...
-        </div>
+        <div id="loading" class="loading"><i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading...</div>
 
         <div id="content" class="teachers-section" style="display: none;">
             <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-chalkboard-teacher"></i> Teachers
-                </h2>
+                <h2 class="section-title"><i class="fas fa-chalkboard-teacher"></i> Teachers</h2>
                 <span id="teacherCount" style="color: var(--text-secondary); font-size: 0.875rem;"></span>
             </div>
             <div id="teachersGrid" class="teachers-grid"></div>
         </div>
     </main>
 
-    <!-- Teacher Modal -->
+    <!-- Teacher Modal (same as before with all tabs) -->
     <div id="teacherModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="teacherModalTitle">Add Teacher</h3>
-                <button class="modal-close" onclick="closeTeacherModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeTeacherModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <form id="teacherForm">
                     <input type="hidden" id="teacherId">
-
                     <div class="modal-tabs">
                         <button type="button" class="modal-tab active" data-modal-tab="basic">Basic Info</button>
                         <button type="button" class="modal-tab" data-modal-tab="education">Education</button>
@@ -973,185 +638,49 @@
                         <button type="button" class="modal-tab" data-modal-tab="languages">Languages</button>
                         <button type="button" class="modal-tab" data-modal-tab="instruments">Instruments</button>
                     </div>
-
-                    <!-- Basic Info Tab -->
                     <div id="basicTab" class="modal-tab-content active">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">First Name *</label>
-                                <input type="text" class="form-input" id="teacherFirstName" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Last Name *</label>
-                                <input type="text" class="form-input" id="teacherLastName" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Studio Brand *</label>
-                                <input type="text" class="form-input" id="teacherBrand" required placeholder="e.g., Main Music School">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">State</label>
-                                <input type="text" class="form-input" id="teacherState" placeholder="e.g., Utah">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Gender</label>
-                                <select class="form-select" id="teacherGender">
-                                    <option value="">Select gender...</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Non-binary">Non-binary</option>
-                                    <option value="Prefer not to say">Prefer not to say</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Year Started at Studio</label>
-                                <input type="number" class="form-input" id="teacherYearStarted" placeholder="e.g., 2020">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" id="teacherStatus">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
+                        <div class="form-row"><div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="teacherFirstName" required></div><div class="form-group"><label class="form-label">Last Name *</label><input type="text" class="form-input" id="teacherLastName" required></div></div>
+                        <div class="form-row"><div class="form-group"><label class="form-label">Studio Brand *</label><input type="text" class="form-input" id="teacherBrand" required placeholder="e.g., Main Music School"></div><div class="form-group"><label class="form-label">State</label><input type="text" class="form-input" id="teacherState" placeholder="e.g., Utah"></div></div>
+                        <div class="form-row"><div class="form-group"><label class="form-label">Gender</label><select class="form-select" id="teacherGender"><option value="">Select gender...</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div><div class="form-group"><label class="form-label">Year Started at Studio</label><input type="number" class="form-input" id="teacherYearStarted" placeholder="e.g., 2020"></div></div>
+                        <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="teacherStatus"><option value="active">Active</option><option value="pending">Pending</option><option value="inactive">Inactive</option></select></div>
                     </div>
-
-                    <!-- Education Tab -->
                     <div id="educationTab" class="modal-tab-content">
-                        <div class="toggle-group">
-                            <span class="toggle-label">Formal Music Education</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="teacherFormalEducation">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Education Details</label>
-                            <div class="rich-editor">
-                                <div class="rich-editor-toolbar">
-                                    <button type="button" class="toolbar-btn" onclick="formatBold('teacherEducationDetails')" title="Bold">
-                                        <i class="fas fa-bold"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatItalic('teacherEducationDetails')" title="Italic">
-                                        <i class="fas fa-italic"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatUnderline('teacherEducationDetails')" title="Underline">
-                                        <i class="fas fa-underline"></i>
-                                    </button>
-                                </div>
-                                <div class="rich-editor-content" id="teacherEducationDetails" contenteditable="true" data-placeholder="e.g., Juilliard School of Music - Bachelor of Music"></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Teaching Strength 1</label>
-                            <input type="text" class="form-input" id="teacherStrength1" placeholder="e.g., Patient with beginners">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Teaching Strength 2</label>
-                            <input type="text" class="form-input" id="teacherStrength2" placeholder="e.g., Strong classical technique">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Teaching Strength 3</label>
-                            <input type="text" class="form-input" id="teacherStrength3" placeholder="e.g., Competition preparation">
-                        </div>
+                        <div class="toggle-group"><span class="toggle-label">Formal Music Education</span><label class="toggle-switch"><input type="checkbox" id="teacherFormalEducation"><span class="toggle-slider"></span></label></div>
+                        <div class="form-group"><label class="form-label">Education Details</label><div class="rich-editor"><div class="rich-editor-toolbar"><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherEducationDetails').focus();document.execCommand('bold')" title="Bold"><i class="fas fa-bold"></i></button><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherEducationDetails').focus();document.execCommand('italic')" title="Italic"><i class="fas fa-italic"></i></button></div><div class="rich-editor-content" id="teacherEducationDetails" contenteditable="true" data-placeholder="e.g., Juilliard School - Bachelor of Music"></div></div></div>
+                        <div class="form-group"><label class="form-label">Teaching Strength 1</label><input type="text" class="form-input" id="teacherStrength1" placeholder="e.g., Patient with beginners"></div>
+                        <div class="form-group"><label class="form-label">Teaching Strength 2</label><input type="text" class="form-input" id="teacherStrength2" placeholder="e.g., Strong classical technique"></div>
+                        <div class="form-group"><label class="form-label">Teaching Strength 3</label><input type="text" class="form-input" id="teacherStrength3" placeholder="e.g., Competition preparation"></div>
                     </div>
-
-                    <!-- Preferences Tab -->
                     <div id="preferencesTab" class="modal-tab-content">
-                        <div class="toggle-group">
-                            <span class="toggle-label">Willing to Teach Special Needs Students</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="teacherSpecialNeeds">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-group">
-                            <span class="toggle-label">Willing to Teach Online</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="teacherOnline">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-group">
-                            <span class="toggle-label">Online Only</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="teacherOnlineOnly">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Additional Notes</label>
-                            <div class="rich-editor">
-                                <div class="rich-editor-toolbar">
-                                    <button type="button" class="toolbar-btn" onclick="formatBold('teacherNotes')" title="Bold">
-                                        <i class="fas fa-bold"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatItalic('teacherNotes')" title="Italic">
-                                        <i class="fas fa-italic"></i>
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="formatUnderline('teacherNotes')" title="Underline">
-                                        <i class="fas fa-underline"></i>
-                                    </button>
-                                </div>
-                                <div class="rich-editor-content" id="teacherNotes" contenteditable="true" data-placeholder="Any other information about this teacher..."></div>
-                            </div>
-                        </div>
+                        <div class="toggle-group"><span class="toggle-label">Willing to Teach Special Needs Students</span><label class="toggle-switch"><input type="checkbox" id="teacherSpecialNeeds"><span class="toggle-slider"></span></label></div>
+                        <div class="toggle-group"><span class="toggle-label">Willing to Teach Online</span><label class="toggle-switch"><input type="checkbox" id="teacherOnline"><span class="toggle-slider"></span></label></div>
+                        <div class="toggle-group"><span class="toggle-label">Online Only</span><label class="toggle-switch"><input type="checkbox" id="teacherOnlineOnly"><span class="toggle-slider"></span></label></div>
+                        <div class="form-group"><label class="form-label">Additional Notes</label><div class="rich-editor"><div class="rich-editor-toolbar"><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherNotes').focus();document.execCommand('bold')" title="Bold"><i class="fas fa-bold"></i></button><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherNotes').focus();document.execCommand('italic')" title="Italic"><i class="fas fa-italic"></i></button></div><div class="rich-editor-content" id="teacherNotes" contenteditable="true" data-placeholder="Any other information about this teacher..."></div></div></div>
                     </div>
-
-                    <!-- Cities Tab -->
                     <div id="citiesTab" class="modal-tab-content">
                         <div class="form-label" style="margin-bottom: 0.75rem;">Cities Where Teacher Works</div>
                         <div id="citiesContainer" class="tags-container"></div>
-                        <div class="add-tag-row">
-                            <input type="text" id="newCity" placeholder="Add city (e.g., Salt Lake City)">
-                            <button type="button" class="btn btn-primary btn-small" onclick="addCity()">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </div>
+                        <div class="add-tag-row"><input type="text" id="newCity" placeholder="Add city"><button type="button" class="btn btn-primary btn-small" onclick="addCity()"><i class="fas fa-plus"></i> Add</button></div>
                     </div>
-
-                    <!-- Languages Tab -->
                     <div id="languagesTab" class="modal-tab-content">
-                        <div class="form-label" style="margin-bottom: 0.75rem;">Languages Spoken</div>
+                        <div class="form-label" style="margin-bottom: 0.75rem;">Languages Teacher Can Teach In</div>
                         <div id="languagesContainer" class="tags-container"></div>
-                        <div class="add-tag-row">
-                            <input type="text" id="newLanguage" placeholder="Add language (e.g., Spanish)">
-                            <button type="button" class="btn btn-primary btn-small" onclick="addLanguage()">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </div>
+                        <div class="add-tag-row"><input type="text" id="newLanguage" placeholder="Add language"><button type="button" class="btn btn-primary btn-small" onclick="addLanguage()"><i class="fas fa-plus"></i> Add</button></div>
                     </div>
-
-                    <!-- Instruments Tab -->
                     <div id="instrumentsTab" class="modal-tab-content">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                            <div class="form-label" style="margin-bottom: 0;">Instruments Taught</div>
-                            <button type="button" class="btn btn-primary btn-small" onclick="addInstrument()">
-                                <i class="fas fa-plus"></i> Add Instrument
-                            </button>
-                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><div class="form-label" style="margin-bottom: 0;">Instruments Taught</div><button type="button" class="btn btn-primary btn-small" onclick="addInstrument()"><i class="fas fa-plus"></i> Add Instrument</button></div>
                         <div id="instrumentsContainer"></div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeTeacherModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveTeacher()">
-                    <i class="fas fa-save"></i> Save Teacher
-                </button>
+                <button class="btn btn-primary" onclick="saveTeacher()"><i class="fas fa-save"></i> Save Teacher</button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="toast">
-        <i class="fas fa-check-circle toast-icon"></i>
-        <span class="toast-message"></span>
-    </div>
+    <div id="toast" class="toast"><i class="fas fa-check-circle toast-icon"></i><span class="toast-message"></span></div>
 
     <script>
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
@@ -1159,9 +688,8 @@
 
         let supabaseClient;
         let teachers = [];
-        let allCities = [];
-        let allLanguages = [];
-        let allInstruments = [];
+        let currentStatusTab = 'all';
+        let importData = [];
 
         // Current editing state
         let currentCities = [];
@@ -1177,6 +705,7 @@
             setupModalTabs();
             setupSearch();
             setupTagInputs();
+            setupImportDragDrop();
             loadTeachers();
         });
 
@@ -1185,26 +714,13 @@
             const toggleBtn = document.getElementById('sidebarToggle');
             const overlay = document.getElementById('sidebarOverlay');
             const logoutBtn = document.getElementById('logoutBtn');
-
             toggleBtn.addEventListener('click', () => {
                 sidebar.classList.toggle('collapsed');
-                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
-                    overlay.classList.add('active');
-                } else {
-                    overlay.classList.remove('active');
-                }
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) overlay.classList.add('active');
+                else overlay.classList.remove('active');
             });
-
-            overlay.addEventListener('click', () => {
-                sidebar.classList.add('collapsed');
-                overlay.classList.remove('active');
-            });
-
-            logoutBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to logout?')) {
-                    window.location.href = 'index.html';
-                }
-            });
+            overlay.addEventListener('click', () => { sidebar.classList.add('collapsed'); overlay.classList.remove('active'); });
+            logoutBtn.addEventListener('click', () => { if (confirm('Are you sure you want to logout?')) window.location.href = 'index.html'; });
         }
 
         function setupModalTabs() {
@@ -1220,83 +736,53 @@
         }
 
         function setupSearch() {
-            const searchInput = document.getElementById('teacherSearch');
-            const studioFilter = document.getElementById('studioFilter');
-            const statusFilter = document.getElementById('statusFilter');
-
-            searchInput.addEventListener('input', applyFilters);
-            studioFilter.addEventListener('change', applyFilters);
-            statusFilter.addEventListener('change', applyFilters);
+            document.getElementById('teacherSearch').addEventListener('input', applyFilters);
+            document.getElementById('studioFilter').addEventListener('change', applyFilters);
         }
 
         function setupTagInputs() {
-            document.getElementById('newCity').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') { e.preventDefault(); addCity(); }
-            });
-            document.getElementById('newLanguage').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') { e.preventDefault(); addLanguage(); }
-            });
+            document.getElementById('newCity').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); addCity(); } });
+            document.getElementById('newLanguage').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); addLanguage(); } });
         }
 
-        // ============ RICH TEXT EDITOR ============
-        function formatBold(editorId) {
-            const editor = document.getElementById(editorId);
-            editor.focus();
-            document.execCommand('bold', false, null);
+        // ============ STATUS TABS ============
+        function switchStatusTab(status) {
+            currentStatusTab = status;
+            document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            applyFilters();
         }
 
-        function formatItalic(editorId) {
-            const editor = document.getElementById(editorId);
-            editor.focus();
-            document.execCommand('italic', false, null);
-        }
-
-        function formatUnderline(editorId) {
-            const editor = document.getElementById(editorId);
-            editor.focus();
-            document.execCommand('underline', false, null);
-        }
-
-        function formatBoldDynamic(editorElement) {
-            editorElement.focus();
-            document.execCommand('bold', false, null);
-        }
-
-        function formatItalicDynamic(editorElement) {
-            editorElement.focus();
-            document.execCommand('italic', false, null);
-        }
-
-        function formatUnderlineDynamic(editorElement) {
-            editorElement.focus();
-            document.execCommand('underline', false, null);
+        function updateStatusCounts() {
+            document.getElementById('countAll').textContent = teachers.length;
+            document.getElementById('countPending').textContent = teachers.filter(t => t.status === 'pending').length;
+            document.getElementById('countActive').textContent = teachers.filter(t => t.status === 'active').length;
+            document.getElementById('countInactive').textContent = teachers.filter(t => t.status === 'inactive').length;
         }
 
         function applyFilters() {
             const searchTerm = document.getElementById('teacherSearch').value.toLowerCase();
             const studioFilter = document.getElementById('studioFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
 
             const filtered = teachers.filter(t => {
-                const matchesSearch = !searchTerm ||
-                    `${t.first_name} ${t.last_name}`.toLowerCase().includes(searchTerm);
+                const matchesSearch = !searchTerm || `${t.first_name} ${t.last_name}`.toLowerCase().includes(searchTerm);
                 const matchesStudio = !studioFilter || t.brand === studioFilter;
-                const matchesStatus = !statusFilter || t.status === statusFilter;
+                const matchesStatus = currentStatusTab === 'all' || t.status === currentStatusTab;
                 return matchesSearch && matchesStudio && matchesStatus;
             });
 
             renderTeachers(filtered);
         }
 
+        // ============ LOAD DATA ============
         async function loadTeachers() {
             try {
                 const [teachersResult, citiesResult, languagesResult, instrumentsResult] = await Promise.all([
-                    supabaseClient.from('teachers').select('*').order('first_name'),
+                    supabaseClient.from('teachers').select('*').order('created_at', { ascending: false }),
                     supabaseClient.from('teacher_cities').select('*'),
                     supabaseClient.from('teacher_languages').select('*'),
                     supabaseClient.from('teacher_instruments').select('*')
                 ]);
-
                 if (teachersResult.error) throw teachersResult.error;
 
                 teachers = (teachersResult.data || []).map(t => ({
@@ -1306,72 +792,61 @@
                     instruments: (instrumentsResult.data || []).filter(i => i.teacher_id === t.id)
                 }));
 
-                allCities = citiesResult.data || [];
-                allLanguages = languagesResult.data || [];
-                allInstruments = instrumentsResult.data || [];
-
-                // Populate studio filter
                 const studios = [...new Set(teachers.map(t => t.brand).filter(Boolean))].sort();
                 const studioSelect = document.getElementById('studioFilter');
                 studioSelect.innerHTML = '<option value="">All Studios</option>';
-                studios.forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s;
-                    opt.textContent = s;
-                    studioSelect.appendChild(opt);
-                });
+                studios.forEach(s => { const opt = document.createElement('option'); opt.value = s; opt.textContent = s; studioSelect.appendChild(opt); });
 
+                updateStatusCounts();
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
-                renderTeachers(teachers);
+                applyFilters();
             } catch (error) {
                 console.error('Error loading teachers:', error);
                 showToast('Error loading teachers', 'error');
             }
         }
 
+        // ============ RENDER ============
         function renderTeachers(teachersList) {
             const container = document.getElementById('teachersGrid');
             const countEl = document.getElementById('teacherCount');
             countEl.textContent = `${teachersList.length} teacher${teachersList.length !== 1 ? 's' : ''}`;
 
             if (teachersList.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <p>No teachers found</p>
-                        <button class="btn btn-primary" onclick="openTeacherModal()">
-                            <i class="fas fa-plus"></i> Add Your First Teacher
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><i class="fas fa-chalkboard-teacher"></i><p>No teachers found</p></div>`;
                 return;
             }
 
-            container.innerHTML = teachersList.map(teacher => `
-                <div class="teacher-card">
-                    <div class="teacher-card-header">
+            container.innerHTML = teachersList.map(teacher => {
+                const isPending = teacher.status === 'pending';
+                return `
+                <div class="teacher-card ${isPending ? 'pending-card' : ''}">
+                    <div class="teacher-card-header ${isPending ? 'pending-header' : ''}">
                         <div class="teacher-card-name">${teacher.first_name} ${teacher.last_name}</div>
                         <div class="teacher-card-studio">${teacher.brand || 'N/A'}</div>
                     </div>
                     <div class="teacher-card-body">
                         ${teacher.state ? `<div class="teacher-info-row"><i class="fas fa-map-marker-alt"></i><span>${teacher.state}</span></div>` : ''}
-                        ${teacher.gender ? `<div class="teacher-info-row"><i class="fas fa-user"></i><span>${teacher.gender}</span></div>` : ''}
-                        ${teacher.instruments && teacher.instruments.length > 0 ? `
-                            <div class="teacher-info-row">
-                                <i class="fas fa-music"></i>
-                                <span>${teacher.instruments.map(i => i.instrument).join(', ')}</span>
-                            </div>
-                        ` : ''}
+                        ${teacher.instruments && teacher.instruments.length > 0 ? `<div class="teacher-info-row"><i class="fas fa-music"></i><span>${teacher.instruments.map(i => i.instrument).join(', ')}</span></div>` : ''}
                         <div class="teacher-badges">
-                            <span class="teacher-badge ${teacher.status === 'active' ? 'badge-success' : 'badge-warning'}">
+                            <span class="teacher-badge ${teacher.status === 'active' ? 'badge-success' : teacher.status === 'pending' ? 'badge-pending' : 'badge-warning'}">
                                 ${teacher.status || 'active'}
                             </span>
                             ${teacher.formal_music_education ? '<span class="teacher-badge badge-info">Formal Education</span>' : ''}
                             ${teacher.online_willing ? '<span class="teacher-badge badge-info">Online</span>' : ''}
-                            ${teacher.online_only ? '<span class="teacher-badge badge-purple">Online Only</span>' : ''}
                         </div>
                         <div class="teacher-card-actions">
+                            ${isPending ? `
+                                <div class="pending-actions">
+                                    <button class="btn btn-success btn-small" onclick="approveTeacher('${teacher.id}')">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-danger btn-small" onclick="rejectTeacher('${teacher.id}')">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                </div>
+                            ` : ''}
                             <button class="btn btn-secondary btn-small" onclick='editTeacher("${teacher.id}")' style="flex: 1;">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
@@ -1380,48 +855,218 @@
                             </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
+        // ============ APPROVE / REJECT ============
+        async function approveTeacher(id) {
+            try {
+                const result = await supabaseClient.from('teachers').update({ status: 'active' }).eq('id', id);
+                if (result.error) throw result.error;
+                showToast('Teacher approved!', 'success');
+                loadTeachers();
+            } catch (error) {
+                console.error(error);
+                showToast('Error approving teacher', 'error');
+            }
+        }
+
+        async function rejectTeacher(id) {
+            if (!confirm('Reject this teacher? This will delete their submission.')) return;
+            try {
+                const result = await supabaseClient.from('teachers').delete().eq('id', id);
+                if (result.error) throw result.error;
+                showToast('Teacher submission rejected', 'success');
+                loadTeachers();
+            } catch (error) {
+                console.error(error);
+                showToast('Error rejecting teacher', 'error');
+            }
+        }
+
+        // ============ IMPORT ============
+        function toggleImport() {
+            document.getElementById('importSection').classList.toggle('active');
+        }
+
+        function setupImportDragDrop() {
+            const dz = document.getElementById('importDropzone');
+            dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+            dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+            dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); if (e.dataTransfer.files.length) handleImportFile(e.dataTransfer.files[0]); });
+        }
+
+        function handleImportFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    if (file.name.endsWith('.json')) {
+                        importData = JSON.parse(text);
+                        if (!Array.isArray(importData)) importData = [importData];
+                    } else {
+                        importData = parseCSV(text);
+                    }
+                    if (importData.length === 0) { showToast('No valid data found in file', 'error'); return; }
+                    showImportPreview();
+                } catch (err) {
+                    console.error(err);
+                    showToast('Error parsing file. Check format.', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            return lines.slice(1).map(line => {
+                const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                const obj = {};
+                headers.forEach((h, i) => obj[h] = values[i] || '');
+                return obj;
+            }).filter(obj => obj.first_name && obj.last_name);
+        }
+
+        function showImportPreview() {
+            document.getElementById('importCount').textContent = importData.length;
+            const tbody = document.getElementById('importTableBody');
+            tbody.innerHTML = importData.map(t => `
+                <tr>
+                    <td>${t.first_name || ''} ${t.last_name || ''}</td>
+                    <td>${t.brand || ''}</td>
+                    <td>${t.state || ''}</td>
+                    <td>${t.instruments || ''}</td>
+                    <td>Will import as active</td>
+                </tr>
+            `).join('');
+            document.getElementById('importPreview').classList.add('active');
+        }
+
+        function cancelImport() {
+            importData = [];
+            document.getElementById('importPreview').classList.remove('active');
+            document.getElementById('importFile').value = '';
+        }
+
+        async function executeImport() {
+            const btn = document.getElementById('importBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importing...';
+            let successCount = 0;
+
+            try {
+                for (const row of importData) {
+                    const teacherData = {
+                        first_name: row.first_name || '',
+                        last_name: row.last_name || '',
+                        brand: row.brand || null,
+                        state: row.state || null,
+                        gender: row.gender || null,
+                        year_started_at_studio: row.year_started_at_studio ? parseInt(row.year_started_at_studio) : null,
+                        status: 'active',
+                        formal_music_education: row.formal_music_education === 'true' || row.formal_music_education === true,
+                        formal_education_details: row.formal_education_details || null,
+                        teaching_strength_1: row.teaching_strength_1 || null,
+                        teaching_strength_2: row.teaching_strength_2 || null,
+                        teaching_strength_3: row.teaching_strength_3 || null,
+                        special_needs_willing: row.special_needs_willing === 'true' || row.special_needs_willing === true,
+                        online_willing: row.online_willing === 'true' || row.online_willing === true,
+                        online_only: row.online_only === 'true' || row.online_only === true,
+                        additional_notes: row.additional_notes || null
+                    };
+
+                    const teacherResult = await supabaseClient.from('teachers').insert([teacherData]).select();
+                    if (teacherResult.error) { console.error('Error importing:', row, teacherResult.error); continue; }
+                    const teacherId = teacherResult.data[0].id;
+
+                    // Cities
+                    if (row.cities) {
+                        const cityList = row.cities.split(';').map(c => c.trim()).filter(Boolean);
+                        if (cityList.length > 0) {
+                            await supabaseClient.from('teacher_cities').insert(cityList.map((c, i) => ({ teacher_id: teacherId, city: c, order_index: i })));
+                        }
+                    }
+                    // Languages
+                    if (row.languages) {
+                        const langList = row.languages.split(';').map(l => l.trim()).filter(Boolean);
+                        if (langList.length > 0) {
+                            await supabaseClient.from('teacher_languages').insert(langList.map((l, i) => ({ teacher_id: teacherId, language: l, order_index: i })));
+                        }
+                    }
+                    // Instruments
+                    if (row.instruments) {
+                        const instList = row.instruments.split(';').map(inst => inst.trim()).filter(Boolean);
+                        if (instList.length > 0) {
+                            await supabaseClient.from('teacher_instruments').insert(instList.map((inst, i) => ({ teacher_id: teacherId, instrument: inst, order_index: i })));
+                        }
+                    }
+                    successCount++;
+                }
+
+                showToast(`Successfully imported ${successCount} teacher${successCount !== 1 ? 's' : ''}!`, 'success');
+                cancelImport();
+                toggleImport();
+                loadTeachers();
+            } catch (error) {
+                console.error('Import error:', error);
+                showToast('Error during import', 'error');
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-file-import"></i> Import All';
+        }
+
+        function downloadTemplate(type) {
+            if (type === 'csv') {
+                const csv = 'first_name,last_name,brand,state,gender,year_started_at_studio,formal_music_education,formal_education_details,teaching_strength_1,teaching_strength_2,teaching_strength_3,special_needs_willing,online_willing,online_only,additional_notes,cities,languages,instruments\nJane,Smith,Music Academy,Utah,Female,2020,true,Berklee - BM,Patient with beginners,Strong technique,,true,true,false,,Salt Lake City;Provo,English;Spanish,Piano;Guitar';
+                downloadFile(csv, 'teacher_import_template.csv', 'text/csv');
+            } else {
+                const json = JSON.stringify([{
+                    first_name: "Jane", last_name: "Smith", brand: "Music Academy", state: "Utah",
+                    gender: "Female", year_started_at_studio: 2020, formal_music_education: true,
+                    formal_education_details: "Berklee - BM", teaching_strength_1: "Patient with beginners",
+                    teaching_strength_2: "Strong technique", teaching_strength_3: "",
+                    special_needs_willing: true, online_willing: true, online_only: false,
+                    additional_notes: "", cities: "Salt Lake City;Provo", languages: "English;Spanish",
+                    instruments: "Piano;Guitar"
+                }], null, 2);
+                downloadFile(json, 'teacher_import_template.json', 'application/json');
+            }
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ============ TEACHER MODAL (Edit/Add) ============
         function openTeacherModal() {
             document.getElementById('teacherModalTitle').textContent = 'Add Teacher';
             document.getElementById('teacherForm').reset();
             document.getElementById('teacherId').value = '';
             document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
-
-            // Clear rich editors
             document.getElementById('teacherEducationDetails').innerHTML = '';
             document.getElementById('teacherNotes').innerHTML = '';
-
-            currentCities = [];
-            currentLanguages = [];
-            currentInstruments = [];
-            deletedCityIds = [];
-            deletedLanguageIds = [];
-            deletedInstrumentIds = [];
-
-            renderCities();
-            renderLanguages();
-            renderInstruments();
-
+            currentCities = []; currentLanguages = []; currentInstruments = [];
+            deletedCityIds = []; deletedLanguageIds = []; deletedInstrumentIds = [];
+            renderCities(); renderLanguages(); renderInstruments();
             document.getElementById('teacherModal').classList.add('active');
         }
 
         function editTeacher(teacherId) {
             const teacher = teachers.find(t => t.id === teacherId);
-            if (!teacher) {
-                showToast('Teacher not found', 'error');
-                return;
-            }
-
+            if (!teacher) { showToast('Teacher not found', 'error'); return; }
             document.getElementById('teacherModalTitle').textContent = 'Edit Teacher';
             document.getElementById('teacherId').value = teacher.id;
             document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
-
-            // Basic Info
             document.getElementById('teacherFirstName').value = teacher.first_name || '';
             document.getElementById('teacherLastName').value = teacher.last_name || '';
             document.getElementById('teacherBrand').value = teacher.brand || '';
@@ -1429,216 +1074,57 @@
             document.getElementById('teacherGender').value = teacher.gender || '';
             document.getElementById('teacherYearStarted').value = teacher.year_started_at_studio || '';
             document.getElementById('teacherStatus').value = teacher.status || 'active';
-
-            // Education
             document.getElementById('teacherFormalEducation').checked = teacher.formal_music_education || false;
             document.getElementById('teacherEducationDetails').innerHTML = teacher.formal_education_details || '';
             document.getElementById('teacherStrength1').value = teacher.teaching_strength_1 || '';
             document.getElementById('teacherStrength2').value = teacher.teaching_strength_2 || '';
             document.getElementById('teacherStrength3').value = teacher.teaching_strength_3 || '';
-
-            // Preferences
             document.getElementById('teacherSpecialNeeds').checked = teacher.special_needs_willing || false;
             document.getElementById('teacherOnline').checked = teacher.online_willing || false;
             document.getElementById('teacherOnlineOnly').checked = teacher.online_only || false;
             document.getElementById('teacherNotes').innerHTML = teacher.additional_notes || '';
-
-            // Cities
-            currentCities = (teacher.cities || []).map(c => ({ id: c.id, city: c.city, isNew: false }));
-            deletedCityIds = [];
-            renderCities();
-
-            // Languages
-            currentLanguages = (teacher.languages || []).map(l => ({ id: l.id, language: l.language, isNew: false }));
-            deletedLanguageIds = [];
-            renderLanguages();
-
-            // Instruments
-            currentInstruments = (teacher.instruments || []).map(i => ({
-                id: i.id,
-                instrument: i.instrument,
-                teacher_level: i.teacher_level || '',
-                youngest_age_preference: i.youngest_age_preference || '',
-                achievements_credentials: i.achievements_credentials || '',
-                year_started: i.year_started || '',
-                genres: i.genres || '',
-                notes: i.notes || '',
-                isNew: false
-            }));
-            deletedInstrumentIds = [];
-            renderInstruments();
-
+            currentCities = (teacher.cities || []).map(c => ({ id: c.id, city: c.city, isNew: false })); deletedCityIds = []; renderCities();
+            currentLanguages = (teacher.languages || []).map(l => ({ id: l.id, language: l.language, isNew: false })); deletedLanguageIds = []; renderLanguages();
+            currentInstruments = (teacher.instruments || []).map(i => ({ id: i.id, instrument: i.instrument, teacher_level: i.teacher_level || '', youngest_age_preference: i.youngest_age_preference || '', achievements_credentials: i.achievements_credentials || '', year_started: i.year_started || '', genres: i.genres || '', notes: i.notes || '', isNew: false }));
+            deletedInstrumentIds = []; renderInstruments();
             document.getElementById('teacherModal').classList.add('active');
         }
 
-        function closeTeacherModal() {
-            document.getElementById('teacherModal').classList.remove('active');
-        }
+        function closeTeacherModal() { document.getElementById('teacherModal').classList.remove('active'); }
 
-        // ============ CITIES ============
-        function addCity() {
-            const input = document.getElementById('newCity');
-            const value = input.value.trim();
-            if (value && !currentCities.some(c => c.city === value)) {
-                currentCities.push({ id: null, city: value, isNew: true });
-                renderCities();
-                input.value = '';
-            }
-        }
+        // Cities
+        function addCity() { const input = document.getElementById('newCity'); const v = input.value.trim(); if (v && !currentCities.some(c => c.city === v)) { currentCities.push({ id: null, city: v, isNew: true }); renderCities(); input.value = ''; } }
+        function removeCity(i) { const c = currentCities[i]; if (c.id && !c.isNew) deletedCityIds.push(c.id); currentCities.splice(i, 1); renderCities(); }
+        function renderCities() { const c = document.getElementById('citiesContainer'); if (currentCities.length === 0) { c.innerHTML = '<span style="color:var(--text-light);font-size:0.875rem;">No cities added yet</span>'; return; } c.innerHTML = currentCities.map((ci, i) => `<span class="tag">${ci.city}<button type="button" onclick="removeCity(${i})"><i class="fas fa-times"></i></button></span>`).join(''); }
 
-        function removeCity(index) {
-            const city = currentCities[index];
-            if (city.id && !city.isNew) deletedCityIds.push(city.id);
-            currentCities.splice(index, 1);
-            renderCities();
-        }
+        // Languages
+        function addLanguage() { const input = document.getElementById('newLanguage'); const v = input.value.trim(); if (v && !currentLanguages.some(l => l.language === v)) { currentLanguages.push({ id: null, language: v, isNew: true }); renderLanguages(); input.value = ''; } }
+        function removeLanguage(i) { const l = currentLanguages[i]; if (l.id && !l.isNew) deletedLanguageIds.push(l.id); currentLanguages.splice(i, 1); renderLanguages(); }
+        function renderLanguages() { const c = document.getElementById('languagesContainer'); if (currentLanguages.length === 0) { c.innerHTML = '<span style="color:var(--text-light);font-size:0.875rem;">No languages added yet</span>'; return; } c.innerHTML = currentLanguages.map((l, i) => `<span class="tag">${l.language}<button type="button" onclick="removeLanguage(${i})"><i class="fas fa-times"></i></button></span>`).join(''); }
 
-        function renderCities() {
-            const container = document.getElementById('citiesContainer');
-            if (currentCities.length === 0) {
-                container.innerHTML = '<span style="color: var(--text-light); font-size: 0.875rem;">No cities added yet</span>';
-                return;
-            }
-            container.innerHTML = currentCities.map((c, i) => `
-                <span class="tag">
-                    ${c.city}
-                    <button type="button" onclick="removeCity(${i})"><i class="fas fa-times"></i></button>
-                </span>
-            `).join('');
-        }
-
-        // ============ LANGUAGES ============
-        function addLanguage() {
-            const input = document.getElementById('newLanguage');
-            const value = input.value.trim();
-            if (value && !currentLanguages.some(l => l.language === value)) {
-                currentLanguages.push({ id: null, language: value, isNew: true });
-                renderLanguages();
-                input.value = '';
-            }
-        }
-
-        function removeLanguage(index) {
-            const lang = currentLanguages[index];
-            if (lang.id && !lang.isNew) deletedLanguageIds.push(lang.id);
-            currentLanguages.splice(index, 1);
-            renderLanguages();
-        }
-
-        function renderLanguages() {
-            const container = document.getElementById('languagesContainer');
-            if (currentLanguages.length === 0) {
-                container.innerHTML = '<span style="color: var(--text-light); font-size: 0.875rem;">No languages added yet</span>';
-                return;
-            }
-            container.innerHTML = currentLanguages.map((l, i) => `
-                <span class="tag">
-                    ${l.language}
-                    <button type="button" onclick="removeLanguage(${i})"><i class="fas fa-times"></i></button>
-                </span>
-            `).join('');
-        }
-
-        // ============ INSTRUMENTS ============
-        function addInstrument() {
-            currentInstruments.push({
-                id: null,
-                instrument: '',
-                teacher_level: '',
-                youngest_age_preference: '',
-                achievements_credentials: '',
-                year_started: '',
-                genres: '',
-                notes: '',
-                isNew: true
-            });
-            renderInstruments();
-        }
-
-        function removeInstrument(index) {
-            const inst = currentInstruments[index];
-            if (inst.id && !inst.isNew) deletedInstrumentIds.push(inst.id);
-            currentInstruments.splice(index, 1);
-            renderInstruments();
-        }
-
-        function updateInstrument(index, field, value) {
-            currentInstruments[index][field] = value;
-        }
+        // Instruments
+        function addInstrument() { currentInstruments.push({ id: null, instrument: '', teacher_level: '', youngest_age_preference: '', achievements_credentials: '', year_started: '', genres: '', notes: '', isNew: true }); renderInstruments(); }
+        function removeInstrument(i) { const inst = currentInstruments[i]; if (inst.id && !inst.isNew) deletedInstrumentIds.push(inst.id); currentInstruments.splice(i, 1); renderInstruments(); }
+        function updateInstrument(i, f, v) { currentInstruments[i][f] = v; }
 
         function renderInstruments() {
-            const container = document.getElementById('instrumentsContainer');
-            if (currentInstruments.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-light); font-size: 0.875rem; text-align: center; padding: 2rem;">No instruments added yet. Click "Add Instrument" to start.</p>';
-                return;
-            }
-
-            container.innerHTML = currentInstruments.map((inst, index) => `
+            const c = document.getElementById('instrumentsContainer');
+            if (currentInstruments.length === 0) { c.innerHTML = '<p style="color:var(--text-light);font-size:0.875rem;text-align:center;padding:2rem;">No instruments added yet.</p>'; return; }
+            c.innerHTML = currentInstruments.map((inst, i) => `
                 <div class="instrument-card">
-                    <div class="instrument-card-header">
-                        <span class="instrument-card-title">${inst.instrument || 'New Instrument'}</span>
-                        <button type="button" class="remove-instrument-btn" onclick="removeInstrument(${index})">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Instrument Name *</label>
-                            <input type="text" class="form-input" value="${inst.instrument}" onchange="updateInstrument(${index}, 'instrument', this.value)" placeholder="e.g., Piano">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Teaching Level</label>
-                            <select class="form-select" onchange="updateInstrument(${index}, 'teacher_level', this.value)">
-                                <option value="">Select level...</option>
-                                <option value="beginner" ${inst.teacher_level === 'beginner' ? 'selected' : ''}>Beginner</option>
-                                <option value="intermediate" ${inst.teacher_level === 'intermediate' ? 'selected' : ''}>Intermediate</option>
-                                <option value="advanced" ${inst.teacher_level === 'advanced' ? 'selected' : ''}>Advanced</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Youngest Age Preference</label>
-                            <input type="number" class="form-input" value="${inst.youngest_age_preference}" onchange="updateInstrument(${index}, 'youngest_age_preference', this.value)" placeholder="e.g., 5">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Year Started Playing</label>
-                            <input type="number" class="form-input" value="${inst.year_started}" onchange="updateInstrument(${index}, 'year_started', this.value)" placeholder="e.g., 2010">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Genres</label>
-                        <input type="text" class="form-input" value="${inst.genres}" onchange="updateInstrument(${index}, 'genres', this.value)" placeholder="e.g., Classical, Jazz, Pop">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Achievements / Credentials</label>
-                        <input type="text" class="form-input" value="${inst.achievements_credentials}" onchange="updateInstrument(${index}, 'achievements_credentials', this.value)" placeholder="e.g., MTAC Certified">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Notes</label>
-                        <div class="rich-editor">
-                            <div class="rich-editor-toolbar">
-                                <button type="button" class="toolbar-btn" onclick="formatBoldDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Bold">
-                                    <i class="fas fa-bold"></i>
-                                </button>
-                                <button type="button" class="toolbar-btn" onclick="formatItalicDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Italic">
-                                    <i class="fas fa-italic"></i>
-                                </button>
-                                <button type="button" class="toolbar-btn" onclick="formatUnderlineDynamic(this.closest('.rich-editor').querySelector('.rich-editor-content'))" title="Underline">
-                                    <i class="fas fa-underline"></i>
-                                </button>
-                            </div>
-                            <div class="rich-editor-content small" contenteditable="true" data-placeholder="Additional notes about teaching this instrument..." oninput="updateInstrument(${index}, 'notes', this.innerHTML)">${inst.notes || ''}</div>
-                        </div>
-                    </div>
+                    <div class="instrument-card-header"><span class="instrument-card-title">${inst.instrument || 'New Instrument'}</span><button type="button" class="remove-instrument-btn" onclick="removeInstrument(${i})"><i class="fas fa-times"></i></button></div>
+                    <div class="form-row"><div class="form-group"><label class="form-label">Instrument Name *</label><input type="text" class="form-input" value="${inst.instrument}" onchange="updateInstrument(${i},'instrument',this.value)" placeholder="e.g., Piano"></div><div class="form-group"><label class="form-label">Teaching Level</label><select class="form-select" onchange="updateInstrument(${i},'teacher_level',this.value)"><option value="">Select level...</option><option value="beginner" ${inst.teacher_level === 'beginner' ? 'selected' : ''}>Beginner</option><option value="intermediate" ${inst.teacher_level === 'intermediate' ? 'selected' : ''}>Intermediate</option><option value="advanced" ${inst.teacher_level === 'advanced' ? 'selected' : ''}>Advanced</option></select></div></div>
+                    <div class="form-row"><div class="form-group"><label class="form-label">Youngest Age Preference</label><input type="number" class="form-input" value="${inst.youngest_age_preference}" onchange="updateInstrument(${i},'youngest_age_preference',this.value)" placeholder="e.g., 5"></div><div class="form-group"><label class="form-label">Year Started Teaching</label><input type="number" class="form-input" value="${inst.year_started}" onchange="updateInstrument(${i},'year_started',this.value)" placeholder="e.g., 2015"></div></div>
+                    <div class="form-group"><label class="form-label">Genres</label><input type="text" class="form-input" value="${inst.genres}" onchange="updateInstrument(${i},'genres',this.value)" placeholder="e.g., Classical, Jazz, Pop"></div>
+                    <div class="form-group"><label class="form-label">Achievements / Credentials</label><input type="text" class="form-input" value="${inst.achievements_credentials}" onchange="updateInstrument(${i},'achievements_credentials',this.value)" placeholder="e.g., MTAC Certified"></div>
+                    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" style="min-height:60px;" onchange="updateInstrument(${i},'notes',this.value)" placeholder="Additional notes...">${inst.notes || ''}</textarea></div>
                 </div>
             `).join('');
         }
 
-        // ============ SAVE TEACHER ============
+        // ============ SAVE ============
         async function saveTeacher() {
             const id = document.getElementById('teacherId').value;
-
             const teacherData = {
                 first_name: document.getElementById('teacherFirstName').value,
                 last_name: document.getElementById('teacherLastName').value,
@@ -1660,8 +1146,6 @@
 
             try {
                 let teacherId = id;
-
-                // Save teacher
                 if (id) {
                     const result = await supabaseClient.from('teachers').update(teacherData).eq('id', id);
                     if (result.error) throw result.error;
@@ -1671,92 +1155,44 @@
                     teacherId = result.data[0].id;
                 }
 
-                // Delete removed items
-                if (deletedCityIds.length > 0) {
-                    await supabaseClient.from('teacher_cities').delete().in('id', deletedCityIds);
-                }
-                if (deletedLanguageIds.length > 0) {
-                    await supabaseClient.from('teacher_languages').delete().in('id', deletedLanguageIds);
-                }
-                if (deletedInstrumentIds.length > 0) {
-                    await supabaseClient.from('teacher_instruments').delete().in('id', deletedInstrumentIds);
-                }
+                if (deletedCityIds.length > 0) await supabaseClient.from('teacher_cities').delete().in('id', deletedCityIds);
+                if (deletedLanguageIds.length > 0) await supabaseClient.from('teacher_languages').delete().in('id', deletedLanguageIds);
+                if (deletedInstrumentIds.length > 0) await supabaseClient.from('teacher_instruments').delete().in('id', deletedInstrumentIds);
 
-                // Save cities
-                for (let i = 0; i < currentCities.length; i++) {
-                    const city = currentCities[i];
-                    if (city.isNew) {
-                        await supabaseClient.from('teacher_cities').insert({
-                            teacher_id: teacherId,
-                            city: city.city,
-                            order_index: i
-                        });
-                    }
-                }
+                for (let i = 0; i < currentCities.length; i++) { if (currentCities[i].isNew) await supabaseClient.from('teacher_cities').insert({ teacher_id: teacherId, city: currentCities[i].city, order_index: i }); }
+                for (let i = 0; i < currentLanguages.length; i++) { if (currentLanguages[i].isNew) await supabaseClient.from('teacher_languages').insert({ teacher_id: teacherId, language: currentLanguages[i].language, order_index: i }); }
 
-                // Save languages
-                for (let i = 0; i < currentLanguages.length; i++) {
-                    const lang = currentLanguages[i];
-                    if (lang.isNew) {
-                        await supabaseClient.from('teacher_languages').insert({
-                            teacher_id: teacherId,
-                            language: lang.language,
-                            order_index: i
-                        });
-                    }
-                }
-
-                // Save instruments
                 for (let i = 0; i < currentInstruments.length; i++) {
                     const inst = currentInstruments[i];
-                    const instData = {
-                        teacher_id: teacherId,
-                        instrument: inst.instrument,
-                        teacher_level: inst.teacher_level || null,
-                        youngest_age_preference: inst.youngest_age_preference ? parseInt(inst.youngest_age_preference) : null,
-                        achievements_credentials: inst.achievements_credentials || null,
-                        year_started: inst.year_started ? parseInt(inst.year_started) : null,
-                        genres: inst.genres || null,
-                        notes: inst.notes || null,
-                        order_index: i
-                    };
-
-                    if (inst.isNew) {
-                        await supabaseClient.from('teacher_instruments').insert(instData);
-                    } else {
-                        await supabaseClient.from('teacher_instruments').update(instData).eq('id', inst.id);
-                    }
+                    const instData = { teacher_id: teacherId, instrument: inst.instrument, teacher_level: inst.teacher_level || null, youngest_age_preference: inst.youngest_age_preference ? parseInt(inst.youngest_age_preference) : null, achievements_credentials: inst.achievements_credentials || null, year_started: inst.year_started ? parseInt(inst.year_started) : null, genres: inst.genres || null, notes: inst.notes || null, order_index: i };
+                    if (inst.isNew) await supabaseClient.from('teacher_instruments').insert(instData);
+                    else await supabaseClient.from('teacher_instruments').update(instData).eq('id', inst.id);
                 }
 
-                showToast(id ? 'Teacher updated successfully!' : 'Teacher added successfully!', 'success');
+                showToast(id ? 'Teacher updated!' : 'Teacher added!', 'success');
                 closeTeacherModal();
                 loadTeachers();
             } catch (error) {
-                console.error('Error saving teacher:', error);
+                console.error('Error saving:', error);
                 showToast('Error saving teacher.', 'error');
             }
         }
 
         async function deleteTeacher(id) {
-            if (!confirm('Are you sure you want to delete this teacher? This will also delete all associated cities, languages, and instruments.')) return;
+            if (!confirm('Are you sure you want to delete this teacher?')) return;
             try {
                 const result = await supabaseClient.from('teachers').delete().eq('id', id);
                 if (result.error) throw result.error;
-                showToast('Teacher deleted successfully!', 'success');
+                showToast('Teacher deleted!', 'success');
                 loadTeachers();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error deleting teacher.', 'error');
-            }
+            } catch (error) { console.error(error); showToast('Error deleting teacher.', 'error'); }
         }
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            const toastMessage = toast.querySelector('.toast-message');
-            const toastIcon = toast.querySelector('.toast-icon');
             toast.className = 'toast ' + type;
-            toastMessage.textContent = message;
-            toastIcon.className = type === 'success' ? 'fas fa-check-circle toast-icon' : 'fas fa-exclamation-circle toast-icon';
+            toast.querySelector('.toast-message').textContent = message;
+            toast.querySelector('.toast-icon').className = type === 'success' ? 'fas fa-check-circle toast-icon' : 'fas fa-exclamation-circle toast-icon';
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }

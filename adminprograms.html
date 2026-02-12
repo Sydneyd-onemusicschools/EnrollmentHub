@@ -33,1114 +33,295 @@
             --sidebar-collapsed: 70px;
             --transition-speed: 0.3s;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #F8F9FA;
-            min-height: 100vh;
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: var(--white);
-            border-right: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
-            transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #F8F9FA; min-height: 100vh; color: var(--text-primary); overflow-x: hidden; }
+        .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh; background: var(--white); border-right: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); transition: transform var(--transition-speed) ease, width var(--transition-speed) ease; z-index: 1000; display: flex; flex-direction: column; }
         .sidebar.collapsed { width: var(--sidebar-collapsed); }
-
-        .sidebar-header {
-            padding: 1.5rem 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: opacity var(--transition-speed) ease;
-        }
-
+        .sidebar-header { padding: 1.5rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gray-200); }
+        .logo-section { display: flex; align-items: center; gap: 0.75rem; transition: opacity var(--transition-speed) ease; }
         .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            color: var(--white);
-            font-weight: 700;
-        }
-
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; color: var(--white); font-weight: 700; }
         .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
-
-        .admin-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            font-size: 0.625rem;
-            font-weight: 700;
-            padding: 0.125rem 0.5rem;
-            border-radius: 4px;
-            margin-left: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .toggle-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--gray-200);
-            background: var(--white);
-            color: var(--text-secondary);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
+        .admin-badge { display: inline-block; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; font-size: 0.625rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; text-transform: uppercase; }
+        .toggle-btn { width: 32px; height: 32px; border: 1px solid var(--gray-200); background: var(--white); color: var(--text-secondary); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
         .toggle-btn:hover { background: var(--gray-50); }
         .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
         .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
-
         .sidebar-nav { flex: 1; overflow-y: auto; padding: 1rem 0; }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
-            padding: 0.875rem 1.5rem;
-            margin: 0.25rem 0.75rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            width: calc(100% - 1.5rem);
-            font-size: 0.9375rem;
-        }
-
+        .nav-item { display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1.5rem; margin: 0.25rem 0.75rem; color: var(--text-secondary); text-decoration: none; border-radius: 10px; transition: all 0.2s ease; cursor: pointer; border: none; background: transparent; width: calc(100% - 1.5rem); font-size: 0.9375rem; }
         .nav-item:hover { background: var(--gray-100); color: var(--primary); }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, rgba(96,165,250,0.1) 0%, rgba(56,189,248,0.1) 100%);
-            color: var(--primary);
-            font-weight: 600;
-        }
-
+        .nav-item.active { background: linear-gradient(135deg, rgba(96,165,250,0.1) 0%, rgba(56,189,248,0.1) 100%); color: var(--primary); font-weight: 600; }
         .nav-icon { width: 20px; text-align: center; font-size: 1rem; }
         .sidebar.collapsed .nav-text { display: none; }
-
         .sidebar-footer { padding: 1rem 0.75rem; border-top: 1px solid var(--gray-200); }
         .logout-btn { color: var(--danger) !important; }
         .logout-btn:hover { background: rgba(239, 68, 68, 0.1) !important; }
-
-        /* MAIN CONTENT */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
-            transition: margin-left var(--transition-speed) ease;
-        }
-
+        .main-content { margin-left: var(--sidebar-width); padding: 2rem; transition: margin-left var(--transition-speed) ease; }
         .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .page-header h1 { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
         .page-header p { color: var(--text-secondary); margin-top: 0.25rem; }
-
-        /* FILTER SECTION */
-        .filter-section {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-end;
-            flex-wrap: wrap;
-        }
-
+        .filter-section { background: var(--white); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); }
+        .filter-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
         .filter-group { flex: 1; min-width: 200px; }
-
-        .filter-group label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        /* BUTTONS */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            border-radius: 10px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4);
-            transform: translateY(-1px);
-        }
-
+        .filter-group label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; }
+        .btn-primary:hover { box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4); transform: translateY(-1px); }
         .btn-secondary { background: var(--gray-100); color: var(--text-primary); }
         .btn-secondary:hover { background: var(--gray-200); }
-
         .btn-danger { background: var(--danger); color: white; }
         .btn-danger:hover { background: #dc2626; }
-
         .btn-small { padding: 0.5rem 0.875rem; font-size: 0.8125rem; }
-
-        /* PROGRAMS GRID */
-        .programs-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .program-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-left: 4px solid var(--primary);
-            border-radius: 10px;
-            box-shadow: var(--shadow-sm);
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.2s ease;
-        }
-
-        .program-card:hover {
-            border-left-color: var(--accent);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-
-        .program-card.inactive {
-            border-left-color: var(--gray-300);
-            opacity: 0.7;
-        }
-
-        .program-card-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-        }
-
-        .program-name {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-
-        .program-type-badge {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            color: white;
-            font-size: 0.625rem;
-            font-weight: 700;
-            padding: 0.25rem 0.625rem;
-            border-radius: 10px;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .program-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--gray-100);
-            flex: 1;
-        }
-
-        .program-info-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8125rem;
-        }
-
-        .program-info-item i {
-            color: var(--primary);
-            width: 16px;
-            font-size: 0.75rem;
-        }
-
+        .programs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .program-card { background: var(--white); border: 1px solid var(--gray-200); border-left: 4px solid var(--primary); border-radius: 10px; box-shadow: var(--shadow-sm); padding: 1.25rem; display: flex; flex-direction: column; transition: all 0.2s ease; }
+        .program-card:hover { border-left-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .program-card.inactive { border-left-color: var(--gray-300); opacity: 0.7; }
+        .program-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.75rem; }
+        .program-name { font-size: 1rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+        .program-type-badge { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; font-size: 0.625rem; font-weight: 700; padding: 0.25rem 0.625rem; border-radius: 10px; text-transform: uppercase; white-space: nowrap; }
+        .program-info { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--gray-100); flex: 1; }
+        .program-info-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; }
+        .program-info-item i { color: var(--primary); width: 16px; font-size: 0.75rem; }
         .program-info-item span { color: var(--text-secondary); }
-
-        .program-card-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--gray-100);
-        }
-
+        .program-card-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--gray-100); }
         .program-card-actions .btn { flex: 1; justify-content: center; }
-
-        .status-badge {
-            font-size: 0.6875rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
+        .status-badge { font-size: 0.6875rem; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
         .status-active { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .status-inactive { background: rgba(107, 114, 128, 0.1); color: var(--text-secondary); }
-
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            color: var(--gray-300);
-            margin-bottom: 1rem;
-        }
-
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
+        .empty-state { text-align: center; padding: 3rem; color: var(--text-secondary); }
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 2000; align-items: center; justify-content: center; padding: 1rem; }
         .modal.active { display: flex; }
-
-        .modal-content {
-            background: var(--white);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .modal-content { background: var(--white); border-radius: 16px; width: 100%; max-width: 700px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
         .modal-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-
-        .modal-close {
-            background: var(--gray-100);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
+        .modal-close { background: var(--gray-100); border: none; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; }
         .modal-close:hover { background: var(--gray-200); }
-
-        .modal-body {
-            padding: 1.5rem;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        /* Modal Tabs */
-        .modal-tabs {
-            display: flex;
-            gap: 0.25rem;
-            flex-wrap: wrap;
-            border-bottom: 2px solid var(--gray-200);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0;
-        }
-
-        .modal-tab {
-            padding: 0.75rem 1rem;
-            background: transparent;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: -2px;
-        }
-
+        .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+        .modal-tabs { display: flex; gap: 0.25rem; flex-wrap: wrap; border-bottom: 2px solid var(--gray-200); margin-bottom: 1.5rem; padding-bottom: 0; }
+        .modal-tab { padding: 0.75rem 1rem; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-secondary); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-bottom: -2px; }
         .modal-tab:hover { color: var(--text-primary); }
-
-        .modal-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
+        .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
         .modal-tab-content { display: none; }
         .modal-tab-content.active { display: block; }
-
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-        }
-
-        /* Form Elements */
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 0.75rem; }
         .form-group { margin-bottom: 1.25rem; }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .form-input,
-        .form-textarea,
-        .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--gray-50);
-            border: 1.5px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 0.9375rem;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .form-input:focus,
-        .form-textarea:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--white);
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-        }
-
+        .form-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .form-input, .form-textarea, .form-select { width: 100%; padding: 0.75rem 1rem; background: var(--gray-50); border: 1.5px solid var(--gray-200); border-radius: 10px; font-size: 0.9375rem; color: var(--text-primary); transition: all 0.2s ease; font-family: inherit; }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1); }
         .form-textarea { resize: vertical; min-height: 100px; }
         .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-
-        /* Toggle Switch */
-        .toggle-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-
+        .rich-editor-wrapper { border: 1.5px solid var(--gray-200); border-radius: 10px; overflow: hidden; background: var(--gray-50); transition: all 0.2s ease; }
+        .rich-editor-wrapper:focus-within { border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1); }
+        .rich-editor-toolbar { display: flex; gap: 0.25rem; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--gray-200); background: var(--gray-100); }
+        .rich-editor-toolbar button { width: 32px; height: 32px; border: 1px solid transparent; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.8125rem; transition: all 0.15s ease; }
+        .rich-editor-toolbar button:hover { background: var(--white); border-color: var(--gray-200); color: var(--text-primary); }
+        .rich-editor-toolbar button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .rich-editor-toolbar .toolbar-divider { width: 1px; background: var(--gray-300); margin: 0.25rem 0.375rem; }
+        .rich-editor-content { min-height: 100px; padding: 0.75rem 1rem; font-size: 0.9375rem; color: var(--text-primary); font-family: inherit; outline: none; line-height: 1.6; }
+        .rich-editor-content:empty::before { content: attr(data-placeholder); color: var(--text-light); pointer-events: none; }
+        .rich-editor-content ul, .rich-editor-content ol { margin-left: 1.5rem; margin-bottom: 0.5rem; }
+        .rich-editor-content li { margin-bottom: 0.25rem; }
+        .toggle-group { display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--gray-50); border-radius: 10px; margin-bottom: 1rem; }
         .toggle-label { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
-
         .toggle-switch { position: relative; width: 50px; height: 26px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--gray-300);
-            transition: 0.3s;
-            border-radius: 26px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            transition: 0.3s;
-            border-radius: 50%;
-        }
-
-        .toggle-switch input:checked + .toggle-slider {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        }
-
+        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--gray-300); transition: 0.3s; border-radius: 26px; }
+        .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%; }
+        .toggle-switch input:checked + .toggle-slider { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); }
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
-
-        /* File Drop Zone */
-        .file-drop-zone {
-            border: 2px dashed var(--gray-300);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--gray-50);
-        }
-
-        .file-drop-zone:hover,
-        .file-drop-zone.dragover {
-            border-color: var(--primary);
-            background: rgba(96, 165, 250, 0.05);
-        }
-
-        .file-drop-zone i {
-            font-size: 2.5rem;
-            color: var(--gray-300);
-            margin-bottom: 1rem;
-        }
-
-        .file-drop-zone:hover i,
-        .file-drop-zone.dragover i {
-            color: var(--primary);
-        }
-
-        .file-drop-zone p {
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .file-drop-zone small {
-            color: var(--text-light);
-            font-size: 0.8125rem;
-        }
-
-        .file-drop-zone input[type="file"] {
-            display: none;
-        }
-
-        .import-preview {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: 10px;
-            display: none;
-        }
-
-        .import-preview.show {
-            display: block;
-        }
-
-        .import-preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .import-preview-header h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .import-preview-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem;
-            background: var(--white);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            border: 1px solid var(--gray-200);
-        }
-
-        .import-preview-item .name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .import-preview-item .meta {
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
-        }
-
-        .studio-match-success {
-            color: var(--success);
-        }
-
-        .studio-match-warning {
-            color: var(--warning);
-        }
-
-        /* TOAST */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            color: white;
-            font-weight: 500;
-            z-index: 3000;
-            animation: slideIn 0.3s ease;
-        }
-
+        .file-drop-zone { border: 2px dashed var(--gray-300); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--gray-50); }
+        .file-drop-zone:hover, .file-drop-zone.dragover { border-color: var(--primary); background: rgba(96, 165, 250, 0.05); }
+        .file-drop-zone i { font-size: 2.5rem; color: var(--gray-300); margin-bottom: 1rem; }
+        .file-drop-zone:hover i, .file-drop-zone.dragover i { color: var(--primary); }
+        .file-drop-zone p { color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .file-drop-zone small { color: var(--text-light); font-size: 0.8125rem; }
+        .file-drop-zone input[type="file"] { display: none; }
+        .import-preview { margin-top: 1.5rem; padding: 1rem; background: var(--gray-50); border-radius: 10px; display: none; }
+        .import-preview.show { display: block; }
+        .import-preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .import-preview-header h4 { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+        .import-preview-item { display: flex; justify-content: space-between; padding: 0.75rem; background: var(--white); border-radius: 8px; margin-bottom: 0.5rem; border: 1px solid var(--gray-200); }
+        .import-preview-item .name { font-weight: 600; color: var(--text-primary); }
+        .import-preview-item .meta { font-size: 0.8125rem; color: var(--text-secondary); }
+        .studio-match-success { color: var(--success); }
+        .studio-match-warning { color: var(--warning); }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; border-radius: 10px; color: white; font-weight: 500; z-index: 3000; animation: slideIn 0.3s ease; }
         .toast.success { background: var(--success); }
         .toast.error { background: var(--danger); }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .loading { text-align: center; padding: 3rem; color: var(--text-secondary); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999; }
         .sidebar-overlay.active { display: block; }
-
-        @media (max-width: 1100px) {
-            .programs-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.collapsed { transform: translateX(0); width: var(--sidebar-width); }
-            .main-content { margin-left: 0; padding: 1.5rem; }
-            .page-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
-            .filter-row { flex-direction: column; }
-            .filter-group { width: 100%; }
-            .form-row { grid-template-columns: 1fr; }
-            .programs-grid { grid-template-columns: 1fr; }
-            .modal-tabs { gap: 0; }
-            .modal-tab { padding: 0.625rem 0.75rem; font-size: 0.75rem; }
-        }
+        @media (max-width: 1100px) { .programs-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .sidebar { transform: translateX(-100%); } .sidebar.collapsed { transform: translateX(0); width: var(--sidebar-width); } .main-content { margin-left: 0; padding: 1.5rem; } .page-header { flex-direction: column; gap: 1rem; align-items: flex-start; } .filter-row { flex-direction: column; } .filter-group { width: 100%; } .form-row { grid-template-columns: 1fr; } .programs-grid { grid-template-columns: 1fr; } .modal-tabs { gap: 0; } .modal-tab { padding: 0.625rem 0.75rem; font-size: 0.75rem; } }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <div class="logo-section">
                 <div class="logo-icon">EH</div>
                 <span class="logo-text">Admin<span class="admin-badge">Admin</span></span>
             </div>
-            <button id="sidebarToggle" class="toggle-btn">
-                <span class="toggle-icon">‹</span>
-            </button>
+            <button id="sidebarToggle" class="toggle-btn"><span class="toggle-icon">&#8249;</span></button>
         </div>
-
         <nav class="sidebar-nav">
-            <a href="admindashboard.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
-                <span class="nav-text">Dashboard</span>
-            </a>
-            <a href="adminquicklinks.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-link"></i></span>
-                <span class="nav-text">Quick Links</span>
-            </a>
-            <a href="adminstudio-directory.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-building"></i></span>
-                <span class="nav-text">Studio Directory</span>
-            </a>
-            <a href="adminteacher-directory.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
-                <span class="nav-text">Teacher Directory</span>
-            </a>
-            <a href="adminsnippets.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-code"></i></span>
-                <span class="nav-text">Snippets</span>
-            </a>
-            <a href="adminmap.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
-                <span class="nav-text">Map</span>
-            </a>
-            <a href="adminprograms.html" class="nav-item active">
-                <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
-                <span class="nav-text">Programs</span>
-            </a>
-            <a href="admintraining-hub.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-book-open"></i></span>
-                <span class="nav-text">Training Hub</span>
-            </a>
-            <a href="adminpolicies.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
-                <span class="nav-text">Policies</span>
-            </a>
-            <a href="adminprofiles.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-user"></i></span>
-                <span class="nav-text">Profiles</span>
-            </a>
-            <a href="admindirectors.html" class="nav-item">
-                <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
-                <span class="nav-text">Directors Page</span>
-            </a>
+            <a href="admindashboard.html" class="nav-item"><span class="nav-icon"><i class="fas fa-chart-line"></i></span><span class="nav-text">Dashboard</span></a>
+            <a href="adminquicklinks.html" class="nav-item"><span class="nav-icon"><i class="fas fa-link"></i></span><span class="nav-text">Quick Links</span></a>
+            <a href="adminstudio-directory.html" class="nav-item"><span class="nav-icon"><i class="fas fa-building"></i></span><span class="nav-text">Studio Directory</span></a>
+            <a href="adminteacher-directory.html" class="nav-item"><span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span><span class="nav-text">Teacher Directory</span></a>
+            <a href="adminsnippets.html" class="nav-item"><span class="nav-icon"><i class="fas fa-code"></i></span><span class="nav-text">Snippets</span></a>
+            <a href="adminmap.html" class="nav-item"><span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span><span class="nav-text">Map</span></a>
+            <a href="adminprograms.html" class="nav-item active"><span class="nav-icon"><i class="fas fa-graduation-cap"></i></span><span class="nav-text">Programs</span></a>
+            <a href="admintraining-hub.html" class="nav-item"><span class="nav-icon"><i class="fas fa-book-open"></i></span><span class="nav-text">Training Hub</span></a>
+            <a href="adminpolicies.html" class="nav-item"><span class="nav-icon"><i class="fas fa-file-alt"></i></span><span class="nav-text">Policies</span></a>
+            <a href="adminprofiles.html" class="nav-item"><span class="nav-icon"><i class="fas fa-user"></i></span><span class="nav-text">Profiles</span></a>
+            <a href="admindirectors.html" class="nav-item"><span class="nav-icon"><i class="fas fa-user-tie"></i></span><span class="nav-text">Directors Page</span></a>
         </nav>
-
-        <div class="sidebar-footer">
-            <button id="logoutBtn" class="nav-item logout-btn">
-                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
-                <span class="nav-text">Logout</span>
-            </button>
-        </div>
+        <div class="sidebar-footer"><button id="logoutBtn" class="nav-item logout-btn"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span><span class="nav-text">Logout</span></button></div>
     </div>
-
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
-
     <main class="main-content">
-        <div class="page-header">
-            <div class="page-header-left">
-                <h1>Programs Management</h1>
-                <p>Manage programs for each studio location</p>
-            </div>
-        </div>
-
-        <!-- Filter Section -->
+        <div class="page-header"><div class="page-header-left"><h1>Programs Management</h1><p>Manage programs for each studio location</p></div></div>
         <div class="filter-section">
             <div class="filter-row">
-                <div class="filter-group">
-                    <label>Zone</label>
-                    <select class="form-select" id="zoneFilter">
-                        <option value="">All Zones</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Brand</label>
-                    <select class="form-select" id="brandFilter">
-                        <option value="">All Brands</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>State</label>
-                    <select class="form-select" id="stateFilter">
-                        <option value="">All States</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Studio</label>
-                    <select class="form-select" id="studioFilter">
-                        <option value="">All Studios</option>
-                    </select>
-                </div>
+                <div class="filter-group"><label>Zone</label><select class="form-select" id="zoneFilter"><option value="">All Zones</option></select></div>
+                <div class="filter-group"><label>Brand</label><select class="form-select" id="brandFilter"><option value="">All Brands</option></select></div>
+                <div class="filter-group"><label>State</label><select class="form-select" id="stateFilter"><option value="">All States</option></select></div>
+                <div class="filter-group"><label>Studio</label><select class="form-select" id="studioFilter"><option value="">All Studios</option></select></div>
             </div>
             <div class="filter-row" style="margin-top: 1rem;">
-                <div class="filter-group" style="flex: 2;">
-                    <label>Search Programs</label>
-                    <input type="text" class="form-input" id="searchInput" placeholder="Search by program, brand, city, or state...">
-                </div>
-                <button class="btn btn-secondary" id="importProgramBtn" onclick="openImportModal()">
-                    <i class="fas fa-upload"></i>
-                    Import JSON
-                </button>
-                <button class="btn btn-primary" id="addProgramBtn" style="display: none;" onclick="openAddProgramModal()">
-                    <i class="fas fa-plus"></i>
-                    Add Program
-                </button>
+                <div class="filter-group" style="flex: 2;"><label>Search Programs</label><input type="text" class="form-input" id="searchInput" placeholder="Search by program, brand, city, or state..."></div>
+                <button class="btn btn-secondary" id="importProgramBtn" onclick="openImportModal()"><i class="fas fa-upload"></i> Import JSON</button>
+                <button class="btn btn-primary" id="addProgramBtn" style="display: none;" onclick="openAddProgramModal()"><i class="fas fa-plus"></i> Add Program</button>
             </div>
         </div>
-
-        <div id="loading" class="loading" style="display: none;">
-            <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
-            Loading programs...
-        </div>
-
-        <div id="selectStudioMessage" class="empty-state">
-            <i class="fas fa-hand-pointer"></i>
-            <p>Select a studio to view and manage its programs</p>
-        </div>
-
-        <div id="programsContainer" style="display: none;">
-            <div id="programsGrid" class="programs-grid"></div>
-        </div>
+        <div id="loading" class="loading" style="display: none;"><i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading programs...</div>
+        <div id="selectStudioMessage" class="empty-state"><i class="fas fa-hand-pointer"></i><p>Select a studio to view and manage its programs</p></div>
+        <div id="programsContainer" style="display: none;"><div id="programsGrid" class="programs-grid"></div></div>
     </main>
 
     <!-- Program Modal -->
-    <div id="programModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="programModalTitle">Add Program</h3>
-                <button class="modal-close" onclick="closeProgramModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+    <div id="programModal" class="modal"><div class="modal-content">
+        <div class="modal-header"><h3 class="modal-title" id="programModalTitle">Add Program</h3><button class="modal-close" onclick="closeProgramModal()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body"><form id="programForm">
+            <input type="hidden" id="programId"><input type="hidden" id="programStudioId">
+            <div class="modal-tabs">
+                <button type="button" class="modal-tab active" data-tab="basic">Basic Info</button>
+                <button type="button" class="modal-tab" data-tab="pricing">Pricing</button>
+                <button type="button" class="modal-tab" data-tab="enrollment">Enrollment</button>
+                <button type="button" class="modal-tab" data-tab="details">Details</button>
+                <button type="button" class="modal-tab" data-tab="policies">Policies</button>
+                <button type="button" class="modal-tab" data-tab="links">Links</button>
             </div>
-            <div class="modal-body">
-                <form id="programForm">
-                    <input type="hidden" id="programId">
-                    <input type="hidden" id="programStudioId">
-                    
-                    <div class="modal-tabs">
-                        <button type="button" class="modal-tab active" data-tab="basic">Basic Info</button>
-                        <button type="button" class="modal-tab" data-tab="pricing">Pricing</button>
-                        <button type="button" class="modal-tab" data-tab="enrollment">Enrollment</button>
-                        <button type="button" class="modal-tab" data-tab="details">Details</button>
-                        <button type="button" class="modal-tab" data-tab="policies">Policies</button>
-                        <button type="button" class="modal-tab" data-tab="links">Links</button>
-                    </div>
-
-                    <!-- Basic Info Tab -->
-                    <div id="basicTab" class="modal-tab-content active">
-                        <div class="form-group">
-                            <label class="form-label">Program Name *</label>
-                            <input type="text" class="form-input" id="programName" required placeholder="e.g., Private Piano Lessons">
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Class Size</label>
-                                <input type="text" class="form-input" id="programClassSize" placeholder="e.g., 1-on-1, Max 6 students">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Lesson Duration</label>
-                                <input type="text" class="form-input" id="programDuration" placeholder="e.g., 30, 45, or 60 min">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Lesson Frequency</label>
-                                <input type="text" class="form-input" id="programFrequency" placeholder="e.g., Weekly, Twice a week, Monthly">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" id="programStatus">
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pricing Tab -->
-                    <div id="pricingTab" class="modal-tab-content">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Price</label>
-                                <input type="text" class="form-input" id="programPrice" placeholder="e.g., $150">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Billing Type</label>
-                                <select class="form-select" id="programPriceType">
-                                    <option value="">Select type</option>
-                                    <option value="Monthly">Monthly (Recurring)</option>
-                                    <option value="Semester">Per Semester (Upfront)</option>
-                                    <option value="Per Class">Per Class</option>
-                                    <option value="Package">Package Deal</option>
-                                    <option value="Annual">Annual</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Registration Fee</label>
-                                <input type="text" class="form-input" id="programRegFee" placeholder="e.g., $50">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">What Does the Fee Cover?</label>
-                                <input type="text" class="form-input" id="programRegFeeCovers" placeholder="e.g., Materials, books, admin">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Enrollment Tab -->
-                    <div id="enrollmentTab" class="modal-tab-content">
-                        <div class="form-group">
-                            <label class="form-label">Enrollment Type</label>
-                            <select class="form-select" id="programEnrollmentType" onchange="toggleMidSemesterFields()">
-                                <option value="">Select type</option>
-                                <option value="Open Enrollment">Open Enrollment (Start Anytime)</option>
-                                <option value="Semester Based">Semester Based</option>
-                                <option value="Session Based">Session Based</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">How to Enroll</label>
-                            <textarea class="form-textarea" id="programEnrollmentProcess" placeholder="Steps to enroll - call, online form, in-person, etc."></textarea>
-                        </div>
-                        
-                        <!-- Mid-Semester Fields (hidden by default) -->
-                        <div id="midSemesterSection" style="display: none;">
-                            <div class="toggle-group">
-                                <span class="toggle-label">Can Students Start Mid-Semester?</span>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="programMidSemester">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Mid-Semester Policy</label>
-                                <textarea class="form-textarea" id="programMidSemesterPolicy" placeholder="Rules for joining mid-semester..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Price Adjustment for Mid-Semester?</label>
-                                <input type="text" class="form-input" id="programMidSemesterPrice" placeholder="e.g., Prorated based on remaining weeks">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Details Tab -->
-                    <div id="detailsTab" class="modal-tab-content">
-                        <div class="form-group">
-                            <label class="form-label">Skill Level</label>
-                            <select class="form-select" id="programSkillLevel">
-                                <option value="">Select level</option>
-                                <option value="None/Beginner">No Experience Needed</option>
-                                <option value="Some Experience">Some Experience Required</option>
-                                <option value="Intermediate">Intermediate Level</option>
-                                <option value="Advanced">Advanced Level</option>
-                                <option value="All Levels">All Levels Welcome</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Other Requirements</label>
-                            <textarea class="form-textarea" id="programQualifications" placeholder="Age requirements, audition needed, materials to bring, etc."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">What Will Students Learn?</label>
-                            <textarea class="form-textarea" id="programCurriculum" style="min-height: 120px;" placeholder="Topics covered, skills developed, materials used, etc."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Policies Tab -->
-                    <div id="policiesTab" class="modal-tab-content">
-                        <div class="toggle-group">
-                            <span class="toggle-label">Parent/Guardian Must Stay for Class?</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="programParentRequired">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-group">
-                            <span class="toggle-label">First Lesson Free?</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="programFirstFree">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Makeup Policy</label>
-                            <textarea class="form-textarea" id="programMakeupPolicy" placeholder="How are missed lessons handled? How much notice is required?"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Withdrawal Policy</label>
-                            <textarea class="form-textarea" id="programWithdrawalPolicy" placeholder="How to cancel enrollment, notice required, refund policy, etc."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Other Policies</label>
-                            <textarea class="form-textarea" id="programAdditionalPolicies" placeholder="Attendance expectations, dress code, late fees, etc."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Links Tab -->
-                    <div id="linksTab" class="modal-tab-content">
-                        <div class="form-group">
-                            <label class="form-label">Scheduling Link</label>
-                            <input type="url" class="form-input" id="programLink" placeholder="https://calendly.com/...">
-                            <small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Link for scheduling consultations or lessons</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Flyer Link</label>
-                            <input type="url" class="form-input" id="programFlyerLink" placeholder="https://drive.google.com/...">
-                            <small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Link to program flyer or brochure (PDF, image, etc.)</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Website Description Link</label>
-                            <input type="url" class="form-input" id="programWebsiteLink" placeholder="https://studioweb.com/programs/...">
-                            <small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Link to program description on the studio website</small>
-                        </div>
-                    </div>
-                </form>
+            <div id="basicTab" class="modal-tab-content active">
+                <div class="form-group"><label class="form-label">Program Name *</label><input type="text" class="form-input" id="programName" required placeholder="e.g., Private Piano Lessons"></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Class Size</label><input type="text" class="form-input" id="programClassSize" placeholder="e.g., 1-on-1, Max 6 students"></div><div class="form-group"><label class="form-label">Lesson Duration</label><input type="text" class="form-input" id="programDuration" placeholder="e.g., 30, 45, or 60 min"></div></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Lesson Frequency</label><input type="text" class="form-input" id="programFrequency" placeholder="e.g., Weekly, Twice a week, Monthly"></div><div class="form-group"><label class="form-label">Status</label><select class="form-select" id="programStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div></div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeProgramModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveProgram()">
-                    <i class="fas fa-save"></i>
-                    Save Program
-                </button>
+            <div id="pricingTab" class="modal-tab-content">
+                <div class="form-row"><div class="form-group"><label class="form-label">Price</label><input type="text" class="form-input" id="programPrice" placeholder="e.g., $150"></div><div class="form-group"><label class="form-label">Billing Type</label><select class="form-select" id="programPriceType"><option value="">Select type</option><option value="Monthly">Monthly (Recurring)</option><option value="Semester">Per Semester (Upfront)</option><option value="Per Class">Per Class</option><option value="Package">Package Deal</option><option value="Annual">Annual</option></select></div></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Registration Fee</label><input type="text" class="form-input" id="programRegFee" placeholder="e.g., $50"></div><div class="form-group"><label class="form-label">What Does the Fee Cover?</label><input type="text" class="form-input" id="programRegFeeCovers" placeholder="e.g., Materials, books, admin"></div></div>
             </div>
-        </div>
-    </div>
+            <div id="enrollmentTab" class="modal-tab-content">
+                <div class="form-group"><label class="form-label">Enrollment Type</label><select class="form-select" id="programEnrollmentType" onchange="toggleMidSemesterFields()"><option value="">Select type</option><option value="Open Enrollment">Open Enrollment (Start Anytime)</option><option value="Semester Based">Semester Based</option><option value="Session Based">Session Based</option></select></div>
+                <div class="form-group"><label class="form-label">How to Enroll</label><div class="rich-editor-wrapper">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" onclick="execRichCmd(this, 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                    <div class="toolbar-divider"></div>
+                                    <button type="button" onclick="execRichCmd(this, 'insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                    <button type="button" onclick="execRichCmd(this, 'insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                                </div>
+                                <div class="rich-editor-content" contenteditable="true" id="programEnrollmentProcess" data-placeholder="Steps to enroll - call, online form, in-person, etc."></div>
+                            </div></div>
+                <div id="midSemesterSection" style="display: none;">
+                    <div class="toggle-group"><span class="toggle-label">Can Students Start Mid-Semester?</span><label class="toggle-switch"><input type="checkbox" id="programMidSemester"><span class="toggle-slider"></span></label></div>
+                    <div class="form-group"><label class="form-label">Mid-Semester Policy</label><textarea class="form-textarea" id="programMidSemesterPolicy" placeholder="Rules for joining mid-semester..."></textarea></div>
+                    <div class="form-group"><label class="form-label">Price Adjustment for Mid-Semester?</label><input type="text" class="form-input" id="programMidSemesterPrice" placeholder="e.g., Prorated based on remaining weeks"></div>
+                </div>
+            </div>
+            <div id="detailsTab" class="modal-tab-content">
+                <div class="form-group"><label class="form-label">Skill Level</label><select class="form-select" id="programSkillLevel"><option value="">Select level</option><option value="None/Beginner">No Experience Needed</option><option value="Some Experience">Some Experience Required</option><option value="Intermediate">Intermediate Level</option><option value="Advanced">Advanced Level</option><option value="All Levels">All Levels Welcome</option></select></div>
+                <div class="form-group"><label class="form-label">Other Requirements</label><textarea class="form-textarea" id="programQualifications" placeholder="Age requirements, audition needed, materials to bring, etc."></textarea></div>
+                <div class="form-group"><label class="form-label">What Will Students Learn?</label><textarea class="form-textarea" id="programCurriculum" style="min-height: 120px;" placeholder="Topics covered, skills developed, materials used, etc."></textarea></div>
+            </div>
+            <div id="policiesTab" class="modal-tab-content">
+                <div class="toggle-group"><span class="toggle-label">Parent/Guardian Must Stay for Class?</span><label class="toggle-switch"><input type="checkbox" id="programParentRequired"><span class="toggle-slider"></span></label></div>
+                <div class="toggle-group"><span class="toggle-label">First Lesson Free?</span><label class="toggle-switch"><input type="checkbox" id="programFirstFree"><span class="toggle-slider"></span></label></div>
+                <div class="form-group"><label class="form-label">Makeup Policy</label><div class="rich-editor-wrapper">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" onclick="execRichCmd(this, 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                    <div class="toolbar-divider"></div>
+                                    <button type="button" onclick="execRichCmd(this, 'insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                    <button type="button" onclick="execRichCmd(this, 'insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                                </div>
+                                <div class="rich-editor-content" contenteditable="true" id="programMakeupPolicy" data-placeholder="How are missed lessons handled? How much notice is required?"></div>
+                            </div></div>
+                <div class="form-group"><label class="form-label">Withdrawal Policy</label><div class="rich-editor-wrapper">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" onclick="execRichCmd(this, 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                    <div class="toolbar-divider"></div>
+                                    <button type="button" onclick="execRichCmd(this, 'insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                    <button type="button" onclick="execRichCmd(this, 'insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                                </div>
+                                <div class="rich-editor-content" contenteditable="true" id="programWithdrawalPolicy" data-placeholder="How to cancel enrollment, notice required, refund policy, etc."></div>
+                            </div></div>
+                <div class="form-group"><label class="form-label">Other Policies</label><div class="rich-editor-wrapper">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" onclick="execRichCmd(this, 'bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                    <div class="toolbar-divider"></div>
+                                    <button type="button" onclick="execRichCmd(this, 'insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                    <button type="button" onclick="execRichCmd(this, 'insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                                </div>
+                                <div class="rich-editor-content" contenteditable="true" id="programAdditionalPolicies" data-placeholder="Attendance expectations, dress code, late fees, etc."></div>
+                            </div></div>
+            </div>
+            <div id="linksTab" class="modal-tab-content">
+                <div class="form-group"><label class="form-label">Scheduling Link</label><input type="url" class="form-input" id="programLink" placeholder="https://calendly.com/..."><small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Link for scheduling consultations or lessons</small></div>
+                <div class="form-group"><label class="form-label">Flyer Link</label><input type="url" class="form-input" id="programFlyerLink" placeholder="https://drive.google.com/..."><small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Link to program flyer or brochure (PDF, image, etc.)</small></div>
+                <div class="form-group"><label class="form-label">Website Description Link</label><input type="url" class="form-input" id="programWebsiteLink" placeholder="https://studioweb.com/programs/..."><small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Link to program description on the studio website</small></div>
+            </div>
+        </form></div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="closeProgramModal()">Cancel</button><button class="btn btn-primary" onclick="saveProgram()"><i class="fas fa-save"></i> Save Program</button></div>
+    </div></div>
 
     <!-- Import Modal -->
-    <div id="importModal" class="modal">
-        <div class="modal-content" style="max-width: 550px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Import Program</h3>
-                <button class="modal-close" onclick="closeImportModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="file-drop-zone" id="fileDropZone">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Drag & drop JSON file here</p>
-                    <small>or click to browse</small>
-                    <input type="file" id="fileInput" accept=".json" style="display: none;">
+    <div id="importModal" class="modal"><div class="modal-content" style="max-width: 550px;">
+        <div class="modal-header"><h3 class="modal-title">Import Program</h3><button class="modal-close" onclick="closeImportModal()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body">
+            <div class="file-drop-zone" id="fileDropZone"><i class="fas fa-cloud-upload-alt"></i><p>Drag &amp; drop JSON file here</p><small>or click to browse</small><input type="file" id="fileInput" accept=".json" style="display: none;"></div>
+            <div class="import-preview" id="importPreview">
+                <div class="import-preview-header"><h4>Program to Import</h4><button class="btn btn-secondary btn-small" onclick="clearImport()"><i class="fas fa-times"></i> Clear</button></div>
+                <div id="importPreviewContent"></div>
+                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                    <label class="form-label" style="margin-bottom: 0.75rem; display: block;">Assign to Studio *</label>
+                    <div class="form-group" id="importZoneGroup" style="margin-bottom: 0.75rem;"><select class="form-select" id="importZoneSelect"><option value="">All Zones</option></select></div>
+                    <div class="form-group" id="importBrandGroup" style="margin-bottom: 0.75rem;"><select class="form-select" id="importBrandSelect"><option value="">Select Brand</option></select></div>
+                    <div class="form-group" style="margin-bottom: 0;"><select class="form-select" id="importStudioSelect"><option value="">Select Studio Location</option></select></div>
+                    <div id="studioMatchInfo" style="margin-top: 0.5rem; font-size: 0.8125rem;"></div>
                 </div>
-
-                <div class="import-preview" id="importPreview">
-                    <div class="import-preview-header">
-                        <h4>Program to Import</h4>
-                        <button class="btn btn-secondary btn-small" onclick="clearImport()">
-                            <i class="fas fa-times"></i> Clear
-                        </button>
-                    </div>
-                    <div id="importPreviewContent"></div>
-                    
-                    <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
-                        <label class="form-label" style="margin-bottom: 0.75rem; display: block;">Assign to Studio *</label>
-                        
-                        <div class="form-group" id="importZoneGroup" style="margin-bottom: 0.75rem;">
-                            <select class="form-select" id="importZoneSelect">
-                                <option value="">All Zones</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group" id="importBrandGroup" style="margin-bottom: 0.75rem;">
-                            <select class="form-select" id="importBrandSelect">
-                                <option value="">Select Brand</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <select class="form-select" id="importStudioSelect">
-                                <option value="">Select Studio Location</option>
-                            </select>
-                        </div>
-                        
-                        <div id="studioMatchInfo" style="margin-top: 0.5rem; font-size: 0.8125rem;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeImportModal()">Cancel</button>
-                <button class="btn btn-primary" id="importConfirmBtn" onclick="confirmImport()" disabled>
-                    <i class="fas fa-upload"></i>
-                    Import Program
-                </button>
             </div>
         </div>
-    </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="closeImportModal()">Cancel</button><button class="btn btn-primary" id="importConfirmBtn" onclick="confirmImport()" disabled><i class="fas fa-upload"></i> Import Program</button></div>
+    </div></div>
 
     <!-- Duplicate Modal -->
-    <div id="duplicateModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Duplicate Program</h3>
-                <button class="modal-close" onclick="closeDuplicateModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+    <div id="duplicateModal" class="modal"><div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header"><h3 class="modal-title">Duplicate Program</h3><button class="modal-close" onclick="closeDuplicateModal()"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body">
+            <div class="import-preview show" style="margin-top: 0;"><div class="import-preview-header" style="margin-bottom: 0.75rem;"><h4>Program to Duplicate</h4></div><div id="duplicatePreviewContent"></div></div>
+            <div style="margin-top: 1.5rem;">
+                <label class="form-label" style="margin-bottom: 0.75rem; display: block;">Duplicate to Studio *</label>
+                <div class="form-group" id="duplicateZoneGroup" style="margin-bottom: 0.75rem;"><select class="form-select" id="duplicateZoneSelect"><option value="">All Zones</option></select></div>
+                <div class="form-group" id="duplicateBrandGroup" style="margin-bottom: 0.75rem;"><select class="form-select" id="duplicateBrandSelect"><option value="">Select Brand</option></select></div>
+                <div class="form-group" style="margin-bottom: 0;"><select class="form-select" id="duplicateStudioSelect"><option value="">Select Studio Location</option></select></div>
             </div>
-            <div class="modal-body">
-                <div class="import-preview show" style="margin-top: 0;">
-                    <div class="import-preview-header" style="margin-bottom: 0.75rem;">
-                        <h4>Program to Duplicate</h4>
-                    </div>
-                    <div id="duplicatePreviewContent"></div>
-                </div>
-                
-                <div style="margin-top: 1.5rem;">
-                    <label class="form-label" style="margin-bottom: 0.75rem; display: block;">Duplicate to Studio *</label>
-                    
-                    <div class="form-group" id="duplicateZoneGroup" style="margin-bottom: 0.75rem;">
-                        <select class="form-select" id="duplicateZoneSelect">
-                            <option value="">All Zones</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" id="duplicateBrandGroup" style="margin-bottom: 0.75rem;">
-                        <select class="form-select" id="duplicateBrandSelect">
-                            <option value="">Select Brand</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <select class="form-select" id="duplicateStudioSelect">
-                            <option value="">Select Studio Location</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-top: 1rem;">
-                    <label class="form-label">New Program Name</label>
-                    <input type="text" class="form-input" id="duplicateProgramName" placeholder="Leave blank to keep same name">
-                    <small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
-                        Optional: Enter a new name or leave blank to use the original name
-                    </small>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeDuplicateModal()">Cancel</button>
-                <button class="btn btn-primary" id="duplicateConfirmBtn" onclick="confirmDuplicate()">
-                    <i class="fas fa-copy"></i>
-                    Duplicate Program
-                </button>
-            </div>
+            <div class="form-group" style="margin-top: 1rem;"><label class="form-label">New Program Name</label><input type="text" class="form-input" id="duplicateProgramName" placeholder="Leave blank to keep same name"><small style="color: var(--text-light); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Optional: Enter a new name or leave blank to use the original name</small></div>
         </div>
-    </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="closeDuplicateModal()">Cancel</button><button class="btn btn-primary" id="duplicateConfirmBtn" onclick="confirmDuplicate()"><i class="fas fa-copy"></i> Duplicate Program</button></div>
+    </div></div>
 
     <script>
         const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
@@ -1153,14 +334,12 @@
         let allBrands = [];
         let selectedStudioId = null;
 
-        // Helper function to get brand name from brand_id
         function getBrandName(brandId) {
             if (!brandId) return 'Unknown';
             const brand = allBrands.find(b => b.id === brandId);
             return brand ? brand.name : 'Unknown';
         }
 
-        // Helper function to get studio display label
         function getStudioLabel(studio) {
             const brandName = getBrandName(studio.brand_id);
             let label = brandName;
@@ -1177,7 +356,6 @@
             loadBrands();
             loadStudios();
             loadAllPrograms();
-            
             document.getElementById('zoneFilter').addEventListener('change', onZoneChange);
             document.getElementById('brandFilter').addEventListener('change', onBrandChange);
             document.getElementById('stateFilter').addEventListener('change', onStateChange);
@@ -1190,38 +368,20 @@
             const toggleBtn = document.getElementById('sidebarToggle');
             const overlay = document.getElementById('sidebarOverlay');
             const logoutBtn = document.getElementById('logoutBtn');
-
             toggleBtn.addEventListener('click', () => {
                 sidebar.classList.toggle('collapsed');
-                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
-                    overlay.classList.add('active');
-                } else {
-                    overlay.classList.remove('active');
-                }
+                if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) { overlay.classList.add('active'); } else { overlay.classList.remove('active'); }
             });
-
-            overlay.addEventListener('click', () => {
-                sidebar.classList.add('collapsed');
-                overlay.classList.remove('active');
-            });
-
-            logoutBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to logout?')) {
-                    window.location.href = 'index.html';
-                }
-            });
+            overlay.addEventListener('click', () => { sidebar.classList.add('collapsed'); overlay.classList.remove('active'); });
+            logoutBtn.addEventListener('click', () => { if (confirm('Are you sure you want to logout?')) { window.location.href = 'index.html'; } });
         }
 
         function setupModalTabs() {
             document.querySelectorAll('.modal-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.dataset.tab;
-                    
-                    // Update tab buttons
                     document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    
-                    // Update tab content
                     document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
                     document.getElementById(tabName + 'Tab').classList.add('active');
                 });
@@ -1231,7 +391,6 @@
         function toggleMidSemesterFields() {
             const enrollmentType = document.getElementById('programEnrollmentType').value;
             const midSemesterSection = document.getElementById('midSemesterSection');
-            
             if (enrollmentType === 'Semester Based') {
                 midSemesterSection.style.display = 'block';
             } else {
@@ -1242,101 +401,55 @@
             }
         }
 
+        // Rich Text Editor helpers
+        function execRichCmd(btn, command) {
+            document.execCommand(command, false, null);
+            if (command === 'bold') {
+                btn.classList.toggle('active', document.queryCommandState('bold'));
+            }
+            const editor = btn.closest('.rich-editor-wrapper').querySelector('.rich-editor-content');
+            editor.focus();
+        }
+
+        function getRichContent(id) {
+            const el = document.getElementById(id);
+            if (!el) return null;
+            const content = el.innerHTML.trim();
+            if (!content || content === '<br>' || content === '<div><br></div>') return null;
+            return content;
+        }
+
+        function setRichContent(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = value || '';
+        }
+
+        function clearRichEditors() {
+            document.querySelectorAll('.rich-editor-content').forEach(el => el.innerHTML = '');
+        }
+
         async function loadZones() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('zones')
-                    .select('*');
-
-                if (error) {
-                    // Table doesn't exist or other error
-                    console.warn('Zones table not available:', error.message);
-                    allZones = [];
-                    const zoneFilter = document.getElementById('zoneFilter');
-                    if (zoneFilter && zoneFilter.parentElement) {
-                        zoneFilter.parentElement.style.display = 'none';
-                    }
-                    return;
-                }
-
+                const { data, error } = await supabaseClient.from('zones').select('*');
+                if (error) { console.warn('Zones table not available:', error.message); allZones = []; const zf = document.getElementById('zoneFilter'); if (zf && zf.parentElement) zf.parentElement.style.display = 'none'; return; }
                 allZones = data || [];
-                console.log('Loaded zones:', allZones.length);
-                if (allZones.length > 0) {
-                    console.log('Zone fields:', Object.keys(allZones[0]));
-                    console.log('Sample zone:', allZones[0]);
-                }
-                
-                if (allZones.length === 0) {
-                    const zoneFilter = document.getElementById('zoneFilter');
-                    if (zoneFilter && zoneFilter.parentElement) {
-                        zoneFilter.parentElement.style.display = 'none';
-                    }
-                } else {
-                    populateZoneDropdown();
-                }
-            } catch (error) {
-                console.warn('Error loading zones:', error);
-                allZones = [];
-                const zoneFilter = document.getElementById('zoneFilter');
-                if (zoneFilter && zoneFilter.parentElement) {
-                    zoneFilter.parentElement.style.display = 'none';
-                }
-            }
+                if (allZones.length === 0) { const zf = document.getElementById('zoneFilter'); if (zf && zf.parentElement) zf.parentElement.style.display = 'none'; } else { populateZoneDropdown(); }
+            } catch (error) { console.warn('Error loading zones:', error); allZones = []; const zf = document.getElementById('zoneFilter'); if (zf && zf.parentElement) zf.parentElement.style.display = 'none'; }
         }
 
         function populateZoneDropdown() {
             const select = document.getElementById('zoneFilter');
             select.innerHTML = '<option value="">All Zones</option>';
-            
-            allZones.forEach(zone => {
-                const option = document.createElement('option');
-                option.value = zone.id;
-                // Try different possible column names for zone name
-                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
-                select.appendChild(option);
-            });
+            allZones.forEach(zone => { const o = document.createElement('option'); o.value = zone.id; o.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone'; select.appendChild(o); });
         }
 
         async function loadBrands() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('brands')
-                    .select('*')
-                    .order('name');
-
-                if (error) {
-                    console.warn('Brands table not available:', error.message);
-                    allBrands = [];
-                    const brandFilter = document.getElementById('brandFilter');
-                    if (brandFilter && brandFilter.parentElement) {
-                        brandFilter.parentElement.style.display = 'none';
-                    }
-                    return;
-                }
-
+                const { data, error } = await supabaseClient.from('brands').select('*').order('name');
+                if (error) { console.warn('Brands table not available:', error.message); allBrands = []; const bf = document.getElementById('brandFilter'); if (bf && bf.parentElement) bf.parentElement.style.display = 'none'; return; }
                 allBrands = data || [];
-                console.log('Loaded brands:', allBrands.length);
-                if (allBrands.length > 0) {
-                    console.log('Brand fields:', Object.keys(allBrands[0]));
-                    console.log('Sample brand:', allBrands[0]);
-                }
-                
-                if (allBrands.length === 0) {
-                    const brandFilter = document.getElementById('brandFilter');
-                    if (brandFilter && brandFilter.parentElement) {
-                        brandFilter.parentElement.style.display = 'none';
-                    }
-                } else {
-                    populateBrandDropdown();
-                }
-            } catch (error) {
-                console.warn('Error loading brands:', error);
-                allBrands = [];
-                const brandFilter = document.getElementById('brandFilter');
-                if (brandFilter && brandFilter.parentElement) {
-                    brandFilter.parentElement.style.display = 'none';
-                }
-            }
+                if (allBrands.length === 0) { const bf = document.getElementById('brandFilter'); if (bf && bf.parentElement) bf.parentElement.style.display = 'none'; } else { populateBrandDropdown(); }
+            } catch (error) { console.warn('Error loading brands:', error); allBrands = []; const bf = document.getElementById('brandFilter'); if (bf && bf.parentElement) bf.parentElement.style.display = 'none'; }
         }
 
         function populateBrandDropdown(filteredBrands = null) {
@@ -1344,41 +457,18 @@
             const currentValue = select.value;
             const brands = filteredBrands || allBrands;
             select.innerHTML = '<option value="">All Brands</option>';
-            
-            brands.forEach(brand => {
-                const option = document.createElement('option');
-                option.value = brand.id;
-                option.textContent = brand.name;
-                select.appendChild(option);
-            });
-
-            // Restore value if still valid
-            if (currentValue && brands.some(b => b.id === currentValue)) {
-                select.value = currentValue;
-            }
+            brands.forEach(brand => { const o = document.createElement('option'); o.value = brand.id; o.textContent = brand.name; select.appendChild(o); });
+            if (currentValue && brands.some(b => b.id === currentValue)) select.value = currentValue;
         }
 
         async function loadStudios() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('studios')
-                    .select('*')
-                    .order('brand');
-
+                const { data, error } = await supabaseClient.from('studios').select('*').order('brand');
                 if (error) throw error;
-
                 allStudios = data || [];
-                console.log('Loaded studios:', allStudios.length);
-                if (allStudios.length > 0) {
-                    console.log('Sample studio fields:', Object.keys(allStudios[0]));
-                    console.log('Sample studio:', allStudios[0]);
-                }
                 populateStateDropdown();
                 populateStudioDropdown();
-            } catch (error) {
-                console.error('Error loading studios:', error);
-                showToast('Error loading studios', 'error');
-            }
+            } catch (error) { console.error('Error loading studios:', error); showToast('Error loading studios', 'error'); }
         }
 
         function populateStateDropdown(filteredStudios = null) {
@@ -1386,21 +476,9 @@
             const currentValue = select.value;
             const studios = filteredStudios || allStudios;
             select.innerHTML = '<option value="">All States</option>';
-            
-            // Get unique states from studios
             const states = [...new Set(studios.map(s => s.state).filter(Boolean))].sort();
-            
-            states.forEach(state => {
-                const option = document.createElement('option');
-                option.value = state;
-                option.textContent = state;
-                select.appendChild(option);
-            });
-
-            // Restore value if still valid
-            if (currentValue && states.includes(currentValue)) {
-                select.value = currentValue;
-            }
+            states.forEach(state => { const o = document.createElement('option'); o.value = state; o.textContent = state; select.appendChild(o); });
+            if (currentValue && states.includes(currentValue)) select.value = currentValue;
         }
 
         function populateStudioDropdown(filteredStudios = null) {
@@ -1408,94 +486,42 @@
             const currentValue = select.value;
             const studios = filteredStudios || allStudios;
             select.innerHTML = '<option value="">All Studios</option>';
-            
-            studios.forEach(studio => {
-                const option = document.createElement('option');
-                option.value = studio.id;
-                option.textContent = getStudioLabel(studio);
-                select.appendChild(option);
-            });
-
-            // Restore value if still valid
-            if (currentValue && studios.some(s => s.id === currentValue)) {
-                select.value = currentValue;
-            }
+            studios.forEach(studio => { const o = document.createElement('option'); o.value = studio.id; o.textContent = getStudioLabel(studio); select.appendChild(o); });
+            if (currentValue && studios.some(s => s.id === currentValue)) select.value = currentValue;
         }
 
         async function loadAllPrograms() {
             document.getElementById('loading').style.display = 'block';
-
             try {
-                const { data, error } = await supabaseClient
-                    .from('programs')
-                    .select('*')
-                    .order('name');
-
+                const { data, error } = await supabaseClient.from('programs').select('*').order('name');
                 if (error) throw error;
-
                 allPrograms = data || [];
                 applyFilters();
-            } catch (error) {
-                console.error('Error loading programs:', error);
-                showToast('Error loading programs', 'error');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
+            } catch (error) { console.error('Error loading programs:', error); showToast('Error loading programs', 'error'); }
+            finally { document.getElementById('loading').style.display = 'none'; }
         }
 
         function getFilteredStudios() {
             const zoneId = document.getElementById('zoneFilter').value;
             const brandId = document.getElementById('brandFilter').value;
             const state = document.getElementById('stateFilter').value;
-
             let filtered = [...allStudios];
-
-            // Filter by zone (through brands) - get brand_ids that belong to this zone
-            if (zoneId && allBrands.length > 0) {
-                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id);
-                filtered = filtered.filter(s => zoneBrandIds.includes(s.brand_id));
-            }
-
-            // Filter by brand
-            if (brandId) {
-                filtered = filtered.filter(s => s.brand_id === brandId);
-            }
-
-            // Filter by state
-            if (state) {
-                filtered = filtered.filter(s => s.state === state);
-            }
-
+            if (zoneId && allBrands.length > 0) { const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id); filtered = filtered.filter(s => zoneBrandIds.includes(s.brand_id)); }
+            if (brandId) filtered = filtered.filter(s => s.brand_id === brandId);
+            if (state) filtered = filtered.filter(s => s.state === state);
             return filtered;
         }
 
         function onZoneChange() {
             const zoneId = document.getElementById('zoneFilter').value;
-
-            // Update brand dropdown based on zone (only if brands exist)
-            if (allBrands.length > 0) {
-                if (zoneId) {
-                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
-                    populateBrandDropdown(filteredBrands);
-                } else {
-                    populateBrandDropdown();
-                }
-                // Reset brand selection if not in filtered list
-                document.getElementById('brandFilter').value = '';
-            }
-
-            // Update state and studio dropdowns
+            if (allBrands.length > 0) { if (zoneId) { populateBrandDropdown(allBrands.filter(b => b.zone_id === zoneId)); } else { populateBrandDropdown(); } document.getElementById('brandFilter').value = ''; }
             updateStateAndStudioDropdowns();
             applyFilters();
         }
 
-        function onBrandChange() {
-            updateStateAndStudioDropdowns();
-            applyFilters();
-        }
+        function onBrandChange() { updateStateAndStudioDropdowns(); applyFilters(); }
 
         function onStateChange() {
-            // Update studio dropdown based on current filters
             const filteredStudios = getFilteredStudios();
             populateStudioDropdown(filteredStudios);
             document.getElementById('studioFilter').value = '';
@@ -1504,39 +530,18 @@
 
         function onStudioChange() {
             selectedStudioId = document.getElementById('studioFilter').value;
-            
-            // Show/hide Add Program button based on single studio selection
-            if (selectedStudioId) {
-                document.getElementById('addProgramBtn').style.display = 'inline-flex';
-            } else {
-                document.getElementById('addProgramBtn').style.display = 'none';
-            }
-            
+            document.getElementById('addProgramBtn').style.display = selectedStudioId ? 'inline-flex' : 'none';
             applyFilters();
         }
 
         function updateStateAndStudioDropdowns() {
             const zoneId = document.getElementById('zoneFilter').value;
             const brandId = document.getElementById('brandFilter').value;
-
             let filteredStudios = [...allStudios];
-
-            // Filter by zone (get brand_ids for this zone)
-            if (zoneId && allBrands.length > 0) {
-                const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id);
-                filteredStudios = filteredStudios.filter(s => zoneBrandIds.includes(s.brand_id));
-            }
-
-            // Filter by brand
-            if (brandId) {
-                filteredStudios = filteredStudios.filter(s => s.brand_id === brandId);
-            }
-
-            // Update state dropdown with available states
+            if (zoneId && allBrands.length > 0) { const zoneBrandIds = allBrands.filter(b => b.zone_id === zoneId).map(b => b.id); filteredStudios = filteredStudios.filter(s => zoneBrandIds.includes(s.brand_id)); }
+            if (brandId) filteredStudios = filteredStudios.filter(s => s.brand_id === brandId);
             populateStateDropdown(filteredStudios);
             document.getElementById('stateFilter').value = '';
-
-            // Update studio dropdown
             populateStudioDropdown(filteredStudios);
             document.getElementById('studioFilter').value = '';
             selectedStudioId = null;
@@ -1544,48 +549,24 @@
         }
 
         function applyFilters() {
-            const zoneId = document.getElementById('zoneFilter').value;
-            const brandId = document.getElementById('brandFilter').value;
-            const state = document.getElementById('stateFilter').value;
             const studioId = document.getElementById('studioFilter').value;
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-
-            // Get studio IDs that match the filters
             const filteredStudios = getFilteredStudios();
             const filteredStudioIds = filteredStudios.map(s => s.id);
-
-            // Filter programs
             let filteredPrograms = allPrograms.filter(program => {
-                // Must belong to a studio in filtered list
                 if (!filteredStudioIds.includes(program.studio_id)) return false;
-
-                // If specific studio selected, filter to that studio
                 if (studioId && program.studio_id !== studioId) return false;
-
-                // Search filter - search by program name, price, enrollment type, skill level, brand, state, city
                 if (searchTerm) {
-                    // Get studio info for this program
                     const studio = allStudios.find(s => s.id === program.studio_id);
                     const brand = studio ? allBrands.find(b => b.id === studio.brand_id) : null;
                     const brandName = brand ? brand.name : '';
                     const studioCity = studio ? (studio.city || '') : '';
                     const studioState = studio ? (studio.state || '') : '';
-                    
-                    const matchesSearch = 
-                        (program.name && program.name.toLowerCase().includes(searchTerm)) ||
-                        (program.price && program.price.toLowerCase().includes(searchTerm)) ||
-                        (program.enrollment_type && program.enrollment_type.toLowerCase().includes(searchTerm)) ||
-                        (program.skill_level && program.skill_level.toLowerCase().includes(searchTerm)) ||
-                        (brandName && brandName.toLowerCase().includes(searchTerm)) ||
-                        (studioCity && studioCity.toLowerCase().includes(searchTerm)) ||
-                        (studioState && studioState.toLowerCase().includes(searchTerm));
+                    const matchesSearch = (program.name && program.name.toLowerCase().includes(searchTerm)) || (program.price && program.price.toLowerCase().includes(searchTerm)) || (program.enrollment_type && program.enrollment_type.toLowerCase().includes(searchTerm)) || (program.skill_level && program.skill_level.toLowerCase().includes(searchTerm)) || (brandName && brandName.toLowerCase().includes(searchTerm)) || (studioCity && studioCity.toLowerCase().includes(searchTerm)) || (studioState && studioState.toLowerCase().includes(searchTerm));
                     if (!matchesSearch) return false;
                 }
-
                 return true;
             });
-
-            // Hide select studio message, show programs
             document.getElementById('selectStudioMessage').style.display = 'none';
             renderPrograms(filteredPrograms);
         }
@@ -1593,30 +574,15 @@
         function renderPrograms(programs) {
             const container = document.getElementById('programsGrid');
             document.getElementById('programsContainer').style.display = 'block';
-
             if (programs.length === 0) {
                 const searchTerm = document.getElementById('searchInput').value.trim();
-                const hasFilters = document.getElementById('zoneFilter').value || 
-                                   document.getElementById('brandFilter').value || 
-                                   document.getElementById('stateFilter').value ||
-                                   document.getElementById('studioFilter').value;
-                container.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1 / -1;">
-                        <i class="fas fa-graduation-cap"></i>
-                        <p>${searchTerm ? 'No programs match your search' : hasFilters ? 'No programs found for this filter' : 'No programs yet'}</p>
-                    </div>
-                `;
+                const hasFilters = document.getElementById('zoneFilter').value || document.getElementById('brandFilter').value || document.getElementById('stateFilter').value || document.getElementById('studioFilter').value;
+                container.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-graduation-cap"></i><p>${searchTerm ? 'No programs match your search' : hasFilters ? 'No programs found for this filter' : 'No programs yet'}</p></div>`;
                 return;
             }
-
             container.innerHTML = programs.map(program => {
-                // Get studio info for this program
                 const studio = allStudios.find(s => s.id === program.studio_id);
-                let studioLabel = '';
-                if (studio) {
-                    studioLabel = getStudioLabel(studio);
-                }
-
+                let studioLabel = studio ? getStudioLabel(studio) : '';
                 return `
                 <div class="program-card ${program.status === 'inactive' ? 'inactive' : ''}">
                     <div class="program-card-header">
@@ -1625,76 +591,26 @@
                     </div>
                     ${studioLabel ? `<div style="padding: 0.5rem 1rem; background: var(--gray-50); font-size: 0.8125rem; color: var(--text-secondary); border-bottom: 1px solid var(--gray-200);"><i class="fas fa-building" style="margin-right: 0.375rem;"></i>${studioLabel}</div>` : ''}
                     <div class="program-info">
-                        ${program.price ? `
-                            <div class="program-info-item">
-                                <i class="fas fa-dollar-sign"></i>
-                                <span>${program.price}${program.price_type ? ` (${program.price_type})` : ''}</span>
-                            </div>
-                        ` : ''}
-                        ${program.class_size ? `
-                            <div class="program-info-item">
-                                <i class="fas fa-users"></i>
-                                <span>${program.class_size}</span>
-                            </div>
-                        ` : ''}
-                        ${program.duration ? `
-                            <div class="program-info-item">
-                                <i class="fas fa-clock"></i>
-                                <span>${program.duration}</span>
-                            </div>
-                        ` : ''}
-                        ${program.lesson_frequency ? `
-                            <div class="program-info-item">
-                                <i class="fas fa-calendar-week"></i>
-                                <span>${program.lesson_frequency}</span>
-                            </div>
-                        ` : ''}
-                        ${program.skill_level ? `
-                            <div class="program-info-item">
-                                <i class="fas fa-signal"></i>
-                                <span>${program.skill_level}</span>
-                            </div>
-                        ` : ''}
-                        ${program.first_free_lesson ? `
-                            <div class="program-info-item">
-                                <i class="fas fa-gift"></i>
-                                <span style="color: var(--success);">Free Trial</span>
-                            </div>
-                        ` : ''}
-                        ${program.parent_guardian_required ? `
-                            <div class="program-info-item">
-                                <i class="fas fa-user-friends"></i>
-                                <span style="color: var(--warning);">Parent Must Stay</span>
-                            </div>
-                        ` : ''}
-                        <div class="program-info-item">
-                            <span class="status-badge ${program.status === 'active' ? 'status-active' : 'status-inactive'}">
-                                ${program.status || 'active'}
-                            </span>
-                        </div>
+                        ${program.price ? `<div class="program-info-item"><i class="fas fa-dollar-sign"></i><span>${program.price}${program.price_type ? ` (${program.price_type})` : ''}</span></div>` : ''}
+                        ${program.class_size ? `<div class="program-info-item"><i class="fas fa-users"></i><span>${program.class_size}</span></div>` : ''}
+                        ${program.duration ? `<div class="program-info-item"><i class="fas fa-clock"></i><span>${program.duration}</span></div>` : ''}
+                        ${program.lesson_frequency ? `<div class="program-info-item"><i class="fas fa-calendar-week"></i><span>${program.lesson_frequency}</span></div>` : ''}
+                        ${program.skill_level ? `<div class="program-info-item"><i class="fas fa-signal"></i><span>${program.skill_level}</span></div>` : ''}
+                        ${program.first_free_lesson ? `<div class="program-info-item"><i class="fas fa-gift"></i><span style="color: var(--success);">Free Trial</span></div>` : ''}
+                        ${program.parent_guardian_required ? `<div class="program-info-item"><i class="fas fa-user-friends"></i><span style="color: var(--warning);">Parent Must Stay</span></div>` : ''}
+                        <div class="program-info-item"><span class="status-badge ${program.status === 'active' ? 'status-active' : 'status-inactive'}">${program.status || 'active'}</span></div>
                     </div>
                     <div class="program-card-actions">
-                        <button class="btn btn-secondary btn-small" onclick='editProgram(${JSON.stringify(program).replace(/'/g, "&#39;")})'>
-                            <i class="fas fa-edit"></i>
-                            Edit
-                        </button>
-                        <button class="btn btn-secondary btn-small" onclick='openDuplicateModal(${JSON.stringify(program).replace(/'/g, "&#39;")})' title="Duplicate to another studio">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <button class="btn btn-danger btn-small" onclick="deleteProgram('${program.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button class="btn btn-secondary btn-small" onclick='editProgram(${JSON.stringify(program).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-secondary btn-small" onclick='openDuplicateModal(${JSON.stringify(program).replace(/'/g, "&#39;")})' title="Duplicate to another studio"><i class="fas fa-copy"></i></button>
+                        <button class="btn btn-danger btn-small" onclick="deleteProgram('${program.id}')"><i class="fas fa-trash"></i></button>
                     </div>
-                </div>
-            `}).join('');
+                </div>`;
+            }).join('');
         }
 
         function openAddProgramModal() {
-            if (!selectedStudioId) {
-                showToast('Please select a specific studio first', 'error');
-                return;
-            }
-
+            if (!selectedStudioId) { showToast('Please select a specific studio first', 'error'); return; }
             document.getElementById('programModalTitle').textContent = 'Add Program';
             document.getElementById('programForm').reset();
             document.getElementById('programId').value = '';
@@ -1704,13 +620,11 @@
             document.getElementById('programFirstFree').checked = false;
             document.getElementById('programParentRequired').checked = false;
             document.getElementById('midSemesterSection').style.display = 'none';
-            
-            // Reset to first tab
+            clearRichEditors();
             document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
             document.querySelector('.modal-tab[data-tab="basic"]').classList.add('active');
             document.getElementById('basicTab').classList.add('active');
-            
             document.getElementById('programModal').classList.add('active');
         }
 
@@ -1718,78 +632,49 @@
             document.getElementById('programModalTitle').textContent = 'Edit Program';
             document.getElementById('programId').value = program.id;
             document.getElementById('programStudioId').value = program.studio_id;
-            
-            // Basic Info
             document.getElementById('programName').value = program.name || '';
             document.getElementById('programClassSize').value = program.class_size || '';
             document.getElementById('programDuration').value = program.duration || '';
             document.getElementById('programFrequency').value = program.lesson_frequency || '';
             document.getElementById('programStatus').value = program.status || 'active';
-            
-            // Pricing
             document.getElementById('programPrice').value = program.price || '';
             document.getElementById('programPriceType').value = program.price_type || '';
             document.getElementById('programRegFee').value = program.registration_fee || '';
             document.getElementById('programRegFeeCovers').value = program.registration_fee_covers || '';
-            
-            // Enrollment
             document.getElementById('programEnrollmentType').value = program.enrollment_type || '';
-            document.getElementById('programEnrollmentProcess').value = program.enrollment_process || '';
+            setRichContent('programEnrollmentProcess', program.enrollment_process);
             document.getElementById('programMidSemester').checked = program.mid_semester_enrollment || false;
             document.getElementById('programMidSemesterPolicy').value = program.mid_semester_policy || '';
             document.getElementById('programMidSemesterPrice').value = program.mid_semester_price_change || '';
-            
-            // Details
             document.getElementById('programSkillLevel').value = program.skill_level || '';
             document.getElementById('programQualifications').value = program.qualifications || '';
             document.getElementById('programCurriculum').value = program.curriculum_details || '';
-            
-            // Policies
             document.getElementById('programParentRequired').checked = program.parent_guardian_required || false;
-            document.getElementById('programMakeupPolicy').value = program.makeup_policy || '';
-            document.getElementById('programWithdrawalPolicy').value = program.withdrawal_policy || '';
+            setRichContent('programMakeupPolicy', program.makeup_policy);
+            setRichContent('programWithdrawalPolicy', program.withdrawal_policy);
             document.getElementById('programFirstFree').checked = program.first_free_lesson || false;
-            document.getElementById('programAdditionalPolicies').value = program.additional_policies || '';
-            
-            // Links
+            setRichContent('programAdditionalPolicies', program.additional_policies);
             document.getElementById('programLink').value = program.scheduling_link || '';
             document.getElementById('programFlyerLink').value = program.flyer_link || '';
             document.getElementById('programWebsiteLink').value = program.website_description_link || '';
-            
-            // Show/hide mid-semester fields
             toggleMidSemesterFields();
-            
-            // Reset to first tab
             document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
             document.querySelector('.modal-tab[data-tab="basic"]').classList.add('active');
             document.getElementById('basicTab').classList.add('active');
-            
             document.getElementById('programModal').classList.add('active');
         }
 
-        function closeProgramModal() {
-            document.getElementById('programModal').classList.remove('active');
-        }
+        function closeProgramModal() { document.getElementById('programModal').classList.remove('active'); }
 
         async function saveProgram() {
             const id = document.getElementById('programId').value;
             const name = document.getElementById('programName').value.trim();
             const studioId = document.getElementById('programStudioId').value;
-
-            if (!name) {
-                showToast('Program name is required', 'error');
-                return;
-            }
-
-            if (!studioId) {
-                showToast('No studio selected', 'error');
-                return;
-            }
-
+            if (!name) { showToast('Program name is required', 'error'); return; }
+            if (!studioId) { showToast('No studio selected', 'error'); return; }
             const data = {
-                studio_id: studioId,
-                name: name,
+                studio_id: studioId, name: name,
                 class_size: document.getElementById('programClassSize').value || null,
                 duration: document.getElementById('programDuration').value || null,
                 lesson_frequency: document.getElementById('programFrequency').value || null,
@@ -1799,66 +684,45 @@
                 registration_fee: document.getElementById('programRegFee').value || null,
                 registration_fee_covers: document.getElementById('programRegFeeCovers').value || null,
                 enrollment_type: document.getElementById('programEnrollmentType').value || null,
-                enrollment_process: document.getElementById('programEnrollmentProcess').value || null,
+                enrollment_process: getRichContent('programEnrollmentProcess'),
                 mid_semester_enrollment: document.getElementById('programMidSemester').checked,
                 mid_semester_policy: document.getElementById('programMidSemesterPolicy').value || null,
                 mid_semester_price_change: document.getElementById('programMidSemesterPrice').value || null,
                 skill_level: document.getElementById('programSkillLevel').value || null,
                 qualifications: document.getElementById('programQualifications').value || null,
                 curriculum_details: document.getElementById('programCurriculum').value || null,
-                makeup_policy: document.getElementById('programMakeupPolicy').value || null,
-                withdrawal_policy: document.getElementById('programWithdrawalPolicy').value || null,
+                makeup_policy: getRichContent('programMakeupPolicy'),
+                withdrawal_policy: getRichContent('programWithdrawalPolicy'),
                 first_free_lesson: document.getElementById('programFirstFree').checked,
                 parent_guardian_required: document.getElementById('programParentRequired').checked,
-                additional_policies: document.getElementById('programAdditionalPolicies').value || null,
+                additional_policies: getRichContent('programAdditionalPolicies'),
                 scheduling_link: document.getElementById('programLink').value || null,
                 flyer_link: document.getElementById('programFlyerLink').value || null,
                 website_description_link: document.getElementById('programWebsiteLink').value || null
             };
-
             try {
                 let result;
-                if (id) {
-                    result = await supabaseClient.from('programs').update(data).eq('id', id);
-                } else {
-                    result = await supabaseClient.from('programs').insert([data]);
-                }
-
+                if (id) { result = await supabaseClient.from('programs').update(data).eq('id', id); } else { result = await supabaseClient.from('programs').insert([data]); }
                 if (result.error) throw result.error;
-
                 showToast(id ? 'Program updated!' : 'Program added!', 'success');
                 closeProgramModal();
                 loadAllPrograms();
-            } catch (error) {
-                console.error('Error saving program:', error);
-                showToast('Error saving program', 'error');
-            }
+            } catch (error) { console.error('Error saving program:', error); showToast('Error saving program', 'error'); }
         }
 
         async function deleteProgram(id) {
             if (!confirm('Are you sure you want to delete this program?')) return;
-
-            try {
-                const { error } = await supabaseClient.from('programs').delete().eq('id', id);
-                if (error) throw error;
-
-                showToast('Program deleted!', 'success');
-                loadAllPrograms();
-            } catch (error) {
-                console.error('Error deleting program:', error);
-                showToast('Error deleting program', 'error');
-            }
+            try { const { error } = await supabaseClient.from('programs').delete().eq('id', id); if (error) throw error; showToast('Program deleted!', 'success'); loadAllPrograms(); }
+            catch (error) { console.error('Error deleting program:', error); showToast('Error deleting program', 'error'); }
         }
 
         function showToast(message, type = 'success') {
             const existing = document.querySelector('.toast');
             if (existing) existing.remove();
-
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.textContent = message;
             document.body.appendChild(toast);
-
             setTimeout(() => toast.remove(), 3000);
         }
 
@@ -1868,227 +732,47 @@
         let dragDropSetup = false;
 
         function openImportModal() {
-            importData = null;
-            importStudioId = null;
+            importData = null; importStudioId = null;
             document.getElementById('importPreview').classList.remove('show');
             document.getElementById('importConfirmBtn').disabled = true;
             document.getElementById('studioMatchInfo').innerHTML = '';
             document.getElementById('importModal').classList.add('active');
-            
-            // Hide zone if not available
-            const importZoneGroup = document.getElementById('importZoneGroup');
-            if (importZoneGroup) {
-                importZoneGroup.style.display = allZones.length > 0 ? 'block' : 'none';
-            }
-            
-            // Hide brand dropdown if no brands, show direct studio selection instead
-            const importBrandGroup = document.getElementById('importBrandGroup');
-            if (importBrandGroup) {
-                importBrandGroup.style.display = allBrands.length > 0 ? 'block' : 'none';
-            }
-            
-            // Populate dropdowns
-            if (allZones.length > 0) {
-                populateImportZoneDropdown();
-            }
-            
-            if (allBrands.length > 0) {
-                populateImportBrandDropdown();
-                document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
-            } else {
-                // No brands table - show all studios directly
-                populateImportStudioDropdownAll();
-            }
-            
-            // Setup drag drop only once
-            if (!dragDropSetup) {
-                setupDragDrop();
-                setupImportDropdownListeners();
-                dragDropSetup = true;
-            }
-            
-            // Reset file input
-            const fileInput = document.getElementById('fileInput');
-            fileInput.value = '';
+            const izg = document.getElementById('importZoneGroup'); if (izg) izg.style.display = allZones.length > 0 ? 'block' : 'none';
+            const ibg = document.getElementById('importBrandGroup'); if (ibg) ibg.style.display = allBrands.length > 0 ? 'block' : 'none';
+            if (allZones.length > 0) populateImportZoneDropdown();
+            if (allBrands.length > 0) { populateImportBrandDropdown(); document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>'; } else { populateImportStudioDropdownAll(); }
+            if (!dragDropSetup) { setupDragDrop(); setupImportDropdownListeners(); dragDropSetup = true; }
+            document.getElementById('fileInput').value = '';
         }
 
-        function populateImportStudioDropdownAll() {
-            const select = document.getElementById('importStudioSelect');
-            select.innerHTML = '<option value="">Select Studio</option>';
-            
-            allStudios.forEach(studio => {
-                const option = document.createElement('option');
-                option.value = studio.id;
-                option.textContent = getStudioLabel(studio);
-                select.appendChild(option);
-            });
-        }
-
-        function populateImportZoneDropdown() {
-            const select = document.getElementById('importZoneSelect');
-            select.innerHTML = '<option value="">All Zones</option>';
-            
-            allZones.forEach(zone => {
-                const option = document.createElement('option');
-                option.value = zone.id;
-                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
-                select.appendChild(option);
-            });
-        }
-
-        function populateImportBrandDropdown(filteredBrands = null) {
-            const select = document.getElementById('importBrandSelect');
-            const brands = filteredBrands || allBrands;
-            select.innerHTML = '<option value="">Select Brand</option>';
-            
-            brands.forEach(brand => {
-                const option = document.createElement('option');
-                option.value = brand.id;
-                option.textContent = brand.name;
-                select.appendChild(option);
-            });
-        }
-
-        function populateImportStudioDropdown(filteredStudios = null) {
-            const select = document.getElementById('importStudioSelect');
-            const studios = filteredStudios || [];
-            select.innerHTML = '<option value="">Select Studio Location</option>';
-            
-            studios.forEach(studio => {
-                const option = document.createElement('option');
-                option.value = studio.id;
-                let label = studio.city || 'Main Location';
-                if (studio.state) label += `, ${studio.state}`;
-                option.textContent = label;
-                select.appendChild(option);
-            });
-        }
+        function populateImportStudioDropdownAll() { const s = document.getElementById('importStudioSelect'); s.innerHTML = '<option value="">Select Studio</option>'; allStudios.forEach(st => { const o = document.createElement('option'); o.value = st.id; o.textContent = getStudioLabel(st); s.appendChild(o); }); }
+        function populateImportZoneDropdown() { const s = document.getElementById('importZoneSelect'); s.innerHTML = '<option value="">All Zones</option>'; allZones.forEach(z => { const o = document.createElement('option'); o.value = z.id; o.textContent = z.name || z.zone_name || z.title || 'Unknown Zone'; s.appendChild(o); }); }
+        function populateImportBrandDropdown(fb = null) { const s = document.getElementById('importBrandSelect'); const brands = fb || allBrands; s.innerHTML = '<option value="">Select Brand</option>'; brands.forEach(b => { const o = document.createElement('option'); o.value = b.id; o.textContent = b.name; s.appendChild(o); }); }
+        function populateImportStudioDropdown(fs = null) { const s = document.getElementById('importStudioSelect'); const studios = fs || []; s.innerHTML = '<option value="">Select Studio Location</option>'; studios.forEach(st => { const o = document.createElement('option'); o.value = st.id; let l = st.city || 'Main Location'; if (st.state) l += `, ${st.state}`; o.textContent = l; s.appendChild(o); }); }
 
         function setupImportDropdownListeners() {
-            // Zone change
-            document.getElementById('importZoneSelect').addEventListener('change', (e) => {
-                const zoneId = e.target.value;
-                
-                // Filter brands by zone
-                if (zoneId && allBrands.length > 0) {
-                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
-                    populateImportBrandDropdown(filteredBrands);
-                } else {
-                    populateImportBrandDropdown();
-                }
-                
-                // Reset brand and studio
-                document.getElementById('importBrandSelect').value = '';
-                document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
-                importStudioId = null;
-                updateImportButton();
-            });
-            
-            // Brand change
-            document.getElementById('importBrandSelect').addEventListener('change', (e) => {
-                const brandId = e.target.value;
-                
-                if (brandId) {
-                    // Get studios for this brand using brand_id
-                    const brandStudios = allStudios.filter(s => s.brand_id === brandId);
-                    console.log('Brand selected:', brandId, 'Found studios:', brandStudios.length);
-                    populateImportStudioDropdown(brandStudios);
-                } else {
-                    populateImportStudioDropdown([]);
-                }
-                
-                // Reset studio
-                importStudioId = null;
-                updateImportButton();
-            });
-            
-            // Studio change
-            document.getElementById('importStudioSelect').addEventListener('change', (e) => {
-                importStudioId = e.target.value;
-                updateImportButton();
-            });
+            document.getElementById('importZoneSelect').addEventListener('change', (e) => { const zoneId = e.target.value; if (zoneId && allBrands.length > 0) { populateImportBrandDropdown(allBrands.filter(b => b.zone_id === zoneId)); } else { populateImportBrandDropdown(); } document.getElementById('importBrandSelect').value = ''; document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>'; importStudioId = null; updateImportButton(); });
+            document.getElementById('importBrandSelect').addEventListener('change', (e) => { const brandId = e.target.value; if (brandId) { populateImportStudioDropdown(allStudios.filter(s => s.brand_id === brandId)); } else { populateImportStudioDropdown([]); } importStudioId = null; updateImportButton(); });
+            document.getElementById('importStudioSelect').addEventListener('change', (e) => { importStudioId = e.target.value; updateImportButton(); });
         }
 
-        function closeImportModal() {
-            document.getElementById('importModal').classList.remove('active');
-            importData = null;
-            importStudioId = null;
-        }
+        function closeImportModal() { document.getElementById('importModal').classList.remove('active'); importData = null; importStudioId = null; }
 
         function setupDragDrop() {
             const dropZone = document.getElementById('fileDropZone');
             const fileInput = document.getElementById('fileInput');
-            
-            // File input change handler
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    processFile(file);
-                }
-            });
-
-            // Click to open file picker
-            dropZone.addEventListener('click', (e) => {
-                if (e.target !== fileInput) {
-                    fileInput.click();
-                }
-            });
-
-            // Drag and drop handlers
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.add('dragover');
-            });
-
-            dropZone.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('dragover');
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    processFile(files[0]);
-                }
-            });
+            fileInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (file) processFile(file); });
+            dropZone.addEventListener('click', (e) => { if (e.target !== fileInput) fileInput.click(); });
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover'); });
+            dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover'); });
+            dropZone.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]); });
         }
 
         function processFile(file) {
-            console.log('Processing file:', file.name);
-            
-            if (!file.name.endsWith('.json')) {
-                showToast('Please select a JSON file', 'error');
-                return;
-            }
-
+            if (!file.name.endsWith('.json')) { showToast('Please select a JSON file', 'error'); return; }
             const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    console.log('Parsed data:', data);
-                    
-                    // Validate the structure
-                    if (!data.program || !data.program.name) {
-                        showToast('Invalid program file format', 'error');
-                        return;
-                    }
-
-                    importData = data;
-                    showImportPreview(data);
-                } catch (error) {
-                    showToast('Error parsing JSON file', 'error');
-                    console.error('JSON parse error:', error);
-                }
-            };
-            reader.onerror = () => {
-                showToast('Error reading file', 'error');
-                console.error('File read error');
-            };
+            reader.onload = (e) => { try { const data = JSON.parse(e.target.result); if (!data.program || !data.program.name) { showToast('Invalid program file format', 'error'); return; } importData = data; showImportPreview(data); } catch (error) { showToast('Error parsing JSON file', 'error'); } };
+            reader.onerror = () => { showToast('Error reading file', 'error'); };
             reader.readAsText(file);
         }
 
@@ -2097,24 +781,8 @@
             const content = document.getElementById('importPreviewContent');
             const program = data.program;
             const studioInfo = data.studioInfo || {};
-
-            content.innerHTML = `
-                <div class="import-preview-item">
-                    <div>
-                        <div class="name">${program.name}</div>
-                        <div class="meta">
-                            ${program.price ? program.price : 'No price'} 
-                            ${program.price_type ? `(${program.price_type})` : ''} 
-                            • ${program.enrollment_type || 'No enrollment type'}
-                        </div>
-                        ${studioInfo.name ? `<div class="meta" style="margin-top: 0.25rem;"><i class="fas fa-building" style="margin-right: 0.25rem;"></i> Source: ${studioInfo.name}${studioInfo.location ? ' - ' + studioInfo.location : ''}</div>` : ''}
-                    </div>
-                </div>
-            `;
-
+            content.innerHTML = `<div class="import-preview-item"><div><div class="name">${program.name}</div><div class="meta">${program.price ? program.price : 'No price'} ${program.price_type ? `(${program.price_type})` : ''} &bull; ${program.enrollment_type || 'No enrollment type'}</div>${studioInfo.name ? `<div class="meta" style="margin-top: 0.25rem;"><i class="fas fa-building" style="margin-right: 0.25rem;"></i> Source: ${studioInfo.name}${studioInfo.location ? ' - ' + studioInfo.location : ''}</div>` : ''}</div></div>`;
             preview.classList.add('show');
-            
-            // Try to auto-match studio
             autoMatchStudio(studioInfo);
         }
 
@@ -2123,193 +791,52 @@
             const brandSelect = document.getElementById('importBrandSelect');
             const studioSelect = document.getElementById('importStudioSelect');
             const matchInfo = document.getElementById('studioMatchInfo');
-            
-            if (!studioInfo.name && !studioInfo.location) {
-                matchInfo.innerHTML = '<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> No studio info in file. Please select brand and location.</span>';
-                importStudioId = null;
-                updateImportButton();
-                return;
-            }
-
+            if (!studioInfo.name && !studioInfo.location) { matchInfo.innerHTML = '<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> No studio info in file. Please select brand and location.</span>'; importStudioId = null; updateImportButton(); return; }
             const searchName = (studioInfo.name || '').toLowerCase().trim();
             const searchLocation = (studioInfo.location || '').toLowerCase().trim();
-
-            // Try to find matching brand
             let matchedBrand = null;
             if (allBrands.length > 0) {
-                matchedBrand = allBrands.find(b => {
-                    const brandName = (b.name || '').toLowerCase();
-                    return brandName === searchName || searchName.includes(brandName) || brandName.includes(searchName);
-                });
-
+                matchedBrand = allBrands.find(b => { const bn = (b.name || '').toLowerCase(); return bn === searchName || searchName.includes(bn) || bn.includes(searchName); });
                 if (matchedBrand) {
-                    // Set zone if available
-                    if (matchedBrand.zone_id && allZones.length > 0) {
-                        zoneSelect.value = matchedBrand.zone_id;
-                        // Filter brands to this zone
-                        const zoneBrands = allBrands.filter(b => b.zone_id === matchedBrand.zone_id);
-                        populateImportBrandDropdown(zoneBrands);
-                    }
-                    
-                    // Set brand
+                    if (matchedBrand.zone_id && allZones.length > 0) { zoneSelect.value = matchedBrand.zone_id; populateImportBrandDropdown(allBrands.filter(b => b.zone_id === matchedBrand.zone_id)); }
                     brandSelect.value = matchedBrand.id;
-                    
-                    // Populate studios for this brand using brand_id
                     const brandStudios = allStudios.filter(s => s.brand_id === matchedBrand.id);
-                    
-                    console.log('Looking for studios matching brand_id:', matchedBrand.id);
-                    console.log('Found studios:', brandStudios.length);
-                    
                     populateImportStudioDropdown(brandStudios);
-                    
-                    // Try to match studio location
                     let matchedStudio = null;
-                    if (searchLocation) {
-                        matchedStudio = brandStudios.find(s => {
-                            const city = (s.city || '').toLowerCase();
-                            return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim());
-                        });
-                    }
-                    
-                    if (matchedStudio) {
-                        studioSelect.value = matchedStudio.id;
-                        importStudioId = matchedStudio.id;
-                        let locationLabel = matchedStudio.city || 'Main Location';
-                        if (matchedStudio.state) locationLabel += `, ${matchedStudio.state}`;
-                        matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${matchedBrand.name} - ${locationLabel}</strong></span>`;
-                    } else if (brandStudios.length === 1) {
-                        // If only one studio for this brand, auto-select it
-                        studioSelect.value = brandStudios[0].id;
-                        importStudioId = brandStudios[0].id;
-                        let locationLabel = brandStudios[0].city || 'Main Location';
-                        if (brandStudios[0].state) locationLabel += `, ${brandStudios[0].state}`;
-                        matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${matchedBrand.name} - ${locationLabel}</strong></span>`;
-                    } else {
-                        matchInfo.innerHTML = `<span style="color: var(--primary);"><i class="fas fa-info-circle"></i> Brand matched: <strong>${matchedBrand.name}</strong>. Please select the location.</span>`;
-                    }
-                } else {
-                    matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match "${studioInfo.name}". Please select brand and location.</span>`;
-                }
+                    if (searchLocation) { matchedStudio = brandStudios.find(s => { const city = (s.city || '').toLowerCase(); return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim()); }); }
+                    if (matchedStudio) { studioSelect.value = matchedStudio.id; importStudioId = matchedStudio.id; let ll = matchedStudio.city || 'Main Location'; if (matchedStudio.state) ll += `, ${matchedStudio.state}`; matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${matchedBrand.name} - ${ll}</strong></span>`; }
+                    else if (brandStudios.length === 1) { studioSelect.value = brandStudios[0].id; importStudioId = brandStudios[0].id; let ll = brandStudios[0].city || 'Main Location'; if (brandStudios[0].state) ll += `, ${brandStudios[0].state}`; matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${matchedBrand.name} - ${ll}</strong></span>`; }
+                    else { matchInfo.innerHTML = `<span style="color: var(--primary);"><i class="fas fa-info-circle"></i> Brand matched: <strong>${matchedBrand.name}</strong>. Please select the location.</span>`; }
+                } else { matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match "${studioInfo.name}". Please select brand and location.</span>`; }
             } else {
-                // No brands table - try direct studio match by looking up brand name
                 let matchedStudio = null;
-                for (const studio of allStudios) {
-                    const brandName = getBrandName(studio.brand_id).toLowerCase();
-                    if (brandName === searchName || searchName.includes(brandName) || brandName.includes(searchName)) {
-                        matchedStudio = studio;
-                        break;
-                    }
-                }
-                
-                // If found by brand, try to narrow by location
-                if (matchedStudio && searchLocation) {
-                    const brandStudios = allStudios.filter(s => s.brand_id === matchedStudio.brand_id);
-                    const locationMatch = brandStudios.find(s => {
-                        const city = (s.city || '').toLowerCase();
-                        return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim());
-                    });
-                    if (locationMatch) {
-                        matchedStudio = locationMatch;
-                    }
-                }
-                
-                if (matchedStudio) {
-                    studioSelect.value = matchedStudio.id;
-                    importStudioId = matchedStudio.id;
-                    matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${getStudioLabel(matchedStudio)}</strong></span>`;
-                } else {
-                    matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match. Please select a studio.</span>`;
-                }
+                for (const studio of allStudios) { const bn = getBrandName(studio.brand_id).toLowerCase(); if (bn === searchName || searchName.includes(bn) || bn.includes(searchName)) { matchedStudio = studio; break; } }
+                if (matchedStudio && searchLocation) { const bs = allStudios.filter(s => s.brand_id === matchedStudio.brand_id); const lm = bs.find(s => { const city = (s.city || '').toLowerCase(); return searchLocation.includes(city) || city.includes(searchLocation.split(',')[0].trim()); }); if (lm) matchedStudio = lm; }
+                if (matchedStudio) { studioSelect.value = matchedStudio.id; importStudioId = matchedStudio.id; matchInfo.innerHTML = `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Auto-matched: <strong>${getStudioLabel(matchedStudio)}</strong></span>`; }
+                else { matchInfo.innerHTML = `<span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Could not match. Please select a studio.</span>`; }
             }
-
             updateImportButton();
         }
 
-        function updateImportButton() {
-            const btn = document.getElementById('importConfirmBtn');
-            btn.disabled = !importData || !importStudioId;
-        }
+        function updateImportButton() { document.getElementById('importConfirmBtn').disabled = !importData || !importStudioId; }
 
         function clearImport() {
-            importData = null;
-            importStudioId = null;
+            importData = null; importStudioId = null;
             document.getElementById('fileInput').value = '';
             document.getElementById('importPreview').classList.remove('show');
-            
-            const zoneSelect = document.getElementById('importZoneSelect');
-            if (zoneSelect) zoneSelect.value = '';
-            
-            const brandSelect = document.getElementById('importBrandSelect');
-            if (brandSelect) brandSelect.value = '';
-            
-            // Reset studio dropdown
-            if (allBrands.length > 0) {
-                document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
-                // Reset brand dropdown to show all brands
-                populateImportBrandDropdown();
-            } else {
-                populateImportStudioDropdownAll();
-            }
-            
+            const zs = document.getElementById('importZoneSelect'); if (zs) zs.value = '';
+            const bs = document.getElementById('importBrandSelect'); if (bs) bs.value = '';
+            if (allBrands.length > 0) { document.getElementById('importStudioSelect').innerHTML = '<option value="">Select Studio Location</option>'; populateImportBrandDropdown(); } else { populateImportStudioDropdownAll(); }
             document.getElementById('studioMatchInfo').innerHTML = '';
             document.getElementById('importConfirmBtn').disabled = true;
         }
 
         async function confirmImport() {
-            if (!importData || !importStudioId) {
-                showToast('Please select a studio for the import', 'error');
-                return;
-            }
-
+            if (!importData || !importStudioId) { showToast('Please select a studio for the import', 'error'); return; }
             const program = importData.program;
-
-            const data = {
-                studio_id: importStudioId,
-                name: program.name || 'Imported Program',
-                class_size: program.class_size || null,
-                duration: program.duration || null,
-                lesson_frequency: program.lesson_frequency || null,
-                status: program.status || 'active',
-                price: program.price || null,
-                price_type: program.price_type || null,
-                registration_fee: program.registration_fee || null,
-                registration_fee_covers: program.registration_fee_covers || null,
-                enrollment_type: program.enrollment_type || null,
-                enrollment_process: program.enrollment_process || null,
-                mid_semester_enrollment: program.mid_semester_enrollment || false,
-                mid_semester_policy: program.mid_semester_policy || null,
-                mid_semester_price_change: program.mid_semester_price_change || null,
-                skill_level: program.skill_level || null,
-                qualifications: program.qualifications || null,
-                curriculum_details: program.curriculum_details || null,
-                makeup_policy: program.makeup_policy || null,
-                withdrawal_policy: program.withdrawal_policy || null,
-                first_free_lesson: program.first_free_lesson || false,
-                parent_guardian_required: program.parent_guardian_required || false,
-                additional_policies: program.additional_policies || null,
-                scheduling_link: program.scheduling_link || null,
-                flyer_link: program.flyer_link || null,
-                website_description_link: program.website_description_link || null
-            };
-
-            try {
-                const { error } = await supabaseClient.from('programs').insert([data]);
-                
-                if (error) throw error;
-
-                // Find studio name for toast
-                const studio = allStudios.find(s => s.id === importStudioId);
-                const studioName = studio ? getStudioLabel(studio) : 'studio';
-
-                showToast(`Program "${program.name}" imported to ${studioName}!`, 'success');
-                closeImportModal();
-                
-                // Reload all programs
-                loadAllPrograms();
-            } catch (error) {
-                console.error('Error importing program:', error);
-                showToast('Error importing program', 'error');
-            }
+            const data = { studio_id: importStudioId, name: program.name || 'Imported Program', class_size: program.class_size || null, duration: program.duration || null, lesson_frequency: program.lesson_frequency || null, status: program.status || 'active', price: program.price || null, price_type: program.price_type || null, registration_fee: program.registration_fee || null, registration_fee_covers: program.registration_fee_covers || null, enrollment_type: program.enrollment_type || null, enrollment_process: program.enrollment_process || null, mid_semester_enrollment: program.mid_semester_enrollment || false, mid_semester_policy: program.mid_semester_policy || null, mid_semester_price_change: program.mid_semester_price_change || null, skill_level: program.skill_level || null, qualifications: program.qualifications || null, curriculum_details: program.curriculum_details || null, makeup_policy: program.makeup_policy || null, withdrawal_policy: program.withdrawal_policy || null, first_free_lesson: program.first_free_lesson || false, parent_guardian_required: program.parent_guardian_required || false, additional_policies: program.additional_policies || null, scheduling_link: program.scheduling_link || null, flyer_link: program.flyer_link || null, website_description_link: program.website_description_link || null };
+            try { const { error } = await supabaseClient.from('programs').insert([data]); if (error) throw error; const studio = allStudios.find(s => s.id === importStudioId); showToast(`Program "${program.name}" imported to ${studio ? getStudioLabel(studio) : 'studio'}!`, 'success'); closeImportModal(); loadAllPrograms(); }
+            catch (error) { console.error('Error importing program:', error); showToast('Error importing program', 'error'); }
         }
 
         // ==================== DUPLICATE FUNCTIONS ====================
@@ -2318,222 +845,40 @@
         let duplicateListenersSetup = false;
 
         function openDuplicateModal(program) {
-            programToDuplicate = program;
-            duplicateStudioId = null;
-            
-            // Show program preview
-            const content = document.getElementById('duplicatePreviewContent');
-            content.innerHTML = `
-                <div class="import-preview-item">
-                    <div>
-                        <div class="name">${program.name}</div>
-                        <div class="meta">
-                            ${program.price ? program.price : 'No price'} 
-                            ${program.price_type ? `(${program.price_type})` : ''} 
-                            • ${program.enrollment_type || 'No enrollment type'}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Hide zone/brand if not available
-            const duplicateZoneGroup = document.getElementById('duplicateZoneGroup');
-            if (duplicateZoneGroup) {
-                duplicateZoneGroup.style.display = allZones.length > 0 ? 'block' : 'none';
-            }
-            
-            const duplicateBrandGroup = document.getElementById('duplicateBrandGroup');
-            if (duplicateBrandGroup) {
-                duplicateBrandGroup.style.display = allBrands.length > 0 ? 'block' : 'none';
-            }
-
-            // Populate dropdowns
-            if (allZones.length > 0) {
-                populateDuplicateZoneDropdown();
-            }
-            
-            if (allBrands.length > 0) {
-                populateDuplicateBrandDropdown();
-                document.getElementById('duplicateStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
-            } else {
-                // No brands table - show all studios directly
-                populateDuplicateStudioDropdownAll();
-            }
-
-            // Setup listeners once
-            if (!duplicateListenersSetup) {
-                setupDuplicateDropdownListeners();
-                duplicateListenersSetup = true;
-            }
-
-            // Clear name input
+            programToDuplicate = program; duplicateStudioId = null;
+            document.getElementById('duplicatePreviewContent').innerHTML = `<div class="import-preview-item"><div><div class="name">${program.name}</div><div class="meta">${program.price ? program.price : 'No price'} ${program.price_type ? `(${program.price_type})` : ''} &bull; ${program.enrollment_type || 'No enrollment type'}</div></div></div>`;
+            const dzg = document.getElementById('duplicateZoneGroup'); if (dzg) dzg.style.display = allZones.length > 0 ? 'block' : 'none';
+            const dbg = document.getElementById('duplicateBrandGroup'); if (dbg) dbg.style.display = allBrands.length > 0 ? 'block' : 'none';
+            if (allZones.length > 0) populateDuplicateZoneDropdown();
+            if (allBrands.length > 0) { populateDuplicateBrandDropdown(); document.getElementById('duplicateStudioSelect').innerHTML = '<option value="">Select Studio Location</option>'; } else { populateDuplicateStudioDropdownAll(); }
+            if (!duplicateListenersSetup) { setupDuplicateDropdownListeners(); duplicateListenersSetup = true; }
             document.getElementById('duplicateProgramName').value = '';
-
             document.getElementById('duplicateModal').classList.add('active');
         }
 
-        function populateDuplicateStudioDropdownAll() {
-            const select = document.getElementById('duplicateStudioSelect');
-            select.innerHTML = '<option value="">Select Studio</option>';
-            
-            allStudios.forEach(studio => {
-                const option = document.createElement('option');
-                option.value = studio.id;
-                option.textContent = getStudioLabel(studio);
-                select.appendChild(option);
-            });
-        }
-
-        function populateDuplicateZoneDropdown() {
-            const select = document.getElementById('duplicateZoneSelect');
-            select.innerHTML = '<option value="">All Zones</option>';
-            
-            allZones.forEach(zone => {
-                const option = document.createElement('option');
-                option.value = zone.id;
-                option.textContent = zone.name || zone.zone_name || zone.title || 'Unknown Zone';
-                select.appendChild(option);
-            });
-        }
-
-        function populateDuplicateBrandDropdown(filteredBrands = null) {
-            const select = document.getElementById('duplicateBrandSelect');
-            const brands = filteredBrands || allBrands;
-            select.innerHTML = '<option value="">Select Brand</option>';
-            
-            brands.forEach(brand => {
-                const option = document.createElement('option');
-                option.value = brand.id;
-                option.textContent = brand.name;
-                select.appendChild(option);
-            });
-        }
-
-        function populateDuplicateStudioDropdown(filteredStudios = null) {
-            const select = document.getElementById('duplicateStudioSelect');
-            const studios = filteredStudios || [];
-            select.innerHTML = '<option value="">Select Studio Location</option>';
-            
-            studios.forEach(studio => {
-                const option = document.createElement('option');
-                option.value = studio.id;
-                let label = studio.city || 'Main Location';
-                if (studio.state) label += `, ${studio.state}`;
-                option.textContent = label;
-                select.appendChild(option);
-            });
-        }
+        function populateDuplicateStudioDropdownAll() { const s = document.getElementById('duplicateStudioSelect'); s.innerHTML = '<option value="">Select Studio</option>'; allStudios.forEach(st => { const o = document.createElement('option'); o.value = st.id; o.textContent = getStudioLabel(st); s.appendChild(o); }); }
+        function populateDuplicateZoneDropdown() { const s = document.getElementById('duplicateZoneSelect'); s.innerHTML = '<option value="">All Zones</option>'; allZones.forEach(z => { const o = document.createElement('option'); o.value = z.id; o.textContent = z.name || z.zone_name || z.title || 'Unknown Zone'; s.appendChild(o); }); }
+        function populateDuplicateBrandDropdown(fb = null) { const s = document.getElementById('duplicateBrandSelect'); const brands = fb || allBrands; s.innerHTML = '<option value="">Select Brand</option>'; brands.forEach(b => { const o = document.createElement('option'); o.value = b.id; o.textContent = b.name; s.appendChild(o); }); }
+        function populateDuplicateStudioDropdown(fs = null) { const s = document.getElementById('duplicateStudioSelect'); const studios = fs || []; s.innerHTML = '<option value="">Select Studio Location</option>'; studios.forEach(st => { const o = document.createElement('option'); o.value = st.id; let l = st.city || 'Main Location'; if (st.state) l += `, ${st.state}`; o.textContent = l; s.appendChild(o); }); }
 
         function setupDuplicateDropdownListeners() {
-            // Zone change
-            document.getElementById('duplicateZoneSelect').addEventListener('change', (e) => {
-                const zoneId = e.target.value;
-                
-                // Filter brands by zone
-                if (zoneId && allBrands.length > 0) {
-                    const filteredBrands = allBrands.filter(b => b.zone_id === zoneId);
-                    populateDuplicateBrandDropdown(filteredBrands);
-                } else {
-                    populateDuplicateBrandDropdown();
-                }
-                
-                // Reset brand and studio
-                document.getElementById('duplicateBrandSelect').value = '';
-                document.getElementById('duplicateStudioSelect').innerHTML = '<option value="">Select Studio Location</option>';
-                duplicateStudioId = null;
-            });
-            
-            // Brand change
-            document.getElementById('duplicateBrandSelect').addEventListener('change', (e) => {
-                const brandId = e.target.value;
-                
-                if (brandId) {
-                    // Get studios for this brand using brand_id
-                    const brandStudios = allStudios.filter(s => s.brand_id === brandId);
-                    populateDuplicateStudioDropdown(brandStudios);
-                } else {
-                    populateDuplicateStudioDropdown([]);
-                }
-                
-                // Reset studio
-                duplicateStudioId = null;
-            });
-            
-            // Studio change
-            document.getElementById('duplicateStudioSelect').addEventListener('change', (e) => {
-                duplicateStudioId = e.target.value;
-            });
+            document.getElementById('duplicateZoneSelect').addEventListener('change', (e) => { const zoneId = e.target.value; if (zoneId && allBrands.length > 0) { populateDuplicateBrandDropdown(allBrands.filter(b => b.zone_id === zoneId)); } else { populateDuplicateBrandDropdown(); } document.getElementById('duplicateBrandSelect').value = ''; document.getElementById('duplicateStudioSelect').innerHTML = '<option value="">Select Studio Location</option>'; duplicateStudioId = null; });
+            document.getElementById('duplicateBrandSelect').addEventListener('change', (e) => { const brandId = e.target.value; if (brandId) { populateDuplicateStudioDropdown(allStudios.filter(s => s.brand_id === brandId)); } else { populateDuplicateStudioDropdown([]); } duplicateStudioId = null; });
+            document.getElementById('duplicateStudioSelect').addEventListener('change', (e) => { duplicateStudioId = e.target.value; });
         }
 
-        function closeDuplicateModal() {
-            document.getElementById('duplicateModal').classList.remove('active');
-            programToDuplicate = null;
-            duplicateStudioId = null;
-        }
+        function closeDuplicateModal() { document.getElementById('duplicateModal').classList.remove('active'); programToDuplicate = null; duplicateStudioId = null; }
 
         async function confirmDuplicate() {
             const targetStudioId = duplicateStudioId || document.getElementById('duplicateStudioSelect').value;
-            
-            if (!targetStudioId) {
-                showToast('Please select a studio location', 'error');
-                return;
-            }
-
-            if (!programToDuplicate) {
-                showToast('No program to duplicate', 'error');
-                return;
-            }
-
+            if (!targetStudioId) { showToast('Please select a studio location', 'error'); return; }
+            if (!programToDuplicate) { showToast('No program to duplicate', 'error'); return; }
             const newName = document.getElementById('duplicateProgramName').value.trim() || programToDuplicate.name;
-
-            const data = {
-                studio_id: targetStudioId,
-                name: newName,
-                class_size: programToDuplicate.class_size || null,
-                duration: programToDuplicate.duration || null,
-                lesson_frequency: programToDuplicate.lesson_frequency || null,
-                status: programToDuplicate.status || 'active',
-                price: programToDuplicate.price || null,
-                price_type: programToDuplicate.price_type || null,
-                registration_fee: programToDuplicate.registration_fee || null,
-                registration_fee_covers: programToDuplicate.registration_fee_covers || null,
-                enrollment_type: programToDuplicate.enrollment_type || null,
-                enrollment_process: programToDuplicate.enrollment_process || null,
-                mid_semester_enrollment: programToDuplicate.mid_semester_enrollment || false,
-                mid_semester_policy: programToDuplicate.mid_semester_policy || null,
-                mid_semester_price_change: programToDuplicate.mid_semester_price_change || null,
-                skill_level: programToDuplicate.skill_level || null,
-                qualifications: programToDuplicate.qualifications || null,
-                curriculum_details: programToDuplicate.curriculum_details || null,
-                makeup_policy: programToDuplicate.makeup_policy || null,
-                withdrawal_policy: programToDuplicate.withdrawal_policy || null,
-                first_free_lesson: programToDuplicate.first_free_lesson || false,
-                parent_guardian_required: programToDuplicate.parent_guardian_required || false,
-                additional_policies: programToDuplicate.additional_policies || null,
-                scheduling_link: programToDuplicate.scheduling_link || null,
-                flyer_link: programToDuplicate.flyer_link || null,
-                website_description_link: programToDuplicate.website_description_link || null
-            };
-
-            try {
-                const { error } = await supabaseClient.from('programs').insert([data]);
-                
-                if (error) throw error;
-
-                // Find studio name for toast
-                const studio = allStudios.find(s => s.id === targetStudioId);
-                const studioName = studio ? getStudioLabel(studio) : 'studio';
-
-                showToast(`Program "${newName}" duplicated to ${studioName}!`, 'success');
-                closeDuplicateModal();
-                
-                // Reload all programs
-                loadAllPrograms();
-            } catch (error) {
-                console.error('Error duplicating program:', error);
-                showToast('Error duplicating program', 'error');
-            }
+            const data = { studio_id: targetStudioId, name: newName, class_size: programToDuplicate.class_size || null, duration: programToDuplicate.duration || null, lesson_frequency: programToDuplicate.lesson_frequency || null, status: programToDuplicate.status || 'active', price: programToDuplicate.price || null, price_type: programToDuplicate.price_type || null, registration_fee: programToDuplicate.registration_fee || null, registration_fee_covers: programToDuplicate.registration_fee_covers || null, enrollment_type: programToDuplicate.enrollment_type || null, enrollment_process: programToDuplicate.enrollment_process || null, mid_semester_enrollment: programToDuplicate.mid_semester_enrollment || false, mid_semester_policy: programToDuplicate.mid_semester_policy || null, mid_semester_price_change: programToDuplicate.mid_semester_price_change || null, skill_level: programToDuplicate.skill_level || null, qualifications: programToDuplicate.qualifications || null, curriculum_details: programToDuplicate.curriculum_details || null, makeup_policy: programToDuplicate.makeup_policy || null, withdrawal_policy: programToDuplicate.withdrawal_policy || null, first_free_lesson: programToDuplicate.first_free_lesson || false, parent_guardian_required: programToDuplicate.parent_guardian_required || false, additional_policies: programToDuplicate.additional_policies || null, scheduling_link: programToDuplicate.scheduling_link || null, flyer_link: programToDuplicate.flyer_link || null, website_description_link: programToDuplicate.website_description_link || null };
+            try { const { error } = await supabaseClient.from('programs').insert([data]); if (error) throw error; const studio = allStudios.find(s => s.id === targetStudioId); showToast(`Program "${newName}" duplicated to ${studio ? getStudioLabel(studio) : 'studio'}!`, 'success'); closeDuplicateModal(); loadAllPrograms(); }
+            catch (error) { console.error('Error duplicating program:', error); showToast('Error duplicating program', 'error'); }
         }
+
     </script>
 </body>
 </html>

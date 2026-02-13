@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            /* Salmon/Coral Color Scheme - EXACT MATCH TO DASHBOARD */
             --primary: #FA8072;
             --primary-light: #FFB4A2;
             --primary-dark: #E96E5D;
@@ -17,35 +15,25 @@
             --secondary-light: #FFB6C1;
             --accent: #FFA07A;
             --accent-light: #FFCBA4;
-            
             --bg-primary: #FFFFFF;
             --bg-secondary: #F8F9FA;
             --text-primary: #2D3748;
             --text-secondary: #718096;
             --text-light: #A0AEC0;
             --white: #FFFFFF;
-            
             --gray-50: #F8F9FA;
             --gray-100: #F1F3F5;
             --gray-200: #E9ECEF;
             --gray-300: #DEE2E6;
-            
             --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 10px 30px 0 rgba(0, 0, 0, 0.12);
             --shadow-xl: 0 20px 40px 0 rgba(0, 0, 0, 0.15);
-            
             --sidebar-width: 260px;
             --sidebar-collapsed: 70px;
             --transition-speed: 0.3s;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #F8F9FA;
@@ -53,467 +41,192 @@
             color: var(--text-primary);
             overflow-x: hidden;
         }
-
-        /* SIDEBAR - EXACT MATCH TO DASHBOARD */
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
             background: var(--white);
             border-right: 1px solid var(--gray-200);
             box-shadow: var(--shadow-sm);
             transition: transform var(--transition-speed) ease, width var(--transition-speed) ease;
             z-index: 1000;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
-
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed);
-        }
-
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
         .sidebar-header {
             padding: 1.5rem 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid var(--gray-200);
         }
-
         .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            display: flex; align-items: center; gap: 0.75rem;
             transition: opacity var(--transition-speed) ease;
         }
-
-        .sidebar.collapsed .logo-section {
-            opacity: 0;
-            pointer-events: none;
-        }
-
+        .sidebar.collapsed .logo-section { opacity: 0; pointer-events: none; }
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            color: var(--white);
-            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; flex-shrink: 0;
+            color: var(--white); font-weight: 700;
         }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            white-space: nowrap;
-        }
-
+        .logo-text { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
         .toggle-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--gray-200);
-            background: var(--white);
-            color: var(--text-secondary);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
+            width: 32px; height: 32px;
+            border: 1px solid var(--gray-200); background: var(--white);
+            color: var(--text-secondary); border-radius: 6px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; flex-shrink: 0;
         }
-
-        .toggle-btn:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-300);
-        }
-
-        .sidebar.collapsed .toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .toggle-icon {
-            transition: transform var(--transition-speed) ease;
-            font-size: 1rem;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 1rem 0;
-        }
-
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
-            border-radius: 2px;
-        }
-
+        .toggle-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .sidebar.collapsed .toggle-icon { transform: rotate(180deg); }
+        .toggle-icon { transition: transform var(--transition-speed) ease; font-size: 1rem; }
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 2px; }
         .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
-            padding: 0.875rem 1.5rem;
-            margin: 0.25rem 0.75rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            width: calc(100% - 1.5rem);
-            font-size: 0.9375rem;
-            font-weight: 500;
+            display: flex; align-items: center; gap: 0.875rem;
+            padding: 0.875rem 1.5rem; margin: 0.25rem 0.75rem;
+            color: var(--text-secondary); text-decoration: none;
+            border-radius: 10px; transition: all 0.2s ease;
+            cursor: pointer; border: none; background: transparent;
+            width: calc(100% - 1.5rem); font-size: 0.9375rem; font-weight: 500;
         }
-
-        .nav-item:hover {
-            background: var(--gray-100);
-            color: var(--text-primary);
-        }
-
+        .nav-item:hover { background: var(--gray-100); color: var(--text-primary); }
         .nav-item.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: var(--white);
             box-shadow: 0 4px 12px rgba(250, 128, 114, 0.3);
         }
-
         .nav-icon {
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 1.25rem; flex-shrink: 0;
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        .nav-text {
-            white-space: nowrap;
-            transition: opacity var(--transition-speed) ease;
-        }
-
-        .sidebar.collapsed .nav-text {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-            padding: 0.875rem;
-        }
-
-        .sidebar-footer {
-            padding: 0.5rem 0 1rem 0;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .logout-btn {
-            color: var(--secondary) !important;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 107, 157, 0.1) !important;
-        }
-
+        .nav-text { white-space: nowrap; transition: opacity var(--transition-speed) ease; }
+        .sidebar.collapsed .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 0.875rem; }
+        .sidebar-footer { padding: 0.5rem 0 1rem 0; border-top: 1px solid var(--gray-200); }
+        .logout-btn { color: var(--secondary) !important; }
+        .logout-btn:hover { background: rgba(255, 107, 157, 0.1) !important; }
         .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 999;
+            opacity: 0; pointer-events: none;
             transition: opacity var(--transition-speed) ease;
         }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
         .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
+            margin-left: var(--sidebar-width); min-height: 100vh;
             padding: 2rem 2.5rem;
             transition: margin-left var(--transition-speed) ease;
         }
-
-        .sidebar.collapsed ~ .main-content {
-            margin-left: var(--sidebar-collapsed);
-        }
-
-        /* Page Header */
-        .page-header {
-            margin-bottom: 2.5rem;
-        }
-
+        .sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-collapsed); }
+        .page-header { margin-bottom: 2.5rem; }
         .page-header h1 {
-            font-size: 2rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
+            font-size: 2rem; color: var(--text-primary);
+            margin-bottom: 0.5rem; font-weight: 700; letter-spacing: -0.02em;
         }
-
-        .page-header p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        /* Tabs Section - Compact */
+        .page-header p { color: var(--text-secondary); font-size: 1rem; }
         .tabs-section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 1.5rem;
+            background: var(--white); border-radius: 16px;
+            padding: 1.5rem; box-shadow: var(--shadow-md); margin-bottom: 1.5rem;
         }
-
         .tabs {
-            display: flex;
-            gap: 0.5rem;
+            display: flex; gap: 0.5rem;
             border-bottom: 2px solid var(--gray-200);
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            margin-bottom: 1.5rem; flex-wrap: wrap;
         }
-
         .tab {
-            padding: 0.75rem 1.25rem;
-            background: transparent;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: var(--text-secondary);
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: -2px;
+            padding: 0.75rem 1.25rem; background: transparent;
+            border: none; border-bottom: 3px solid transparent;
+            color: var(--text-secondary); font-size: 0.9375rem;
+            font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; margin-bottom: -2px;
         }
-
-        .tab:hover {
-            color: var(--text-primary);
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Snippets Section */
-        .snippets-header {
-            margin-bottom: 1.5rem;
-        }
-
-        .snippets-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .snippets-header { margin-bottom: 1.5rem; }
+        .snippets-title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); }
         .snippets-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.25rem;
         }
-
         .snippet-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
+            background: var(--white); border-radius: 16px;
+            padding: 1.5rem; box-shadow: var(--shadow-sm);
             border: 1px solid var(--gray-200);
             transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
-
         .snippet-card:hover {
             box-shadow: var(--shadow-md);
             border-color: var(--primary);
             transform: translateY(-2px);
         }
-
-        .snippet-header {
-            margin-bottom: 1rem;
-        }
-
+        .snippet-header { margin-bottom: 1rem; }
         .snippet-title {
-            font-size: 1.0625rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.375rem;
+            font-size: 1.0625rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 0.375rem;
         }
-
-        .snippet-subheading {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
+        .snippet-subheading { font-size: 0.875rem; color: var(--text-secondary); font-weight: 500; }
         .snippet-content {
-            color: var(--text-primary);
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            flex: 1;
+            color: var(--text-primary); font-size: 0.9375rem;
+            line-height: 1.6; margin-bottom: 1rem; flex: 1;
         }
-
-        .snippet-content p {
-            margin-bottom: 0.625rem;
-        }
-
-        .snippet-content p:last-child {
-            margin-bottom: 0;
-        }
-
+        .snippet-content p { margin-bottom: 0.625rem; }
+        .snippet-content p:last-child { margin-bottom: 0; }
         .snippet-actions {
-            display: flex;
-            gap: 0.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--gray-100);
+            display: flex; gap: 0.5rem;
+            padding-top: 1rem; border-top: 1px solid var(--gray-100);
         }
-
         .snippet-btn {
-            flex: 1;
-            padding: 0.75rem 1rem;
+            flex: 1; padding: 0.75rem 1rem;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            border: none; border-radius: 10px;
+            color: white; font-weight: 600; font-size: 0.875rem;
+            cursor: pointer; transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             box-shadow: 0 2px 8px rgba(250, 128, 114, 0.3);
         }
-
         .snippet-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(250, 128, 114, 0.4);
         }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            color: var(--gray-300);
-            margin-bottom: 0.75rem;
-        }
-
-        .empty-state p {
-            font-size: 1rem;
-        }
-
-        /* Toast */
+        .empty-state { text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary); }
+        .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 0.75rem; }
+        .empty-state p { font-size: 1rem; }
         .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--text-primary);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: var(--text-primary); color: white;
+            padding: 1rem 1.5rem; border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.9375rem;
-            z-index: 3000;
+            opacity: 0; transition: all 0.3s ease;
+            font-weight: 500; font-size: 0.9375rem; z-index: 3000;
         }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateY(-8px);
-        }
-
-        .toast.success {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        }
-
-        .toast.error {
-            background: #EF4444;
-        }
-
+        .toast.show { opacity: 1; transform: translateY(-8px); }
+        .toast.success { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); }
+        .toast.error { background: #EF4444; }
         .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            color: var(--text-secondary);
-            font-size: 1.125rem;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 400px; color: var(--text-secondary); font-size: 1.125rem;
         }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar:not(.collapsed) {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 1.5rem;
-            }
-            
-            .sidebar.collapsed ~ .main-content {
-                margin-left: 0;
-            }
-
-            .snippets-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tabs {
-                gap: 0.25rem;
-            }
-
-            .tab {
-                padding: 0.625rem 1rem;
-                font-size: 0.875rem;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar:not(.collapsed) { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar.collapsed ~ .main-content { margin-left: 0; }
+            .snippets-grid { grid-template-columns: 1fr; }
+            .tabs { gap: 0.25rem; }
+            .tab { padding: 0.625rem 1rem; font-size: 0.875rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar - EXACT MATCH TO DASHBOARD -->
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <div class="logo-section">
@@ -524,23 +237,19 @@
                 <span class="toggle-icon">‹</span>
             </button>
         </div>
-
         <nav class="sidebar-nav">
             <a href="teamdashboard.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
                 <span class="nav-text">Dashboard</span>
             </a>
-            
             <a href="teamquicklinks.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-link"></i></span>
                 <span class="nav-text">Quick Links</span>
             </a>
-            
             <a href="teamstudio-directory.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-building"></i></span>
                 <span class="nav-text">Studio Directory</span>
             </a>
-            
             <a href="teamsnippets.html" class="nav-item active">
                 <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
                 <span class="nav-text">Snippets</span>
@@ -549,33 +258,27 @@
                 <span class="nav-icon"><i class="far fa-star"></i></span>
                 <span class="nav-text">Map</span>
             </a>
-            
             <a href="teamteacher-selling-points.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-star"></i></span>
                 <span class="nav-text">Selling Points</span>
             </a>
-            
             <a href="teamprograms.html" class="nav-item">
                 <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
                 <span class="nav-text">Programs</span>
             </a>
-            
             <a href="teamtraining-hub.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-book-open"></i></span>
                 <span class="nav-text">Training Hub</span>
             </a>
-            
             <a href="teampolicies.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-file-alt"></i></span>
                 <span class="nav-text">Policies</span>
             </a>
-            
             <a href="teamprofile.html" class="nav-item">
                 <span class="nav-icon"><i class="far fa-user"></i></span>
                 <span class="nav-text">Profiles</span>
             </a>
         </nav>
-
         <div class="sidebar-footer">
             <button id="logoutBtn" class="nav-item logout-btn">
                 <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
@@ -587,19 +290,15 @@
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <main class="main-content">
-        <!-- Page Header -->
         <div class="page-header">
             <h1>Snippets</h1>
             <p>Save and organize reusable text snippets with formatting</p>
         </div>
-
         <div id="loading" class="loading">
             <i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>
             Loading snippets...
         </div>
-
         <div id="content" style="display: none;">
-            <!-- Category Tabs Section -->
             <div class="tabs-section">
                 <div class="tabs" id="categoryTabs"></div>
                 <div id="tabContents"></div>
@@ -651,7 +350,6 @@
             });
         }
 
-        // Toast
         function showToast(message, isSuccess = false) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -660,7 +358,6 @@
             setTimeout(() => toast.className = 'toast', 2500);
         }
 
-        // Load Data
         async function loadData() {
             try {
                 const [categoriesResult, snippetsResult] = await Promise.all([
@@ -689,27 +386,21 @@
             }
         }
 
-        // Render Category Tabs
         function renderTabs() {
             const tabsContainer = document.getElementById('categoryTabs');
-            
             const tabsHTML = categories.map(category => `
                 <button class="tab ${activeCategory === category.id ? 'active' : ''}" 
                         onclick="switchCategory('${category.id}')">
                     ${category.name}
                 </button>
             `).join('');
-
             tabsContainer.innerHTML = tabsHTML;
         }
 
-        // Render Tab Contents
         function renderTabContents() {
             const contentsContainer = document.getElementById('tabContents');
-            
             const contentsHTML = categories.map(category => {
                 const categorySnippets = snippets.filter(s => s.category_id === category.id);
-                
                 return `
                     <div class="tab-content ${activeCategory === category.id ? 'active' : ''}" id="category-${category.id}">
                         ${categorySnippets.length === 0 ? `
@@ -740,16 +431,12 @@
                     </div>
                 `;
             }).join('');
-
             contentsContainer.innerHTML = contentsHTML;
         }
 
-        // Switch Category Tab
         function switchCategory(categoryId) {
             activeCategory = categoryId;
             renderTabs();
-            
-            // Show/hide tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
@@ -759,17 +446,29 @@
             }
         }
 
-        // Copy Snippet
+        // FIXED: Copy snippet preserving line breaks from HTML
         function copySnippet(id) {
             const snippet = snippets.find(s => s.id === id);
+            
+            // Build the text, converting HTML to plain text with proper line breaks
+            let textParts = [];
+            
+            snippet.paragraphs.forEach(p => {
+                const temp = document.createElement('div');
+                // Convert <br> tags to newlines
+                let processed = p.replace(/<br\s*\/?>/gi, '\n');
+                // Convert closing block-level tags to newlines
+                processed = processed.replace(/<\/(p|div|li|tr)>/gi, '\n');
+                // Convert </td> to tab (useful for table-like data)
+                processed = processed.replace(/<\/td>/gi, '\t');
+                temp.innerHTML = processed;
+                textParts.push(temp.textContent.trim());
+            });
+
             let text = snippet.title + '\n';
             if (snippet.subheading) text += snippet.subheading + '\n';
             text += '\n';
-            text += snippet.paragraphs.map(p => {
-                const temp = document.createElement('div');
-                temp.innerHTML = p;
-                return temp.textContent;
-            }).join('\n\n');
+            text += textParts.join('\n\n');
 
             navigator.clipboard.writeText(text).then(() => {
                 showToast('Copied to clipboard!', true);

@@ -656,6 +656,35 @@
       box-shadow: var(--shadow-md);
     }
 
+    /* Featured Team Card */
+    .team-card-featured {
+      border: 2px solid var(--featured-color, var(--color-primary));
+      box-shadow: 0 4px 20px rgba(13, 148, 136, 0.15);
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.03) 0%, rgba(16, 185, 129, 0.03) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-card-featured:hover {
+      box-shadow: 0 8px 30px rgba(13, 148, 136, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .featured-banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-primary);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     .team-card-header {
       display: flex;
       align-items: center;
@@ -1169,6 +1198,7 @@
     let policies = [];
     let categories = [];
     let teamMembers = [];
+    let roles = [];
     let scriptContent = '';
 
     // Initialize
@@ -1179,12 +1209,13 @@
 
     async function loadAllData() {
       try {
-        const [annRes, promoRes, policyRes, catRes, teamRes, scriptRes] = await Promise.all([
+        const [annRes, promoRes, policyRes, catRes, teamRes, rolesRes, scriptRes] = await Promise.all([
           sb.from('announcements').select('*').eq('is_active', true).order('sort_order').order('date', { ascending: false }),
           sb.from('promotions').select('*').order('sort_order').order('start_date', { ascending: false }),
           sb.from('policies').select('*').order('sort_order'),
           sb.from('policy_categories').select('*').order('sort_order'),
           sb.from('team_members').select('*').order('sort_order'),
+          sb.from('roles').select('*').order('sort_order'),
           sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single()
         ]);
 
@@ -1193,6 +1224,7 @@
         policies = policyRes.data || [];
         categories = catRes.data || [];
         teamMembers = teamRes.data || [];
+        roles = rolesRes.data || [];
         scriptContent = scriptRes.data?.content || '';
 
         renderAll();
@@ -1559,13 +1591,29 @@
         return;
       }
 
-      container.innerHTML = filtered.map(t => `
-        <div class="team-card">
-          <div class="team-card-header">
+      // Sort so featured roles appear first
+      const sorted = [...filtered].sort((a, b) => {
+        const roleA = roles.find(r => r.id === a.role_id);
+        const roleB = roles.find(r => r.id === b.role_id);
+        if (roleA?.is_featured && !roleB?.is_featured) return -1;
+        if (!roleA?.is_featured && roleB?.is_featured) return 1;
+        return 0;
+      });
+
+      container.innerHTML = sorted.map(t => {
+        const role = roles.find(r => r.id === t.role_id);
+        const roleName = role ? role.name : (t.role || 'Team Member');
+        const roleColor = role ? role.color : '#64748B';
+        const isFeatured = role ? role.is_featured : false;
+        
+        return `
+        <div class="team-card ${isFeatured ? 'team-card-featured' : ''}" ${isFeatured ? `style="--featured-color: ${roleColor}"` : ''}>
+          ${isFeatured ? `<div class="featured-banner" style="background: ${roleColor}">★ ${esc(roleName)}</div>` : ''}
+          <div class="team-card-header" ${isFeatured ? 'style="margin-top: 16px;"' : ''}>
             <img src="${esc(t.avatar_url) || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}" class="team-avatar" alt="${esc(t.first_name)}">
             <div class="team-info">
               <h4>${esc(t.first_name)} ${esc(t.last_name)}</h4>
-              <div class="role">${esc(t.role) || 'Team Member'}</div>
+              <span style="display: inline-block; background: ${roleColor}20; color: ${roleColor}; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;">${esc(roleName)}</span>
               ${t.zone ? `<div class="zone">${esc(t.zone)}</div>` : ''}
             </div>
           </div>
@@ -1587,7 +1635,7 @@
             ` : ''}
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     // Section switching

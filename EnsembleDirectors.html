@@ -3,32 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Director's Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Director's Portal - Enrollment Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --color-bg: #F5F5F7;
+      --color-primary: #0D9488;
+      --color-primary-dark: #0F766E;
+      --color-secondary: #10B981;
+      --gradient-primary: linear-gradient(135deg, #0D9488 0%, #10B981 100%);
+      --color-bg: #F8FAFB;
       --color-white: #FFFFFF;
-      --color-coral: #F97B5F;
-      --color-coral-light: #FFA07A;
-      --color-pink: #F472B6;
-      --gradient-primary: linear-gradient(135deg, #F97B5F 0%, #F472B6 100%);
-      --color-text: #1F2937;
-      --color-text-muted: #6B7280;
-      --color-text-light: #9CA3AF;
-      --color-border: #E5E7EB;
+      --color-text: #1E293B;
+      --color-text-muted: #64748B;
+      --color-text-light: #94A3B8;
+      --color-border: #E2E8F0;
       --color-success: #10B981;
       --color-warning: #F59E0B;
-      --color-blue: #3B82F6;
+      --color-danger: #EF4444;
+      --color-info: #0EA5E9;
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
       --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
       --sidebar-width: 260px;
     }
 
@@ -40,6 +41,7 @@
       line-height: 1.6;
     }
 
+    /* Layout */
     .app-layout { display: flex; min-height: 100vh; }
 
     /* Sidebar */
@@ -58,7 +60,7 @@
     }
 
     .sidebar-header {
-      padding: 20px;
+      padding: 24px 20px;
       border-bottom: 1px solid var(--color-border);
     }
 
@@ -77,20 +79,35 @@
       align-items: center;
       justify-content: center;
       color: white;
-      flex-shrink: 0;
     }
 
-    .sidebar-logo-text h1 { font-size: 15px; font-weight: 700; color: var(--color-text); }
-    .sidebar-logo-text p { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+    .sidebar-logo-icon svg { width: 22px; height: 22px; }
 
-    .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
-
-    .nav-section { margin-bottom: 20px; }
-    .nav-section-title {
-      font-size: 10px;
+    .sidebar-logo-text h1 {
+      font-size: 16px;
       font-weight: 700;
+      color: var(--color-text);
+    }
+
+    .sidebar-logo-text p {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+
+    .nav-section { margin-bottom: 24px; }
+
+    .nav-section-title {
+      font-size: 11px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.5px;
       color: var(--color-text-light);
       padding: 0 12px;
       margin-bottom: 8px;
@@ -103,7 +120,6 @@
       padding: 10px 12px;
       border-radius: var(--radius-sm);
       color: var(--color-text-muted);
-      text-decoration: none;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
@@ -111,16 +127,41 @@
       margin-bottom: 2px;
     }
 
-    .nav-item:hover { background: var(--color-bg); color: var(--color-text); }
-    .nav-item.active {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.12) 0%, rgba(244, 114, 182, 0.12) 100%);
-      color: var(--color-coral);
+    .nav-item:hover {
+      background: var(--color-bg);
+      color: var(--color-text);
     }
-    .nav-item.active svg { color: var(--color-coral); }
-    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--color-border); }
-    .sidebar-footer p { font-size: 11px; color: var(--color-text-light); }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+      color: var(--color-primary);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--gradient-primary);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .sidebar-footer p {
+      font-size: 11px;
+      color: var(--color-text-light);
+    }
 
     /* Mobile Header */
     .mobile-header {
@@ -129,7 +170,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 56px;
+      height: 60px;
       background: var(--color-white);
       border-bottom: 1px solid var(--color-border);
       padding: 0 16px;
@@ -157,7 +198,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.4);
       z-index: 99;
     }
 
@@ -169,10 +210,23 @@
       min-height: 100vh;
     }
 
-    .page-header { margin-bottom: 28px; }
-    .page-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; color: var(--color-text); }
-    .page-header p { font-size: 14px; color: var(--color-text-muted); }
+    .page-header {
+      margin-bottom: 28px;
+    }
 
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 6px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    /* Sections */
     .section { display: none; }
     .section.active { display: block; animation: fadeIn 0.25s ease; }
 
@@ -181,45 +235,13 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Cards */
-    .card {
-      background: var(--color-white);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-coral);
-      flex-shrink: 0;
-    }
-
-    .card-title { font-size: 17px; font-weight: 600; color: var(--color-text); }
-    .card-subtitle { font-size: 13px; color: var(--color-text-muted); margin-top: 2px; }
-
     /* Hero Banner */
     .hero-banner {
       background: var(--gradient-primary);
       border-radius: var(--radius-lg);
-      padding: 28px 32px;
+      padding: 36px;
       color: white;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       position: relative;
       overflow: hidden;
     }
@@ -227,481 +249,394 @@
     .hero-banner::before {
       content: '';
       position: absolute;
-      top: -60%;
-      right: -15%;
-      width: 280px;
-      height: 280px;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 50%;
     }
 
-    .hero-banner h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; position: relative; }
-    .hero-banner p { font-size: 14px; opacity: 0.92; position: relative; max-width: 550px; }
-    .hero-banner .promo-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-top: 14px;
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: 20%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
     }
 
-    /* Stats */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+    .hero-banner h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .hero-banner > p {
+      font-size: 15px;
+      opacity: 0.9;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: white;
+      color: var(--color-primary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 16px;
+      position: relative;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
       margin-bottom: 24px;
     }
 
-    .stat-card {
-      background: var(--color-white);
-      border-radius: var(--radius-md);
-      padding: 18px 20px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border);
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--color-border);
     }
 
-    .stat-card-label { font-size: 12px; color: var(--color-text-muted); margin-bottom: 6px; font-weight: 500; }
-    .stat-card-value { font-size: 28px; font-weight: 700; color: var(--color-text); }
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
 
-    /* Announcements */
-    .announcement-list { display: flex; flex-direction: column; gap: 12px; }
+    .card-icon svg { width: 20px; height: 20px; }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .card-body { padding: 24px; }
+
+    /* Announcements List */
+    .announcement-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
     .announcement-item {
       display: flex;
       gap: 16px;
-      padding: 16px;
+      padding: 20px;
       background: var(--color-bg);
       border-radius: var(--radius-md);
-      align-items: flex-start;
+      transition: all 0.15s ease;
+    }
+
+    .announcement-item:hover {
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
     }
 
     .announcement-date {
       text-align: center;
-      min-width: 48px;
-      padding: 8px;
-      background: var(--color-white);
-      border-radius: var(--radius-sm);
-    }
-    .announcement-date .day { font-size: 20px; font-weight: 700; color: var(--color-coral); line-height: 1; }
-    .announcement-date .month { font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; font-weight: 500; margin-top: 2px; }
-
-    .announcement-content { flex: 1; }
-    .announcement-content h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--color-text); }
-    .announcement-content p { font-size: 13px; color: var(--color-text-muted); line-height: 1.5; }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 4px;
-      background: var(--color-bg);
-      padding: 4px;
-      border-radius: var(--radius-md);
-      margin-bottom: 20px;
+      min-width: 50px;
+      flex-shrink: 0;
     }
 
-    .tab-btn {
-      padding: 10px 20px;
-      border: none;
-      background: transparent;
-      font-size: 13px;
-      font-weight: 500;
+    .announcement-date .day {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1.1;
+    }
+
+    .announcement-date .month {
+      font-size: 12px;
       color: var(--color-text-muted);
-      cursor: pointer;
-      border-radius: var(--radius-sm);
-      transition: all 0.15s ease;
-      font-family: inherit;
+      text-transform: uppercase;
+      font-weight: 500;
     }
 
-    .tab-btn:hover { color: var(--color-text); }
-    .tab-btn.active {
-      background: var(--color-white);
-      color: var(--color-coral);
-      box-shadow: var(--shadow-sm);
+    .announcement-content h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-text);
     }
 
-    /* Promo Cards */
+    .announcement-content p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    /* Promotions Grid */
     .promo-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px;
+      gap: 20px;
     }
 
     .promo-card {
       background: var(--color-white);
       border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: 20px;
+      border-radius: var(--radius-lg);
+      padding: 24px;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
 
     .promo-card:hover {
-      border-color: var(--color-coral);
+      border-color: var(--color-primary);
       box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
 
     .promo-card-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
       margin-bottom: 12px;
     }
 
     .promo-status {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: capitalize;
     }
 
-    .promo-status.active { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
-    .promo-status.upcoming { background: rgba(59, 130, 246, 0.1); color: var(--color-blue); }
-    .promo-status.ended { background: rgba(107, 114, 128, 0.1); color: var(--color-text-muted); }
+    .promo-status.active {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-success);
+    }
 
-    .promo-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
-    .promo-card .promo-dates { font-size: 12px; color: var(--color-text-muted); margin-bottom: 8px; }
-    .promo-card .promo-discount {
+    .promo-status.upcoming {
+      background: rgba(14, 165, 233, 0.1);
+      color: var(--color-info);
+    }
+
+    .promo-type {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-text-light);
+      font-weight: 600;
+    }
+
+    .promo-card h4 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--color-text);
+    }
+
+    .promo-dates {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .promo-dates svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .promo-discount {
       display: inline-block;
       background: var(--gradient-primary);
       color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
       font-weight: 600;
       margin-bottom: 12px;
     }
 
-    .promo-card p { font-size: 13px; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 14px; }
+    .promo-card > p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
 
-    .promo-details-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      background: var(--color-bg);
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
       border: 1px solid var(--color-border);
+      background: var(--color-white);
       border-radius: var(--radius-sm);
       font-size: 13px;
       font-weight: 500;
-      color: var(--color-text);
+      color: var(--color-text-muted);
       cursor: pointer;
       transition: all 0.15s ease;
-      font-family: inherit;
     }
 
-    .promo-details-btn:hover {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
-      border-color: var(--color-coral);
-      color: var(--color-coral);
+    .tab-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
     }
 
-    /* Discount Cards */
-    .discount-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
-    .discount-card {
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      transition: all 0.15s ease;
-    }
-
-    .discount-card:hover {
-      border-color: var(--color-coral);
-      box-shadow: var(--shadow-md);
-    }
-
-    .discount-card-header { margin-bottom: 12px; }
-
-    .discount-status {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .discount-status.active { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
-    .discount-status.upcoming { background: rgba(59, 130, 246, 0.1); color: var(--color-blue); }
-    .discount-status.expired { background: var(--color-bg); color: var(--color-text-muted); }
-
-    .discount-card h4 { font-size: 17px; font-weight: 600; margin-bottom: 8px; color: var(--color-text); }
-    .discount-dates { font-size: 13px; color: var(--color-text-muted); margin-bottom: 12px; }
-    .discount-amount {
-      display: inline-block;
+    .tab-btn.active {
       background: var(--gradient-primary);
       color: white;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 12px;
+      border-color: transparent;
     }
-    .discount-card > p { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
-
-    /* Contact Cards */
-    .contact-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 16px;
-    }
-
-    .contact-card {
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-    }
-
-    .contact-card-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--color-white);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-coral);
-      flex-shrink: 0;
-    }
-
-    .contact-card-content { flex: 1; }
-    .contact-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: var(--color-text); }
-    .contact-card p { font-size: 13px; color: var(--color-text-muted); margin-bottom: 10px; line-height: 1.5; }
-    .contact-card a {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--color-coral);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 14px;
-    }
-    .contact-card a:hover { text-decoration: underline; }
-
-    /* Responsibility Lists */
-    .responsibility-section { margin-bottom: 28px; }
-    .responsibility-section:last-child { margin-bottom: 0; }
-
-    .responsibility-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .responsibility-badge {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .responsibility-badge.we-handle { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
-    .responsibility-badge.you-handle { background: rgba(249, 123, 95, 0.1); color: var(--color-coral); }
-
-    .responsibility-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 10px;
-    }
-
-    .responsibility-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 14px 16px;
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-    }
-
-    .responsibility-item .icon-wrapper {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .responsibility-item.we-handle .icon-wrapper { background: rgba(16, 185, 129, 0.15); color: var(--color-success); }
-    .responsibility-item.you-handle .icon-wrapper { background: rgba(249, 123, 95, 0.15); color: var(--color-coral); }
-    .responsibility-item .icon-wrapper svg { width: 14px; height: 14px; }
-    .responsibility-item span { font-size: 14px; color: var(--color-text); line-height: 1.5; }
-
-    /* Best Practices */
-    .practices-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 20px;
-    }
-
-    .practice-card {
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      border-left: 4px solid var(--color-coral);
-    }
-
-    .practice-card h4 {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--color-text);
-    }
-
-    .practice-card h4 .number {
-      width: 28px;
-      height: 28px;
-      background: var(--gradient-primary);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .practice-card p { font-size: 13px; color: var(--color-text-muted); line-height: 1.6; }
-    .practice-card ul { margin-top: 12px; padding-left: 18px; }
-    .practice-card li { font-size: 13px; color: var(--color-text-muted); margin-bottom: 6px; }
 
     /* Policies */
-    .policy-category { margin-bottom: 28px; }
-    .policy-category:last-child { margin-bottom: 0; }
+    .policy-category {
+      margin-bottom: 28px;
+    }
 
     .policy-category-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--color-text);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border);
     }
-    .policy-category-title svg { color: var(--color-coral); width: 18px; height: 18px; }
 
-    .policy-list { display: flex; flex-direction: column; gap: 8px; }
+    .policy-category-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--color-primary);
+    }
+
+    .policy-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
     .policy-item {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
       background: var(--color-bg);
       border-radius: var(--radius-md);
       text-decoration: none;
-      color: var(--color-text);
+      color: inherit;
       transition: all 0.15s ease;
     }
 
     .policy-item:hover {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.08) 0%, rgba(244, 114, 182, 0.08) 100%);
-      transform: translateX(4px);
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
     }
 
-    .policy-item-info { display: flex; align-items: center; gap: 12px; }
-    .policy-item-icon {
-      width: 36px;
-      height: 36px;
+    .policy-icon {
+      width: 40px;
+      height: 40px;
       background: var(--color-white);
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-coral);
-    }
-
-    .policy-item h4 { font-size: 14px; font-weight: 500; }
-    .policy-item svg.arrow { color: var(--color-text-light); width: 18px; height: 18px; }
-
-    /* Script */
-    .script-container {
-      background: var(--color-white);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--color-border);
-    }
-
-    .script-content { font-size: 15px; line-height: 1.8; color: var(--color-text); }
-    .script-content h2 { font-size: 20px; font-weight: 600; margin: 28px 0 12px 0; color: var(--color-coral); }
-    .script-content h2:first-child { margin-top: 0; }
-    .script-content h3 { font-size: 16px; font-weight: 600; margin: 24px 0 10px 0; color: var(--color-text); }
-    .script-content p { margin-bottom: 14px; }
-    .script-content ul, .script-content ol { margin: 14px 0; padding-left: 24px; }
-    .script-content li { margin-bottom: 8px; }
-    .script-content blockquote {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.08) 0%, rgba(244, 114, 182, 0.08) 100%);
-      border-left: 4px solid var(--color-coral);
-      padding: 16px 20px;
-      margin: 18px 0;
-      border-radius: 0 var(--radius-md) var(--radius-md) 0;
-      font-style: italic;
-      color: var(--color-text-muted);
-    }
-
-    /* Links */
-    .links-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 14px;
-    }
-
-    .link-card {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 16px;
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      text-decoration: none;
-      color: var(--color-text);
-      transition: all 0.15s ease;
-    }
-
-    .link-card:hover {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .link-card-icon {
-      width: 44px;
-      height: 44px;
-      background: var(--color-white);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-coral);
+      color: var(--color-primary);
       flex-shrink: 0;
     }
 
-    .link-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .link-card p { font-size: 12px; color: var(--color-text-muted); }
+    .policy-icon svg { width: 18px; height: 18px; }
 
-    /* Team */
+    .policy-info { flex: 1; }
+
+    .policy-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--color-text);
+    }
+
+    .policy-info p {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    .policy-arrow {
+      color: var(--color-text-light);
+      flex-shrink: 0;
+      margin-top: 10px;
+    }
+
+    .policy-arrow svg { width: 18px; height: 18px; }
+
+    /* Script Content */
+    .script-content {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--color-border);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .script-content h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 28px 0 12px;
+      color: var(--color-primary);
+    }
+
+    .script-content h2:first-child { margin-top: 0; }
+
+    .script-content h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 22px 0 10px;
+      color: var(--color-text);
+    }
+
+    .script-content p { margin-bottom: 14px; }
+
+    .script-content ul, .script-content ol {
+      margin: 14px 0;
+      padding-left: 24px;
+    }
+
+    .script-content li { margin-bottom: 8px; }
+
+    .script-content strong { color: var(--color-text); }
+
+    /* Team Grid */
     .team-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -713,11 +648,11 @@
       border: 1px solid var(--color-border);
       border-radius: var(--radius-lg);
       padding: 24px;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .team-card:hover {
-      border-color: var(--color-coral);
+      border-color: var(--color-primary);
       box-shadow: var(--shadow-md);
     }
 
@@ -725,74 +660,96 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
-    .team-card-avatar {
+    .team-avatar {
       width: 64px;
       height: 64px;
       border-radius: 50%;
       object-fit: cover;
+      background: var(--color-bg);
       border: 3px solid var(--color-bg);
-      flex-shrink: 0;
     }
 
-    .team-card-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 2px; color: var(--color-text); }
-    .team-card-info .role { font-size: 13px; color: var(--color-coral); font-weight: 500; }
-    .team-card-info .zone {
-      display: inline-block;
-      padding: 3px 10px;
-      background: var(--color-bg);
-      border-radius: 12px;
-      font-size: 11px;
-      color: var(--color-text-muted);
-      margin-top: 6px;
+    .team-info h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--color-text);
+    }
+
+    .team-info .role {
+      font-size: 13px;
+      color: var(--color-primary);
       font-weight: 500;
     }
 
-    .team-card-details {
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
+    .team-info .zone {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
     }
 
-    .team-detail-row {
+    .team-details {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .team-detail {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--color-border);
+      gap: 12px;
+      font-size: 14px;
+      color: var(--color-text-muted);
     }
 
-    .team-detail-row:last-child { border-bottom: none; }
+    .team-detail svg {
+      width: 16px;
+      height: 16px;
+      color: var(--color-text-light);
+      flex-shrink: 0;
+    }
 
-    .team-detail-row svg { width: 16px; height: 16px; color: var(--color-coral); flex-shrink: 0; }
-    .team-detail-row .label { font-size: 12px; color: var(--color-text-muted); min-width: 70px; }
-    .team-detail-row .value { font-size: 13px; color: var(--color-text); font-weight: 500; }
-    .team-detail-row a { color: var(--color-coral); text-decoration: none; }
-    .team-detail-row a:hover { text-decoration: underline; }
+    .team-detail a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .team-detail a:hover { text-decoration: underline; }
 
     /* Filter */
     .filter-bar {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
     }
 
-    .filter-label { font-size: 14px; font-weight: 500; color: var(--color-text-muted); }
+    .filter-label {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      font-weight: 500;
+    }
 
     .filter-select {
       padding: 10px 16px;
       border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-sm);
       font-size: 14px;
-      font-family: inherit;
       background: var(--color-white);
       cursor: pointer;
-      min-width: 160px;
+      color: var(--color-text);
     }
-    .filter-select:focus { outline: none; border-color: var(--color-coral); }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
 
     /* Empty State */
     .empty-state {
@@ -800,53 +757,76 @@
       padding: 48px 24px;
       color: var(--color-text-muted);
     }
-    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.4; }
-    .empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
-    .empty-state p { font-size: 14px; }
 
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+    .empty-state-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--color-bg);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.2s ease;
+      margin: 0 auto 16px;
+      color: var(--color-text-light);
     }
 
-    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .empty-state-icon svg { width: 24px; height: 24px; }
+
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 6px;
+    }
+
+    .empty-state p { font-size: 14px; }
+
+    /* Promo Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active { display: flex; }
 
     .modal {
       background: var(--color-white);
       border-radius: var(--radius-lg);
-      max-width: 500px;
-      width: 90%;
-      max-height: 85vh;
-      overflow-y: auto;
-      transform: scale(0.95);
-      transition: all 0.2s ease;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.2s ease;
     }
 
-    .modal-overlay.active .modal { transform: scale(1); }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
 
     .modal-header {
-      padding: 24px 24px 0;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--color-border);
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
     }
 
     .modal-close {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border: none;
-      background: var(--color-bg);
-      border-radius: 50%;
+      background: transparent;
       cursor: pointer;
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -854,83 +834,130 @@
       transition: all 0.15s ease;
     }
 
-    .modal-close:hover { background: var(--color-coral); color: white; }
+    .modal-close:hover {
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
 
-    .modal-body { padding: 24px; }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: calc(90vh - 80px);
+    }
 
-    .modal-promo-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-    .modal-promo-dates { font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px; }
+    .modal-promo-status {
+      margin-bottom: 16px;
+    }
+
+    .modal-promo-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--color-text);
+    }
+
+    .modal-promo-dates {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-promo-dates svg {
+      width: 16px;
+      height: 16px;
+    }
+
     .modal-promo-discount {
       display: inline-block;
       background: var(--gradient-primary);
       color: white;
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 16px;
       font-weight: 600;
       margin-bottom: 20px;
     }
 
-    .modal-promo-description { font-size: 14px; color: var(--color-text-muted); line-height: 1.7; margin-bottom: 20px; }
-
-    .modal-promo-details { background: var(--color-bg); border-radius: var(--radius-md); padding: 16px; }
-    .modal-promo-details h4 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--color-text); }
-    .modal-promo-details p { font-size: 13px; color: var(--color-text-muted); line-height: 1.6; }
-
-    /* Mobile Responsive */
-    @media (max-width: 1024px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .modal-promo-description {
+      font-size: 15px;
+      color: var(--color-text-muted);
+      line-height: 1.7;
     }
 
+    .modal-promo-description p { margin-bottom: 12px; }
+    .modal-promo-description ul, .modal-promo-description ol {
+      padding-left: 20px;
+      margin: 12px 0;
+    }
+    .modal-promo-description li { margin-bottom: 6px; }
+
+    /* Responsive */
     @media (max-width: 768px) {
-      .mobile-header { display: flex; }
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.open { display: block; }
-      .main-content { margin-left: 0; padding: 72px 20px 32px; }
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      .mobile-header {
+        display: flex;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 80px 16px 24px;
+      }
+
       .page-header h1 { font-size: 22px; }
+
       .hero-banner { padding: 24px; }
       .hero-banner h2 { font-size: 20px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .practices-grid, .promo-grid, .discount-grid, .links-grid, .team-grid, .contact-grid, .responsibility-list { grid-template-columns: 1fr; }
-      .tabs { flex-wrap: wrap; }
-      .tab-btn { flex: 1; min-width: 100px; text-align: center; }
-    }
 
-    @media (max-width: 480px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .filter-bar { flex-direction: column; align-items: stretch; }
-      .filter-select { width: 100%; }
+      .promo-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+
+      .modal { max-width: 100%; margin: 10px; }
     }
   </style>
 </head>
 <body>
-  <div class="mobile-header">
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-    </button>
-    <span style="font-size: 15px; font-weight: 700;">Director's Portal</span>
-    <div style="width: 40px;"></div>
-  </div>
-
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
   <div class="app-layout">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <span style="font-weight: 600;">Director's Portal</span>
+      <div style="width: 40px;"></div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
           <div class="sidebar-logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
             </svg>
           </div>
           <div class="sidebar-logo-text">
-            <h1>Director's Portal</h1>
-            <p>Enrollment Resources</p>
+            <h1>Enrollment Hub</h1>
+            <p>Director's Portal</p>
           </div>
         </div>
       </div>
@@ -938,776 +965,632 @@
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-section-title">Overview</div>
-          <a class="nav-item active" onclick="switchSection('dashboard', this)">
+          <div class="nav-item active" onclick="switchSection('home', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-              <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-              <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-              <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
             </svg>
-            Dashboard
-          </a>
-          <a class="nav-item" onclick="switchSection('promos', this)">
+            Home
+          </div>
+          <div class="nav-item" onclick="switchSection('announcements', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="8" r="6"></circle>
-              <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+              <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
             </svg>
-            Promotions
-          </a>
-          <a class="nav-item" onclick="switchSection('discounts', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 5 5 19"></path>
-              <circle cx="6.5" cy="6.5" r="2.5"></circle>
-              <circle cx="17.5" cy="17.5" r="2.5"></circle>
-            </svg>
-            Discounts
-          </a>
+            Announcements
+            <span class="nav-badge" id="announcementCount">0</span>
+          </div>
         </div>
 
         <div class="nav-section">
-          <div class="nav-section-title">Guide</div>
-          <a class="nav-item" onclick="switchSection('working-with-us', this)">
+          <div class="nav-section-title">Resources</div>
+          <div class="nav-item" onclick="switchSection('promotions', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
             </svg>
-            Working With Us
-          </a>
-          <a class="nav-item" onclick="switchSection('best-practices', this)">
+            Promotions
+          </div>
+          <div class="nav-item" onclick="switchSection('policies', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            Best Practices
-          </a>
-          <a class="nav-item" onclick="switchSection('policies', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
               <polyline points="14 2 14 8 20 8"></polyline>
               <line x1="16" y1="13" x2="8" y2="13"></line>
               <line x1="16" y1="17" x2="8" y2="17"></line>
             </svg>
             Policies
-          </a>
-          <a class="nav-item" onclick="switchSection('script', this)">
+          </div>
+          <div class="nav-item" onclick="switchSection('script', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-              <path d="m15 5 4 4"></path>
+              <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
             </svg>
             Enrollment Script
-          </a>
+          </div>
         </div>
 
         <div class="nav-section">
-          <div class="nav-section-title">Support</div>
-          <a class="nav-item" onclick="switchSection('resources', this)">
+          <div class="nav-section-title">People</div>
+          <div class="nav-item" onclick="switchSection('team', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 010 7.75"></path>
             </svg>
-            Resources
-          </a>
-          <a class="nav-item" onclick="switchSection('team', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
-            Contact Team
-          </a>
+            Meet the Team
+          </div>
         </div>
       </nav>
 
       <div class="sidebar-footer">
-        <p>© 2026 Enrollment Team</p>
+        <p>Director's Portal v1.0</p>
       </div>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content">
-      <!-- Dashboard -->
-      <section id="dashboard" class="section active">
-        <div class="page-header">
-          <h1>Welcome to the Director's Portal</h1>
-          <p>Stay informed with the latest updates and resources for enrollment success.</p>
-        </div>
 
-        <div class="hero-banner" id="promoBanner">
-          <h2 id="promoTitle">Loading...</h2>
-          <p id="promoDescription"></p>
-          <span class="promo-badge" id="promoBadge" style="display: none;"></span>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-card-label">Announcements</div>
-            <div class="stat-card-value" id="statAnnouncements">-</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Active Promos</div>
-            <div class="stat-card-value" id="statPromos">-</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Team Members</div>
-            <div class="stat-card-value" id="statTeam">-</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Resources</div>
-            <div class="stat-card-value" id="statLinks">-</div>
-          </div>
+      <!-- Home Section -->
+      <section id="home" class="section active">
+        <div class="hero-banner" id="heroBanner">
+          <h2 id="heroTitle">Welcome to the Director's Portal</h2>
+          <p id="heroDescription">Your central hub for enrollment resources, policies, and team information.</p>
+          <div class="hero-badge" id="heroBadge" style="display: none;"></div>
         </div>
 
         <div class="card">
           <div class="card-header">
             <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="m3 11 18-5v12L3 13v-2z"></path>
-                <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
               </svg>
             </div>
             <div>
-              <div class="card-title">Recent Announcements</div>
-              <div class="card-subtitle">Latest updates from the enrollment team</div>
+              <div class="card-title">Latest Announcements</div>
+              <div class="card-subtitle">Stay up to date with the latest news</div>
             </div>
           </div>
-          <div class="announcement-list" id="announcementsList"></div>
+          <div class="card-body">
+            <div class="announcement-list" id="homeAnnouncementsList"></div>
+          </div>
         </div>
       </section>
 
-      <!-- Promos -->
-      <section id="promos" class="section">
+      <!-- Announcements Section -->
+      <section id="announcements" class="section">
+        <div class="page-header">
+          <h1>Announcements</h1>
+          <p>All news and updates</p>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="announcement-list" id="allAnnouncementsList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Promotions Section -->
+      <section id="promotions" class="section">
         <div class="page-header">
           <h1>Promotions</h1>
-          <p>View current, upcoming, and past promotional offers.</p>
+          <p>Current and upcoming promotions and discounts</p>
         </div>
 
         <div class="tabs">
           <button class="tab-btn active" onclick="switchPromoTab('active', this)">Active</button>
           <button class="tab-btn" onclick="switchPromoTab('upcoming', this)">Upcoming</button>
-          <button class="tab-btn" onclick="switchPromoTab('past', this)">Past</button>
         </div>
 
         <div class="promo-grid" id="promoGrid"></div>
       </section>
 
-      <!-- Discounts -->
-      <section id="discounts" class="section">
-        <div class="page-header">
-          <h1>Discounts</h1>
-          <p>Available discount codes and special offers for families.</p>
-        </div>
-
-        <div class="tabs">
-          <button class="tab-btn active" onclick="switchDiscountTab('active', this)">Active</button>
-          <button class="tab-btn" onclick="switchDiscountTab('upcoming', this)">Upcoming</button>
-          <button class="tab-btn" onclick="switchDiscountTab('expired', this)">Expired</button>
-        </div>
-
-        <div class="discount-grid" id="discountGrid"></div>
-      </section>
-
-      <!-- Working With Us -->
-      <section id="working-with-us" class="section">
-        <div class="page-header">
-          <h1>Working With Us</h1>
-          <p>How to communicate with the enrollment team and our division of responsibilities.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-            </div>
-            <div>
-              <div class="card-title">How to Reach Us</div>
-              <div class="card-subtitle">Choose the best communication method for your needs</div>
-            </div>
-          </div>
-          <div class="contact-grid">
-            <div class="contact-card">
-              <div class="contact-card-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                </svg>
-              </div>
-              <div class="contact-card-content">
-                <h4>Email (Non-Urgent)</h4>
-                <p>General questions, policy clarifications, and resource requests.</p>
-                <a href="mailto:enrollment@example.com">enrollment@example.com</a>
-              </div>
-            </div>
-            <div class="contact-card">
-              <div class="contact-card-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                </svg>
-              </div>
-              <div class="contact-card-content">
-                <h4>Phone (Urgent)</h4>
-                <p>Time-sensitive issues requiring immediate assistance.</p>
-                <a href="tel:555-123-4567">(555) 123-4567</a>
-              </div>
-            </div>
-            <div class="contact-card">
-              <div class="contact-card-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
-                  <line x1="16" x2="16" y1="2" y2="6"></line>
-                  <line x1="8" x2="8" y1="2" y2="6"></line>
-                  <line x1="3" x2="21" y1="10" y2="10"></line>
-                </svg>
-              </div>
-              <div class="contact-card-content">
-                <h4>Schedule a Meeting</h4>
-                <p>Book time for strategy, training, or complex cases.</p>
-                <a href="#" onclick="switchSection('resources', this); return false;">View available times →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <line x1="19" x2="19" y1="8" y2="14"></line>
-                <line x1="22" x2="16" y1="11" y2="11"></line>
-              </svg>
-            </div>
-            <div>
-              <div class="card-title">Division of Responsibilities</div>
-              <div class="card-subtitle">Clear boundaries for effective collaboration</div>
-            </div>
-          </div>
-
-          <div class="responsibility-section">
-            <div class="responsibility-header">
-              <span class="responsibility-badge we-handle">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                What We Handle
-              </span>
-            </div>
-            <div class="responsibility-list">
-              <div class="responsibility-item we-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                <span>All inbound enrollment inquiries and follow-ups</span>
-              </div>
-              <div class="responsibility-item we-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                <span>Scheduling tours and enrollment appointments</span>
-              </div>
-              <div class="responsibility-item we-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                <span>Processing applications and paperwork</span>
-              </div>
-              <div class="responsibility-item we-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                <span>Payment setup and financial questions</span>
-              </div>
-              <div class="responsibility-item we-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                <span>Nurturing leads until enrollment is complete</span>
-              </div>
-              <div class="responsibility-item we-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                <span>Reporting and enrollment analytics</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="responsibility-section">
-            <div class="responsibility-header">
-              <span class="responsibility-badge you-handle">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                What Directors Handle
-              </span>
-            </div>
-            <div class="responsibility-list">
-              <div class="responsibility-item you-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-                <span>Conducting tours and building relationships</span>
-              </div>
-              <div class="responsibility-item you-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-                <span>Answering curriculum and program questions</span>
-              </div>
-              <div class="responsibility-item you-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-                <span>Providing classroom availability updates</span>
-              </div>
-              <div class="responsibility-item you-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-                <span>Notifying us of local events or partnerships</span>
-              </div>
-              <div class="responsibility-item you-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-                <span>Following up with enrolled families post-start</span>
-              </div>
-              <div class="responsibility-item you-handle">
-                <div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-                <span>Maintaining Google/Yelp reviews and ratings</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Best Practices -->
-      <section id="best-practices" class="section">
-        <div class="page-header">
-          <h1>Best Practices</h1>
-          <p>Follow these guidelines to maximize enrollment success at your location.</p>
-        </div>
-
-        <div class="practices-grid">
-          <div class="practice-card">
-            <h4><span class="number">1</span> Respond Within 5 Minutes</h4>
-            <p>When a lead is handed off or a tour is scheduled, acknowledge within 5 minutes during business hours. Speed to lead is the #1 factor in conversion.</p>
-          </div>
-          <div class="practice-card">
-            <h4><span class="number">2</span> Keep Availability Updated</h4>
-            <p>Update your classroom availability weekly. Nothing kills momentum like telling a family we have space when we don't.</p>
-            <ul><li>Update every Monday by 10am</li><li>Notify us immediately if a spot opens</li><li>Include waitlist numbers</li></ul>
-          </div>
-          <div class="practice-card">
-            <h4><span class="number">3</span> Prepare for Every Tour</h4>
-            <p>A prepared tour converts 3x better than an improvised one.</p>
-            <ul><li>Review family info before arrival</li><li>Have enrollment packet ready</li><li>Ensure classrooms are tour-ready</li><li>Introduce to key teachers</li></ul>
-          </div>
-          <div class="practice-card">
-            <h4><span class="number">4</span> Follow the Enrollment Script</h4>
-            <p>Our script is tested and proven. Use it as your guide during tours and calls. Customize your stories, but keep the structure.</p>
-          </div>
-          <div class="practice-card">
-            <h4><span class="number">5</span> Ask for the Enrollment</h4>
-            <p>Don't end a tour without asking: "Based on what you've seen, are you ready to secure your spot?" Assumptive closes work.</p>
-          </div>
-          <div class="practice-card">
-            <h4><span class="number">6</span> Request Reviews</h4>
-            <p>After a successful first week, ask families to leave a Google review. Aim for 50+ reviews with 4.5+ stars.</p>
-            <ul><li>Send review link via text</li><li>Ask in person at pickup</li><li>Follow up if they forget</li></ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- Policies -->
+      <!-- Policies Section -->
       <section id="policies" class="section">
         <div class="page-header">
-          <h1>Policies & Guidelines</h1>
-          <p>Official policies that govern our enrollment process.</p>
+          <h1>Policies</h1>
+          <p>Important documents and guidelines</p>
         </div>
-        <div class="card">
-          <div id="policiesContainer"></div>
-        </div>
+
+        <div id="policiesContainer"></div>
       </section>
 
-      <!-- Script -->
+      <!-- Enrollment Script Section -->
       <section id="script" class="section">
         <div class="page-header">
           <h1>Enrollment Script</h1>
-          <p>Use this proven script as your guide during tours and enrollment conversations.</p>
+          <p>Your guide for enrollment conversations</p>
         </div>
-        <div class="script-container">
-          <div class="script-content" id="scriptContent"><p style="color: var(--color-text-muted);">Loading script...</p></div>
-        </div>
+
+        <div class="script-content" id="scriptContent"></div>
       </section>
 
-      <!-- Resources -->
-      <section id="resources" class="section">
-        <div class="page-header">
-          <h1>Resources & Links</h1>
-          <p>Quick access to tools, documents, and helpful resources.</p>
-        </div>
-        <div class="card">
-          <div class="card-header" style="flex-wrap:wrap;gap:12px">
-            <div style="display:flex;align-items:center;gap:12px">
-              <div class="card-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-              </div>
-              <div>
-                <div class="card-title">Quick Links</div>
-                <div class="card-subtitle">Frequently used resources and tools</div>
-              </div>
-            </div>
-            <div style="flex:1;max-width:300px">
-              <input type="text" class="form-input" id="linkSearch" placeholder="Search resources..." oninput="filterLinks()" style="margin:0;padding:10px 14px;border-radius:var(--radius-sm)">
-            </div>
-          </div>
-          <div id="linksContainer"></div>
-        </div>
-      </section>
-
-      <!-- Team -->
+      <!-- Team Section -->
       <section id="team" class="section">
         <div class="page-header">
-          <h1>Contact the Team</h1>
-          <p>Reach out to your enrollment specialist for personalized support.</p>
+          <h1>Meet the Team</h1>
+          <p>Your enrollment support team</p>
         </div>
+
         <div class="filter-bar">
           <span class="filter-label">Filter by zone:</span>
-          <select class="filter-select" id="zoneFilter" onchange="filterTeamByZone()">
+          <select class="filter-select" id="zoneFilter" onchange="filterTeam()">
             <option value="all">All Zones</option>
           </select>
         </div>
+
         <div class="team-grid" id="teamGrid"></div>
       </section>
+
     </main>
   </div>
 
   <!-- Promo Detail Modal -->
   <div class="modal-overlay" id="promoModal" onclick="closePromoModal(event)">
-    <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal">
       <div class="modal-header">
-        <div id="modalPromoStatus"></div>
+        <span class="promo-type" id="modalPromoType"></span>
         <button class="modal-close" onclick="closePromoModal()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
       </div>
       <div class="modal-body">
-        <h3 class="modal-promo-title" id="modalPromoTitle"></h3>
-        <p class="modal-promo-dates" id="modalPromoDates"></p>
-        <div class="modal-promo-discount" id="modalPromoDiscount"></div>
-        <p class="modal-promo-description" id="modalPromoDescription"></p>
-        <div class="modal-promo-details" id="modalPromoDetails" style="display: none;">
-          <h4>Additional Details</h4>
-          <p id="modalPromoDetailsText"></p>
+        <div class="modal-promo-status" id="modalPromoStatus"></div>
+        <h2 class="modal-promo-title" id="modalPromoTitle"></h2>
+        <div class="modal-promo-dates" id="modalPromoDates">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span id="modalPromoDatesText"></span>
         </div>
+        <div class="modal-promo-discount" id="modalPromoDiscount"></div>
+        <div class="modal-promo-description" id="modalPromoDescription"></div>
       </div>
     </div>
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-
-    let supabaseClient = null;
-    let announcements = [], promos = [], discounts = [], policies = [], links = [], linkCategories = [], team = [], zones = [], scriptContent = '';
+    // Supabase Config
+    const SB_URL = 'https://xjmftprxoxqnlqbkpowq.supabase.co';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqbWZ0cHJ4b3hxbmxxYmtwb3dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY4ODg4NzcsImV4cCI6MjA1MjQ2NDg3N30.sZ4rGPHLJpPwHdWCpXaIXjE0GmBGarrsgfPnrzKOBks';
+    
+    let sb;
     let currentPromoTab = 'active';
-    let currentDiscountTab = 'active';
 
+    // Data stores
+    let announcements = [];
+    let promotions = [];
+    let policies = [];
+    let categories = [];
+    let teamMembers = [];
+    let scriptContent = '';
+
+    // Initialize
     async function init() {
-      console.log('Director init starting...');
-      try {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('Supabase client created');
-        const { error } = await supabaseClient.from('announcements').select('count');
-        console.log('Test query result:', error ? 'error' : 'success');
-        if (!error) { await loadAllData(); return; }
-      } catch (e) { console.error('Init error:', e); }
-      loadFromLocalStorage();
+      sb = window.supabase.createClient(SB_URL, SB_KEY);
+      await loadAllData();
     }
 
     async function loadAllData() {
-      console.log('loadAllData starting...');
       try {
-        const [p1, p2, p3, p4, p5, p6, p7, p8, p9] = await Promise.all([
-          supabaseClient.from('promos').select('*').order('start_date', { ascending: false }),
-          supabaseClient.from('announcements').select('*').eq('active', true).order('created_at', { ascending: false }),
-          supabaseClient.from('policies').select('*').order('category'),
-          supabaseClient.from('links').select('*').order('sort_order'),
-          supabaseClient.from('team_members').select('*').order('sort_order'),
-          supabaseClient.from('zones').select('*').order('sort_order'),
-          supabaseClient.from('settings').select('value').eq('key', 'enrollment_script').single(),
-          supabaseClient.from('discounts').select('*').order('start_date', { ascending: false }),
-          supabaseClient.from('link_categories').select('*').order('sort_order')
+        const [annRes, promoRes, policyRes, catRes, teamRes, scriptRes] = await Promise.all([
+          sb.from('announcements').select('*').eq('is_active', true).order('sort_order').order('date', { ascending: false }),
+          sb.from('promotions').select('*').order('sort_order').order('start_date', { ascending: false }),
+          sb.from('policies').select('*').order('sort_order'),
+          sb.from('policy_categories').select('*').order('sort_order'),
+          sb.from('team_members').select('*').order('sort_order'),
+          sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single()
         ]);
-        console.log('Data loaded:', {promos: p1.data?.length, announcements: p2.data?.length, policies: p3.data?.length, links: p4.data?.length, team: p5.data?.length});
-        promos = p1.data || []; announcements = p2.data || []; policies = p3.data || [];
-        links = p4.data || []; team = p5.data || []; zones = p6.data || [];
-        scriptContent = p7.data?.value || getDefaultScript();
-        discounts = p8.data || [];
-        linkCategories = p9.data || [];
-        console.log('Calling renderAll...');
+
+        announcements = annRes.data || [];
+        promotions = promoRes.data || [];
+        policies = policyRes.data || [];
+        categories = catRes.data || [];
+        teamMembers = teamRes.data || [];
+        scriptContent = scriptRes.data?.content || '';
+
         renderAll();
-      } catch (e) { console.error('loadAllData error:', e); loadFromLocalStorage(); }
-    }
-
-    function loadFromLocalStorage() {
-      promos = JSON.parse(localStorage.getItem('admin_promos') || '[]');
-      announcements = JSON.parse(localStorage.getItem('admin_announcements') || '[]');
-      policies = JSON.parse(localStorage.getItem('admin_policies') || '[]');
-      links = JSON.parse(localStorage.getItem('admin_links') || '[]');
-      team = JSON.parse(localStorage.getItem('admin_team') || '[]');
-      zones = JSON.parse(localStorage.getItem('admin_zones') || '[]');
-      discounts = JSON.parse(localStorage.getItem('admin_discounts') || '[]');
-      linkCategories = JSON.parse(localStorage.getItem('admin_link_categories') || '[]');
-      scriptContent = localStorage.getItem('admin_script') || getDefaultScript();
-      renderAll();
-    }
-
-    function getDefaultScript() {
-      return `<h2>Welcome Script</h2><p>Hello! My name is [Your Name], and I'm excited to show you around today.</p>
-        <h3>Opening Questions</h3><ul><li>What brings you to us today?</li><li>Tell me about your child</li><li>What's most important to you in a program?</li></ul>
-        <h3>Tour Flow</h3><ol><li>The classroom your child would be in</li><li>Outdoor play areas</li><li>Safety and security features</li><li>Where meals are prepared</li></ol>
-        <blockquote>"What makes us different is our focus on [unique value]. Parents tell us they chose us because..."</blockquote>
-        <h3>Closing</h3><p>Based on everything we've discussed, I think your child would really thrive here. We do have limited availability in that classroom—would you like to secure your spot today?</p>`;
+      } catch (e) {
+        console.error('Load error:', e);
+      }
     }
 
     function renderAll() {
-      renderHeroBanner(); renderStats(); renderAnnouncements(); renderPromos(); renderDiscounts();
-      renderPolicies(); renderScript(); renderLinks(); renderTeam(); renderZoneFilter();
+      renderHero();
+      renderHomeAnnouncements();
+      renderAllAnnouncements();
+      renderPromotions();
+      renderPolicies();
+      renderTeam();
+      renderZoneFilter();
+      document.getElementById('scriptContent').innerHTML = scriptContent || '<p style="color: var(--color-text-muted);">No script content yet.</p>';
+      document.getElementById('announcementCount').textContent = announcements.length;
+    }
+
+    // Utility functions
+    function esc(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatDate(dateStr, format = 'short') {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      if (format === 'short') {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+      return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
     }
 
     function getPromoStatus(promo) {
       const now = new Date();
+      now.setHours(0, 0, 0, 0);
       const start = new Date(promo.start_date);
       const end = promo.end_date ? new Date(promo.end_date) : null;
-      if (start > now) return 'upcoming';
-      if (end && end < now) return 'ended';
-      return 'active';
-    }
-
-    function renderHeroBanner() {
-      const active = promos.find(p => getPromoStatus(p) === 'active');
-      document.getElementById('promoTitle').textContent = active ? active.title : "Welcome to the Director's Portal";
-      document.getElementById('promoDescription').textContent = active?.description || 'Your central hub for enrollment resources, policies, and team communication.';
-      const badge = document.getElementById('promoBadge');
-      if (active) { badge.textContent = active.discount || 'Limited Time Offer'; badge.style.display = 'inline-flex'; }
-      else { badge.style.display = 'none'; }
-    }
-
-    function renderStats() {
-      const activePromos = promos.filter(p => getPromoStatus(p) === 'active').length;
-      document.getElementById('statAnnouncements').textContent = announcements.length;
-      document.getElementById('statPromos').textContent = activePromos;
-      document.getElementById('statTeam').textContent = team.length;
-      document.getElementById('statLinks').textContent = links.length;
-    }
-
-    function renderAnnouncements() {
-      const c = document.getElementById('announcementsList');
-      if (!announcements.length) { c.innerHTML = '<div class="empty-state"><p>No announcements yet</p></div>'; return; }
-      c.innerHTML = announcements.slice(0, 5).map(a => {
-        const d = new Date(a.date || a.created_at);
-        return `<div class="announcement-item"><div class="announcement-date"><div class="day">${d.getDate()}</div><div class="month">${d.toLocaleString('en',{month:'short'})}</div></div><div class="announcement-content"><h4>${esc(a.title)}</h4><p>${esc(a.content||'')}</p></div></div>`;
-      }).join('');
-    }
-
-    function switchPromoTab(tab, btn) {
-      currentPromoTab = tab;
-      document.querySelectorAll('#promos .tab-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderPromos();
-    }
-
-    function renderPromos() {
-      const c = document.getElementById('promoGrid');
-      const filtered = promos.filter(p => getPromoStatus(p) === currentPromoTab);
-      
-      if (!filtered.length) {
-        const msgs = { active: 'No active promotions', upcoming: 'No upcoming promotions', past: 'No past promotions' };
-        c.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><p>${msgs[currentPromoTab]}</p></div>`;
-        return;
-      }
-
-      c.innerHTML = filtered.map(p => {
-        const status = getPromoStatus(p);
-        const startDate = new Date(p.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const endDate = p.end_date ? new Date(p.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Ongoing';
-        return `
-          <div class="promo-card">
-            <div class="promo-card-header">
-              <span class="promo-status ${status}">${status}</span>
-            </div>
-            <h4>${esc(p.title)}</h4>
-            <div class="promo-dates">${startDate} - ${endDate}</div>
-            ${p.discount ? `<div class="promo-discount">${esc(p.discount)}</div>` : ''}
-            <p>${esc(p.description || 'No description available.')}</p>
-            <button class="promo-details-btn" onclick='openPromoModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M12 16v-4"></path>
-                <path d="M12 8h.01"></path>
-              </svg>
-              View Details
-            </button>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function openPromoModal(promo) {
-      const status = getPromoStatus(promo);
-      const startDate = new Date(promo.start_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-      const endDate = promo.end_date ? new Date(promo.end_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : 'No end date (ongoing)';
-
-      document.getElementById('modalPromoStatus').innerHTML = `<span class="promo-status ${status}">${status}</span>`;
-      document.getElementById('modalPromoTitle').textContent = promo.title;
-      document.getElementById('modalPromoDates').textContent = `${startDate} — ${endDate}`;
-      document.getElementById('modalPromoDiscount').textContent = promo.discount || 'Special Offer';
-      document.getElementById('modalPromoDescription').textContent = promo.description || 'No description provided.';
-      
-      const detailsEl = document.getElementById('modalPromoDetails');
-      const detailsText = document.getElementById('modalPromoDetailsText');
-      if (promo.details) {
-        detailsText.textContent = promo.details;
-        detailsEl.style.display = 'block';
-      } else {
-        detailsEl.style.display = 'none';
-      }
-
-      document.getElementById('promoModal').classList.add('active');
-    }
-
-    function closePromoModal(e) {
-      if (e && e.target !== e.currentTarget) return;
-      document.getElementById('promoModal').classList.remove('active');
-    }
-
-    function getDiscountStatus(d) {
-      const now = new Date();
-      const start = new Date(d.start_date);
-      const end = d.end_date ? new Date(d.end_date) : null;
       if (start > now) return 'upcoming';
       if (end && end < now) return 'expired';
       return 'active';
     }
 
-    function switchDiscountTab(tab, btn) {
-      currentDiscountTab = tab;
-      document.querySelectorAll('#discounts .tab-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderDiscounts();
+    // Hero Banner
+    function renderHero() {
+      const activePromo = promotions.find(p => getPromoStatus(p) === 'active');
+      
+      if (activePromo) {
+        document.getElementById('heroTitle').textContent = activePromo.title;
+        document.getElementById('heroDescription').textContent = activePromo.description ? 
+          activePromo.description.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : 
+          'Check out our latest promotion!';
+        
+        if (activePromo.discount_label) {
+          document.getElementById('heroBadge').textContent = activePromo.discount_label;
+          document.getElementById('heroBadge').style.display = 'inline-block';
+        } else {
+          document.getElementById('heroBadge').style.display = 'none';
+        }
+      } else {
+        document.getElementById('heroTitle').textContent = "Welcome to the Director's Portal";
+        document.getElementById('heroDescription').textContent = 'Your central hub for enrollment resources, policies, and team information.';
+        document.getElementById('heroBadge').style.display = 'none';
+      }
     }
 
-    function renderDiscounts() {
-      const c = document.getElementById('discountGrid');
-      const filtered = discounts.filter(d => getDiscountStatus(d) === currentDiscountTab);
-      
-      if (!filtered.length) {
-        const msgs = { active: 'No active discounts', upcoming: 'No upcoming discounts', expired: 'No expired discounts' };
-        c.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><p>${msgs[currentDiscountTab]}</p></div>`;
+    // Announcements
+    function renderHomeAnnouncements() {
+      const container = document.getElementById('homeAnnouncementsList');
+      const recent = announcements.slice(0, 3);
+
+      if (!recent.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
+              </svg>
+            </div>
+            <h3>No announcements yet</h3>
+            <p>Check back soon for updates</p>
+          </div>
+        `;
         return;
       }
 
-      c.innerHTML = filtered.map(d => {
-        const status = getDiscountStatus(d);
-        const startDate = new Date(d.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const endDate = d.end_date ? new Date(d.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'No Expiry';
+      container.innerHTML = recent.map(a => {
+        const date = new Date(a.date);
         return `
-          <div class="discount-card">
-            <div class="discount-card-header">
-              <span class="discount-status ${status}">${status}</span>
+          <div class="announcement-item">
+            <div class="announcement-date">
+              <div class="day">${date.getDate()}</div>
+              <div class="month">${date.toLocaleString('en', { month: 'short' })}</div>
             </div>
-            <h4>${esc(d.title)}</h4>
-            <div class="discount-dates">${startDate} - ${endDate}</div>
-            <div class="discount-amount">${esc(d.amount)}</div>
-            <p>${esc(d.description || '')}</p>
+            <div class="announcement-content">
+              <h4>${esc(a.title)}</h4>
+              <div>${a.content || ''}</div>
+            </div>
           </div>
         `;
       }).join('');
     }
 
-    function renderPolicies() {
-      const c = document.getElementById('policiesContainer');
-      if (!policies.length) { c.innerHTML = '<div class="empty-state"><p>No policies added yet</p></div>'; return; }
-      const g = policies.reduce((a,p) => { const cat = p.category||'General'; if(!a[cat])a[cat]=[]; a[cat].push(p); return a; }, {});
-      c.innerHTML = Object.entries(g).map(([cat, items]) => `
-        <div class="policy-category"><div class="policy-category-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>${esc(cat)}</div>
-        <div class="policy-list">${items.map(p => `<a href="${esc(p.url||'#')}" target="_blank" class="policy-item" style="flex-direction:column;align-items:stretch"><div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="policy-item-info"><div class="policy-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div><h4>${esc(p.title)}</h4></div><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></div>${p.description?`<div style="font-size:13px;color:var(--color-text-muted);margin-top:8px;line-height:1.5">${p.description}</div>`:''}</a>`).join('')}</div></div>
-      `).join('');
+    function renderAllAnnouncements() {
+      const container = document.getElementById('allAnnouncementsList');
+
+      if (!announcements.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
+              </svg>
+            </div>
+            <h3>No announcements yet</h3>
+            <p>Check back soon for updates</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = announcements.map(a => {
+        const date = new Date(a.date);
+        return `
+          <div class="announcement-item">
+            <div class="announcement-date">
+              <div class="day">${date.getDate()}</div>
+              <div class="month">${date.toLocaleString('en', { month: 'short' })}</div>
+            </div>
+            <div class="announcement-content">
+              <h4>${esc(a.title)}</h4>
+              <div>${a.content || ''}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    function renderScript() {
-      document.getElementById('scriptContent').innerHTML = scriptContent;
+    // Promotions
+    function switchPromoTab(tab, btn) {
+      currentPromoTab = tab;
+      document.querySelectorAll('#promotions .tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderPromotions();
     }
 
-    function renderLinks() {
-      const c = document.getElementById('linksContainer');
-      const search = (document.getElementById('linkSearch')?.value || '').toLowerCase();
-      let filteredLinks = links;
-      if (search) filteredLinks = links.filter(l => (l.title || '').toLowerCase().includes(search) || (l.category || '').toLowerCase().includes(search));
+    function renderPromotions() {
+      const container = document.getElementById('promoGrid');
+      const filtered = promotions.filter(p => getPromoStatus(p) === currentPromoTab);
+
+      if (!filtered.length) {
+        const messages = {
+          active: 'No active promotions right now',
+          upcoming: 'No upcoming promotions scheduled'
+        };
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5"></path>
+                <path d="M2 12l10 5 10-5"></path>
+              </svg>
+            </div>
+            <h3>${messages[currentPromoTab]}</h3>
+            <p>Check back soon for updates</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(p => {
+        const status = getPromoStatus(p);
+        return `
+          <div class="promo-card" onclick="openPromoModal('${p.id}')">
+            <div class="promo-card-header">
+              <span class="promo-status ${status}">${status}</span>
+              <span class="promo-type">${esc(p.type)}</span>
+            </div>
+            <h4>${esc(p.title)}</h4>
+            <div class="promo-dates">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              ${formatDate(p.start_date)} - ${p.end_date ? formatDate(p.end_date) : 'Ongoing'}
+            </div>
+            ${p.discount_label ? `<div class="promo-discount">${esc(p.discount_label)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openPromoModal(id) {
+      const promo = promotions.find(p => p.id === id);
+      if (!promo) return;
+
+      const status = getPromoStatus(promo);
       
-      if (!filteredLinks.length && !linkCategories.length) { 
-        c.innerHTML = '<div class="empty-state"><p>No links added yet</p></div>'; 
-        return; 
+      document.getElementById('modalPromoType').textContent = promo.type.toUpperCase();
+      document.getElementById('modalPromoStatus').innerHTML = `<span class="promo-status ${status}">${status}</span>`;
+      document.getElementById('modalPromoTitle').textContent = promo.title;
+      document.getElementById('modalPromoDatesText').textContent = `${formatDate(promo.start_date, 'long')} — ${promo.end_date ? formatDate(promo.end_date, 'long') : 'Ongoing'}`;
+      
+      if (promo.discount_label) {
+        document.getElementById('modalPromoDiscount').textContent = promo.discount_label;
+        document.getElementById('modalPromoDiscount').style.display = 'inline-block';
+      } else {
+        document.getElementById('modalPromoDiscount').style.display = 'none';
       }
       
-      const grouped = {};
-      linkCategories.forEach(cat => { grouped[cat.name] = []; });
-      grouped['Uncategorized'] = [];
-      filteredLinks.forEach(l => {
-        const cat = l.category || 'Uncategorized';
-        if (!grouped[cat]) grouped[cat] = [];
-        grouped[cat].push(l);
-      });
+      document.getElementById('modalPromoDescription').innerHTML = promo.description || '<p>No additional details.</p>';
       
-      c.innerHTML = Object.entries(grouped).filter(([cat, items]) => items.length > 0).map(([cat, items]) => `
-        <div class="link-category" style="margin-bottom:24px">
-          <div style="font-weight:600;font-size:14px;color:var(--color-text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            ${esc(cat)} (${items.length})
-          </div>
-          <div class="links-grid">${items.map(l => `<a href="${esc(l.url)}" target="_blank" class="link-card"><div class="link-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div><div><h4>${esc(l.title)}</h4></div></a>`).join('')}</div>
-        </div>
-      `).join('');
-      
-      if (!c.innerHTML) c.innerHTML = '<div class="empty-state"><p>No matching resources found</p></div>';
+      document.getElementById('promoModal').classList.add('active');
     }
-    
-    function filterLinks() { renderLinks(); }
+
+    function closePromoModal(e) {
+      if (e && e.target !== e.currentTarget && !e.target.closest('.modal-close')) return;
+      document.getElementById('promoModal').classList.remove('active');
+    }
+
+    // Policies
+    function renderPolicies() {
+      const container = document.getElementById('policiesContainer');
+
+      if (!policies.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+            </div>
+            <h3>No policies yet</h3>
+            <p>Policy documents will appear here</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Group by category
+      const grouped = {};
+      const uncategorized = [];
+
+      policies.forEach(p => {
+        if (p.category_id) {
+          const cat = categories.find(c => c.id === p.category_id);
+          const catName = cat ? cat.name : 'Other';
+          if (!grouped[catName]) grouped[catName] = [];
+          grouped[catName].push(p);
+        } else {
+          uncategorized.push(p);
+        }
+      });
+
+      let html = '';
+
+      // Render categorized policies
+      Object.entries(grouped).forEach(([catName, items]) => {
+        html += `
+          <div class="policy-category">
+            <div class="policy-category-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path>
+              </svg>
+              ${esc(catName)}
+            </div>
+            <div class="policy-list">
+              ${items.map(p => renderPolicyItem(p)).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      // Render uncategorized
+      if (uncategorized.length) {
+        html += `
+          <div class="policy-category">
+            <div class="policy-category-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              General
+            </div>
+            <div class="policy-list">
+              ${uncategorized.map(p => renderPolicyItem(p)).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderPolicyItem(policy) {
+      const hasUrl = policy.url && policy.url.trim();
+      const tag = hasUrl ? 'a' : 'div';
+      const href = hasUrl ? `href="${esc(policy.url)}" target="_blank"` : '';
+      
+      return `
+        <${tag} ${href} class="policy-item">
+          <div class="policy-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <div class="policy-info">
+            <h4>${esc(policy.title)}</h4>
+            ${policy.description ? `<div>${policy.description}</div>` : ''}
+          </div>
+          ${hasUrl ? `
+            <div class="policy-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          ` : ''}
+        </${tag}>
+      `;
+    }
+
+    // Team
+    function renderZoneFilter() {
+      const select = document.getElementById('zoneFilter');
+      const zones = [...new Set(teamMembers.map(t => t.zone).filter(Boolean))];
+      
+      select.innerHTML = '<option value="all">All Zones</option>' + 
+        zones.map(z => `<option value="${esc(z)}">${esc(z)}</option>`).join('');
+    }
+
+    function filterTeam() {
+      renderTeam();
+    }
 
     function renderTeam() {
-      const c = document.getElementById('teamGrid');
-      const f = document.getElementById('zoneFilter').value;
-      let filtered = f === 'all' ? team : team.filter(t => t.zone === f);
-      
-      if (!filtered.length) { 
-        c.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><p>No team members found</p></div>'; 
-        return; 
+      const container = document.getElementById('teamGrid');
+      const filter = document.getElementById('zoneFilter').value;
+      const filtered = filter === 'all' ? teamMembers : teamMembers.filter(t => t.zone === filter);
+
+      if (!filtered.length) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h3>No team members found</h3>
+            <p>${filter === 'all' ? 'Team directory is empty' : 'No team members in this zone'}</p>
+          </div>
+        `;
+        return;
       }
-      
-      c.innerHTML = filtered.map(t => {
-        const fullName = t.name || ((t.first_name || '') + ' ' + (t.last_name || '')).trim() || 'Team Member';
-        return `
+
+      container.innerHTML = filtered.map(t => `
         <div class="team-card">
           <div class="team-card-header">
-            <img src="${esc(t.avatar_url||'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="team-card-avatar" alt="${esc(fullName)}">
-            <div class="team-card-info">
-              <h4>${esc(fullName)}</h4>
-              <div class="role">${esc(t.role||'Enrollment Specialist')}</div>
-              <div class="zone">${esc(t.zone||'General')}</div>
+            <img src="${esc(t.avatar_url) || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}" class="team-avatar" alt="${esc(t.first_name)}">
+            <div class="team-info">
+              <h4>${esc(t.first_name)} ${esc(t.last_name)}</h4>
+              <div class="role">${esc(t.role) || 'Team Member'}</div>
+              ${t.zone ? `<div class="zone">${esc(t.zone)}</div>` : ''}
             </div>
           </div>
-          <div class="team-card-details">
-            <div class="team-detail-row">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
-              <span class="label">Email</span>
-              <a href="mailto:${esc(t.email)}" class="value">${esc(t.email||'Not provided')}</a>
+          <div class="team-details">
+            <div class="team-detail">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"></path>
+              </svg>
+              <a href="mailto:${esc(t.email)}">${esc(t.email)}</a>
             </div>
-            <div class="team-detail-row">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-              <span class="label">Ext.</span>
-              <span class="value">${esc(t.extension||'N/A')}</span>
-            </div>
-            <div class="team-detail-row">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-              <span class="label">Role</span>
-              <span class="value">${esc(t.role||'Enrollment Specialist')}</span>
-            </div>
+            ${t.phone_extension ? `
+              <div class="team-detail">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                </svg>
+                Ext. ${esc(t.phone_extension)}
+              </div>
+            ` : ''}
           </div>
         </div>
-      `}).join('');
+      `).join('');
     }
 
-    function renderZoneFilter() {
-      const s = document.getElementById('zoneFilter');
-      const zs = zones.length ? zones.map(z=>z.name) : [...new Set(team.map(t=>t.zone).filter(Boolean))];
-      s.innerHTML = '<option value="all">All Zones</option>' + zs.map(z=>`<option value="${esc(z)}">${esc(z)}</option>`).join('');
-    }
-
-    function filterTeamByZone() { renderTeam(); }
-
+    // Section switching
     function switchSection(id, el) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       if (el) el.classList.add('active');
@@ -1717,6 +1600,7 @@
       window.scrollTo(0, 0);
     }
 
+    // Mobile sidebar
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('open');
@@ -1727,13 +1611,7 @@
       document.getElementById('sidebarOverlay').classList.remove('open');
     }
 
-    function esc(t) {
-      if (!t) return '';
-      const d = document.createElement('div');
-      d.textContent = t;
-      return d.innerHTML;
-    }
-
+    // Initialize on load
     document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>

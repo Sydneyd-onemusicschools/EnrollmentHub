@@ -786,11 +786,44 @@
       border-radius: var(--radius-md);
       padding: 20px;
       transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
     }
 
     .team-card:hover {
       border-color: var(--color-primary);
       box-shadow: var(--shadow-md);
+    }
+
+    /* Featured Team Card */
+    .team-card-featured {
+      border: 2px solid var(--featured-color, var(--color-primary));
+      box-shadow: 0 4px 20px rgba(13, 148, 136, 0.15);
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.03) 0%, rgba(16, 185, 129, 0.03) 100%);
+    }
+
+    .team-card-featured:hover {
+      box-shadow: 0 8px 30px rgba(13, 148, 136, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .featured-banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-primary);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .team-card-featured .team-card-header {
+      margin-top: 16px;
     }
 
     .team-card-header {
@@ -1049,6 +1082,14 @@
             </svg>
             Team Members
           </div>
+          <div class="nav-item" onclick="switchSection('roles', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a3 3 0 0 0-3 3v1H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3z"></path>
+              <circle cx="12" cy="13" r="2"></circle>
+              <path d="M10 17h4"></path>
+            </svg>
+            Manage Roles
+          </div>
         </div>
       </nav>
 
@@ -1254,6 +1295,41 @@
         </div>
 
         <div class="team-grid" id="teamGrid"></div>
+      </section>
+
+      <!-- Roles Section -->
+      <section id="roles" class="section">
+        <div class="page-header">
+          <div class="page-header-row">
+            <div>
+              <h1>Manage Roles</h1>
+              <p>Define team roles with custom colors and styling</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('role')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Role
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table" id="rolesTable">
+              <thead>
+                <tr>
+                  <th>Role Name</th>
+                  <th>Color</th>
+                  <th>Featured</th>
+                  <th style="width: 100px; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="rolesList"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
     </main>
@@ -1522,7 +1598,9 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Role</label>
-            <input type="text" class="form-input" id="teamRole" placeholder="e.g., Enrollment Specialist">
+            <select class="form-select" id="teamRole">
+              <option value="">Select role...</option>
+            </select>
           </div>
           <div class="form-group">
             <label class="form-label">Zone</label>
@@ -1543,6 +1621,54 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('team')">Cancel</button>
         <button class="btn btn-primary" onclick="saveTeamMember()">Save Team Member</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role Modal -->
+  <div class="modal-overlay" id="roleModal" onclick="closeModalOnOverlay(event, 'role')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="roleModalTitle">Add Role</h2>
+        <button class="modal-close" onclick="closeModal('role')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="roleId">
+        <div class="form-group">
+          <label class="form-label">Role Name *</label>
+          <input type="text" class="form-input" id="roleName" placeholder="e.g., Enrollment Director">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Badge Color</label>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input type="color" id="roleColor" value="#0D9488" style="width: 60px; height: 40px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); cursor: pointer;">
+              <input type="text" class="form-input" id="roleColorText" value="#0D9488" style="flex: 1; font-family: monospace;" onchange="document.getElementById('roleColor').value = this.value">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">&nbsp;</label>
+            <label class="checkbox-label" style="margin-top: 8px;">
+              <input type="checkbox" id="roleFeatured">
+              Featured role (highlighted card)
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preview</label>
+          <div style="padding: 16px; background: var(--color-bg); border-radius: var(--radius-md);">
+            <span class="badge" id="rolePreviewBadge" style="background: rgba(13, 148, 136, 0.1); color: #0D9488;">Enrollment Director</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('role')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveRole()">Save Role</button>
       </div>
     </div>
   </div>
@@ -1587,6 +1713,7 @@
     let policies = [];
     let categories = [];
     let teamMembers = [];
+    let roles = [];
     let scriptContent = '';
 
     // Initialize
@@ -1597,12 +1724,13 @@
 
     async function loadAllData() {
       try {
-        const [annRes, promoRes, policyRes, catRes, teamRes, scriptRes] = await Promise.all([
+        const [annRes, promoRes, policyRes, catRes, teamRes, rolesRes, scriptRes] = await Promise.all([
           sb.from('announcements').select('*').order('sort_order').order('date', { ascending: false }),
           sb.from('promotions').select('*').order('sort_order').order('start_date', { ascending: false }),
           sb.from('policies').select('*').order('sort_order'),
           sb.from('policy_categories').select('*').order('sort_order'),
           sb.from('team_members').select('*').order('sort_order'),
+          sb.from('roles').select('*').order('sort_order'),
           sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single()
         ]);
 
@@ -1611,6 +1739,7 @@
         policies = policyRes.data || [];
         categories = catRes.data || [];
         teamMembers = teamRes.data || [];
+        roles = rolesRes.data || [];
         scriptContent = scriptRes.data?.content || '';
 
         renderAll();
@@ -1626,6 +1755,7 @@
       renderPolicies();
       renderCategories();
       renderTeam();
+      renderRoles();
       document.getElementById('scriptEditor').innerHTML = scriptContent;
     }
 
@@ -2066,13 +2196,20 @@
         return;
       }
 
-      container.innerHTML = teamMembers.map(t => `
-        <div class="team-card">
+      container.innerHTML = teamMembers.map(t => {
+        const role = roles.find(r => r.id === t.role_id);
+        const roleName = role ? role.name : (t.role || 'Team Member');
+        const roleColor = role ? role.color : '#64748B';
+        const isFeatured = role ? role.is_featured : false;
+        
+        return `
+        <div class="team-card ${isFeatured ? 'team-card-featured' : ''}" ${isFeatured ? `style="--featured-color: ${roleColor}"` : ''}>
+          ${isFeatured ? `<div class="featured-banner" style="background: ${roleColor}">★ ${esc(roleName)}</div>` : ''}
           <div class="team-card-header">
             <img src="${esc(t.avatar_url) || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}" class="team-avatar" alt="${esc(t.first_name)}">
             <div class="team-info">
               <h4>${esc(t.first_name)} ${esc(t.last_name)}</h4>
-              <div class="role">${esc(t.role) || 'Team Member'}</div>
+              <span class="role-badge" style="background: ${roleColor}20; color: ${roleColor}; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;">${esc(roleName)}</span>
               ${t.zone ? `<div class="zone">${esc(t.zone)}</div>` : ''}
             </div>
           </div>
@@ -2106,7 +2243,13 @@
             </button>
           </div>
         </div>
-      `).join('');
+      `}).join('');
+    }
+
+    function renderRoleDropdown() {
+      const select = document.getElementById('teamRole');
+      select.innerHTML = '<option value="">Select role...</option>' + 
+        roles.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('');
     }
 
     function editTeamMember(id) {
@@ -2115,7 +2258,8 @@
       document.getElementById('teamId').value = t.id;
       document.getElementById('teamFirstName').value = t.first_name || '';
       document.getElementById('teamLastName').value = t.last_name || '';
-      document.getElementById('teamRole').value = t.role || '';
+      renderRoleDropdown();
+      document.getElementById('teamRole').value = t.role_id || '';
       document.getElementById('teamZone').value = t.zone || '';
       document.getElementById('teamEmail').value = t.email || '';
       document.getElementById('teamExtension').value = t.phone_extension || '';
@@ -2185,7 +2329,7 @@
       const data = {
         first_name: document.getElementById('teamFirstName').value.trim(),
         last_name: document.getElementById('teamLastName').value.trim(),
-        role: document.getElementById('teamRole').value.trim(),
+        role_id: document.getElementById('teamRole').value || null,
         zone: document.getElementById('teamZone').value.trim(),
         email: document.getElementById('teamEmail').value.trim(),
         phone_extension: document.getElementById('teamExtension').value.trim(),
@@ -2218,6 +2362,7 @@
       document.getElementById('teamId').value = '';
       document.getElementById('teamFirstName').value = '';
       document.getElementById('teamLastName').value = '';
+      renderRoleDropdown();
       document.getElementById('teamRole').value = '';
       document.getElementById('teamZone').value = '';
       document.getElementById('teamEmail').value = '';
@@ -2226,6 +2371,124 @@
       document.getElementById('teamPhotoPreview').src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
       document.getElementById('teamPhotoFile').value = '';
       document.getElementById('teamModalTitle').textContent = 'Add Team Member';
+    }
+
+    // Roles
+    function renderRoles() {
+      const tbody = document.getElementById('rolesList');
+      
+      if (!roles.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a3 3 0 0 0-3 3v1H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3z"></path>
+                  </svg>
+                </div>
+                <h3>No roles defined yet</h3>
+                <p>Create roles to organize your team</p>
+                <button class="btn btn-primary" onclick="openModal('role')">Add Role</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = roles.map(r => `
+        <tr>
+          <td><strong>${esc(r.name)}</strong></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 24px; height: 24px; background: ${r.color}; border-radius: 4px;"></div>
+              <span style="font-family: monospace; font-size: 13px;">${esc(r.color)}</span>
+            </div>
+          </td>
+          <td>
+            ${r.is_featured ? '<span class="badge badge-success">★ Featured</span>' : '<span class="badge badge-muted">Standard</span>'}
+          </td>
+          <td>
+            <div class="table-actions">
+              <button class="action-btn" onclick="editRole('${r.id}')" title="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+              <button class="action-btn delete" onclick="deleteItem('role', '${r.id}')" title="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function editRole(id) {
+      const r = roles.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById('roleId').value = r.id;
+      document.getElementById('roleName').value = r.name || '';
+      document.getElementById('roleColor').value = r.color || '#0D9488';
+      document.getElementById('roleColorText').value = r.color || '#0D9488';
+      document.getElementById('roleFeatured').checked = r.is_featured || false;
+      updateRolePreview();
+      document.getElementById('roleModalTitle').textContent = 'Edit Role';
+      openModal('role');
+    }
+
+    function updateRolePreview() {
+      const name = document.getElementById('roleName').value || 'Role Name';
+      const color = document.getElementById('roleColor').value;
+      document.getElementById('roleColorText').value = color;
+      document.getElementById('rolePreviewBadge').textContent = name;
+      document.getElementById('rolePreviewBadge').style.background = color + '20';
+      document.getElementById('rolePreviewBadge').style.color = color;
+    }
+
+    async function saveRole() {
+      const id = document.getElementById('roleId').value;
+      const data = {
+        name: document.getElementById('roleName').value.trim(),
+        color: document.getElementById('roleColor').value,
+        is_featured: document.getElementById('roleFeatured').checked
+      };
+
+      if (!data.name) {
+        toast('Role name is required', 'error');
+        return;
+      }
+
+      try {
+        if (id) {
+          await sb.from('roles').update(data).eq('id', id);
+        } else {
+          data.sort_order = roles.length;
+          await sb.from('roles').insert(data);
+        }
+        await loadAllData();
+        closeModal('role');
+        resetRoleForm();
+        toast('Role saved!', 'success');
+      } catch (e) {
+        console.error('Save error:', e);
+        toast('Error saving role', 'error');
+      }
+    }
+
+    function resetRoleForm() {
+      document.getElementById('roleId').value = '';
+      document.getElementById('roleName').value = '';
+      document.getElementById('roleColor').value = '#0D9488';
+      document.getElementById('roleColorText').value = '#0D9488';
+      document.getElementById('roleFeatured').checked = false;
+      document.getElementById('rolePreviewBadge').textContent = 'Role Name';
+      document.getElementById('rolePreviewBadge').style.background = 'rgba(13, 148, 136, 0.1)';
+      document.getElementById('rolePreviewBadge').style.color = '#0D9488';
+      document.getElementById('roleModalTitle').textContent = 'Add Role';
     }
 
     // Enrollment Script
@@ -2267,6 +2530,8 @@
           announcement: 'announcements',
           promotion: 'promotions',
           policy: 'policies',
+          team: 'team_members',
+          role: 'roles'
           team: 'team_members'
         };
         
@@ -2293,6 +2558,14 @@
       if (type === 'policy') {
         renderCategoryDropdown();
       }
+      if (type === 'team') {
+        renderRoleDropdown();
+      }
+      if (type === 'role') {
+        // Set up event listeners for preview
+        document.getElementById('roleName').oninput = updateRolePreview;
+        document.getElementById('roleColor').oninput = updateRolePreview;
+      }
       document.getElementById(type + 'Modal').classList.add('active');
     }
 
@@ -2304,6 +2577,7 @@
       if (type === 'promotion') resetPromotionForm();
       if (type === 'policy') resetPolicyForm();
       if (type === 'team') resetTeamForm();
+      if (type === 'role') resetRoleForm();
     }
 
     function closeModalOnOverlay(event, type) {

@@ -3,688 +3,2307 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Enrollment Hub - Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --color-bg: #F5F5F7;
+      --color-primary: #0D9488;
+      --color-primary-dark: #0F766E;
+      --color-secondary: #10B981;
+      --gradient-primary: linear-gradient(135deg, #0D9488 0%, #10B981 100%);
+      --color-bg: #F8FAFB;
       --color-white: #FFFFFF;
-      --color-coral: #F97B5F;
-      --color-pink: #F472B6;
-      --gradient-primary: linear-gradient(135deg, #F97B5F 0%, #F472B6 100%);
-      --color-text: #1F2937;
-      --color-text-muted: #6B7280;
-      --color-text-light: #9CA3AF;
-      --color-border: #E5E7EB;
+      --color-text: #1E293B;
+      --color-text-muted: #64748B;
+      --color-text-light: #94A3B8;
+      --color-border: #E2E8F0;
       --color-success: #10B981;
       --color-warning: #F59E0B;
-      --color-blue: #3B82F6;
       --color-danger: #EF4444;
+      --color-info: #0EA5E9;
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
       --sidebar-width: 260px;
     }
 
-    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--color-bg); color: var(--color-text); min-height: 100vh; line-height: 1.6; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Layout */
     .app-layout { display: flex; min-height: 100vh; }
 
     /* Sidebar */
-    .sidebar { width: var(--sidebar-width); background: var(--color-white); border-right: 1px solid var(--color-border); position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; }
-    .sidebar-header { padding: 20px; border-bottom: 1px solid var(--color-border); }
-    .sidebar-logo { display: flex; align-items: center; gap: 12px; }
-    .sidebar-logo-icon { width: 42px; height: 42px; background: var(--gradient-primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; }
-    .sidebar-logo-text h1 { font-size: 15px; font-weight: 700; }
-    .sidebar-logo-text p { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
-    .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
-    .nav-section { margin-bottom: 20px; }
-    .nav-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--color-text-light); padding: 0 12px; margin-bottom: 8px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--color-text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
-    .nav-item:hover { background: var(--color-bg); color: var(--color-text); }
-    .nav-item.active { background: linear-gradient(135deg, rgba(249,123,95,0.12) 0%, rgba(244,114,182,0.12) 100%); color: var(--color-coral); }
-    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--color-border); }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-white);
+      border-right: 1px solid var(--color-border);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
 
-    /* Mobile */
-    .mobile-header { display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--color-white); border-bottom: 1px solid var(--color-border); padding: 0 16px; align-items: center; justify-content: space-between; z-index: 99; }
-    .mobile-menu-btn { width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text); border-radius: var(--radius-sm); }
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--color-border);
+    }
 
-    /* Main */
-    .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 32px; min-height: 100vh; }
-    .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
-    .page-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
-    .page-header p { font-size: 14px; color: var(--color-text-muted); }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .sidebar-logo-icon svg { width: 22px; height: 22px; }
+
+    .sidebar-logo-text h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+
+    .sidebar-logo-text p {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+
+    .nav-section { margin-bottom: 24px; }
+
+    .nav-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-text-light);
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover {
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+      color: var(--color-primary);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .sidebar-footer p {
+      font-size: 11px;
+      color: var(--color-text-light);
+    }
+
+    /* Mobile Header */
+    .mobile-header {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 16px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 99;
+    }
+
+    .mobile-menu-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text);
+      border-radius: var(--radius-sm);
+    }
+
+    .mobile-menu-btn:hover { background: var(--color-bg); }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 99;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 6px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    /* Sections */
     .section { display: none; }
-    .section.active { display: block; animation: fadeIn 0.2s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .section.active { display: block; animation: fadeIn 0.25s ease; }
 
-    /* Buttons */
-    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
-    .btn-primary { background: var(--gradient-primary); color: white; }
-    .btn-primary:hover { opacity: 0.9; }
-    .btn-secondary { background: var(--color-white); border: 1px solid var(--color-border); color: var(--color-text); }
-    .btn-secondary:hover { background: var(--color-bg); }
-    .btn-danger { background: var(--color-danger); color: white; }
-    .btn-sm { padding: 6px 12px; font-size: 13px; }
-    .btn svg { width: 16px; height: 16px; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     /* Cards */
-    .card { background: var(--color-white); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); }
-    .card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .card-icon { width: 44px; height: 44px; background: linear-gradient(135deg, rgba(249,123,95,0.1) 0%, rgba(244,114,182,0.1) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-coral); }
-    .card-title { font-size: 16px; font-weight: 600; }
-    .card-subtitle { font-size: 13px; color: var(--color-text-muted); margin-top: 2px; }
+    .card {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
 
-    /* Hero Banner */
-    .hero-banner { background: var(--gradient-primary); border-radius: var(--radius-lg); padding: 32px; color: white; margin-bottom: 24px; position: relative; overflow: hidden; }
-    .hero-banner::before { content: ''; position: absolute; top: -50%; right: -10%; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-    .hero-banner h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; position: relative; }
-    .hero-banner > p { font-size: 15px; opacity: 0.9; max-width: 600px; position: relative; }
-    .promo-badge { display: inline-block; background: white; color: var(--color-coral); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 12px; position: relative; }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--color-border);
+    }
 
-    /* Stats Grid */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: var(--color-white); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--color-border); }
-    .stat-card-label { font-size: 13px; color: var(--color-text-muted); margin-bottom: 6px; }
-    .stat-card-value { font-size: 28px; font-weight: 700; color: var(--color-coral); }
+    .card-header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-    /* Announcements */
-    .announcement-list { display: flex; flex-direction: column; gap: 12px; }
-    .announcement-item { display: flex; gap: 16px; padding: 16px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
-    .announcement-date { text-align: center; width: 50px; flex-shrink: 0; }
-    .announcement-date .day { font-size: 24px; font-weight: 700; color: var(--color-coral); line-height: 1.2; }
-    .announcement-date .month { font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; }
-    .announcement-content { flex: 1; }
-    .announcement-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .announcement-content p { font-size: 13px; color: var(--color-text-muted); line-height: 1.5; }
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
 
-    /* Tabs */
-    .tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
-    .tab-btn { padding: 10px 20px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: var(--color-white); font-size: 14px; font-weight: 500; color: var(--color-text-muted); cursor: pointer; transition: all 0.15s; }
-    .tab-btn:hover { border-color: var(--color-coral); color: var(--color-coral); }
-    .tab-btn.active { background: var(--gradient-primary); color: white; border-color: transparent; }
+    .card-icon svg { width: 20px; height: 20px; }
 
-    /* Promo/Discount Grid */
-    .promo-grid, .discount-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-    .promo-card, .discount-card { background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; position: relative; }
-    .promo-card:hover, .discount-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); }
-    .promo-status, .discount-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: capitalize; margin-bottom: 12px; }
-    .promo-status.active, .discount-status.active { background: rgba(16,185,129,0.1); color: var(--color-success); }
-    .promo-status.upcoming, .discount-status.upcoming { background: rgba(59,130,246,0.1); color: var(--color-blue); }
-    .promo-status.past, .discount-status.expired { background: var(--color-bg); color: var(--color-text-muted); }
-    .promo-card h4, .discount-card h4 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
-    .promo-dates, .discount-dates { font-size: 13px; color: var(--color-text-muted); margin-bottom: 12px; }
-    .promo-discount, .discount-amount { display: inline-block; background: var(--gradient-primary); color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
-    .promo-card > p, .discount-card > p { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
 
-    /* Contact Cards */
-    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-    .contact-card { background: var(--color-bg); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: flex-start; gap: 16px; position: relative; }
-    .contact-card-icon { width: 48px; height: 48px; background: var(--color-white); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-coral); flex-shrink: 0; }
-    .contact-card-content { flex: 1; }
-    .contact-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .contact-card p { font-size: 13px; color: var(--color-text-muted); margin-bottom: 10px; line-height: 1.5; }
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
 
-    /* Responsibility Lists */
-    .responsibility-section { margin-bottom: 28px; }
-    .responsibility-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .responsibility-badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-    .responsibility-badge.we-handle { background: rgba(16,185,129,0.1); color: var(--color-success); }
-    .responsibility-badge.you-handle { background: rgba(249,123,95,0.1); color: var(--color-coral); }
-    .responsibility-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
-    .responsibility-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
-    .responsibility-item .icon-wrapper { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .responsibility-item.we-handle .icon-wrapper { background: rgba(16,185,129,0.15); color: var(--color-success); }
-    .responsibility-item.you-handle .icon-wrapper { background: rgba(249,123,95,0.15); color: var(--color-coral); }
-    .responsibility-item .icon-wrapper svg { width: 14px; height: 14px; }
-    .responsibility-item span { font-size: 14px; flex: 1; }
+    .card-body { padding: 24px; }
 
-    /* Best Practices */
-    .practices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
-    .practice-card { background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; border-left: 4px solid var(--color-coral); position: relative; }
-    .practice-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
-    .practice-card h4 .number { width: 28px; height: 28px; background: var(--gradient-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-    .practice-card > p { font-size: 13px; color: var(--color-text-muted); line-height: 1.6; }
-    .practice-card ul { margin-top: 12px; padding-left: 18px; }
-    .practice-card li { font-size: 13px; color: var(--color-text-muted); margin-bottom: 6px; }
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
 
-    /* Policies */
-    .policy-category { margin-bottom: 28px; }
-    .policy-category-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .policy-category-title svg { color: var(--color-coral); width: 18px; height: 18px; }
-    .policy-list { display: flex; flex-direction: column; gap: 8px; }
-    .policy-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
-    .policy-item:hover { background: linear-gradient(135deg, rgba(249,123,95,0.08) 0%, rgba(244,114,182,0.08) 100%); }
-    .policy-item-info { display: flex; align-items: center; gap: 12px; }
-    .policy-item-icon { width: 36px; height: 36px; background: var(--color-white); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--color-coral); }
-    .policy-item h4 { font-size: 14px; font-weight: 500; }
+    .btn svg { width: 16px; height: 16px; }
 
-    /* Script Editor */
-    .editor-toolbar { display: flex; gap: 6px; padding: 12px; background: var(--color-bg); border-radius: var(--radius-md) var(--radius-md) 0 0; flex-wrap: wrap; }
-    .editor-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 6px; cursor: pointer; color: var(--color-text-muted); font-size: 13px; font-weight: 600; }
-    .editor-btn:hover { background: var(--color-coral); color: white; border-color: var(--color-coral); }
-    .script-container { background: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); overflow: hidden; }
-    .script-content { min-height: 400px; padding: 32px; font-size: 15px; line-height: 1.8; outline: none; }
-    .script-content h2 { font-size: 20px; font-weight: 600; margin: 28px 0 12px; color: var(--color-coral); }
-    .script-content h2:first-child { margin-top: 0; }
-    .script-content h3 { font-size: 16px; font-weight: 600; margin: 24px 0 10px; }
-    .script-content p { margin-bottom: 14px; }
-    .script-content ul, .script-content ol { margin: 14px 0; padding-left: 24px; }
-    .script-content li { margin-bottom: 8px; }
-    .script-content blockquote { background: linear-gradient(135deg, rgba(249,123,95,0.08) 0%, rgba(244,114,182,0.08) 100%); border-left: 4px solid var(--color-coral); padding: 16px 20px; margin: 18px 0; border-radius: 0 var(--radius-md) var(--radius-md) 0; font-style: italic; color: var(--color-text-muted); }
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+    }
 
-    /* Links */
-    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-    .link-card { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--color-bg); border-radius: var(--radius-md); position: relative; }
-    .link-card:hover { background: linear-gradient(135deg, rgba(249,123,95,0.1) 0%, rgba(244,114,182,0.1) 100%); }
-    .link-card-icon { width: 44px; height: 44px; background: var(--color-white); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-coral); flex-shrink: 0; }
-    .link-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .link-card p { font-size: 12px; color: var(--color-text-muted); }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
-    /* Team */
-    .filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-    .filter-label { font-size: 14px; color: var(--color-text-muted); }
-    .filter-select { padding: 10px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 14px; background: var(--color-white); cursor: pointer; }
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    .team-card { background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; position: relative; }
-    .team-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); }
-    .team-card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-    .team-card-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-bg); flex-shrink: 0; }
-    .team-card-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
-    .team-card-info .role { font-size: 13px; color: var(--color-coral); font-weight: 500; }
-    .team-card-info .zone { display: inline-block; padding: 3px 10px; background: var(--color-bg); border-radius: 12px; font-size: 11px; color: var(--color-text-muted); margin-top: 4px; }
-    .team-card-details { border-top: 1px solid var(--color-border); padding-top: 16px; }
-    .team-detail-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
-    .team-detail-row svg { width: 16px; height: 16px; color: var(--color-text-muted); flex-shrink: 0; }
-    .team-detail-row a { color: var(--color-coral); text-decoration: none; }
+    .btn-secondary {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
 
-    /* Edit Controls */
-    .edit-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
-    .announcement-item:hover .edit-actions, .promo-card:hover .edit-actions, .discount-card:hover .edit-actions,
-    .contact-card:hover .edit-actions, .responsibility-item:hover .edit-actions, .practice-card:hover .edit-actions,
-    .policy-item:hover .edit-actions, .link-card:hover .edit-actions, .team-card:hover .edit-actions { opacity: 1; }
-    .edit-btn-small { width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .edit-btn-small svg { width: 14px; height: 14px; }
-    .edit-btn-small.edit { background: var(--color-blue); color: white; }
-    .edit-btn-small.delete { background: var(--color-danger); color: white; }
-    .edit-btn-small:hover { transform: scale(1.1); }
-    .add-btn-inline { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; background: var(--color-bg); border: 2px dashed var(--color-border); border-radius: var(--radius-md); color: var(--color-text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-    .add-btn-inline:hover { border-color: var(--color-coral); color: var(--color-coral); background: linear-gradient(135deg, rgba(249,123,95,0.05) 0%, rgba(244,114,182,0.05) 100%); }
-    .add-btn-inline svg { width: 16px; height: 16px; }
+    .btn-secondary:hover { background: var(--color-bg); }
 
-    /* Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.2s; padding: 20px; }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal { background: var(--color-white); border-radius: var(--radius-lg); max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
-    .modal-header { padding: 24px; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
-    .modal-header h3 { font-size: 20px; font-weight: 600; }
-    .modal-close { width: 36px; height: 36px; border: none; background: var(--color-bg); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); }
-    .modal-close:hover { background: var(--color-coral); color: white; }
-    .modal-close svg { width: 18px; height: 18px; }
-    .modal-body { padding: 24px; }
-    .modal-footer { padding: 20px 24px; border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end; gap: 12px; }
+    .btn-danger {
+      background: var(--color-danger);
+      color: white;
+    }
+
+    .btn-danger:hover { opacity: 0.9; }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .data-table th {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-text-muted);
+      background: var(--color-bg);
+    }
+
+    .data-table td {
+      font-size: 14px;
+      color: var(--color-text);
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .data-table tr:hover td { background: var(--color-bg); }
+
+    .table-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .action-btn:hover {
+      background: var(--color-bg);
+      color: var(--color-primary);
+    }
+
+    .action-btn.delete:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--color-danger);
+    }
+
+    .action-btn svg { width: 16px; height: 16px; }
+
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-success);
+    }
+
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--color-warning);
+    }
+
+    .badge-muted {
+      background: var(--color-bg);
+      color: var(--color-text-muted);
+    }
+
+    .badge-info {
+      background: rgba(14, 165, 233, 0.1);
+      color: var(--color-info);
+    }
 
     /* Forms */
     .form-group { margin-bottom: 20px; }
-    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
-    .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; }
-    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--color-coral); box-shadow: 0 0 0 3px rgba(249,123,95,0.1); }
-    .form-textarea { resize: vertical; min-height: 100px; }
-    .editor-toolbar { display: flex; gap: 4px; margin-bottom: 8px; padding: 6px; background: var(--color-bg); border-radius: var(--radius-sm); }
-    .editor-toolbar button { padding: 6px 10px; border: 1px solid var(--color-border); background: var(--color-white); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .editor-toolbar button:hover { background: var(--color-border); }
-    .form-editor { width: 100%; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; min-height: 80px; background: var(--color-white); }
-    .form-editor:focus { outline: none; border-color: var(--color-coral); box-shadow: 0 0 0 3px rgba(249,123,95,0.1); }
-    .form-editor ul, .form-editor ol { margin-left: 20px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-hint { font-size: 12px; color: var(--color-text-muted); margin-top: 6px; }
-    .switch { position: relative; width: 48px; height: 26px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .switch-slider { position: absolute; cursor: pointer; inset: 0; background: var(--color-border); border-radius: 26px; transition: 0.2s; }
-    .switch-slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
-    .switch input:checked + .switch-slider { background: var(--color-success); }
-    .switch input:checked + .switch-slider:before { transform: translateX(22px); }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: 6px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--color-text);
+      background: var(--color-white);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--color-text-light);
+      margin-top: 4px;
+    }
+
+    /* Rich Text Editor */
+    .editor-container {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 10px 12px;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      flex-wrap: wrap;
+    }
+
+    .editor-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--color-white);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .editor-btn:hover {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .editor-btn svg { width: 16px; height: 16px; }
+
+    .editor-content {
+      min-height: 200px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.7;
+      outline: none;
+    }
+
+    .editor-content:focus {
+      background: rgba(13, 148, 136, 0.02);
+    }
+
+    .editor-content h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: var(--color-primary);
+    }
+
+    .editor-content h2:first-child { margin-top: 0; }
+
+    .editor-content h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+    }
+
+    .editor-content p { margin-bottom: 12px; }
+
+    .editor-content ul, .editor-content ol {
+      margin: 12px 0;
+      padding-left: 24px;
+    }
+
+    .editor-content li { margin-bottom: 6px; }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: calc(90vh - 140px);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-bg);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--color-text-muted);
+    }
+
+    .empty-state-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: var(--color-text-light);
+    }
+
+    .empty-state-icon svg { width: 24px; height: 24px; }
+
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
 
     /* Toast */
-    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--color-text); color: white; padding: 16px 24px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 2000; }
-    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--color-text);
+      color: white;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 300;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
     .toast.success { background: var(--color-success); }
     .toast.error { background: var(--color-danger); }
 
-    /* Empty/Loading */
-    .empty-state { text-align: center; padding: 40px; color: var(--color-text-muted); }
-    .loading { text-align: center; padding: 60px; color: var(--color-text-muted); }
-
-    /* Mobile */
-    @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 768px) {
-      .mobile-header { display: flex; }
-      .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.open { display: block; }
-      .main-content { margin-left: 0; padding: 72px 20px 32px; }
-      .page-header { flex-direction: column; gap: 16px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .practices-grid, .promo-grid, .discount-grid, .links-grid, .team-grid, .contact-grid, .responsibility-list { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
-    @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .stat-card-label {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-card-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    /* Category Pills */
+    .category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .category-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .category-pill .delete-cat {
+      width: 18px;
+      height: 18px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--color-text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-left: 2px;
+    }
+
+    .category-pill .delete-cat:hover {
+      background: var(--color-danger);
+      color: white;
+    }
+
+    .category-pill .delete-cat svg { width: 12px; height: 12px; }
+
+    /* Checkbox */
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-primary);
+    }
+
+    /* Team Cards */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .team-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: all 0.15s ease;
+    }
+
+    .team-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .team-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .team-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--color-bg);
+    }
+
+    .team-info h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .team-info .role {
+      font-size: 13px;
+      color: var(--color-primary);
+      font-weight: 500;
+    }
+
+    .team-info .zone {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .team-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .team-detail {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .team-detail svg {
+      width: 14px;
+      height: 14px;
+      color: var(--color-text-light);
+    }
+
+    .team-detail a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .team-detail a:hover { text-decoration: underline; }
+
+    .team-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--color-border);
+      background: var(--color-white);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .tab-btn.active {
+      background: var(--gradient-primary);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* Photo Upload */
+    .photo-upload {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .photo-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+    }
+
+    .photo-upload-btn {
+      flex: 1;
+    }
+
+    .photo-upload-btn input[type="file"] {
+      display: none;
+    }
+
+    .photo-upload-btn label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .photo-upload-btn label:hover {
+      background: var(--color-white);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      .mobile-header {
+        display: flex;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 80px 16px 24px;
+      }
+
+      .page-header h1 { font-size: 22px; }
+
+      .form-row { grid-template-columns: 1fr; }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .modal { max-width: 100%; margin: 10px; }
+    }
   </style>
 </head>
 <body>
-  <div class="mobile-header">
-    <button class="mobile-menu-btn" onclick="toggleSidebar()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-    <span style="font-size:15px;font-weight:700">Admin Portal</span>
-    <div style="width:40px"></div>
-  </div>
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
   <div class="app-layout">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <span style="font-weight: 600;">Enrollment Hub</span>
+      <div style="width: 40px;"></div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <div class="sidebar-logo-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></div>
-          <div class="sidebar-logo-text"><h1>Admin Portal</h1><p>Content Editor</p></div>
+          <div class="sidebar-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+          </div>
+          <div class="sidebar-logo-text">
+            <h1>Enrollment Hub</h1>
+            <p>Admin Portal</p>
+          </div>
         </div>
       </div>
+
       <nav class="sidebar-nav">
         <div class="nav-section">
-          <div class="nav-section-title">Overview</div>
-          <a class="nav-item active" onclick="switchSection('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
-          <a class="nav-item" onclick="switchSection('promos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>Promotions</a>
-          <a class="nav-item" onclick="switchSection('discounts',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>Discounts</a>
+          <div class="nav-section-title">Content</div>
+          <div class="nav-item active" onclick="switchSection('announcements', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
+            </svg>
+            Announcements
+          </div>
+          <div class="nav-item" onclick="switchSection('promotions', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+            Promotions
+          </div>
+          <div class="nav-item" onclick="switchSection('policies', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            Policies
+          </div>
+          <div class="nav-item" onclick="switchSection('script', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+            </svg>
+            Enrollment Script
+          </div>
         </div>
+
         <div class="nav-section">
-          <div class="nav-section-title">Guide</div>
-          <a class="nav-item" onclick="switchSection('working-with-us',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Working With Us</a>
-          <a class="nav-item" onclick="switchSection('best-practices',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Best Practices</a>
-          <a class="nav-item" onclick="switchSection('policies',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Policies</a>
-          <a class="nav-item" onclick="switchSection('script',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>Enrollment Script</a>
-        </div>
-        <div class="nav-section">
-          <div class="nav-section-title">Support</div>
-          <a class="nav-item" onclick="switchSection('resources',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Resources</a>
-          <a class="nav-item" onclick="switchSection('team',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Team</a>
+          <div class="nav-section-title">People</div>
+          <div class="nav-item" onclick="switchSection('team', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 010 7.75"></path>
+            </svg>
+            Team Members
+          </div>
         </div>
       </nav>
-      <div class="sidebar-footer"><p style="font-size:11px;color:var(--color-text-light)">© 2026 Enrollment Team</p></div>
+
+      <div class="sidebar-footer">
+        <p>Enrollment Hub Admin v1.0</p>
+      </div>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content">
-      <!-- Dashboard -->
-      <section id="dashboard" class="section active">
-        <div class="page-header">
-          <div><h1>Dashboard</h1><p>Main dashboard content directors see first.</p></div>
-          <button class="btn btn-primary" onclick="openModal('announcement')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Announcement</button>
-        </div>
-        <div class="hero-banner"><h2 id="promoTitle">Loading...</h2><p id="promoDescription"></p><span class="promo-badge" id="promoBadge" style="display:none"></span></div>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-card-label">Announcements</div><div class="stat-card-value" id="statAnnouncements">-</div></div>
-          <div class="stat-card"><div class="stat-card-label">Active Promos</div><div class="stat-card-value" id="statPromos">-</div></div>
-          <div class="stat-card"><div class="stat-card-label">Team Members</div><div class="stat-card-value" id="statTeam">-</div></div>
-          <div class="stat-card"><div class="stat-card-label">Resources</div><div class="stat-card-value" id="statLinks">-</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div><div><div class="card-title">Recent Announcements</div><div class="card-subtitle">Latest updates</div></div></div>
-          <div class="announcement-list" id="announcementsList"><div class="loading">Loading...</div></div>
-        </div>
-      </section>
 
-      <!-- Promotions -->
-      <section id="promos" class="section">
+      <!-- Announcements Section -->
+      <section id="announcements" class="section active">
         <div class="page-header">
-          <div><h1>Promotions</h1><p>Promotional campaigns for directors.</p></div>
-          <button class="btn btn-primary" onclick="openModal('promo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Promotion</button>
-        </div>
-        <div class="tabs">
-          <button class="tab-btn active" onclick="switchPromoTab('active',this)">Active</button>
-          <button class="tab-btn" onclick="switchPromoTab('upcoming',this)">Upcoming</button>
-          <button class="tab-btn" onclick="switchPromoTab('past',this)">Past</button>
-        </div>
-        <div class="promo-grid" id="promoGrid"><div class="loading">Loading...</div></div>
-      </section>
-
-      <!-- Discounts -->
-      <section id="discounts" class="section">
-        <div class="page-header">
-          <div><h1>Discounts</h1><p>Manage discount codes and special offers.</p></div>
-          <button class="btn btn-primary" onclick="openModal('discount')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Discount</button>
-        </div>
-        <div class="tabs">
-          <button class="tab-btn active" onclick="switchDiscountTab('active',this)">Active</button>
-          <button class="tab-btn" onclick="switchDiscountTab('upcoming',this)">Upcoming</button>
-          <button class="tab-btn" onclick="switchDiscountTab('expired',this)">Expired</button>
-        </div>
-        <div class="discount-grid" id="discountGrid"><div class="loading">Loading...</div></div>
-      </section>
-
-      <!-- Working With Us -->
-      <section id="working-with-us" class="section">
-        <div class="page-header">
-          <div><h1>Working With Us</h1><p>Contact methods and responsibilities.</p></div>
-          <button class="btn btn-primary" onclick="saveWorking()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes</button>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><div class="card-title">How to Reach Us</div><div class="card-subtitle">Contact methods</div></div></div>
-          <div class="contact-grid" id="contactGrid"></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg></div><div><div class="card-title">Division of Responsibilities</div><div class="card-subtitle">Clear boundaries</div></div></div>
-          <div class="responsibility-section">
-            <div class="responsibility-header"><span class="responsibility-badge we-handle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> What We Handle</span><button class="btn btn-sm btn-secondary" onclick="addResp('we')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button></div>
-            <div class="responsibility-list" id="weHandleList"></div>
+          <div class="page-header-row">
+            <div>
+              <h1>Announcements</h1>
+              <p>Manage news and updates for directors</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('announcement')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Announcement
+            </button>
           </div>
-          <div class="responsibility-section">
-            <div class="responsibility-header"><span class="responsibility-badge you-handle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg> What Directors Handle</span><button class="btn btn-sm btn-secondary" onclick="addResp('you')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button></div>
-            <div class="responsibility-list" id="youHandleList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table" id="announcementsTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th style="width: 100px; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="announcementsList"></tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      <!-- Best Practices -->
-      <section id="best-practices" class="section">
+      <!-- Promotions Section -->
+      <section id="promotions" class="section">
         <div class="page-header">
-          <div><h1>Best Practices</h1><p>Enrollment guidelines for directors.</p></div>
-          <button class="btn btn-primary" onclick="openModal('practice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Practice</button>
+          <div class="page-header-row">
+            <div>
+              <h1>Promotions</h1>
+              <p>Manage promos and discounts</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('promotion')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Promotion
+            </button>
+          </div>
         </div>
-        <div class="practices-grid" id="practicesGrid"><div class="loading">Loading...</div></div>
+
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchPromoTab('active', this)">Active</button>
+          <button class="tab-btn" onclick="switchPromoTab('upcoming', this)">Upcoming</button>
+          <button class="tab-btn" onclick="switchPromoTab('expired', this)">Expired</button>
+        </div>
+
+        <div class="card">
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table" id="promotionsTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Discount</th>
+                  <th>Dates</th>
+                  <th style="width: 100px; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="promotionsList"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
-      <!-- Policies -->
+      <!-- Policies Section -->
       <section id="policies" class="section">
         <div class="page-header">
-          <div><h1>Policies</h1><p>Policy documents and guidelines.</p></div>
-          <button class="btn btn-primary" onclick="openModal('policy')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Policy</button>
+          <div class="page-header-row">
+            <div>
+              <h1>Policies</h1>
+              <p>Manage policy documents and categories</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button class="btn btn-secondary" onclick="openModal('category')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path>
+                </svg>
+                Manage Categories
+              </button>
+              <button class="btn btn-primary" onclick="openModal('policy')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Policy
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="card"><div id="policiesContainer"><div class="loading">Loading...</div></div></div>
+
+        <div class="card">
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table" id="policiesTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>URL</th>
+                  <th style="width: 100px; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="policiesList"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
-      <!-- Script -->
+      <!-- Enrollment Script Section -->
       <section id="script" class="section">
         <div class="page-header">
-          <div><h1>Enrollment Script</h1><p>Script directors follow during tours.</p></div>
-          <button class="btn btn-primary" onclick="saveScript()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Script</button>
-        </div>
-        <div class="editor-toolbar">
-          <button class="editor-btn" onclick="fmt('h2')">H2</button>
-          <button class="editor-btn" onclick="fmt('h3')">H3</button>
-          <button class="editor-btn" onclick="fmt('p')">P</button>
-          <button class="editor-btn" onclick="document.execCommand('bold')"><b>B</b></button>
-          <button class="editor-btn" onclick="document.execCommand('italic')"><i>I</i></button>
-          <button class="editor-btn" onclick="document.execCommand('insertUnorderedList')">•</button>
-          <button class="editor-btn" onclick="document.execCommand('insertOrderedList')">1.</button>
-          <button class="editor-btn" onclick="fmt('blockquote')">"</button>
-        </div>
-        <div class="script-container" style="border-radius:0 0 var(--radius-lg) var(--radius-lg)"><div class="script-content" id="scriptContent" contenteditable="true"><p>Loading...</p></div></div>
-      </section>
-
-      <!-- Resources -->
-      <section id="resources" class="section">
-        <div class="page-header">
-          <div><h1>Resources</h1><p>Quick links for directors.</p></div>
-          <div style="display:flex;gap:10px">
-            <button class="btn btn-secondary" onclick="openModal('linkCategory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Manage Categories</button>
-            <button class="btn btn-primary" onclick="openModal('link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Link</button>
+          <div class="page-header-row">
+            <div>
+              <h1>Enrollment Script</h1>
+              <p>Edit the enrollment conversation guide</p>
+            </div>
+            <button class="btn btn-primary" onclick="saveScript()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Save Script
+            </button>
           </div>
         </div>
+
         <div class="card">
-          <div class="card-header" style="flex-wrap:wrap;gap:12px">
-            <div style="display:flex;align-items:center;gap:12px">
-              <div class="card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
-              <div><div class="card-title">Quick Links</div><div class="card-subtitle">Resources and tools</div></div>
-            </div>
-            <div style="flex:1;max-width:300px">
-              <input type="text" class="form-input" id="linkSearch" placeholder="Search resources..." oninput="filterLinks()" style="margin:0">
+          <div class="card-body" style="padding: 0;">
+            <div class="editor-container">
+              <div class="editor-toolbar">
+                <button class="editor-btn" onclick="formatDoc('bold')" title="Bold"><strong>B</strong></button>
+                <button class="editor-btn" onclick="formatDoc('italic')" title="Italic"><em>I</em></button>
+                <button class="editor-btn" onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
+                <button class="editor-btn" onclick="formatBlock('h2')" title="Heading 2">H2</button>
+                <button class="editor-btn" onclick="formatBlock('h3')" title="Heading 3">H3</button>
+                <button class="editor-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </button>
+                <button class="editor-btn" onclick="formatDoc('insertOrderedList')" title="Numbered List">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="10" y1="6" x2="21" y2="6"></line>
+                    <line x1="10" y1="12" x2="21" y2="12"></line>
+                    <line x1="10" y1="18" x2="21" y2="18"></line>
+                    <text x="3" y="7" font-size="8" fill="currentColor">1</text>
+                    <text x="3" y="13" font-size="8" fill="currentColor">2</text>
+                    <text x="3" y="19" font-size="8" fill="currentColor">3</text>
+                  </svg>
+                </button>
+              </div>
+              <div class="editor-content" id="scriptEditor" contenteditable="true"></div>
             </div>
           </div>
-          <div id="linksContainer"><div class="loading">Loading...</div></div>
         </div>
       </section>
 
-      <!-- Team -->
+      <!-- Team Section -->
       <section id="team" class="section">
         <div class="page-header">
-          <div><h1>Team</h1><p>Enrollment team contacts.</p></div>
-          <button class="btn btn-primary" onclick="openModal('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Member</button>
+          <div class="page-header-row">
+            <div>
+              <h1>Team Members</h1>
+              <p>Manage your enrollment team directory</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('team')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Team Member
+            </button>
+          </div>
         </div>
-        <div class="filter-bar">
-          <span class="filter-label">Filter:</span>
-          <select class="filter-select" id="zoneFilter" onchange="renderTeam()"><option value="all">All Zones</option></select>
-          <button class="btn btn-sm btn-secondary" onclick="openModal('zone')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Zone</button>
-        </div>
-        <div class="team-grid" id="teamGrid"><div class="loading">Loading...</div></div>
+
+        <div class="team-grid" id="teamGrid"></div>
       </section>
+
     </main>
   </div>
 
-  <!-- Modals -->
-  <div class="modal-overlay" id="announcementModal"><div class="modal"><div class="modal-header"><h3>Announcement</h3><button class="modal-close" onclick="closeModal('announcement')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="annId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="annTitle"></div><div class="form-group"><label class="form-label">Content</label><textarea class="form-textarea" id="annContent"></textarea></div><div class="form-row"><div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="annDate"></div><div class="form-group"><label class="form-label">Active</label><div style="margin-top:10px;display:flex;align-items:center;gap:10px"><label class="switch"><input type="checkbox" id="annActive" checked><span class="switch-slider"></span></label><span>Visible</span></div></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('announcement')">Cancel</button><button class="btn btn-primary" onclick="saveAnn()">Save</button></div></div></div>
+  <!-- Announcement Modal -->
+  <div class="modal-overlay" id="announcementModal" onclick="closeModalOnOverlay(event, 'announcement')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="announcementModalTitle">Add Announcement</h2>
+        <button class="modal-close" onclick="closeModal('announcement')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="announcementId">
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input type="text" class="form-input" id="announcementTitle" placeholder="Enter announcement title">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Content</label>
+          <div class="editor-container">
+            <div class="editor-toolbar">
+              <button class="editor-btn" onclick="formatDocIn('announcementContent', 'bold')"><strong>B</strong></button>
+              <button class="editor-btn" onclick="formatDocIn('announcementContent', 'italic')"><em>I</em></button>
+              <button class="editor-btn" onclick="formatDocIn('announcementContent', 'insertUnorderedList')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="editor-content" id="announcementContent" contenteditable="true" style="min-height: 120px;"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-input" id="announcementDate">
+          </div>
+          <div class="form-group">
+            <label class="form-label">&nbsp;</label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="announcementActive" checked>
+              Active (visible to directors)
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('announcement')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveAnnouncement()">Save Announcement</button>
+      </div>
+    </div>
+  </div>
 
-  <div class="modal-overlay" id="promoModal"><div class="modal"><div class="modal-header"><h3>Promotion</h3><button class="modal-close" onclick="closeModal('promo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="promoId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="promoTitleInput"></div><div class="form-group"><label class="form-label">Discount/Offer</label><input type="text" class="form-input" id="promoDiscount" placeholder="e.g. 50% Off"></div><div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="promoDesc"></textarea></div><div class="form-group"><label class="form-label">Details (Terms)</label><textarea class="form-textarea" id="promoDetails"></textarea></div><div class="form-row"><div class="form-group"><label class="form-label">Start Date *</label><input type="date" class="form-input" id="promoStart"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" class="form-input" id="promoEnd"><p class="form-hint">Leave blank for ongoing</p></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('promo')">Cancel</button><button class="btn btn-primary" onclick="savePromo()">Save</button></div></div></div>
+  <!-- Promotion Modal -->
+  <div class="modal-overlay" id="promotionModal" onclick="closeModalOnOverlay(event, 'promotion')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="promotionModalTitle">Add Promotion</h2>
+        <button class="modal-close" onclick="closeModal('promotion')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="promotionId">
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input type="text" class="form-input" id="promotionTitle" placeholder="Enter promotion title">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <div class="editor-container">
+            <div class="editor-toolbar">
+              <button class="editor-btn" onclick="formatDocIn('promotionDescription', 'bold')"><strong>B</strong></button>
+              <button class="editor-btn" onclick="formatDocIn('promotionDescription', 'italic')"><em>I</em></button>
+              <button class="editor-btn" onclick="formatDocIn('promotionDescription', 'insertUnorderedList')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="editor-content" id="promotionDescription" contenteditable="true" style="min-height: 100px;"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-select" id="promotionType">
+              <option value="promo">Promo</option>
+              <option value="discount">Discount</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Discount Label</label>
+            <input type="text" class="form-input" id="promotionDiscount" placeholder="e.g., 20% Off, $50 Savings">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Start Date *</label>
+            <input type="date" class="form-input" id="promotionStartDate">
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-input" id="promotionEndDate">
+            <span class="form-hint">Leave blank for ongoing promotion</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('promotion')">Cancel</button>
+        <button class="btn btn-primary" onclick="savePromotion()">Save Promotion</button>
+      </div>
+    </div>
+  </div>
 
-  <div class="modal-overlay" id="discountModal"><div class="modal"><div class="modal-header"><h3>Discount</h3><button class="modal-close" onclick="closeModal('discount')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="discountId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="discountTitle" placeholder="e.g. New Family Discount"></div><div class="form-group"><label class="form-label">Amount/Value *</label><input type="text" class="form-input" id="discountAmount" placeholder="e.g. 25% Off or $100 Off"></div><div class="form-group"><label class="form-label">Description</label><div class="editor-toolbar"><button type="button" onclick="document.execCommand('bold')" title="Bold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button><button type="button" onclick="document.execCommand('insertUnorderedList')" title="Bullet List"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg></button></div><div class="form-editor" contenteditable="true" id="discountDesc"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Start Date *</label><input type="date" class="form-input" id="discountStart"></div><div class="form-group"><label class="form-label">Expiry Date</label><input type="date" class="form-input" id="discountEnd"><p class="form-hint">Leave blank for no expiry</p></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('discount')">Cancel</button><button class="btn btn-primary" onclick="saveDiscount()">Save</button></div></div></div>
+  <!-- Policy Modal -->
+  <div class="modal-overlay" id="policyModal" onclick="closeModalOnOverlay(event, 'policy')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="policyModalTitle">Add Policy</h2>
+        <button class="modal-close" onclick="closeModal('policy')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="policyId">
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input type="text" class="form-input" id="policyTitle" placeholder="Enter policy title">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <div class="editor-container">
+            <div class="editor-toolbar">
+              <button class="editor-btn" onclick="formatDocIn('policyDescription', 'bold')"><strong>B</strong></button>
+              <button class="editor-btn" onclick="formatDocIn('policyDescription', 'italic')"><em>I</em></button>
+              <button class="editor-btn" onclick="formatDocIn('policyDescription', 'insertUnorderedList')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="editor-content" id="policyDescription" contenteditable="true" style="min-height: 100px;"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="policyCategory">
+              <option value="">Select category...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Document URL</label>
+            <input type="text" class="form-input" id="policyUrl" placeholder="https://...">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('policy')">Cancel</button>
+        <button class="btn btn-primary" onclick="savePolicy()">Save Policy</button>
+      </div>
+    </div>
+  </div>
 
-  <div class="modal-overlay" id="practiceModal"><div class="modal"><div class="modal-header"><h3>Best Practice</h3><button class="modal-close" onclick="closeModal('practice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="practiceId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="practiceTitle"></div><div class="form-group"><label class="form-label">Description *</label><textarea class="form-textarea" id="practiceDesc"></textarea></div><div class="form-group"><label class="form-label">Tips (one per line)</label><textarea class="form-textarea" id="practiceTips" placeholder="Tip 1&#10;Tip 2"></textarea></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('practice')">Cancel</button><button class="btn btn-primary" onclick="savePractice()">Save</button></div></div></div>
+  <!-- Category Modal -->
+  <div class="modal-overlay" id="categoryModal" onclick="closeModalOnOverlay(event, 'category')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Manage Categories</h2>
+        <button class="modal-close" onclick="closeModal('category')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Add New Category</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" class="form-input" id="newCategoryName" placeholder="Category name" style="flex: 1;">
+            <button class="btn btn-primary" onclick="addCategory()">Add</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Existing Categories</label>
+          <div class="category-pills" id="categoryList"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('category')">Done</button>
+      </div>
+    </div>
+  </div>
 
-  <div class="modal-overlay" id="policyModal"><div class="modal"><div class="modal-header"><h3>Policy</h3><button class="modal-close" onclick="closeModal('policy')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="policyId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="policyTitle"></div><div class="form-group"><label class="form-label">Category</label><input type="text" class="form-input" id="policyCat" placeholder="e.g. Enrollment, Safety"></div><div class="form-group"><label class="form-label">Details</label><div class="editor-toolbar"><button type="button" onclick="document.execCommand('bold')" title="Bold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button><button type="button" onclick="document.execCommand('insertUnorderedList')" title="Bullet List"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg></button></div><div class="form-editor" contenteditable="true" id="policyDesc" style="min-height:120px"></div></div><div class="form-group"><label class="form-label">Document URL *</label><input type="url" class="form-input" id="policyUrl"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('policy')">Cancel</button><button class="btn btn-primary" onclick="savePolicy()">Save</button></div></div></div>
+  <!-- Team Modal -->
+  <div class="modal-overlay" id="teamModal" onclick="closeModalOnOverlay(event, 'team')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="teamModalTitle">Add Team Member</h2>
+        <button class="modal-close" onclick="closeModal('team')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="teamId">
+        <div class="form-group">
+          <label class="form-label">Photo</label>
+          <div class="photo-upload">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" class="photo-preview" id="teamPhotoPreview">
+            <div class="photo-upload-btn">
+              <input type="file" id="teamPhotoFile" accept="image/*" onchange="previewTeamPhoto(this)">
+              <label for="teamPhotoFile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Upload Photo
+              </label>
+              <input type="hidden" id="teamAvatarUrl">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name *</label>
+            <input type="text" class="form-input" id="teamFirstName" placeholder="First name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name *</label>
+            <input type="text" class="form-input" id="teamLastName" placeholder="Last name">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <input type="text" class="form-input" id="teamRole" placeholder="e.g., Enrollment Specialist">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zone</label>
+            <input type="text" class="form-input" id="teamZone" placeholder="e.g., North Region">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" class="form-input" id="teamEmail" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Extension</label>
+            <input type="text" class="form-input" id="teamExtension" placeholder="e.g., 1234">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('team')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTeamMember()">Save Team Member</button>
+      </div>
+    </div>
+  </div>
 
-  <div class="modal-overlay" id="linkModal"><div class="modal"><div class="modal-header"><h3>Quick Link</h3><button class="modal-close" onclick="closeModal('link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="linkId"><div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="linkTitle"></div><div class="form-group"><label class="form-label">Category *</label><select class="form-select" id="linkCat"></select></div><div class="form-group"><label class="form-label">URL *</label><input type="url" class="form-input" id="linkUrl"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('link')">Cancel</button><button class="btn btn-primary" onclick="saveLink()">Save</button></div></div></div>
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal" onclick="closeModalOnOverlay(event, 'delete')">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2>Confirm Delete</h2>
+        <button class="modal-close" onclick="closeModal('delete')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('delete')">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
 
-  <div class="modal-overlay" id="linkCategoryModal"><div class="modal"><div class="modal-header"><h3>Manage Categories</h3><button class="modal-close" onclick="closeModal('linkCategory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Add New Category</label><div style="display:flex;gap:8px"><input type="text" class="form-input" id="newCategoryName" placeholder="Category name" style="flex:1"><button class="btn btn-primary" onclick="addLinkCategory()">Add</button></div></div><div class="form-group"><label class="form-label">Existing Categories</label><div id="categoryList" style="max-height:300px;overflow-y:auto"></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('linkCategory')">Close</button></div></div></div>
-
-  <div class="modal-overlay" id="teamModal"><div class="modal"><div class="modal-header"><h3>Team Member</h3><button class="modal-close" onclick="closeModal('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="teamId"><div class="form-group"><label class="form-label">Photo</label><div style="display:flex;align-items:center;gap:16px"><img id="teamPhotoPreview" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--color-bg)"><div><input type="file" id="teamPhotoFile" accept="image/*" onchange="previewTeamPhoto(this)" style="display:none"><button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('teamPhotoFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Photo</button><p class="form-hint" style="margin-top:6px">Max 2MB, JPG/PNG</p></div></div><input type="hidden" id="teamAvatar"></div><div class="form-row"><div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="teamFirst"></div><div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" id="teamLast"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Role</label><input type="text" class="form-input" id="teamRole"></div><div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" id="teamEmail"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Extension</label><input type="text" class="form-input" id="teamExt"></div><div class="form-group"><label class="form-label">Zone</label><select class="form-select" id="teamZone"></select></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('team')">Cancel</button><button class="btn btn-primary" onclick="saveTeam()">Save</button></div></div></div>
-
-  <div class="modal-overlay" id="zoneModal"><div class="modal"><div class="modal-header"><h3>Zone</h3><button class="modal-close" onclick="closeModal('zone')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="zoneId"><div class="form-group"><label class="form-label">Name *</label><input type="text" class="form-input" id="zoneName"></div><div class="form-group"><label class="form-label">Color</label><input type="color" class="form-input" id="zoneColor" value="#F97B5F" style="height:50px"></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('zone')">Cancel</button><button class="btn btn-primary" onclick="saveZone()">Save</button></div></div></div>
-
-  <div class="modal-overlay" id="deleteModal"><div class="modal" style="max-width:400px"><div class="modal-header"><h3>Delete?</h3><button class="modal-close" onclick="closeModal('delete')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><p>Are you sure? This cannot be undone.</p></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('delete')">Cancel</button><button class="btn btn-danger" onclick="confirmDel()">Delete</button></div></div></div>
-
+  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <script>
-    const SB_URL='https://kvyvjwepfrqqkvyyutdw.supabase.co';
-    const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-    let sb,delCb=null,currentPromoTab='active',currentDiscountTab='active';
-    let D={announcements:[],promos:[],discounts:[],policies:[],links:[],linkCategories:[],team:[],zones:[],practices:[],weHandle:[],youHandle:[],contact:{},script:''};
+    // Supabase Config
+    const SB_URL = 'https://xjmftprxoxqnlqbkpowq.supabase.co';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqbWZ0cHJ4b3hxbmxxYmtwb3dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY4ODg4NzcsImV4cCI6MjA1MjQ2NDg3N30.sZ4rGPHLJpPwHdWCpXaIXjE0GmBGarrsgfPnrzKOBks';
+    
+    let sb;
+    let currentPromoTab = 'active';
+    let deleteCallback = null;
 
-    const defPractices=[{id:'1',title:'Respond Within 5 Minutes',description:'Speed to lead is #1.',tips:[]},{id:'2',title:'Keep Availability Updated',description:'Update weekly.',tips:['Update Monday by 10am','Notify immediately if spots open']},{id:'3',title:'Prepare for Every Tour',description:'Prepared tours convert 3x better.',tips:['Review family info','Have packet ready']},{id:'4',title:'Follow the Script',description:'Our script is tested and proven.',tips:[]},{id:'5',title:'Ask for the Enrollment',description:'Always ask to secure the spot.',tips:[]},{id:'6',title:'Request Reviews',description:'Aim for 50+ reviews at 4.5+ stars.',tips:['Send review link via text']}];
-    const defWeHandle=['All inbound enrollment inquiries','Scheduling tours','Processing applications','Payment setup questions','Lead nurturing','Reporting and analytics'];
-    const defYouHandle=['Conducting tours','Answering curriculum questions','Providing availability updates','Local marketing partnerships','Post-enrollment follow-up','Managing online reviews'];
-    const defContact={email:'enrollment@example.com',emailDesc:'General questions',phone:'(555) 123-4567',phoneDesc:'Urgent issues',meetDesc:'Book strategy time',meetUrl:''};
-    const defScript='<h2>Welcome Script</h2><p>Hello! I\'m [Name], excited to show you around.</p><h3>Opening Questions</h3><ul><li>What brings you here?</li><li>Tell me about your child</li></ul>';
+    // Data stores
+    let announcements = [];
+    let promotions = [];
+    let policies = [];
+    let categories = [];
+    let teamMembers = [];
+    let scriptContent = '';
 
-    async function init(){
-      if(!window.supabase){toast('Supabase library not loaded','error');return;}
-      try{
-        sb=window.supabase.createClient(SB_URL,SB_KEY);
-        await loadAll();
-      }catch(e){
-        console.error('Init error:',e);
-        toast('Error connecting to database','error');
+    // Initialize
+    async function init() {
+      sb = window.supabase.createClient(SB_URL, SB_KEY);
+      await loadAllData();
+    }
+
+    async function loadAllData() {
+      try {
+        const [annRes, promoRes, policyRes, catRes, teamRes, scriptRes] = await Promise.all([
+          sb.from('announcements').select('*').order('sort_order').order('date', { ascending: false }),
+          sb.from('promotions').select('*').order('sort_order').order('start_date', { ascending: false }),
+          sb.from('policies').select('*').order('sort_order'),
+          sb.from('policy_categories').select('*').order('sort_order'),
+          sb.from('team_members').select('*').order('sort_order'),
+          sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single()
+        ]);
+
+        announcements = annRes.data || [];
+        promotions = promoRes.data || [];
+        policies = policyRes.data || [];
+        categories = catRes.data || [];
+        teamMembers = teamRes.data || [];
+        scriptContent = scriptRes.data?.content || '';
+
+        renderAll();
+      } catch (e) {
+        console.error('Load error:', e);
+        toast('Error loading data', 'error');
       }
     }
 
-    async function loadAll(){
-      try{
-        const[r1,r2,r3,r4,r5,r6,r7,r8]=await Promise.all([
-          sb.from('announcements').select('*').order('created_at',{ascending:false}),
-          sb.from('promos').select('*').order('start_date',{ascending:false}),
-          sb.from('discounts').select('*').order('start_date',{ascending:false}),
-          sb.from('policies').select('*').order('sort_order'),
-          sb.from('links').select('*').order('sort_order'),
-          sb.from('team_members').select('*').order('sort_order'),
-          sb.from('zones').select('*').order('sort_order'),
-          sb.from('link_categories').select('*').order('sort_order')
-        ]);
-        D.announcements=r1.data||[];D.promos=r2.data||[];D.discounts=r3.data||[];D.policies=r4.data||[];D.links=r5.data||[];D.team=r6.data||[];D.zones=r7.data||[];D.linkCategories=r8.data||[];
-        const settings=await sb.from('settings').select('*');
-        if(settings.error)console.error('settings:',settings.error);
-        if(settings.data)settings.data.forEach(s=>{
-          console.log('Setting loaded:', s.key, s.value);
-          if(s.key==='practices')D.practices=JSON.parse(s.value||'[]');
-          if(s.key==='we_handle')D.weHandle=JSON.parse(s.value||'[]');
-          if(s.key==='you_handle')D.youHandle=JSON.parse(s.value||'[]');
-          if(s.key==='contact'){D.contact=JSON.parse(s.value||'{}');console.log('Contact loaded:',D.contact);}
-          if(s.key==='enrollment_script')D.script=s.value||'';
-        });
-        applyDefaults();render();
-      }catch(e){console.error('loadAll error:',e);toast('Error loading data','error');}
+    function renderAll() {
+      renderAnnouncements();
+      renderPromotions();
+      renderPolicies();
+      renderCategories();
+      renderTeam();
+      document.getElementById('scriptEditor').innerHTML = scriptContent;
     }
 
-    function applyDefaults(){if(!D.practices.length)D.practices=defPractices;if(!D.weHandle.length)D.weHandle=defWeHandle;if(!D.youHandle.length)D.youHandle=defYouHandle;if(!Object.keys(D.contact).length)D.contact=defContact;if(!D.script)D.script=defScript;}
-    async function saveSetting(k,v){
-      try{
-        const res = await sb.from('settings').upsert({key:k, value:v}, {onConflict:'key'});
-        if(res.error){console.error('Settings save error:',res.error);toast('Error saving: '+res.error.message,'error');return false;}
-        return true;
-      }catch(e){console.error('saveSetting error:',e);return false;}
+    // Utility functions
+    function esc(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     }
 
-    function render(){renderHero();renderStats();renderAnn();renderPromos();renderDiscounts();renderContact();renderResp();renderPractices();renderPolicies();renderLinks();renderTeam();renderZoneFilter();document.getElementById('scriptContent').innerHTML=D.script;}
-    function esc(t){if(!t)return'';const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
-    function name(t){return t.name||((t.first_name||'')+' '+(t.last_name||'')).trim()||'Team Member';}
-    function getStatus(p){const n=new Date(),s=new Date(p.start_date),e=p.end_date?new Date(p.end_date):null;if(s>n)return'upcoming';if(e&&e<n)return'past';return'active';}
-    function getDiscountStatus(d){const n=new Date(),s=new Date(d.start_date),e=d.end_date?new Date(d.end_date):null;if(s>n)return'upcoming';if(e&&e<n)return'expired';return'active';}
-    function fmtDate(d){return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'-';}
-    const editIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
-    const delIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
-    const addIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
-
-    function renderHero(){const a=D.promos.find(p=>getStatus(p)==='active');document.getElementById('promoTitle').textContent=a?a.title:"Welcome to the Director's Portal";document.getElementById('promoDescription').textContent=a?.description||'Your central hub for enrollment resources.';const b=document.getElementById('promoBadge');if(a&&a.discount){b.textContent=a.discount;b.style.display='inline-block';}else b.style.display='none';}
-    function renderStats(){document.getElementById('statAnnouncements').textContent=D.announcements.length;document.getElementById('statPromos').textContent=D.promos.filter(p=>getStatus(p)==='active').length;document.getElementById('statTeam').textContent=D.team.length;document.getElementById('statLinks').textContent=D.links.length;}
-
-    function renderAnn(){const el=document.getElementById('announcementsList');if(!D.announcements.length){el.innerHTML=`<div class="add-btn-inline" onclick="openModal('announcement')">${addIcon} Add first announcement</div>`;return;}el.innerHTML=D.announcements.slice(0,5).map(a=>{const d=new Date(a.date||a.created_at);return`<div class="announcement-item"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editAnn('${a.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('ann','${a.id}')">${delIcon}</button></div><div class="announcement-date"><div class="day">${d.getDate()}</div><div class="month">${d.toLocaleString('en',{month:'short'})}</div></div><div class="announcement-content"><h4>${esc(a.title)}</h4><p>${esc(a.content||'')}</p></div></div>`;}).join('');}
-
-    function switchPromoTab(tab,btn){currentPromoTab=tab;document.querySelectorAll('#promos .tab-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderPromos();}
-    function renderPromos(){const el=document.getElementById('promoGrid');const filtered=D.promos.filter(p=>getStatus(p)===currentPromoTab);if(!filtered.length){el.innerHTML=`<div class="add-btn-inline" style="grid-column:1/-1" onclick="openModal('promo')">${addIcon} Add promotion</div>`;return;}el.innerHTML=filtered.map(p=>{const s=getStatus(p);return`<div class="promo-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editPromo('${p.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('promo','${p.id}')">${delIcon}</button></div><span class="promo-status ${s}">${s}</span><h4>${esc(p.title)}</h4><div class="promo-dates">${fmtDate(p.start_date)} - ${p.end_date?fmtDate(p.end_date):'Ongoing'}</div>${p.discount?`<div class="promo-discount">${esc(p.discount)}</div>`:''}<p>${esc(p.description||'')}</p></div>`;}).join('');}
-
-    function switchDiscountTab(tab,btn){currentDiscountTab=tab;document.querySelectorAll('#discounts .tab-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderDiscounts();}
-    function renderDiscounts(){const el=document.getElementById('discountGrid');const filtered=D.discounts.filter(d=>getDiscountStatus(d)===currentDiscountTab);if(!filtered.length){el.innerHTML=`<div class="add-btn-inline" style="grid-column:1/-1" onclick="openModal('discount')">${addIcon} Add discount</div>`;return;}el.innerHTML=filtered.map(d=>{const s=getDiscountStatus(d);return`<div class="discount-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editDiscount('${d.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('discount','${d.id}')">${delIcon}</button></div><span class="discount-status ${s}">${s}</span><h4>${esc(d.title)}</h4><div class="discount-dates">${fmtDate(d.start_date)} - ${d.end_date?fmtDate(d.end_date):'No Expiry'}</div><div class="discount-amount">${esc(d.amount)}</div><p>${esc(d.description||'')}</p></div>`;}).join('');}
-
-    function renderContact(){document.getElementById('contactGrid').innerHTML=`
-      <div class="contact-card"><div class="contact-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div><div class="contact-card-content"><h4>Email (Non-Urgent)</h4><input class="form-input" style="margin:8px 0;font-size:13px" id="cEmailDesc" value="${esc(D.contact.emailDesc||'')}"><input class="form-input" style="font-size:13px" id="cEmail" value="${esc(D.contact.email||'')}"></div></div>
-      <div class="contact-card"><div class="contact-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="contact-card-content"><h4>Phone (Urgent)</h4><input class="form-input" style="margin:8px 0;font-size:13px" id="cPhoneDesc" value="${esc(D.contact.phoneDesc||'')}"><input class="form-input" style="font-size:13px" id="cPhone" value="${esc(D.contact.phone||'')}"></div></div>
-      <div class="contact-card"><div class="contact-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></div><div class="contact-card-content"><h4>Schedule Meeting</h4><input class="form-input" style="margin:8px 0;font-size:13px" id="cMeetDesc" value="${esc(D.contact.meetDesc||'')}"><input class="form-input" style="font-size:13px" id="cMeetUrl" value="${esc(D.contact.meetUrl||'')}" placeholder="Booking URL"></div></div>`;}
-
-    function renderResp(){
-      document.getElementById('weHandleList').innerHTML=D.weHandle.map((r,i)=>`<div class="responsibility-item we-handle"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editResp('we',${i})">${editIcon}</button><button class="edit-btn-small delete" onclick="delResp('we',${i})">${delIcon}</button></div><div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div><span>${esc(r)}</span></div>`).join('');
-      document.getElementById('youHandleList').innerHTML=D.youHandle.map((r,i)=>`<div class="responsibility-item you-handle"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editResp('you',${i})">${editIcon}</button><button class="edit-btn-small delete" onclick="delResp('you',${i})">${delIcon}</button></div><div class="icon-wrapper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div><span>${esc(r)}</span></div>`).join('');
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    function renderPractices(){const el=document.getElementById('practicesGrid');el.innerHTML=D.practices.map((p,i)=>`<div class="practice-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editPractice('${p.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="delPractice('${p.id}')">${delIcon}</button></div><h4><span class="number">${i+1}</span>${esc(p.title)}</h4><p>${esc(p.description)}</p>${p.tips&&p.tips.length?`<ul>${p.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}</div>`).join('')+`<div class="add-btn-inline" onclick="openModal('practice')" style="min-height:150px;align-items:center">${addIcon} Add Practice</div>`;}
+    function getPromoStatus(promo) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const start = new Date(promo.start_date);
+      const end = promo.end_date ? new Date(promo.end_date) : null;
+      if (start > now) return 'upcoming';
+      if (end && end < now) return 'expired';
+      return 'active';
+    }
 
-    function renderPolicies(){const el=document.getElementById('policiesContainer');if(!D.policies.length){el.innerHTML=`<div class="add-btn-inline" onclick="openModal('policy')">${addIcon} Add policy</div>`;return;}const g=D.policies.reduce((a,p)=>{const c=p.category||'General';if(!a[c])a[c]=[];a[c].push(p);return a;},{});el.innerHTML=Object.entries(g).map(([cat,items])=>`<div class="policy-category"><div class="policy-category-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>${esc(cat)}</div><div class="policy-list">${items.map(p=>`<div class="policy-item" style="flex-direction:column;align-items:stretch"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editPolicy('${p.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('policy','${p.id}')">${delIcon}</button></div><div style="display:flex;align-items:center;gap:12px"><div class="policy-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h4>${esc(p.title)}</h4></div>${p.description?`<p style="font-size:13px;color:var(--color-text-muted);margin-top:8px;line-height:1.5">${esc(p.description)}</p>`:''}</div>`).join('')}</div></div>`).join('')+`<div class="add-btn-inline" onclick="openModal('policy')">${addIcon} Add Policy</div>`;}
+    // Announcements
+    function renderAnnouncements() {
+      const tbody = document.getElementById('announcementsList');
+      
+      if (!announcements.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
+                  </svg>
+                </div>
+                <h3>No announcements yet</h3>
+                <p>Create your first announcement to get started</p>
+                <button class="btn btn-primary" onclick="openModal('announcement')">Add Announcement</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
-    function renderLinks(){
-      const el=document.getElementById('linksContainer');
-      const search=(document.getElementById('linkSearch')?.value||'').toLowerCase();
-      let filteredLinks=D.links;
-      if(search)filteredLinks=D.links.filter(l=>(l.title||'').toLowerCase().includes(search)||(l.category||'').toLowerCase().includes(search));
-      if(!filteredLinks.length&&!D.linkCategories.length){el.innerHTML=`<div class="add-btn-inline" onclick="openModal('link')">${addIcon} Add link</div>`;return;}
-      const grouped={};
-      D.linkCategories.forEach(c=>{grouped[c.name]=[];});
-      grouped['Uncategorized']=[];
-      filteredLinks.forEach(l=>{const cat=l.category||'Uncategorized';if(!grouped[cat])grouped[cat]=[];grouped[cat].push(l);});
-      el.innerHTML=Object.entries(grouped).filter(([cat,items])=>items.length>0||D.linkCategories.find(c=>c.name===cat)).map(([cat,items])=>`
-        <div class="link-category" style="margin-bottom:24px">
-          <div style="font-weight:600;font-size:14px;color:var(--color-text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            ${esc(cat)} (${items.length})
-          </div>
-          <div class="links-grid">${items.length?items.map(l=>`<div class="link-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editLink('${l.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('link','${l.id}')">${delIcon}</button></div><div class="link-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div><h4>${esc(l.title)}</h4></div></div>`).join(''):`<p style="color:var(--color-text-light);font-size:13px">No links in this category</p>`}</div>
+      tbody.innerHTML = announcements.map(a => `
+        <tr>
+          <td>
+            <strong>${esc(a.title)}</strong>
+          </td>
+          <td>${formatDate(a.date)}</td>
+          <td>
+            <span class="badge ${a.is_active ? 'badge-success' : 'badge-muted'}">${a.is_active ? 'Active' : 'Inactive'}</span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <button class="action-btn" onclick="editAnnouncement('${a.id}')" title="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+              <button class="action-btn delete" onclick="deleteItem('announcement', '${a.id}')" title="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function editAnnouncement(id) {
+      const a = announcements.find(x => x.id === id);
+      if (!a) return;
+      document.getElementById('announcementId').value = a.id;
+      document.getElementById('announcementTitle').value = a.title || '';
+      document.getElementById('announcementContent').innerHTML = a.content || '';
+      document.getElementById('announcementDate').value = a.date || '';
+      document.getElementById('announcementActive').checked = a.is_active !== false;
+      document.getElementById('announcementModalTitle').textContent = 'Edit Announcement';
+      openModal('announcement');
+    }
+
+    async function saveAnnouncement() {
+      const id = document.getElementById('announcementId').value;
+      const data = {
+        title: document.getElementById('announcementTitle').value.trim(),
+        content: document.getElementById('announcementContent').innerHTML.trim(),
+        date: document.getElementById('announcementDate').value || new Date().toISOString().split('T')[0],
+        is_active: document.getElementById('announcementActive').checked
+      };
+
+      if (!data.title) {
+        toast('Title is required', 'error');
+        return;
+      }
+
+      try {
+        if (id) {
+          await sb.from('announcements').update(data).eq('id', id);
+        } else {
+          data.sort_order = announcements.length;
+          await sb.from('announcements').insert(data);
+        }
+        await loadAllData();
+        closeModal('announcement');
+        resetAnnouncementForm();
+        toast('Announcement saved!', 'success');
+      } catch (e) {
+        console.error('Save error:', e);
+        toast('Error saving announcement', 'error');
+      }
+    }
+
+    function resetAnnouncementForm() {
+      document.getElementById('announcementId').value = '';
+      document.getElementById('announcementTitle').value = '';
+      document.getElementById('announcementContent').innerHTML = '';
+      document.getElementById('announcementDate').value = '';
+      document.getElementById('announcementActive').checked = true;
+      document.getElementById('announcementModalTitle').textContent = 'Add Announcement';
+    }
+
+    // Promotions
+    function switchPromoTab(tab, btn) {
+      currentPromoTab = tab;
+      document.querySelectorAll('#promotions .tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderPromotions();
+    }
+
+    function renderPromotions() {
+      const tbody = document.getElementById('promotionsList');
+      const filtered = promotions.filter(p => getPromoStatus(p) === currentPromoTab);
+
+      if (!filtered.length) {
+        const messages = {
+          active: 'No active promotions',
+          upcoming: 'No upcoming promotions',
+          expired: 'No expired promotions'
+        };
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                  </svg>
+                </div>
+                <h3>${messages[currentPromoTab]}</h3>
+                <p>Add a new promotion to see it here</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(p => {
+        const status = getPromoStatus(p);
+        const badgeClass = status === 'active' ? 'badge-success' : status === 'upcoming' ? 'badge-info' : 'badge-muted';
+        return `
+          <tr>
+            <td><strong>${esc(p.title)}</strong></td>
+            <td><span class="badge badge-muted">${esc(p.type)}</span></td>
+            <td>${p.discount_label ? esc(p.discount_label) : '-'}</td>
+            <td>${formatDate(p.start_date)} - ${p.end_date ? formatDate(p.end_date) : 'Ongoing'}</td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn" onclick="editPromotion('${p.id}')" title="Edit">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                  </svg>
+                </button>
+                <button class="action-btn delete" onclick="deleteItem('promotion', '${p.id}')" title="Delete">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function editPromotion(id) {
+      const p = promotions.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('promotionId').value = p.id;
+      document.getElementById('promotionTitle').value = p.title || '';
+      document.getElementById('promotionDescription').innerHTML = p.description || '';
+      document.getElementById('promotionType').value = p.type || 'promo';
+      document.getElementById('promotionDiscount').value = p.discount_label || '';
+      document.getElementById('promotionStartDate').value = p.start_date || '';
+      document.getElementById('promotionEndDate').value = p.end_date || '';
+      document.getElementById('promotionModalTitle').textContent = 'Edit Promotion';
+      openModal('promotion');
+    }
+
+    async function savePromotion() {
+      const id = document.getElementById('promotionId').value;
+      const data = {
+        title: document.getElementById('promotionTitle').value.trim(),
+        description: document.getElementById('promotionDescription').innerHTML.trim(),
+        type: document.getElementById('promotionType').value,
+        discount_label: document.getElementById('promotionDiscount').value.trim(),
+        start_date: document.getElementById('promotionStartDate').value,
+        end_date: document.getElementById('promotionEndDate').value || null
+      };
+
+      if (!data.title || !data.start_date) {
+        toast('Title and start date are required', 'error');
+        return;
+      }
+
+      try {
+        if (id) {
+          await sb.from('promotions').update(data).eq('id', id);
+        } else {
+          data.sort_order = promotions.length;
+          await sb.from('promotions').insert(data);
+        }
+        await loadAllData();
+        closeModal('promotion');
+        resetPromotionForm();
+        toast('Promotion saved!', 'success');
+      } catch (e) {
+        console.error('Save error:', e);
+        toast('Error saving promotion', 'error');
+      }
+    }
+
+    function resetPromotionForm() {
+      document.getElementById('promotionId').value = '';
+      document.getElementById('promotionTitle').value = '';
+      document.getElementById('promotionDescription').innerHTML = '';
+      document.getElementById('promotionType').value = 'promo';
+      document.getElementById('promotionDiscount').value = '';
+      document.getElementById('promotionStartDate').value = '';
+      document.getElementById('promotionEndDate').value = '';
+      document.getElementById('promotionModalTitle').textContent = 'Add Promotion';
+    }
+
+    // Policies
+    function renderPolicies() {
+      const tbody = document.getElementById('policiesList');
+      
+      if (!policies.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                </div>
+                <h3>No policies yet</h3>
+                <p>Add your first policy document</p>
+                <button class="btn btn-primary" onclick="openModal('policy')">Add Policy</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = policies.map(p => {
+        const cat = categories.find(c => c.id === p.category_id);
+        return `
+          <tr>
+            <td><strong>${esc(p.title)}</strong></td>
+            <td>${cat ? esc(cat.name) : '<span style="color: var(--color-text-light);">Uncategorized</span>'}</td>
+            <td>${p.url ? `<a href="${esc(p.url)}" target="_blank" style="color: var(--color-primary);">View Document</a>` : '-'}</td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn" onclick="editPolicy('${p.id}')" title="Edit">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                  </svg>
+                </button>
+                <button class="action-btn delete" onclick="deleteItem('policy', '${p.id}')" title="Delete">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function editPolicy(id) {
+      const p = policies.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('policyId').value = p.id;
+      document.getElementById('policyTitle').value = p.title || '';
+      document.getElementById('policyDescription').innerHTML = p.description || '';
+      document.getElementById('policyCategory').value = p.category_id || '';
+      document.getElementById('policyUrl').value = p.url || '';
+      document.getElementById('policyModalTitle').textContent = 'Edit Policy';
+      renderCategoryDropdown();
+      document.getElementById('policyCategory').value = p.category_id || '';
+      openModal('policy');
+    }
+
+    async function savePolicy() {
+      const id = document.getElementById('policyId').value;
+      const data = {
+        title: document.getElementById('policyTitle').value.trim(),
+        description: document.getElementById('policyDescription').innerHTML.trim(),
+        category_id: document.getElementById('policyCategory').value || null,
+        url: document.getElementById('policyUrl').value.trim()
+      };
+
+      if (!data.title) {
+        toast('Title is required', 'error');
+        return;
+      }
+
+      try {
+        if (id) {
+          await sb.from('policies').update(data).eq('id', id);
+        } else {
+          data.sort_order = policies.length;
+          await sb.from('policies').insert(data);
+        }
+        await loadAllData();
+        closeModal('policy');
+        resetPolicyForm();
+        toast('Policy saved!', 'success');
+      } catch (e) {
+        console.error('Save error:', e);
+        toast('Error saving policy', 'error');
+      }
+    }
+
+    function resetPolicyForm() {
+      document.getElementById('policyId').value = '';
+      document.getElementById('policyTitle').value = '';
+      document.getElementById('policyDescription').innerHTML = '';
+      document.getElementById('policyCategory').value = '';
+      document.getElementById('policyUrl').value = '';
+      document.getElementById('policyModalTitle').textContent = 'Add Policy';
+    }
+
+    // Categories
+    function renderCategories() {
+      const container = document.getElementById('categoryList');
+      renderCategoryDropdown();
+      
+      if (!categories.length) {
+        container.innerHTML = '<p style="color: var(--color-text-light); font-size: 13px;">No categories yet. Add one above.</p>';
+        return;
+      }
+
+      container.innerHTML = categories.map(c => `
+        <div class="category-pill">
+          ${esc(c.name)}
+          <button class="delete-cat" onclick="deleteCategory('${c.id}')" title="Delete">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
-      `).join('')+`<div class="add-btn-inline" onclick="openModal('link')">${addIcon} Add Link</div>`;
+      `).join('');
     }
-    function filterLinks(){renderLinks();}
-    function renderCategoryDropdown(){
-      const sel=document.getElementById('linkCat');
-      sel.innerHTML='<option value="">Select category...</option>'+D.linkCategories.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+
+    function renderCategoryDropdown() {
+      const select = document.getElementById('policyCategory');
+      select.innerHTML = '<option value="">Select category...</option>' + 
+        categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
     }
-    function renderCategoryList(){
-      const el=document.getElementById('categoryList');
-      if(!D.linkCategories.length){el.innerHTML='<p style="color:var(--color-text-light);font-size:13px">No categories yet</p>';return;}
-      el.innerHTML=D.linkCategories.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--color-bg);border-radius:var(--radius-sm);margin-bottom:6px"><span>${esc(c.name)}</span><button class="edit-btn-small delete" onclick="deleteLinkCategory('${c.id}')">${delIcon}</button></div>`).join('');
+
+    async function addCategory() {
+      const name = document.getElementById('newCategoryName').value.trim();
+      if (!name) {
+        toast('Enter a category name', 'error');
+        return;
+      }
+
+      try {
+        await sb.from('policy_categories').insert({ name, sort_order: categories.length });
+        document.getElementById('newCategoryName').value = '';
+        await loadAllData();
+        toast('Category added!', 'success');
+      } catch (e) {
+        console.error('Add category error:', e);
+        toast('Error adding category', 'error');
+      }
     }
-    async function addLinkCategory(){
-      const name=document.getElementById('newCategoryName').value.trim();
-      if(!name){toast('Enter a category name','error');return;}
-      try{
-        console.log('Adding category:', name);
-        const res = await sb.from('link_categories').insert({name,sort_order:D.linkCategories.length});
-        console.log('Insert result:', res);
-        if(res.error){console.error('Insert error:', res.error);toast('Error: '+res.error.message,'error');return;}
-        document.getElementById('newCategoryName').value='';
-        await loadAll();
-        renderCategoryList();
+
+    async function deleteCategory(id) {
+      if (!confirm('Delete this category? Policies in this category will become uncategorized.')) return;
+      
+      try {
+        await sb.from('policies').update({ category_id: null }).eq('category_id', id);
+        await sb.from('policy_categories').delete().eq('id', id);
+        await loadAllData();
+        toast('Category deleted', 'success');
+      } catch (e) {
+        console.error('Delete category error:', e);
+        toast('Error deleting category', 'error');
+      }
+    }
+
+    // Team Members
+    function renderTeam() {
+      const container = document.getElementById('teamGrid');
+      
+      if (!teamMembers.length) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h3>No team members yet</h3>
+            <p>Add your first team member</p>
+            <button class="btn btn-primary" onclick="openModal('team')">Add Team Member</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = teamMembers.map(t => `
+        <div class="team-card">
+          <div class="team-card-header">
+            <img src="${esc(t.avatar_url) || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}" class="team-avatar" alt="${esc(t.first_name)}">
+            <div class="team-info">
+              <h4>${esc(t.first_name)} ${esc(t.last_name)}</h4>
+              <div class="role">${esc(t.role) || 'Team Member'}</div>
+              ${t.zone ? `<div class="zone">${esc(t.zone)}</div>` : ''}
+            </div>
+          </div>
+          <div class="team-details">
+            <div class="team-detail">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"></path>
+              </svg>
+              <a href="mailto:${esc(t.email)}">${esc(t.email)}</a>
+            </div>
+            ${t.phone_extension ? `
+              <div class="team-detail">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                </svg>
+                Ext. ${esc(t.phone_extension)}
+              </div>
+            ` : ''}
+          </div>
+          <div class="team-card-actions">
+            <button class="action-btn" onclick="editTeamMember('${t.id}')" title="Edit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+              </svg>
+            </button>
+            <button class="action-btn delete" onclick="deleteItem('team', '${t.id}')" title="Delete">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editTeamMember(id) {
+      const t = teamMembers.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById('teamId').value = t.id;
+      document.getElementById('teamFirstName').value = t.first_name || '';
+      document.getElementById('teamLastName').value = t.last_name || '';
+      document.getElementById('teamRole').value = t.role || '';
+      document.getElementById('teamZone').value = t.zone || '';
+      document.getElementById('teamEmail').value = t.email || '';
+      document.getElementById('teamExtension').value = t.phone_extension || '';
+      document.getElementById('teamAvatarUrl').value = t.avatar_url || '';
+      document.getElementById('teamPhotoPreview').src = t.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+      document.getElementById('teamModalTitle').textContent = 'Edit Team Member';
+      openModal('team');
+    }
+
+    function previewTeamPhoto(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 2 * 1024 * 1024) {
+          toast('Image must be under 2MB', 'error');
+          input.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('teamPhotoPreview').src = e.target.result;
+          document.getElementById('teamAvatarUrl').value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function saveTeamMember() {
+      const id = document.getElementById('teamId').value;
+      const data = {
+        first_name: document.getElementById('teamFirstName').value.trim(),
+        last_name: document.getElementById('teamLastName').value.trim(),
+        role: document.getElementById('teamRole').value.trim(),
+        zone: document.getElementById('teamZone').value.trim(),
+        email: document.getElementById('teamEmail').value.trim(),
+        phone_extension: document.getElementById('teamExtension').value.trim(),
+        avatar_url: document.getElementById('teamAvatarUrl').value.trim()
+      };
+
+      if (!data.first_name || !data.last_name || !data.email) {
+        toast('First name, last name, and email are required', 'error');
+        return;
+      }
+
+      try {
+        if (id) {
+          await sb.from('team_members').update(data).eq('id', id);
+        } else {
+          data.sort_order = teamMembers.length;
+          await sb.from('team_members').insert(data);
+        }
+        await loadAllData();
+        closeModal('team');
+        resetTeamForm();
+        toast('Team member saved!', 'success');
+      } catch (e) {
+        console.error('Save error:', e);
+        toast('Error saving team member', 'error');
+      }
+    }
+
+    function resetTeamForm() {
+      document.getElementById('teamId').value = '';
+      document.getElementById('teamFirstName').value = '';
+      document.getElementById('teamLastName').value = '';
+      document.getElementById('teamRole').value = '';
+      document.getElementById('teamZone').value = '';
+      document.getElementById('teamEmail').value = '';
+      document.getElementById('teamExtension').value = '';
+      document.getElementById('teamAvatarUrl').value = '';
+      document.getElementById('teamPhotoPreview').src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+      document.getElementById('teamPhotoFile').value = '';
+      document.getElementById('teamModalTitle').textContent = 'Add Team Member';
+    }
+
+    // Enrollment Script
+    async function saveScript() {
+      const content = document.getElementById('scriptEditor').innerHTML;
+      
+      try {
+        await sb.from('content_blocks').update({ 
+          content, 
+          updated_at: new Date().toISOString() 
+        }).eq('slug', 'enrollment_script');
+        scriptContent = content;
+        toast('Script saved!', 'success');
+      } catch (e) {
+        console.error('Save script error:', e);
+        toast('Error saving script', 'error');
+      }
+    }
+
+    // Rich text formatting
+    function formatDoc(command) {
+      document.execCommand(command, false, null);
+    }
+
+    function formatBlock(tag) {
+      document.execCommand('formatBlock', false, tag);
+    }
+
+    function formatDocIn(editorId, command) {
+      const editor = document.getElementById(editorId);
+      editor.focus();
+      document.execCommand(command, false, null);
+    }
+
+    // Delete functionality
+    function deleteItem(type, id) {
+      deleteCallback = async () => {
+        const tableMap = {
+          announcement: 'announcements',
+          promotion: 'promotions',
+          policy: 'policies',
+          team: 'team_members'
+        };
+        
+        try {
+          await sb.from(tableMap[type]).delete().eq('id', id);
+          await loadAllData();
+          toast('Deleted successfully', 'success');
+        } catch (e) {
+          console.error('Delete error:', e);
+          toast('Error deleting item', 'error');
+        }
+      };
+      openModal('delete');
+    }
+
+    function confirmDelete() {
+      if (deleteCallback) deleteCallback();
+      closeModal('delete');
+      deleteCallback = null;
+    }
+
+    // Modal handling
+    function openModal(type) {
+      if (type === 'policy') {
         renderCategoryDropdown();
-        toast('Category added!','success');
-      }catch(e){console.error('addLinkCategory error:', e);toast('Error adding category','error');}
-    }
-    async function deleteLinkCategory(id){
-      if(!confirm('Delete this category? Links in this category will become uncategorized.'))return;
-      try{const cat=D.linkCategories.find(c=>c.id===id);if(cat)await sb.from('links').update({category:null}).eq('category',cat.name);await sb.from('link_categories').delete().eq('id',id);await loadAll();renderCategoryList();renderCategoryDropdown();toast('Category deleted','success');}catch(e){toast('Error deleting','error');}
+      }
+      document.getElementById(type + 'Modal').classList.add('active');
     }
 
-    function renderZoneFilter(){const s=document.getElementById('zoneFilter');const zs=D.zones.map(z=>z.name);s.innerHTML='<option value="all">All Zones</option>'+zs.map(z=>`<option value="${esc(z)}">${esc(z)}</option>`).join('');document.getElementById('teamZone').innerHTML='<option value="">Select...</option>'+zs.map(z=>`<option value="${esc(z)}">${esc(z)}</option>`).join('');}
-    function renderTeam(){const el=document.getElementById('teamGrid');const f=document.getElementById('zoneFilter').value;let filtered=f==='all'?D.team:D.team.filter(t=>t.zone===f);if(!filtered.length){el.innerHTML=`<div class="add-btn-inline" style="grid-column:1/-1" onclick="openModal('team')">${addIcon} Add member</div>`;return;}el.innerHTML=filtered.map(t=>`<div class="team-card"><div class="edit-actions"><button class="edit-btn-small edit" onclick="editTeam('${t.id}')">${editIcon}</button><button class="edit-btn-small delete" onclick="del('team','${t.id}')">${delIcon}</button></div><div class="team-card-header"><img src="${esc(t.avatar_url||'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face')}" class="team-card-avatar"><div class="team-card-info"><h4>${esc(name(t))}</h4><div class="role">${esc(t.role||'Specialist')}</div><div class="zone">${esc(t.zone||'General')}</div></div></div><div class="team-card-details"><div class="team-detail-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><a href="mailto:${esc(t.email)}">${esc(t.email||'-')}</a></div><div class="team-detail-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Ext: ${esc(t.extension||'-')}</div></div></div>`).join('')+`<div class="add-btn-inline" onclick="openModal('team')" style="min-height:200px;align-items:center">${addIcon} Add Member</div>`;}
-
-    // CRUD
-    function openModal(t){
-      if(t==='link'){renderCategoryDropdown();document.getElementById('linkId').value='';document.getElementById('linkTitle').value='';document.getElementById('linkCat').value='';document.getElementById('linkUrl').value='';}
-      if(t==='linkCategory'){renderCategoryList();}
-      if(t==='team'){const sel=document.getElementById('teamZone');sel.innerHTML='<option value="">No Zone</option>'+D.zones.map(z=>`<option value="${esc(z.name)}">${esc(z.name)}</option>`).join('');document.getElementById('teamPhotoPreview').src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';}
-      document.getElementById(t+'Modal').classList.add('active');
+    function closeModal(type) {
+      document.getElementById(type + 'Modal').classList.remove('active');
+      
+      // Reset forms
+      if (type === 'announcement') resetAnnouncementForm();
+      if (type === 'promotion') resetPromotionForm();
+      if (type === 'policy') resetPolicyForm();
+      if (type === 'team') resetTeamForm();
     }
-    function closeModal(t){document.getElementById(t+'Modal').classList.remove('active');}
 
-    function editAnn(id){const a=D.announcements.find(x=>x.id===id);if(!a)return;document.getElementById('annId').value=a.id;document.getElementById('annTitle').value=a.title||'';document.getElementById('annContent').value=a.content||'';document.getElementById('annDate').value=a.date||'';document.getElementById('annActive').checked=a.active!==false;openModal('announcement');}
-    async function saveAnn(){const id=document.getElementById('annId').value;const d={title:document.getElementById('annTitle').value.trim(),content:document.getElementById('annContent').value.trim(),date:document.getElementById('annDate').value||new Date().toISOString().split('T')[0],active:document.getElementById('annActive').checked};if(!d.title){toast('Title required','error');return;}try{let res;if(id)res=await sb.from('announcements').update(d).eq('id',id);else res=await sb.from('announcements').insert(d);if(res.error){console.error('Save error:',res.error);toast('Error: '+res.error.message,'error');return;}await loadAll();closeModal('announcement');document.getElementById('annId').value='';toast('Saved!','success');}catch(e){console.error('saveAnn:',e);toast('Error saving','error');}}
+    function closeModalOnOverlay(event, type) {
+      if (event.target === event.currentTarget) {
+        closeModal(type);
+      }
+    }
 
-    function editPromo(id){const p=D.promos.find(x=>x.id===id);if(!p)return;document.getElementById('promoId').value=p.id;document.getElementById('promoTitleInput').value=p.title||'';document.getElementById('promoDiscount').value=p.discount||'';document.getElementById('promoDesc').value=p.description||'';document.getElementById('promoDetails').value=p.details||'';document.getElementById('promoStart').value=p.start_date||'';document.getElementById('promoEnd').value=p.end_date||'';openModal('promo');}
-    async function savePromo(){const id=document.getElementById('promoId').value;const d={title:document.getElementById('promoTitleInput').value.trim(),discount:document.getElementById('promoDiscount').value.trim(),description:document.getElementById('promoDesc').value.trim(),details:document.getElementById('promoDetails').value.trim(),start_date:document.getElementById('promoStart').value,end_date:document.getElementById('promoEnd').value||null};if(!d.title||!d.start_date){toast('Title and start date required','error');return;}try{let res;if(id)res=await sb.from('promos').update(d).eq('id',id);else res=await sb.from('promos').insert(d);if(res.error){console.error('Save error:',res.error);toast('Error: '+res.error.message,'error');return;}await loadAll();closeModal('promo');document.getElementById('promoId').value='';toast('Saved!','success');}catch(e){console.error('savePromo:',e);toast('Error saving','error');}}
+    // Section switching
+    function switchSection(id, el) {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      closeSidebar();
+    }
 
-    function editDiscount(id){const d=D.discounts.find(x=>x.id===id);if(!d)return;document.getElementById('discountId').value=d.id;document.getElementById('discountTitle').value=d.title||'';document.getElementById('discountAmount').value=d.amount||'';document.getElementById('discountDesc').innerHTML=d.description||'';document.getElementById('discountStart').value=d.start_date||'';document.getElementById('discountEnd').value=d.end_date||'';openModal('discount');}
-    async function saveDiscount(){const id=document.getElementById('discountId').value;const d={title:document.getElementById('discountTitle').value.trim(),amount:document.getElementById('discountAmount').value.trim(),description:document.getElementById('discountDesc').innerHTML.trim(),start_date:document.getElementById('discountStart').value,end_date:document.getElementById('discountEnd').value||null};if(!d.title||!d.amount||!d.start_date){toast('Title, amount, and start date required','error');return;}try{let res;if(id)res=await sb.from('discounts').update(d).eq('id',id);else res=await sb.from('discounts').insert(d);if(res.error){console.error('Save error:',res.error);toast('Error: '+res.error.message,'error');return;}await loadAll();closeModal('discount');document.getElementById('discountId').value='';toast('Saved!','success');}catch(e){console.error('saveDiscount:',e);toast('Error saving','error');}}
+    // Mobile sidebar
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
 
-    function editPractice(id){const p=D.practices.find(x=>x.id===id);if(!p)return;document.getElementById('practiceId').value=p.id;document.getElementById('practiceTitle').value=p.title||'';document.getElementById('practiceDesc').value=p.description||'';document.getElementById('practiceTips').value=(p.tips||[]).join('\n');openModal('practice');}
-    async function savePractice(){const id=document.getElementById('practiceId').value;const d={title:document.getElementById('practiceTitle').value.trim(),description:document.getElementById('practiceDesc').value.trim(),tips:document.getElementById('practiceTips').value.split('\n').map(t=>t.trim()).filter(t=>t)};if(!d.title||!d.description){toast('Title and description required','error');return;}if(id){const i=D.practices.findIndex(p=>p.id===id);if(i>=0)D.practices[i]={...D.practices[i],...d};}else{d.id=Date.now().toString();D.practices.push(d);}await saveSetting('practices',JSON.stringify(D.practices));renderPractices();closeModal('practice');document.getElementById('practiceId').value='';toast('Saved!','success');}
-    async function delPractice(id){D.practices=D.practices.filter(p=>p.id!==id);await saveSetting('practices',JSON.stringify(D.practices));renderPractices();toast('Deleted','success');}
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('open');
+    }
 
-    function editPolicy(id){const p=D.policies.find(x=>x.id===id);if(!p)return;document.getElementById('policyId').value=p.id;document.getElementById('policyTitle').value=p.title||'';document.getElementById('policyCat').value=p.category||'';document.getElementById('policyDesc').innerHTML=p.description||'';document.getElementById('policyUrl').value=p.url||'';openModal('policy');}
-    async function savePolicy(){const id=document.getElementById('policyId').value;const d={title:document.getElementById('policyTitle').value.trim(),category:document.getElementById('policyCat').value.trim(),description:document.getElementById('policyDesc').innerHTML.trim(),url:document.getElementById('policyUrl').value.trim()};if(!d.title||!d.url){toast('Title and URL required','error');return;}try{if(id)await sb.from('policies').update(d).eq('id',id);else{d.sort_order=D.policies.length;await sb.from('policies').insert(d);}await loadAll();closeModal('policy');document.getElementById('policyId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
+    // Toast notification
+    function toast(message, type = '') {
+      const t = document.getElementById('toast');
+      t.textContent = message;
+      t.className = 'toast show ' + type;
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
 
-    function editLink(id){const l=D.links.find(x=>x.id===id);if(!l)return;document.getElementById('linkId').value=l.id;document.getElementById('linkTitle').value=l.title||'';renderCategoryDropdown();document.getElementById('linkCat').value=l.category||'';document.getElementById('linkUrl').value=l.url||'';openModal('link');}
-    async function saveLink(){const id=document.getElementById('linkId').value;const d={title:document.getElementById('linkTitle').value.trim(),category:document.getElementById('linkCat').value.trim(),url:document.getElementById('linkUrl').value.trim()};if(!d.title||!d.url){toast('Title and URL required','error');return;}try{if(id)await sb.from('links').update(d).eq('id',id);else{d.sort_order=D.links.length;await sb.from('links').insert(d);}await loadAll();closeModal('link');document.getElementById('linkId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
-
-    function previewTeamPhoto(input){if(input.files&&input.files[0]){const file=input.files[0];if(file.size>2*1024*1024){toast('Image must be under 2MB','error');input.value='';return;}const reader=new FileReader();reader.onload=function(e){document.getElementById('teamPhotoPreview').src=e.target.result;document.getElementById('teamAvatar').value=e.target.result;};reader.readAsDataURL(file);}}
-
-    function editTeam(id){const t=D.team.find(x=>x.id===id);if(!t)return;document.getElementById('teamId').value=t.id;document.getElementById('teamFirst').value=t.first_name||'';document.getElementById('teamLast').value=t.last_name||'';document.getElementById('teamRole').value=t.role||'';document.getElementById('teamEmail').value=t.email||'';document.getElementById('teamExt').value=t.extension||'';document.getElementById('teamZone').value=t.zone||'';document.getElementById('teamAvatar').value=t.avatar_url||'';document.getElementById('teamPhotoPreview').src=t.avatar_url||'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';document.getElementById('teamPhotoFile').value='';openModal('team');}
-    async function saveTeam(){const id=document.getElementById('teamId').value;const d={first_name:document.getElementById('teamFirst').value.trim(),last_name:document.getElementById('teamLast').value.trim(),role:document.getElementById('teamRole').value.trim(),email:document.getElementById('teamEmail').value.trim(),extension:document.getElementById('teamExt').value.trim(),zone:document.getElementById('teamZone').value,avatar_url:document.getElementById('teamAvatar').value.trim()};if(!d.first_name||!d.email){toast('Name and email required','error');return;}try{if(id)await sb.from('team_members').update(d).eq('id',id);else{d.sort_order=D.team.length;await sb.from('team_members').insert(d);}await loadAll();closeModal('team');document.getElementById('teamId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
-
-    async function saveZone(){const id=document.getElementById('zoneId').value;const d={name:document.getElementById('zoneName').value.trim(),color:document.getElementById('zoneColor').value};if(!d.name){toast('Name required','error');return;}try{if(id)await sb.from('zones').update(d).eq('id',id);else{d.sort_order=D.zones.length;await sb.from('zones').insert(d);}await loadAll();closeModal('zone');document.getElementById('zoneId').value='';toast('Saved!','success');}catch(e){toast('Error saving','error');}}
-
-    function addResp(type){const t=prompt('Enter responsibility:');if(t&&t.trim()){if(type==='we')D.weHandle.push(t.trim());else D.youHandle.push(t.trim());renderResp();}}
-    function editResp(type,i){const arr=type==='we'?D.weHandle:D.youHandle;const t=prompt('Edit:',arr[i]);if(t&&t.trim()){arr[i]=t.trim();renderResp();}}
-    function delResp(type,i){if(type==='we')D.weHandle.splice(i,1);else D.youHandle.splice(i,1);renderResp();}
-
-    async function saveWorking(){D.contact={email:document.getElementById('cEmail').value,emailDesc:document.getElementById('cEmailDesc').value,phone:document.getElementById('cPhone').value,phoneDesc:document.getElementById('cPhoneDesc').value,meetDesc:document.getElementById('cMeetDesc').value,meetUrl:document.getElementById('cMeetUrl').value};console.log('Saving contact:',D.contact);const r1=await saveSetting('contact',JSON.stringify(D.contact));const r2=await saveSetting('we_handle',JSON.stringify(D.weHandle));const r3=await saveSetting('you_handle',JSON.stringify(D.youHandle));if(r1&&r2&&r3)toast('Saved!','success');}
-    async function saveScript(){D.script=document.getElementById('scriptContent').innerHTML;const ok=await saveSetting('enrollment_script',D.script);if(ok)toast('Script saved!','success');}
-    function fmt(tag){document.execCommand('formatBlock',false,tag);}
-
-    function del(type,id){delCb=async()=>{const map={ann:['announcements'],promo:['promos'],discount:['discounts'],policy:['policies'],link:['links'],team:['team_members'],zone:['zones']};const tbl=map[type][0];try{await sb.from(tbl).delete().eq('id',id);await loadAll();toast('Deleted','success');}catch(e){toast('Error deleting','error');}};openModal('delete');}
-    function confirmDel(){if(delCb)delCb();closeModal('delete');delCb=null;}
-
-    function switchSection(id,el){document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');closeSidebar();window.scrollTo(0,0);}
-    function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
-    function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
-    function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+type;setTimeout(()=>t.classList.remove('show'),3000);}
-
-    document.addEventListener('DOMContentLoaded',init);
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>

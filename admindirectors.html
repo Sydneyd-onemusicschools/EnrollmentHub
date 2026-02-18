@@ -2125,20 +2125,58 @@
       openModal('team');
     }
 
-    function previewTeamPhoto(input) {
+    async function previewTeamPhoto(input) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
-        if (file.size > 2 * 1024 * 1024) {
-          toast('Image must be under 2MB', 'error');
+        
+        // Allow up to 10MB
+        if (file.size > 10 * 1024 * 1024) {
+          toast('Image must be under 10MB', 'error');
           input.value = '';
           return;
         }
+
+        // Show preview immediately
         const reader = new FileReader();
         reader.onload = function(e) {
           document.getElementById('teamPhotoPreview').src = e.target.result;
-          document.getElementById('teamAvatarUrl').value = e.target.result;
         };
         reader.readAsDataURL(file);
+
+        // Upload to Supabase Storage
+        try {
+          toast('Uploading photo...', '');
+          
+          // Create unique filename
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          
+          // Upload to avatars bucket
+          const { data, error } = await sb.storage
+            .from('avatars')
+            .upload(fileName, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (error) {
+            console.error('Upload error:', error);
+            toast('Error uploading photo: ' + error.message, 'error');
+            return;
+          }
+
+          // Get public URL
+          const { data: urlData } = sb.storage
+            .from('avatars')
+            .getPublicUrl(fileName);
+
+          document.getElementById('teamAvatarUrl').value = urlData.publicUrl;
+          toast('Photo uploaded!', 'success');
+          
+        } catch (e) {
+          console.error('Upload error:', e);
+          toast('Error uploading photo', 'error');
+        }
       }
     }
 

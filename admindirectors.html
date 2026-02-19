@@ -3,34 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enrollment Hub - Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Admin Portal - Enrollment Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --color-primary: #0D9488;
-      --color-primary-dark: #0F766E;
-      --color-secondary: #10B981;
-      --gradient-primary: linear-gradient(135deg, #0D9488 0%, #10B981 100%);
-      --color-bg: #F8FAFB;
+      --color-coral: #F97B5F;
+      --color-coral-dark: #E86A4F;
+      --color-salmon: #F472B6;
+      --gradient-coral: linear-gradient(135deg, #F97B5F 0%, #FDAB8E 100%);
+      --gradient-salmon: linear-gradient(135deg, #F472B6 0%, #F9A8D4 100%);
+      --gradient-hero: linear-gradient(135deg, #F97B5F 0%, #F472B6 100%);
+      --color-bg: #F9FAFB;
       --color-white: #FFFFFF;
-      --color-text: #1E293B;
-      --color-text-muted: #64748B;
-      --color-text-light: #94A3B8;
-      --color-border: #E2E8F0;
+      --color-text: #1F2937;
+      --color-text-muted: #6B7280;
+      --color-text-light: #9CA3AF;
+      --color-border: #E5E7EB;
       --color-success: #10B981;
       --color-warning: #F59E0B;
       --color-danger: #EF4444;
-      --color-info: #0EA5E9;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --color-info: #3B82F6;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
       --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
       --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
-      --sidebar-width: 260px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --sidebar-width: 250px;
     }
 
     body {
@@ -41,7 +43,6 @@
       line-height: 1.5;
     }
 
-    /* Layout */
     .app-layout { display: flex; min-height: 100vh; }
 
     /* Sidebar */
@@ -60,7 +61,7 @@
     }
 
     .sidebar-header {
-      padding: 24px 20px;
+      padding: 20px;
       border-bottom: 1px solid var(--color-border);
     }
 
@@ -71,28 +72,26 @@
     }
 
     .sidebar-logo-icon {
-      width: 42px;
-      height: 42px;
-      background: var(--gradient-primary);
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-hero);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
+      font-weight: 800;
+      font-size: 14px;
     }
 
-    .sidebar-logo-icon svg { width: 22px; height: 22px; }
-
     .sidebar-logo-text h1 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
-      color: var(--color-text);
     }
 
     .sidebar-logo-text p {
       font-size: 12px;
       color: var(--color-text-muted);
-      margin-top: 2px;
     }
 
     .sidebar-nav {
@@ -133,27 +132,20 @@
     }
 
     .nav-item.active {
-      background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
-      color: var(--color-primary);
+      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
+      color: var(--color-coral);
     }
 
-    .nav-item svg {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
 
     .sidebar-footer {
       padding: 16px 20px;
       border-top: 1px solid var(--color-border);
-    }
-
-    .sidebar-footer p {
       font-size: 11px;
       color: var(--color-text-light);
     }
 
-    /* Mobile Header */
+    /* Mobile */
     .mobile-header {
       display: none;
       position: fixed;
@@ -182,8 +174,6 @@
       border-radius: var(--radius-sm);
     }
 
-    .mobile-menu-btn:hover { background: var(--color-bg); }
-
     .sidebar-overlay {
       display: none;
       position: fixed;
@@ -196,13 +186,11 @@
     .main-content {
       flex: 1;
       margin-left: var(--sidebar-width);
-      padding: 32px;
+      padding: 28px;
       min-height: 100vh;
     }
 
-    .page-header {
-      margin-bottom: 28px;
-    }
+    .page-header { margin-bottom: 24px; }
 
     .page-header-row {
       display: flex;
@@ -213,10 +201,9 @@
     }
 
     .page-header h1 {
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 700;
-      color: var(--color-text);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .page-header p {
@@ -226,62 +213,21 @@
 
     /* Sections */
     .section { display: none; }
-    .section.active { display: block; animation: fadeIn 0.25s ease; }
+    .section.active { display: block; animation: fadeIn 0.2s ease; }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Cards */
+    /* Card */
     .card {
       background: var(--color-white);
       border-radius: var(--radius-lg);
       border: 1px solid var(--color-border);
       box-shadow: var(--shadow-sm);
-      margin-bottom: 24px;
+      overflow: hidden;
     }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .card-header-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-primary);
-    }
-
-    .card-icon svg { width: 20px; height: 20px; }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--color-text);
-    }
-
-    .card-subtitle {
-      font-size: 13px;
-      color: var(--color-text-muted);
-      margin-top: 2px;
-    }
-
-    .card-body { padding: 24px; }
 
     /* Buttons */
     .btn {
@@ -302,7 +248,7 @@
     .btn svg { width: 16px; height: 16px; }
 
     .btn-primary {
-      background: var(--gradient-primary);
+      background: var(--gradient-hero);
       color: white;
     }
 
@@ -316,34 +262,14 @@
 
     .btn-secondary:hover { background: var(--color-bg); }
 
-    .btn-danger {
-      background: var(--color-danger);
-      color: white;
-    }
-
-    .btn-danger:hover { opacity: 0.9; }
-
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 13px;
-    }
-
-    .btn-icon {
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      border-radius: var(--radius-sm);
-    }
+    .btn-danger { background: var(--color-danger); color: white; }
 
     /* Tables */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    .data-table { width: 100%; border-collapse: collapse; }
 
     .data-table th,
     .data-table td {
-      padding: 14px 16px;
+      padding: 14px 20px;
       text-align: left;
       border-bottom: 1px solid var(--color-border);
     }
@@ -357,26 +283,17 @@
       background: var(--color-bg);
     }
 
-    .data-table td {
-      font-size: 14px;
-      color: var(--color-text);
-    }
-
+    .data-table td { font-size: 14px; }
     .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(249, 123, 95, 0.02); }
 
-    .data-table tr:hover td { background: var(--color-bg); }
-
-    .table-actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
+    .table-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
     .action-btn {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border: none;
-      background: transparent;
+      background: var(--color-bg);
       cursor: pointer;
       border-radius: var(--radius-sm);
       display: flex;
@@ -387,8 +304,8 @@
     }
 
     .action-btn:hover {
-      background: var(--color-bg);
-      color: var(--color-primary);
+      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
+      color: var(--color-coral);
     }
 
     .action-btn.delete:hover {
@@ -398,44 +315,27 @@
 
     .action-btn svg { width: 16px; height: 16px; }
 
-    /* Status Badges */
+    /* Badges */
     .badge {
       display: inline-flex;
-      align-items: center;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 500;
     }
 
-    .badge-success {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--color-success);
-    }
-
-    .badge-warning {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--color-warning);
-    }
-
-    .badge-muted {
-      background: var(--color-bg);
-      color: var(--color-text-muted);
-    }
-
-    .badge-info {
-      background: rgba(14, 165, 233, 0.1);
-      color: var(--color-info);
-    }
+    .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
+    .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--color-warning); }
+    .badge-muted { background: var(--color-bg); color: var(--color-text-muted); }
+    .badge-info { background: rgba(59, 130, 246, 0.1); color: var(--color-info); }
 
     /* Forms */
-    .form-group { margin-bottom: 20px; }
+    .form-group { margin-bottom: 18px; }
 
     .form-label {
       display: block;
       font-size: 13px;
       font-weight: 500;
-      color: var(--color-text);
       margin-bottom: 6px;
     }
 
@@ -457,28 +357,15 @@
     .form-select:focus,
     .form-textarea:focus {
       outline: none;
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+      border-color: var(--color-coral);
+      box-shadow: 0 0 0 3px rgba(249, 123, 95, 0.1);
     }
 
-    .form-textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
+    .form-textarea { min-height: 100px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-hint { font-size: 12px; color: var(--color-text-light); margin-top: 4px; }
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .form-hint {
-      font-size: 12px;
-      color: var(--color-text-light);
-      margin-top: 4px;
-    }
-
-    /* Rich Text Editor */
+    /* Editor */
     .editor-container {
       border: 1px solid var(--color-border);
       border-radius: var(--radius-sm);
@@ -510,11 +397,7 @@
       transition: all 0.15s ease;
     }
 
-    .editor-btn:hover {
-      background: var(--color-primary);
-      color: white;
-    }
-
+    .editor-btn:hover { background: var(--gradient-hero); color: white; }
     .editor-btn svg { width: 16px; height: 16px; }
 
     .editor-content {
@@ -525,32 +408,12 @@
       outline: none;
     }
 
-    .editor-content:focus {
-      background: rgba(13, 148, 136, 0.02);
-    }
-
-    .editor-content h2 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 20px 0 10px;
-      color: var(--color-primary);
-    }
-
+    .editor-content:focus { background: rgba(249, 123, 95, 0.02); }
+    .editor-content h2 { font-size: 18px; font-weight: 600; margin: 20px 0 10px; color: var(--color-coral); }
     .editor-content h2:first-child { margin-top: 0; }
-
-    .editor-content h3 {
-      font-size: 15px;
-      font-weight: 600;
-      margin: 16px 0 8px;
-    }
-
+    .editor-content h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
     .editor-content p { margin-bottom: 12px; }
-
-    .editor-content ul, .editor-content ol {
-      margin: 12px 0;
-      padding-left: 24px;
-    }
-
+    .editor-content ul, .editor-content ol { margin: 12px 0; padding-left: 24px; }
     .editor-content li { margin-bottom: 6px; }
 
     /* Modals */
@@ -572,7 +435,7 @@
       background: var(--color-white);
       border-radius: var(--radius-lg);
       width: 100%;
-      max-width: 560px;
+      max-width: 540px;
       max-height: 90vh;
       overflow: hidden;
       box-shadow: var(--shadow-lg);
@@ -588,18 +451,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 24px;
+      padding: 18px 24px;
       border-bottom: 1px solid var(--color-border);
     }
 
-    .modal-header h2 {
-      font-size: 18px;
-      font-weight: 600;
-    }
+    .modal-header h2 { font-size: 17px; font-weight: 600; }
 
     .modal-close {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border: none;
       background: transparent;
       cursor: pointer;
@@ -611,15 +471,12 @@
       transition: all 0.15s ease;
     }
 
-    .modal-close:hover {
-      background: var(--color-bg);
-      color: var(--color-text);
-    }
+    .modal-close:hover { background: var(--color-bg); color: var(--color-text); }
 
     .modal-body {
       padding: 24px;
       overflow-y: auto;
-      max-height: calc(90vh - 140px);
+      max-height: calc(90vh - 130px);
     }
 
     .modal-footer {
@@ -639,30 +496,20 @@
     }
 
     .empty-state-icon {
-      width: 56px;
-      height: 56px;
-      background: var(--color-bg);
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
-      color: var(--color-text-light);
+      color: var(--color-coral);
     }
 
-    .empty-state-icon svg { width: 24px; height: 24px; }
-
-    .empty-state h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--color-text);
-      margin-bottom: 6px;
-    }
-
-    .empty-state p {
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
+    .empty-state-icon svg { width: 26px; height: 26px; }
+    .empty-state h3 { font-size: 16px; font-weight: 600; color: var(--color-text); margin-bottom: 6px; }
+    .empty-state p { font-size: 14px; margin-bottom: 20px; }
 
     /* Toast */
     .toast {
@@ -682,48 +529,162 @@
       z-index: 300;
     }
 
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
+    .toast.show { transform: translateY(0); opacity: 1; }
     .toast.success { background: var(--color-success); }
     .toast.error { background: var(--color-danger); }
 
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+
+    .tab-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--color-border);
+      background: var(--color-white);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .stat-card {
+    .tab-btn:hover { border-color: var(--color-coral); color: var(--color-coral); }
+    .tab-btn.active { background: var(--gradient-hero); color: white; border-color: transparent; }
+
+    /* Team Grid */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .team-card {
       background: var(--color-white);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-md);
       padding: 20px;
+      transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .stat-card-label {
+    .team-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); }
+
+    .team-card-featured {
+      border: 2px solid var(--featured-color, var(--color-coral));
+      background: linear-gradient(135deg, rgba(249, 123, 95, 0.03) 0%, rgba(244, 114, 182, 0.03) 100%);
+    }
+
+    .team-card-featured:hover {
+      box-shadow: 0 8px 30px rgba(249, 123, 95, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .featured-banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-coral);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .team-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+
+    .team-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--color-bg);
+      flex-shrink: 0;
+    }
+
+    .team-info { min-width: 0; flex: 1; }
+    .team-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .team-info .zone { font-size: 12px; color: var(--color-text-muted); margin-top: 4px; }
+
+    .team-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .team-detail {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 13px;
       color: var(--color-text-muted);
-      margin-bottom: 6px;
+      min-width: 0;
     }
 
-    .stat-card-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--color-primary);
+    .team-detail svg { width: 14px; height: 14px; color: var(--color-text-light); flex-shrink: 0; }
+
+    .team-detail a {
+      color: var(--color-coral);
+      text-decoration: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .team-detail a:hover { text-decoration: underline; }
+
+    .team-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* Photo Upload */
+    .photo-upload { display: flex; align-items: center; gap: 16px; }
+
+    .photo-preview {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+    }
+
+    .photo-upload-btn { flex: 1; }
+    .photo-upload-btn input[type="file"] { display: none; }
+
+    .photo-upload-btn label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .photo-upload-btn label:hover {
+      background: var(--color-white);
+      border-color: var(--color-coral);
+      color: var(--color-coral);
     }
 
     /* Category Pills */
-    .category-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
+    .category-pills { display: flex; flex-wrap: wrap; gap: 8px; }
 
     .category-pill {
       display: inline-flex;
@@ -748,14 +709,9 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      margin-left: 2px;
     }
 
-    .category-pill .delete-cat:hover {
-      background: var(--color-danger);
-      color: white;
-    }
-
+    .category-pill .delete-cat:hover { background: var(--color-danger); color: white; }
     .category-pill .delete-cat svg { width: 12px; height: 12px; }
 
     /* Checkbox */
@@ -770,314 +726,19 @@
     .checkbox-label input[type="checkbox"] {
       width: 18px;
       height: 18px;
-      accent-color: var(--color-primary);
-    }
-
-    /* Team Cards */
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
-    .team-card {
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      transition: all 0.15s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .team-card:hover {
-      border-color: var(--color-primary);
-      box-shadow: var(--shadow-md);
-    }
-
-    /* Featured Team Card */
-    .team-card-featured {
-      border: 2px solid var(--featured-color, var(--color-primary));
-      box-shadow: 0 4px 20px rgba(13, 148, 136, 0.15);
-      background: linear-gradient(135deg, rgba(13, 148, 136, 0.03) 0%, rgba(16, 185, 129, 0.03) 100%);
-    }
-
-    .team-card-featured:hover {
-      box-shadow: 0 8px 30px rgba(13, 148, 136, 0.2);
-      transform: translateY(-2px);
-    }
-
-    .featured-banner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: var(--color-primary);
-      color: white;
-      font-size: 11px;
-      font-weight: 600;
-      text-align: center;
-      padding: 4px 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .team-card-featured .team-card-header {
-      margin-top: 16px;
-    }
-
-    .team-card-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .team-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: var(--color-bg);
-      flex-shrink: 0;
-    }
-
-    .team-info {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .team-info h4 {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .team-info .zone {
-      font-size: 12px;
-      color: var(--color-text-muted);
-      margin-top: 6px;
-    }
-
-    .team-details {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding-top: 14px;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .team-detail {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--color-text-muted);
-      min-width: 0;
-    }
-
-    .team-detail svg {
-      width: 16px;
-      height: 16px;
-      color: var(--color-text-light);
-      flex-shrink: 0;
-    }
-
-    .team-detail a {
-      color: var(--color-primary);
-      text-decoration: none;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .team-detail a:hover { 
-      text-decoration: underline; 
-    }
-
-    .team-card-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .team-card-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .team-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: var(--color-bg);
-    }
-
-    .team-info h4 {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .team-info .role {
-      font-size: 13px;
-      color: var(--color-primary);
-      font-weight: 500;
-    }
-
-    .team-info .zone {
-      font-size: 12px;
-      color: var(--color-text-muted);
-    }
-
-    .team-details {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding-top: 14px;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .team-detail {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    .team-detail svg {
-      width: 14px;
-      height: 14px;
-      color: var(--color-text-light);
-    }
-
-    .team-detail a {
-      color: var(--color-primary);
-      text-decoration: none;
-    }
-
-    .team-detail a:hover { text-decoration: underline; }
-
-    .team-card-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--color-border);
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      padding: 8px 16px;
-      border: 1px solid var(--color-border);
-      background: var(--color-white);
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .tab-btn:hover {
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-
-    .tab-btn.active {
-      background: var(--gradient-primary);
-      color: white;
-      border-color: transparent;
-    }
-
-    /* Photo Upload */
-    .photo-upload {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .photo-preview {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: var(--color-bg);
-      border: 2px solid var(--color-border);
-    }
-
-    .photo-upload-btn {
-      flex: 1;
-    }
-
-    .photo-upload-btn input[type="file"] {
-      display: none;
-    }
-
-    .photo-upload-btn label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      background: var(--color-bg);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .photo-upload-btn label:hover {
-      background: var(--color-white);
-      border-color: var(--color-primary);
-      color: var(--color-primary);
+      accent-color: var(--color-coral);
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-      }
-
-      .sidebar-overlay.open {
-        display: block;
-      }
-
-      .mobile-header {
-        display: flex;
-      }
-
-      .main-content {
-        margin-left: 0;
-        padding: 80px 16px 24px;
-      }
-
-      .page-header h1 { font-size: 22px; }
-
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .mobile-header { display: flex; }
+      .main-content { margin-left: 0; padding: 76px 16px 24px; }
+      .page-header h1 { font-size: 20px; }
       .form-row { grid-template-columns: 1fr; }
-
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-
+      .team-grid { grid-template-columns: 1fr; }
       .modal { max-width: 100%; margin: 10px; }
     }
   </style>
@@ -1102,12 +763,7 @@
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <div class="sidebar-logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-            </svg>
-          </div>
+          <div class="sidebar-logo-icon">EH</div>
           <div class="sidebar-logo-text">
             <h1>Enrollment Hub</h1>
             <p>Admin Portal</p>
@@ -1119,32 +775,19 @@
         <div class="nav-section">
           <div class="nav-section-title">Content</div>
           <div class="nav-item active" onclick="switchSection('announcements', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path></svg>
             Announcements
           </div>
           <div class="nav-item" onclick="switchSection('promotions', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5"></path>
-              <path d="M2 12l10 5 10-5"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
             Promotions
           </div>
           <div class="nav-item" onclick="switchSection('policies', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
             Policies
           </div>
           <div class="nav-item" onclick="switchSection('script', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
             Enrollment Script
           </div>
         </div>
@@ -1152,20 +795,11 @@
         <div class="nav-section">
           <div class="nav-section-title">People</div>
           <div class="nav-item" onclick="switchSection('team', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 010 7.75"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
             Team Members
           </div>
           <div class="nav-item" onclick="switchSection('roles', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2a3 3 0 0 0-3 3v1H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3z"></path>
-              <circle cx="12" cy="13" r="2"></circle>
-              <path d="M10 17h4"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
             Manage Roles
           </div>
         </div>
@@ -1178,8 +812,7 @@
 
     <!-- Main Content -->
     <main class="main-content">
-
-      <!-- Announcements Section -->
+      <!-- Announcements -->
       <section id="announcements" class="section active">
         <div class="page-header">
           <div class="page-header-row">
@@ -1188,33 +821,20 @@
               <p>Manage news and updates for directors</p>
             </div>
             <button class="btn btn-primary" onclick="openModal('announcement')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               Add Announcement
             </button>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-body" style="padding: 0;">
-            <table class="data-table" id="announcementsTable">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th style="width: 100px; text-align: right;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="announcementsList"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <thead><tr><th>Title</th><th>Date</th><th>Status</th><th style="width:100px;text-align:right;">Actions</th></tr></thead>
+            <tbody id="announcementsList"></tbody>
+          </table>
         </div>
       </section>
 
-      <!-- Promotions Section -->
+      <!-- Promotions -->
       <section id="promotions" class="section">
         <div class="page-header">
           <div class="page-header-row">
@@ -1223,40 +843,25 @@
               <p>Manage promos and discounts</p>
             </div>
             <button class="btn btn-primary" onclick="openModal('promotion')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               Add Promotion
             </button>
           </div>
         </div>
-
         <div class="tabs">
           <button class="tab-btn active" onclick="switchPromoTab('active', this)">Active</button>
           <button class="tab-btn" onclick="switchPromoTab('upcoming', this)">Upcoming</button>
           <button class="tab-btn" onclick="switchPromoTab('expired', this)">Expired</button>
         </div>
-
         <div class="card">
-          <div class="card-body" style="padding: 0;">
-            <table class="data-table" id="promotionsTable">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Type</th>
-                  <th>Discount</th>
-                  <th>Dates</th>
-                  <th style="width: 100px; text-align: right;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="promotionsList"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <thead><tr><th>Title</th><th>Type</th><th>Discount</th><th>Dates</th><th style="width:100px;text-align:right;">Actions</th></tr></thead>
+            <tbody id="promotionsList"></tbody>
+          </table>
         </div>
       </section>
 
-      <!-- Policies Section -->
+      <!-- Policies -->
       <section id="policies" class="section">
         <div class="page-header">
           <div class="page-header-row">
@@ -1264,42 +869,27 @@
               <h1>Policies</h1>
               <p>Manage policy documents and categories</p>
             </div>
-            <div style="display: flex; gap: 12px;">
+            <div style="display:flex;gap:12px;">
               <button class="btn btn-secondary" onclick="openModal('category')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path>
-                </svg>
-                Manage Categories
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path></svg>
+                Categories
               </button>
               <button class="btn btn-primary" onclick="openModal('policy')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Add Policy
               </button>
             </div>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-body" style="padding: 0;">
-            <table class="data-table" id="policiesTable">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>URL</th>
-                  <th style="width: 100px; text-align: right;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="policiesList"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <thead><tr><th>Title</th><th>Category</th><th>URL</th><th style="width:100px;text-align:right;">Actions</th></tr></thead>
+            <tbody id="policiesList"></tbody>
+          </table>
         </div>
       </section>
 
-      <!-- Enrollment Script Section -->
+      <!-- Script -->
       <section id="script" class="section">
         <div class="page-header">
           <div class="page-header-row">
@@ -1308,53 +898,32 @@
               <p>Edit the enrollment conversation guide</p>
             </div>
             <button class="btn btn-primary" onclick="saveScript()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
               Save Script
             </button>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-body" style="padding: 0;">
-            <div class="editor-container">
-              <div class="editor-toolbar">
-                <button class="editor-btn" onclick="formatDoc('bold')" title="Bold"><strong>B</strong></button>
-                <button class="editor-btn" onclick="formatDoc('italic')" title="Italic"><em>I</em></button>
-                <button class="editor-btn" onclick="formatDoc('underline')" title="Underline"><u>U</u></button>
-                <button class="editor-btn" onclick="formatBlock('h2')" title="Heading 2">H2</button>
-                <button class="editor-btn" onclick="formatBlock('h3')" title="Heading 3">H3</button>
-                <button class="editor-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                  </svg>
-                </button>
-                <button class="editor-btn" onclick="formatDoc('insertOrderedList')" title="Numbered List">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="10" y1="6" x2="21" y2="6"></line>
-                    <line x1="10" y1="12" x2="21" y2="12"></line>
-                    <line x1="10" y1="18" x2="21" y2="18"></line>
-                    <text x="3" y="7" font-size="8" fill="currentColor">1</text>
-                    <text x="3" y="13" font-size="8" fill="currentColor">2</text>
-                    <text x="3" y="19" font-size="8" fill="currentColor">3</text>
-                  </svg>
-                </button>
-              </div>
-              <div class="editor-content" id="scriptEditor" contenteditable="true"></div>
+          <div class="editor-container">
+            <div class="editor-toolbar">
+              <button class="editor-btn" onclick="formatDoc('bold')"><strong>B</strong></button>
+              <button class="editor-btn" onclick="formatDoc('italic')"><em>I</em></button>
+              <button class="editor-btn" onclick="formatDoc('underline')"><u>U</u></button>
+              <button class="editor-btn" onclick="formatBlock('h2')">H2</button>
+              <button class="editor-btn" onclick="formatBlock('h3')">H3</button>
+              <button class="editor-btn" onclick="formatDoc('insertUnorderedList')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              </button>
+              <button class="editor-btn" onclick="formatDoc('insertOrderedList')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><text x="3" y="7" font-size="8" fill="currentColor">1</text><text x="3" y="13" font-size="8" fill="currentColor">2</text><text x="3" y="19" font-size="8" fill="currentColor">3</text></svg>
+              </button>
             </div>
+            <div class="editor-content" id="scriptEditor" contenteditable="true"></div>
           </div>
         </div>
       </section>
 
-      <!-- Team Section -->
+      <!-- Team -->
       <section id="team" class="section">
         <div class="page-header">
           <div class="page-header-row">
@@ -1363,53 +932,35 @@
               <p>Manage your enrollment team directory</p>
             </div>
             <button class="btn btn-primary" onclick="openModal('team')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               Add Team Member
             </button>
           </div>
         </div>
-
         <div class="team-grid" id="teamGrid"></div>
       </section>
 
-      <!-- Roles Section -->
+      <!-- Roles -->
       <section id="roles" class="section">
         <div class="page-header">
           <div class="page-header-row">
             <div>
               <h1>Manage Roles</h1>
-              <p>Define team roles with custom colors and styling</p>
+              <p>Define team roles with custom colors</p>
             </div>
             <button class="btn btn-primary" onclick="openModal('role')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               Add Role
             </button>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-body" style="padding: 0;">
-            <table class="data-table" id="rolesTable">
-              <thead>
-                <tr>
-                  <th>Role Name</th>
-                  <th>Color</th>
-                  <th>Featured</th>
-                  <th style="width: 100px; text-align: right;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="rolesList"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <thead><tr><th>Role Name</th><th>Color</th><th>Featured</th><th style="width:100px;text-align:right;">Actions</th></tr></thead>
+            <tbody id="rolesList"></tbody>
+          </table>
         </div>
       </section>
-
     </main>
   </div>
 
@@ -1418,18 +969,13 @@
     <div class="modal">
       <div class="modal-header">
         <h2 id="announcementModalTitle">Add Announcement</h2>
-        <button class="modal-close" onclick="closeModal('announcement')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="modal-close" onclick="closeModal('announcement')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="announcementId">
         <div class="form-group">
           <label class="form-label">Title *</label>
-          <input type="text" class="form-input" id="announcementTitle" placeholder="Enter announcement title">
+          <input type="text" class="form-input" id="announcementTitle" placeholder="Enter title">
         </div>
         <div class="form-group">
           <label class="form-label">Content</label>
@@ -1437,18 +983,9 @@
             <div class="editor-toolbar">
               <button class="editor-btn" onclick="formatDocIn('announcementContent', 'bold')"><strong>B</strong></button>
               <button class="editor-btn" onclick="formatDocIn('announcementContent', 'italic')"><em>I</em></button>
-              <button class="editor-btn" onclick="formatDocIn('announcementContent', 'insertUnorderedList')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="8" y1="6" x2="21" y2="6"></line>
-                  <line x1="8" y1="12" x2="21" y2="12"></line>
-                  <line x1="8" y1="18" x2="21" y2="18"></line>
-                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                </svg>
-              </button>
+              <button class="editor-btn" onclick="formatDocIn('announcementContent', 'insertUnorderedList')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></button>
             </div>
-            <div class="editor-content" id="announcementContent" contenteditable="true" style="min-height: 120px;"></div>
+            <div class="editor-content" id="announcementContent" contenteditable="true" style="min-height:100px;"></div>
           </div>
         </div>
         <div class="form-row">
@@ -1458,16 +995,13 @@
           </div>
           <div class="form-group">
             <label class="form-label">&nbsp;</label>
-            <label class="checkbox-label">
-              <input type="checkbox" id="announcementActive" checked>
-              Active (visible to directors)
-            </label>
+            <label class="checkbox-label"><input type="checkbox" id="announcementActive" checked> Active</label>
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('announcement')">Cancel</button>
-        <button class="btn btn-primary" onclick="saveAnnouncement()">Save Announcement</button>
+        <button class="btn btn-primary" onclick="saveAnnouncement()">Save</button>
       </div>
     </div>
   </div>
@@ -1477,18 +1011,13 @@
     <div class="modal">
       <div class="modal-header">
         <h2 id="promotionModalTitle">Add Promotion</h2>
-        <button class="modal-close" onclick="closeModal('promotion')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="modal-close" onclick="closeModal('promotion')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="promotionId">
         <div class="form-group">
           <label class="form-label">Title *</label>
-          <input type="text" class="form-input" id="promotionTitle" placeholder="Enter promotion title">
+          <input type="text" class="form-input" id="promotionTitle" placeholder="Enter title">
         </div>
         <div class="form-group">
           <label class="form-label">Description</label>
@@ -1496,31 +1025,19 @@
             <div class="editor-toolbar">
               <button class="editor-btn" onclick="formatDocIn('promotionDescription', 'bold')"><strong>B</strong></button>
               <button class="editor-btn" onclick="formatDocIn('promotionDescription', 'italic')"><em>I</em></button>
-              <button class="editor-btn" onclick="formatDocIn('promotionDescription', 'insertUnorderedList')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="8" y1="6" x2="21" y2="6"></line>
-                  <line x1="8" y1="12" x2="21" y2="12"></line>
-                  <line x1="8" y1="18" x2="21" y2="18"></line>
-                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                </svg>
-              </button>
+              <button class="editor-btn" onclick="formatDocIn('promotionDescription', 'insertUnorderedList')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></button>
             </div>
-            <div class="editor-content" id="promotionDescription" contenteditable="true" style="min-height: 100px;"></div>
+            <div class="editor-content" id="promotionDescription" contenteditable="true" style="min-height:80px;"></div>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Type</label>
-            <select class="form-select" id="promotionType">
-              <option value="promo">Promo</option>
-              <option value="discount">Discount</option>
-            </select>
+            <select class="form-select" id="promotionType"><option value="promo">Promo</option><option value="discount">Discount</option></select>
           </div>
           <div class="form-group">
             <label class="form-label">Discount Label</label>
-            <input type="text" class="form-input" id="promotionDiscount" placeholder="e.g., 20% Off, $50 Savings">
+            <input type="text" class="form-input" id="promotionDiscount" placeholder="e.g., 20% Off">
           </div>
         </div>
         <div class="form-row">
@@ -1531,13 +1048,13 @@
           <div class="form-group">
             <label class="form-label">End Date</label>
             <input type="date" class="form-input" id="promotionEndDate">
-            <span class="form-hint">Leave blank for ongoing promotion</span>
+            <span class="form-hint">Leave blank for ongoing</span>
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('promotion')">Cancel</button>
-        <button class="btn btn-primary" onclick="savePromotion()">Save Promotion</button>
+        <button class="btn btn-primary" onclick="savePromotion()">Save</button>
       </div>
     </div>
   </div>
@@ -1547,18 +1064,13 @@
     <div class="modal">
       <div class="modal-header">
         <h2 id="policyModalTitle">Add Policy</h2>
-        <button class="modal-close" onclick="closeModal('policy')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="modal-close" onclick="closeModal('policy')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="policyId">
         <div class="form-group">
           <label class="form-label">Title *</label>
-          <input type="text" class="form-input" id="policyTitle" placeholder="Enter policy title">
+          <input type="text" class="form-input" id="policyTitle" placeholder="Enter title">
         </div>
         <div class="form-group">
           <label class="form-label">Description</label>
@@ -1566,26 +1078,15 @@
             <div class="editor-toolbar">
               <button class="editor-btn" onclick="formatDocIn('policyDescription', 'bold')"><strong>B</strong></button>
               <button class="editor-btn" onclick="formatDocIn('policyDescription', 'italic')"><em>I</em></button>
-              <button class="editor-btn" onclick="formatDocIn('policyDescription', 'insertUnorderedList')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="8" y1="6" x2="21" y2="6"></line>
-                  <line x1="8" y1="12" x2="21" y2="12"></line>
-                  <line x1="8" y1="18" x2="21" y2="18"></line>
-                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                </svg>
-              </button>
+              <button class="editor-btn" onclick="formatDocIn('policyDescription', 'insertUnorderedList')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></button>
             </div>
-            <div class="editor-content" id="policyDescription" contenteditable="true" style="min-height: 100px;"></div>
+            <div class="editor-content" id="policyDescription" contenteditable="true" style="min-height:80px;"></div>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Category</label>
-            <select class="form-select" id="policyCategory">
-              <option value="">Select category...</option>
-            </select>
+            <select class="form-select" id="policyCategory"><option value="">Select category...</option></select>
           </div>
           <div class="form-group">
             <label class="form-label">Document URL</label>
@@ -1595,7 +1096,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('policy')">Cancel</button>
-        <button class="btn btn-primary" onclick="savePolicy()">Save Policy</button>
+        <button class="btn btn-primary" onclick="savePolicy()">Save</button>
       </div>
     </div>
   </div>
@@ -1605,18 +1106,13 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Manage Categories</h2>
-        <button class="modal-close" onclick="closeModal('category')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="modal-close" onclick="closeModal('category')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Add New Category</label>
-          <div style="display: flex; gap: 10px;">
-            <input type="text" class="form-input" id="newCategoryName" placeholder="Category name" style="flex: 1;">
+          <div style="display:flex;gap:10px;">
+            <input type="text" class="form-input" id="newCategoryName" placeholder="Category name" style="flex:1;">
             <button class="btn btn-primary" onclick="addCategory()">Add</button>
           </div>
         </div>
@@ -1636,12 +1132,7 @@
     <div class="modal">
       <div class="modal-header">
         <h2 id="teamModalTitle">Add Team Member</h2>
-        <button class="modal-close" onclick="closeModal('team')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="modal-close" onclick="closeModal('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="teamId">
@@ -1651,14 +1142,7 @@
             <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" class="photo-preview" id="teamPhotoPreview">
             <div class="photo-upload-btn">
               <input type="file" id="teamPhotoFile" accept="image/*" onchange="previewTeamPhoto(this)">
-              <label for="teamPhotoFile">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                Upload Photo
-              </label>
+              <label for="teamPhotoFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Upload Photo</label>
               <input type="hidden" id="teamAvatarUrl">
             </div>
           </div>
@@ -1676,9 +1160,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Role</label>
-            <select class="form-select" id="teamRole">
-              <option value="">Select role...</option>
-            </select>
+            <select class="form-select" id="teamRole"><option value="">Select role...</option></select>
           </div>
           <div class="form-group">
             <label class="form-label">Zone</label>
@@ -1698,7 +1180,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('team')">Cancel</button>
-        <button class="btn btn-primary" onclick="saveTeamMember()">Save Team Member</button>
+        <button class="btn btn-primary" onclick="saveTeamMember()">Save</button>
       </div>
     </div>
   </div>
@@ -1708,12 +1190,7 @@
     <div class="modal">
       <div class="modal-header">
         <h2 id="roleModalTitle">Add Role</h2>
-        <button class="modal-close" onclick="closeModal('role')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="modal-close" onclick="closeModal('role')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="roleId">
@@ -1724,47 +1201,39 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Badge Color</label>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <input type="color" id="roleColor" value="#0D9488" style="width: 60px; height: 40px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); cursor: pointer;">
-              <input type="text" class="form-input" id="roleColorText" value="#0D9488" style="flex: 1; font-family: monospace;" onchange="document.getElementById('roleColor').value = this.value">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <input type="color" id="roleColor" value="#F97B5F" style="width:50px;height:36px;border:1px solid var(--color-border);border-radius:var(--radius-sm);cursor:pointer;">
+              <input type="text" class="form-input" id="roleColorText" value="#F97B5F" style="flex:1;font-family:monospace;" onchange="document.getElementById('roleColor').value = this.value">
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">&nbsp;</label>
-            <label class="checkbox-label" style="margin-top: 8px;">
-              <input type="checkbox" id="roleFeatured">
-              Featured role (highlighted card)
-            </label>
+            <label class="checkbox-label" style="margin-top:8px;"><input type="checkbox" id="roleFeatured"> Featured role</label>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Preview</label>
-          <div style="padding: 16px; background: var(--color-bg); border-radius: var(--radius-md);">
-            <span class="badge" id="rolePreviewBadge" style="background: rgba(13, 148, 136, 0.1); color: #0D9488;">Enrollment Director</span>
+          <div style="padding:14px;background:var(--color-bg);border-radius:var(--radius-sm);">
+            <span class="badge" id="rolePreviewBadge" style="background:rgba(249,123,95,0.1);color:#F97B5F;">Role Name</span>
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('role')">Cancel</button>
-        <button class="btn btn-primary" onclick="saveRole()">Save Role</button>
+        <button class="btn btn-primary" onclick="saveRole()">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- Delete Confirmation Modal -->
+  <!-- Delete Modal -->
   <div class="modal-overlay" id="deleteModal" onclick="closeModalOnOverlay(event, 'delete')">
-    <div class="modal" style="max-width: 400px;">
+    <div class="modal" style="max-width:380px;">
       <div class="modal-header">
         <h2>Confirm Delete</h2>
-        <button class="modal-close" onclick="closeModal('delete')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+        <button class="modal-close" onclick="closeModal('delete')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+        <p>Are you sure you want to delete this? This cannot be undone.</p>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('delete')">Cancel</button>
@@ -1777,24 +1246,12 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // Supabase Config
     const SB_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
     
-    let sb;
-    let currentPromoTab = 'active';
-    let deleteCallback = null;
+    let sb, deleteCallback = null, currentPromoTab = 'active';
+    let announcements = [], promotions = [], policies = [], categories = [], teamMembers = [], roles = [], scriptContent = '';
 
-    // Data stores
-    let announcements = [];
-    let promotions = [];
-    let policies = [];
-    let categories = [];
-    let teamMembers = [];
-    let roles = [];
-    let scriptContent = '';
-
-    // Initialize
     async function init() {
       sb = window.supabase.createClient(SB_URL, SB_KEY);
       await loadAllData();
@@ -1811,7 +1268,6 @@
           sb.from('roles').select('*').order('sort_order'),
           sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single()
         ]);
-
         announcements = annRes.data || [];
         promotions = promoRes.data || [];
         policies = policyRes.data || [];
@@ -1819,12 +1275,8 @@
         teamMembers = teamRes.data || [];
         roles = rolesRes.data || [];
         scriptContent = scriptRes.data?.content || '';
-
         renderAll();
-      } catch (e) {
-        console.error('Load error:', e);
-        toast('Error loading data', 'error');
-      }
+      } catch (e) { console.error('Load error:', e); toast('Error loading data', 'error'); }
     }
 
     function renderAll() {
@@ -1837,861 +1289,160 @@
       document.getElementById('scriptEditor').innerHTML = scriptContent;
     }
 
-    // Utility functions
-    function esc(str) {
-      if (!str) return '';
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '-';
-      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function getPromoStatus(promo) {
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
-      const start = new Date(promo.start_date);
-      const end = promo.end_date ? new Date(promo.end_date) : null;
-      if (start > now) return 'upcoming';
-      if (end && end < now) return 'expired';
-      return 'active';
-    }
+    function esc(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+    function formatDate(d) { if (!d) return '-'; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    function getPromoStatus(p) { const now = new Date(); now.setHours(0,0,0,0); const s = new Date(p.start_date), e = p.end_date ? new Date(p.end_date) : null; if (s > now) return 'upcoming'; if (e && e < now) return 'expired'; return 'active'; }
 
     // Announcements
     function renderAnnouncements() {
       const tbody = document.getElementById('announcementsList');
-      
-      if (!announcements.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
-                  </svg>
-                </div>
-                <h3>No announcements yet</h3>
-                <p>Create your first announcement to get started</p>
-                <button class="btn btn-primary" onclick="openModal('announcement')">Add Announcement</button>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = announcements.map(a => `
-        <tr>
-          <td>
-            <strong>${esc(a.title)}</strong>
-          </td>
-          <td>${formatDate(a.date)}</td>
-          <td>
-            <span class="badge ${a.is_active ? 'badge-success' : 'badge-muted'}">${a.is_active ? 'Active' : 'Inactive'}</span>
-          </td>
-          <td>
-            <div class="table-actions">
-              <button class="action-btn" onclick="editAnnouncement('${a.id}')" title="Edit">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                </svg>
-              </button>
-              <button class="action-btn delete" onclick="deleteItem('announcement', '${a.id}')" title="Delete">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-                </svg>
-              </button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      if (!announcements.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path></svg></div><h3>No announcements</h3><p>Add your first announcement</p></div></td></tr>`; return; }
+      tbody.innerHTML = announcements.map(a => `<tr><td><strong>${esc(a.title)}</strong></td><td>${formatDate(a.date)}</td><td><span class="badge ${a.is_active ? 'badge-success' : 'badge-muted'}">${a.is_active ? 'Active' : 'Inactive'}</span></td><td><div class="table-actions"><button class="action-btn" onclick="editAnnouncement('${a.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button><button class="action-btn delete" onclick="deleteItem('announcement','${a.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button></div></td></tr>`).join('');
     }
 
-    function editAnnouncement(id) {
-      const a = announcements.find(x => x.id === id);
-      if (!a) return;
-      document.getElementById('announcementId').value = a.id;
-      document.getElementById('announcementTitle').value = a.title || '';
-      document.getElementById('announcementContent').innerHTML = a.content || '';
-      document.getElementById('announcementDate').value = a.date || '';
-      document.getElementById('announcementActive').checked = a.is_active !== false;
-      document.getElementById('announcementModalTitle').textContent = 'Edit Announcement';
-      openModal('announcement');
-    }
+    function editAnnouncement(id) { const a = announcements.find(x => x.id === id); if (!a) return; document.getElementById('announcementId').value = a.id; document.getElementById('announcementTitle').value = a.title || ''; document.getElementById('announcementContent').innerHTML = a.content || ''; document.getElementById('announcementDate').value = a.date || ''; document.getElementById('announcementActive').checked = a.is_active !== false; document.getElementById('announcementModalTitle').textContent = 'Edit Announcement'; openModal('announcement'); }
 
     async function saveAnnouncement() {
       const id = document.getElementById('announcementId').value;
-      const data = {
-        title: document.getElementById('announcementTitle').value.trim(),
-        content: document.getElementById('announcementContent').innerHTML.trim(),
-        date: document.getElementById('announcementDate').value || new Date().toISOString().split('T')[0],
-        is_active: document.getElementById('announcementActive').checked
-      };
-
-      if (!data.title) {
-        toast('Title is required', 'error');
-        return;
-      }
-
-      try {
-        if (id) {
-          await sb.from('announcements').update(data).eq('id', id);
-        } else {
-          data.sort_order = announcements.length;
-          await sb.from('announcements').insert(data);
-        }
-        await loadAllData();
-        closeModal('announcement');
-        resetAnnouncementForm();
-        toast('Announcement saved!', 'success');
-      } catch (e) {
-        console.error('Save error:', e);
-        toast('Error saving announcement', 'error');
-      }
+      const data = { title: document.getElementById('announcementTitle').value.trim(), content: document.getElementById('announcementContent').innerHTML.trim(), date: document.getElementById('announcementDate').value || new Date().toISOString().split('T')[0], is_active: document.getElementById('announcementActive').checked };
+      if (!data.title) { toast('Title required', 'error'); return; }
+      try { if (id) await sb.from('announcements').update(data).eq('id', id); else { data.sort_order = announcements.length; await sb.from('announcements').insert(data); } await loadAllData(); closeModal('announcement'); resetAnnouncementForm(); toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); }
     }
 
-    function resetAnnouncementForm() {
-      document.getElementById('announcementId').value = '';
-      document.getElementById('announcementTitle').value = '';
-      document.getElementById('announcementContent').innerHTML = '';
-      document.getElementById('announcementDate').value = '';
-      document.getElementById('announcementActive').checked = true;
-      document.getElementById('announcementModalTitle').textContent = 'Add Announcement';
-    }
+    function resetAnnouncementForm() { document.getElementById('announcementId').value = ''; document.getElementById('announcementTitle').value = ''; document.getElementById('announcementContent').innerHTML = ''; document.getElementById('announcementDate').value = ''; document.getElementById('announcementActive').checked = true; document.getElementById('announcementModalTitle').textContent = 'Add Announcement'; }
 
     // Promotions
-    function switchPromoTab(tab, btn) {
-      currentPromoTab = tab;
-      document.querySelectorAll('#promotions .tab-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderPromotions();
-    }
+    function switchPromoTab(tab, btn) { currentPromoTab = tab; document.querySelectorAll('#promotions .tab-btn').forEach(b => b.classList.remove('active')); if (btn) btn.classList.add('active'); renderPromotions(); }
 
     function renderPromotions() {
       const tbody = document.getElementById('promotionsList');
       const filtered = promotions.filter(p => getPromoStatus(p) === currentPromoTab);
-
-      if (!filtered.length) {
-        const messages = {
-          active: 'No active promotions',
-          upcoming: 'No upcoming promotions',
-          expired: 'No expired promotions'
-        };
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                    <path d="M2 17l10 5 10-5"></path>
-                    <path d="M2 12l10 5 10-5"></path>
-                  </svg>
-                </div>
-                <h3>${messages[currentPromoTab]}</h3>
-                <p>Add a new promotion to see it here</p>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(p => {
-        const status = getPromoStatus(p);
-        const badgeClass = status === 'active' ? 'badge-success' : status === 'upcoming' ? 'badge-info' : 'badge-muted';
-        return `
-          <tr>
-            <td><strong>${esc(p.title)}</strong></td>
-            <td><span class="badge badge-muted">${esc(p.type)}</span></td>
-            <td>${p.discount_label ? esc(p.discount_label) : '-'}</td>
-            <td>${formatDate(p.start_date)} - ${p.end_date ? formatDate(p.end_date) : 'Ongoing'}</td>
-            <td>
-              <div class="table-actions">
-                <button class="action-btn" onclick="editPromotion('${p.id}')" title="Edit">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                  </svg>
-                </button>
-                <button class="action-btn delete" onclick="deleteItem('promotion', '${p.id}')" title="Delete">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
+      if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path></svg></div><h3>No ${currentPromoTab} promotions</h3></div></td></tr>`; return; }
+      tbody.innerHTML = filtered.map(p => `<tr><td><strong>${esc(p.title)}</strong></td><td><span class="badge badge-muted">${esc(p.type)}</span></td><td>${p.discount_label ? esc(p.discount_label) : '-'}</td><td>${formatDate(p.start_date)} - ${p.end_date ? formatDate(p.end_date) : 'Ongoing'}</td><td><div class="table-actions"><button class="action-btn" onclick="editPromotion('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button><button class="action-btn delete" onclick="deleteItem('promotion','${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button></div></td></tr>`).join('');
     }
 
-    function editPromotion(id) {
-      const p = promotions.find(x => x.id === id);
-      if (!p) return;
-      document.getElementById('promotionId').value = p.id;
-      document.getElementById('promotionTitle').value = p.title || '';
-      document.getElementById('promotionDescription').innerHTML = p.description || '';
-      document.getElementById('promotionType').value = p.type || 'promo';
-      document.getElementById('promotionDiscount').value = p.discount_label || '';
-      document.getElementById('promotionStartDate').value = p.start_date || '';
-      document.getElementById('promotionEndDate').value = p.end_date || '';
-      document.getElementById('promotionModalTitle').textContent = 'Edit Promotion';
-      openModal('promotion');
-    }
+    function editPromotion(id) { const p = promotions.find(x => x.id === id); if (!p) return; document.getElementById('promotionId').value = p.id; document.getElementById('promotionTitle').value = p.title || ''; document.getElementById('promotionDescription').innerHTML = p.description || ''; document.getElementById('promotionType').value = p.type || 'promo'; document.getElementById('promotionDiscount').value = p.discount_label || ''; document.getElementById('promotionStartDate').value = p.start_date || ''; document.getElementById('promotionEndDate').value = p.end_date || ''; document.getElementById('promotionModalTitle').textContent = 'Edit Promotion'; openModal('promotion'); }
 
     async function savePromotion() {
       const id = document.getElementById('promotionId').value;
-      const data = {
-        title: document.getElementById('promotionTitle').value.trim(),
-        description: document.getElementById('promotionDescription').innerHTML.trim(),
-        type: document.getElementById('promotionType').value,
-        discount_label: document.getElementById('promotionDiscount').value.trim(),
-        start_date: document.getElementById('promotionStartDate').value,
-        end_date: document.getElementById('promotionEndDate').value || null
-      };
-
-      if (!data.title || !data.start_date) {
-        toast('Title and start date are required', 'error');
-        return;
-      }
-
-      try {
-        if (id) {
-          await sb.from('promotions').update(data).eq('id', id);
-        } else {
-          data.sort_order = promotions.length;
-          await sb.from('promotions').insert(data);
-        }
-        await loadAllData();
-        closeModal('promotion');
-        resetPromotionForm();
-        toast('Promotion saved!', 'success');
-      } catch (e) {
-        console.error('Save error:', e);
-        toast('Error saving promotion', 'error');
-      }
+      const data = { title: document.getElementById('promotionTitle').value.trim(), description: document.getElementById('promotionDescription').innerHTML.trim(), type: document.getElementById('promotionType').value, discount_label: document.getElementById('promotionDiscount').value.trim(), start_date: document.getElementById('promotionStartDate').value, end_date: document.getElementById('promotionEndDate').value || null };
+      if (!data.title || !data.start_date) { toast('Title and start date required', 'error'); return; }
+      try { if (id) await sb.from('promotions').update(data).eq('id', id); else { data.sort_order = promotions.length; await sb.from('promotions').insert(data); } await loadAllData(); closeModal('promotion'); resetPromotionForm(); toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); }
     }
 
-    function resetPromotionForm() {
-      document.getElementById('promotionId').value = '';
-      document.getElementById('promotionTitle').value = '';
-      document.getElementById('promotionDescription').innerHTML = '';
-      document.getElementById('promotionType').value = 'promo';
-      document.getElementById('promotionDiscount').value = '';
-      document.getElementById('promotionStartDate').value = '';
-      document.getElementById('promotionEndDate').value = '';
-      document.getElementById('promotionModalTitle').textContent = 'Add Promotion';
-    }
+    function resetPromotionForm() { document.getElementById('promotionId').value = ''; document.getElementById('promotionTitle').value = ''; document.getElementById('promotionDescription').innerHTML = ''; document.getElementById('promotionType').value = 'promo'; document.getElementById('promotionDiscount').value = ''; document.getElementById('promotionStartDate').value = ''; document.getElementById('promotionEndDate').value = ''; document.getElementById('promotionModalTitle').textContent = 'Add Promotion'; }
 
     // Policies
     function renderPolicies() {
       const tbody = document.getElementById('policiesList');
-      
-      if (!policies.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                  </svg>
-                </div>
-                <h3>No policies yet</h3>
-                <p>Add your first policy document</p>
-                <button class="btn btn-primary" onclick="openModal('policy')">Add Policy</button>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = policies.map(p => {
-        const cat = categories.find(c => c.id === p.category_id);
-        return `
-          <tr>
-            <td><strong>${esc(p.title)}</strong></td>
-            <td>${cat ? esc(cat.name) : '<span style="color: var(--color-text-light);">Uncategorized</span>'}</td>
-            <td>${p.url ? `<a href="${esc(p.url)}" target="_blank" style="color: var(--color-primary);">View Document</a>` : '-'}</td>
-            <td>
-              <div class="table-actions">
-                <button class="action-btn" onclick="editPolicy('${p.id}')" title="Edit">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                  </svg>
-                </button>
-                <button class="action-btn delete" onclick="deleteItem('policy', '${p.id}')" title="Delete">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
+      if (!policies.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path></svg></div><h3>No policies</h3><p>Add your first policy</p></div></td></tr>`; return; }
+      tbody.innerHTML = policies.map(p => { const cat = categories.find(c => c.id === p.category_id); return `<tr><td><strong>${esc(p.title)}</strong></td><td>${cat ? esc(cat.name) : '<span style="color:var(--color-text-light);">Uncategorized</span>'}</td><td>${p.url ? `<a href="${esc(p.url)}" target="_blank" style="color:var(--color-coral);">View</a>` : '-'}</td><td><div class="table-actions"><button class="action-btn" onclick="editPolicy('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button><button class="action-btn delete" onclick="deleteItem('policy','${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button></div></td></tr>`; }).join('');
     }
 
-    function editPolicy(id) {
-      const p = policies.find(x => x.id === id);
-      if (!p) return;
-      document.getElementById('policyId').value = p.id;
-      document.getElementById('policyTitle').value = p.title || '';
-      document.getElementById('policyDescription').innerHTML = p.description || '';
-      document.getElementById('policyCategory').value = p.category_id || '';
-      document.getElementById('policyUrl').value = p.url || '';
-      document.getElementById('policyModalTitle').textContent = 'Edit Policy';
-      renderCategoryDropdown();
-      document.getElementById('policyCategory').value = p.category_id || '';
-      openModal('policy');
-    }
+    function editPolicy(id) { const p = policies.find(x => x.id === id); if (!p) return; document.getElementById('policyId').value = p.id; document.getElementById('policyTitle').value = p.title || ''; document.getElementById('policyDescription').innerHTML = p.description || ''; document.getElementById('policyCategory').value = p.category_id || ''; document.getElementById('policyUrl').value = p.url || ''; document.getElementById('policyModalTitle').textContent = 'Edit Policy'; renderCategoryDropdown(); document.getElementById('policyCategory').value = p.category_id || ''; openModal('policy'); }
 
     async function savePolicy() {
       const id = document.getElementById('policyId').value;
-      const data = {
-        title: document.getElementById('policyTitle').value.trim(),
-        description: document.getElementById('policyDescription').innerHTML.trim(),
-        category_id: document.getElementById('policyCategory').value || null,
-        url: document.getElementById('policyUrl').value.trim()
-      };
-
-      if (!data.title) {
-        toast('Title is required', 'error');
-        return;
-      }
-
-      try {
-        if (id) {
-          await sb.from('policies').update(data).eq('id', id);
-        } else {
-          data.sort_order = policies.length;
-          await sb.from('policies').insert(data);
-        }
-        await loadAllData();
-        closeModal('policy');
-        resetPolicyForm();
-        toast('Policy saved!', 'success');
-      } catch (e) {
-        console.error('Save error:', e);
-        toast('Error saving policy', 'error');
-      }
+      const data = { title: document.getElementById('policyTitle').value.trim(), description: document.getElementById('policyDescription').innerHTML.trim(), category_id: document.getElementById('policyCategory').value || null, url: document.getElementById('policyUrl').value.trim() };
+      if (!data.title) { toast('Title required', 'error'); return; }
+      try { if (id) await sb.from('policies').update(data).eq('id', id); else { data.sort_order = policies.length; await sb.from('policies').insert(data); } await loadAllData(); closeModal('policy'); resetPolicyForm(); toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); }
     }
 
-    function resetPolicyForm() {
-      document.getElementById('policyId').value = '';
-      document.getElementById('policyTitle').value = '';
-      document.getElementById('policyDescription').innerHTML = '';
-      document.getElementById('policyCategory').value = '';
-      document.getElementById('policyUrl').value = '';
-      document.getElementById('policyModalTitle').textContent = 'Add Policy';
-    }
+    function resetPolicyForm() { document.getElementById('policyId').value = ''; document.getElementById('policyTitle').value = ''; document.getElementById('policyDescription').innerHTML = ''; document.getElementById('policyCategory').value = ''; document.getElementById('policyUrl').value = ''; document.getElementById('policyModalTitle').textContent = 'Add Policy'; }
 
     // Categories
-    function renderCategories() {
-      const container = document.getElementById('categoryList');
-      renderCategoryDropdown();
-      
-      if (!categories.length) {
-        container.innerHTML = '<p style="color: var(--color-text-light); font-size: 13px;">No categories yet. Add one above.</p>';
-        return;
-      }
+    function renderCategories() { const c = document.getElementById('categoryList'); renderCategoryDropdown(); if (!categories.length) { c.innerHTML = '<p style="color:var(--color-text-light);font-size:13px;">No categories yet</p>'; return; } c.innerHTML = categories.map(cat => `<div class="category-pill">${esc(cat.name)}<button class="delete-cat" onclick="deleteCategory('${cat.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>`).join(''); }
 
-      container.innerHTML = categories.map(c => `
-        <div class="category-pill">
-          ${esc(c.name)}
-          <button class="delete-cat" onclick="deleteCategory('${c.id}')" title="Delete">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-      `).join('');
-    }
+    function renderCategoryDropdown() { const s = document.getElementById('policyCategory'); s.innerHTML = '<option value="">Select category...</option>' + categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join(''); }
 
-    function renderCategoryDropdown() {
-      const select = document.getElementById('policyCategory');
-      select.innerHTML = '<option value="">Select category...</option>' + 
-        categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
-    }
+    async function addCategory() { const name = document.getElementById('newCategoryName').value.trim(); if (!name) { toast('Enter name', 'error'); return; } try { await sb.from('policy_categories').insert({ name, sort_order: categories.length }); document.getElementById('newCategoryName').value = ''; await loadAllData(); toast('Added!', 'success'); } catch (e) { console.error(e); toast('Error', 'error'); } }
 
-    async function addCategory() {
-      const name = document.getElementById('newCategoryName').value.trim();
-      if (!name) {
-        toast('Enter a category name', 'error');
-        return;
-      }
+    async function deleteCategory(id) { if (!confirm('Delete this category?')) return; try { await sb.from('policies').update({ category_id: null }).eq('category_id', id); await sb.from('policy_categories').delete().eq('id', id); await loadAllData(); toast('Deleted', 'success'); } catch (e) { console.error(e); toast('Error', 'error'); } }
 
-      try {
-        await sb.from('policy_categories').insert({ name, sort_order: categories.length });
-        document.getElementById('newCategoryName').value = '';
-        await loadAllData();
-        toast('Category added!', 'success');
-      } catch (e) {
-        console.error('Add category error:', e);
-        toast('Error adding category', 'error');
-      }
-    }
-
-    async function deleteCategory(id) {
-      if (!confirm('Delete this category? Policies in this category will become uncategorized.')) return;
-      
-      try {
-        await sb.from('policies').update({ category_id: null }).eq('category_id', id);
-        await sb.from('policy_categories').delete().eq('id', id);
-        await loadAllData();
-        toast('Category deleted', 'success');
-      } catch (e) {
-        console.error('Delete category error:', e);
-        toast('Error deleting category', 'error');
-      }
-    }
-
-    // Team Members
+    // Team
     function renderTeam() {
-      const container = document.getElementById('teamGrid');
-      
-      if (!teamMembers.length) {
-        container.innerHTML = `
-          <div class="empty-state" style="grid-column: 1 / -1;">
-            <div class="empty-state-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <h3>No team members yet</h3>
-            <p>Add your first team member</p>
-            <button class="btn btn-primary" onclick="openModal('team')">Add Team Member</button>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = teamMembers.map(t => {
-        const role = roles.find(r => r.id === t.role_id);
-        const roleName = role ? role.name : (t.role || 'Team Member');
-        const roleColor = role ? role.color : '#64748B';
-        const isFeatured = role ? role.is_featured : false;
-        
-        return `
-        <div class="team-card ${isFeatured ? 'team-card-featured' : ''}" ${isFeatured ? `style="--featured-color: ${roleColor}"` : ''}>
-          ${isFeatured ? `<div class="featured-banner" style="background: ${roleColor}">★ ${esc(roleName)}</div>` : ''}
-          <div class="team-card-header">
-            <img src="${esc(t.avatar_url) || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}" class="team-avatar" alt="${esc(t.first_name)}">
-            <div class="team-info">
-              <h4>${esc(t.first_name)} ${esc(t.last_name)}</h4>
-              <span class="role-badge" style="background: ${roleColor}20; color: ${roleColor}; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;">${esc(roleName)}</span>
-              ${t.zone ? `<div class="zone">${esc(t.zone)}</div>` : ''}
-            </div>
-          </div>
-          <div class="team-details">
-            <div class="team-detail">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"></path>
-              </svg>
-              <a href="mailto:${esc(t.email)}">${esc(t.email)}</a>
-            </div>
-            ${t.phone_extension ? `
-              <div class="team-detail">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
-                </svg>
-                Ext. ${esc(t.phone_extension)}
-              </div>
-            ` : ''}
-          </div>
-          <div class="team-card-actions">
-            <button class="action-btn" onclick="editTeamMember('${t.id}')" title="Edit">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-              </svg>
-            </button>
-            <button class="action-btn delete" onclick="deleteItem('team', '${t.id}')" title="Delete">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `}).join('');
+      const c = document.getElementById('teamGrid');
+      if (!teamMembers.length) { c.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div><h3>No team members</h3><p>Add your first team member</p></div>`; return; }
+      c.innerHTML = teamMembers.map(t => { const role = roles.find(r => r.id === t.role_id); const roleName = role ? role.name : (t.role || 'Team Member'); const roleColor = role ? role.color : '#6B7280'; const isFeatured = role ? role.is_featured : false; return `<div class="team-card ${isFeatured ? 'team-card-featured' : ''}" ${isFeatured ? `style="--featured-color:${roleColor}"` : ''}>${isFeatured ? `<div class="featured-banner" style="background:${roleColor}">★ ${esc(roleName)}</div>` : ''}<div class="team-card-header" ${isFeatured ? 'style="margin-top:20px;"' : ''}><img src="${esc(t.avatar_url) || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}" class="team-avatar"><div class="team-info"><h4>${esc(t.first_name)} ${esc(t.last_name)}</h4><span class="badge" style="background:${roleColor}15;color:${roleColor};">${esc(roleName)}</span>${t.zone ? `<div class="zone">${esc(t.zone)}</div>` : ''}</div></div><div class="team-details"><div class="team-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"></path></svg><a href="mailto:${esc(t.email)}">${esc(t.email)}</a></div>${t.phone_extension ? `<div class="team-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"></path></svg>Ext. ${esc(t.phone_extension)}</div>` : ''}</div><div class="team-card-actions"><button class="action-btn" onclick="editTeamMember('${t.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button><button class="action-btn delete" onclick="deleteItem('team','${t.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button></div></div>`; }).join('');
     }
 
-    function renderRoleDropdown() {
-      const select = document.getElementById('teamRole');
-      select.innerHTML = '<option value="">Select role...</option>' + 
-        roles.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('');
-    }
+    function renderRoleDropdown() { const s = document.getElementById('teamRole'); s.innerHTML = '<option value="">Select role...</option>' + roles.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join(''); }
 
-    function editTeamMember(id) {
-      const t = teamMembers.find(x => x.id === id);
-      if (!t) return;
-      document.getElementById('teamId').value = t.id;
-      document.getElementById('teamFirstName').value = t.first_name || '';
-      document.getElementById('teamLastName').value = t.last_name || '';
-      renderRoleDropdown();
-      document.getElementById('teamRole').value = t.role_id || '';
-      document.getElementById('teamZone').value = t.zone || '';
-      document.getElementById('teamEmail').value = t.email || '';
-      document.getElementById('teamExtension').value = t.phone_extension || '';
-      document.getElementById('teamAvatarUrl').value = t.avatar_url || '';
-      document.getElementById('teamPhotoPreview').src = t.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
-      document.getElementById('teamModalTitle').textContent = 'Edit Team Member';
-      openModal('team');
-    }
+    function editTeamMember(id) { const t = teamMembers.find(x => x.id === id); if (!t) return; document.getElementById('teamId').value = t.id; document.getElementById('teamFirstName').value = t.first_name || ''; document.getElementById('teamLastName').value = t.last_name || ''; renderRoleDropdown(); document.getElementById('teamRole').value = t.role_id || ''; document.getElementById('teamZone').value = t.zone || ''; document.getElementById('teamEmail').value = t.email || ''; document.getElementById('teamExtension').value = t.phone_extension || ''; document.getElementById('teamAvatarUrl').value = t.avatar_url || ''; document.getElementById('teamPhotoPreview').src = t.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'; document.getElementById('teamModalTitle').textContent = 'Edit Team Member'; openModal('team'); }
 
     async function previewTeamPhoto(input) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
-        
-        // Allow up to 10MB
-        if (file.size > 10 * 1024 * 1024) {
-          toast('Image must be under 10MB', 'error');
-          input.value = '';
-          return;
-        }
-
-        // Show preview immediately
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('teamPhotoPreview').src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-
-        // Upload to Supabase Storage
+        if (file.size > 10 * 1024 * 1024) { toast('Image must be under 10MB', 'error'); input.value = ''; return; }
+        const reader = new FileReader(); reader.onload = e => { document.getElementById('teamPhotoPreview').src = e.target.result; }; reader.readAsDataURL(file);
         try {
-          toast('Uploading photo...', '');
-          
-          // Create unique filename
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-          
-          // Upload to avatars bucket
-          const { data, error } = await sb.storage
-            .from('avatars')
-            .upload(fileName, file, {
-              cacheControl: '3600',
-              upsert: false
-            });
-
-          if (error) {
-            console.error('Upload error:', error);
-            toast('Error uploading photo: ' + error.message, 'error');
-            return;
-          }
-
-          // Get public URL
-          const { data: urlData } = sb.storage
-            .from('avatars')
-            .getPublicUrl(fileName);
-
+          toast('Uploading...', '');
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`;
+          const { data, error } = await sb.storage.from('avatars').upload(fileName, file, { cacheControl: '3600', upsert: false });
+          if (error) { toast('Error: ' + error.message, 'error'); return; }
+          const { data: urlData } = sb.storage.from('avatars').getPublicUrl(fileName);
           document.getElementById('teamAvatarUrl').value = urlData.publicUrl;
-          toast('Photo uploaded!', 'success');
-          
-        } catch (e) {
-          console.error('Upload error:', e);
-          toast('Error uploading photo', 'error');
-        }
+          toast('Uploaded!', 'success');
+        } catch (e) { console.error(e); toast('Error uploading', 'error'); }
       }
     }
 
     async function saveTeamMember() {
       const id = document.getElementById('teamId').value;
-      const data = {
-        first_name: document.getElementById('teamFirstName').value.trim(),
-        last_name: document.getElementById('teamLastName').value.trim(),
-        role_id: document.getElementById('teamRole').value || null,
-        zone: document.getElementById('teamZone').value.trim(),
-        email: document.getElementById('teamEmail').value.trim(),
-        phone_extension: document.getElementById('teamExtension').value.trim(),
-        avatar_url: document.getElementById('teamAvatarUrl').value.trim()
-      };
-
-      if (!data.first_name || !data.last_name || !data.email) {
-        toast('First name, last name, and email are required', 'error');
-        return;
-      }
-
-      try {
-        if (id) {
-          await sb.from('team_members').update(data).eq('id', id);
-        } else {
-          data.sort_order = teamMembers.length;
-          await sb.from('team_members').insert(data);
-        }
-        await loadAllData();
-        closeModal('team');
-        resetTeamForm();
-        toast('Team member saved!', 'success');
-      } catch (e) {
-        console.error('Save error:', e);
-        toast('Error saving team member', 'error');
-      }
+      const data = { first_name: document.getElementById('teamFirstName').value.trim(), last_name: document.getElementById('teamLastName').value.trim(), role_id: document.getElementById('teamRole').value || null, zone: document.getElementById('teamZone').value.trim(), email: document.getElementById('teamEmail').value.trim(), phone_extension: document.getElementById('teamExtension').value.trim(), avatar_url: document.getElementById('teamAvatarUrl').value.trim() };
+      if (!data.first_name || !data.last_name || !data.email) { toast('Name and email required', 'error'); return; }
+      try { if (id) await sb.from('team_members').update(data).eq('id', id); else { data.sort_order = teamMembers.length; await sb.from('team_members').insert(data); } await loadAllData(); closeModal('team'); resetTeamForm(); toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); }
     }
 
-    function resetTeamForm() {
-      document.getElementById('teamId').value = '';
-      document.getElementById('teamFirstName').value = '';
-      document.getElementById('teamLastName').value = '';
-      renderRoleDropdown();
-      document.getElementById('teamRole').value = '';
-      document.getElementById('teamZone').value = '';
-      document.getElementById('teamEmail').value = '';
-      document.getElementById('teamExtension').value = '';
-      document.getElementById('teamAvatarUrl').value = '';
-      document.getElementById('teamPhotoPreview').src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
-      document.getElementById('teamPhotoFile').value = '';
-      document.getElementById('teamModalTitle').textContent = 'Add Team Member';
-    }
+    function resetTeamForm() { document.getElementById('teamId').value = ''; document.getElementById('teamFirstName').value = ''; document.getElementById('teamLastName').value = ''; renderRoleDropdown(); document.getElementById('teamRole').value = ''; document.getElementById('teamZone').value = ''; document.getElementById('teamEmail').value = ''; document.getElementById('teamExtension').value = ''; document.getElementById('teamAvatarUrl').value = ''; document.getElementById('teamPhotoPreview').src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'; document.getElementById('teamPhotoFile').value = ''; document.getElementById('teamModalTitle').textContent = 'Add Team Member'; }
 
     // Roles
     function renderRoles() {
       const tbody = document.getElementById('rolesList');
-      
-      if (!roles.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2a3 3 0 0 0-3 3v1H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3z"></path>
-                  </svg>
-                </div>
-                <h3>No roles defined yet</h3>
-                <p>Create roles to organize your team</p>
-                <button class="btn btn-primary" onclick="openModal('role')">Add Role</button>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = roles.map(r => `
-        <tr>
-          <td><strong>${esc(r.name)}</strong></td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <div style="width: 24px; height: 24px; background: ${r.color}; border-radius: 4px;"></div>
-              <span style="font-family: monospace; font-size: 13px;">${esc(r.color)}</span>
-            </div>
-          </td>
-          <td>
-            ${r.is_featured ? '<span class="badge badge-success">★ Featured</span>' : '<span class="badge badge-muted">Standard</span>'}
-          </td>
-          <td>
-            <div class="table-actions">
-              <button class="action-btn" onclick="editRole('${r.id}')" title="Edit">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                </svg>
-              </button>
-              <button class="action-btn delete" onclick="deleteItem('role', '${r.id}')" title="Delete">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-                </svg>
-              </button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      if (!roles.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg></div><h3>No roles</h3><p>Add your first role</p></div></td></tr>`; return; }
+      tbody.innerHTML = roles.map(r => `<tr><td><strong>${esc(r.name)}</strong></td><td><div style="display:flex;align-items:center;gap:8px;"><div style="width:22px;height:22px;background:${r.color};border-radius:4px;"></div><span style="font-family:monospace;font-size:13px;">${esc(r.color)}</span></div></td><td>${r.is_featured ? '<span class="badge badge-success">★ Featured</span>' : '<span class="badge badge-muted">Standard</span>'}</td><td><div class="table-actions"><button class="action-btn" onclick="editRole('${r.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button><button class="action-btn delete" onclick="deleteItem('role','${r.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button></div></td></tr>`).join('');
     }
 
-    function editRole(id) {
-      const r = roles.find(x => x.id === id);
-      if (!r) return;
-      document.getElementById('roleId').value = r.id;
-      document.getElementById('roleName').value = r.name || '';
-      document.getElementById('roleColor').value = r.color || '#0D9488';
-      document.getElementById('roleColorText').value = r.color || '#0D9488';
-      document.getElementById('roleFeatured').checked = r.is_featured || false;
-      updateRolePreview();
-      document.getElementById('roleModalTitle').textContent = 'Edit Role';
-      openModal('role');
-    }
+    function editRole(id) { const r = roles.find(x => x.id === id); if (!r) return; document.getElementById('roleId').value = r.id; document.getElementById('roleName').value = r.name || ''; document.getElementById('roleColor').value = r.color || '#F97B5F'; document.getElementById('roleColorText').value = r.color || '#F97B5F'; document.getElementById('roleFeatured').checked = r.is_featured || false; updateRolePreview(); document.getElementById('roleModalTitle').textContent = 'Edit Role'; openModal('role'); }
 
-    function updateRolePreview() {
-      const name = document.getElementById('roleName').value || 'Role Name';
-      const color = document.getElementById('roleColor').value;
-      document.getElementById('roleColorText').value = color;
-      document.getElementById('rolePreviewBadge').textContent = name;
-      document.getElementById('rolePreviewBadge').style.background = color + '20';
-      document.getElementById('rolePreviewBadge').style.color = color;
-    }
+    function updateRolePreview() { const name = document.getElementById('roleName').value || 'Role Name'; const color = document.getElementById('roleColor').value; document.getElementById('roleColorText').value = color; document.getElementById('rolePreviewBadge').textContent = name; document.getElementById('rolePreviewBadge').style.background = color + '15'; document.getElementById('rolePreviewBadge').style.color = color; }
 
     async function saveRole() {
       const id = document.getElementById('roleId').value;
-      const data = {
-        name: document.getElementById('roleName').value.trim(),
-        color: document.getElementById('roleColor').value,
-        is_featured: document.getElementById('roleFeatured').checked
-      };
-
-      if (!data.name) {
-        toast('Role name is required', 'error');
-        return;
-      }
-
-      try {
-        if (id) {
-          await sb.from('roles').update(data).eq('id', id);
-        } else {
-          data.sort_order = roles.length;
-          await sb.from('roles').insert(data);
-        }
-        await loadAllData();
-        closeModal('role');
-        resetRoleForm();
-        toast('Role saved!', 'success');
-      } catch (e) {
-        console.error('Save error:', e);
-        toast('Error saving role', 'error');
-      }
+      const data = { name: document.getElementById('roleName').value.trim(), color: document.getElementById('roleColor').value, is_featured: document.getElementById('roleFeatured').checked };
+      if (!data.name) { toast('Name required', 'error'); return; }
+      try { if (id) await sb.from('roles').update(data).eq('id', id); else { data.sort_order = roles.length; await sb.from('roles').insert(data); } await loadAllData(); closeModal('role'); resetRoleForm(); toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); }
     }
 
-    function resetRoleForm() {
-      document.getElementById('roleId').value = '';
-      document.getElementById('roleName').value = '';
-      document.getElementById('roleColor').value = '#0D9488';
-      document.getElementById('roleColorText').value = '#0D9488';
-      document.getElementById('roleFeatured').checked = false;
-      document.getElementById('rolePreviewBadge').textContent = 'Role Name';
-      document.getElementById('rolePreviewBadge').style.background = 'rgba(13, 148, 136, 0.1)';
-      document.getElementById('rolePreviewBadge').style.color = '#0D9488';
-      document.getElementById('roleModalTitle').textContent = 'Add Role';
-    }
+    function resetRoleForm() { document.getElementById('roleId').value = ''; document.getElementById('roleName').value = ''; document.getElementById('roleColor').value = '#F97B5F'; document.getElementById('roleColorText').value = '#F97B5F'; document.getElementById('roleFeatured').checked = false; document.getElementById('rolePreviewBadge').textContent = 'Role Name'; document.getElementById('rolePreviewBadge').style.background = 'rgba(249,123,95,0.1)'; document.getElementById('rolePreviewBadge').style.color = '#F97B5F'; document.getElementById('roleModalTitle').textContent = 'Add Role'; }
 
-    // Enrollment Script
-    async function saveScript() {
-      const content = document.getElementById('scriptEditor').innerHTML;
-      
-      try {
-        await sb.from('content_blocks').update({ 
-          content, 
-          updated_at: new Date().toISOString() 
-        }).eq('slug', 'enrollment_script');
-        scriptContent = content;
-        toast('Script saved!', 'success');
-      } catch (e) {
-        console.error('Save script error:', e);
-        toast('Error saving script', 'error');
-      }
-    }
+    // Script
+    async function saveScript() { const content = document.getElementById('scriptEditor').innerHTML; try { await sb.from('content_blocks').update({ content, updated_at: new Date().toISOString() }).eq('slug', 'enrollment_script'); scriptContent = content; toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); } }
 
-    // Rich text formatting
-    function formatDoc(command) {
-      document.execCommand(command, false, null);
-    }
+    // Formatting
+    function formatDoc(cmd) { document.execCommand(cmd, false, null); }
+    function formatBlock(tag) { document.execCommand('formatBlock', false, tag); }
+    function formatDocIn(id, cmd) { document.getElementById(id).focus(); document.execCommand(cmd, false, null); }
 
-    function formatBlock(tag) {
-      document.execCommand('formatBlock', false, tag);
-    }
+    // Delete
+    function deleteItem(type, id) { deleteCallback = async () => { const tables = { announcement: 'announcements', promotion: 'promotions', policy: 'policies', team: 'team_members', role: 'roles' }; try { await sb.from(tables[type]).delete().eq('id', id); await loadAllData(); toast('Deleted', 'success'); } catch (e) { console.error(e); toast('Error', 'error'); } }; openModal('delete'); }
+    function confirmDelete() { if (deleteCallback) deleteCallback(); closeModal('delete'); deleteCallback = null; }
 
-    function formatDocIn(editorId, command) {
-      const editor = document.getElementById(editorId);
-      editor.focus();
-      document.execCommand(command, false, null);
-    }
+    // Modals
+    function openModal(type) { if (type === 'policy') renderCategoryDropdown(); if (type === 'team') renderRoleDropdown(); if (type === 'role') { document.getElementById('roleName').oninput = updateRolePreview; document.getElementById('roleColor').oninput = updateRolePreview; } document.getElementById(type + 'Modal').classList.add('active'); }
+    function closeModal(type) { document.getElementById(type + 'Modal').classList.remove('active'); if (type === 'announcement') resetAnnouncementForm(); if (type === 'promotion') resetPromotionForm(); if (type === 'policy') resetPolicyForm(); if (type === 'team') resetTeamForm(); if (type === 'role') resetRoleForm(); }
+    function closeModalOnOverlay(e, type) { if (e.target === e.currentTarget) closeModal(type); }
 
-    // Delete functionality
-    function deleteItem(type, id) {
-      deleteCallback = async () => {
-        const tableMap = {
-          announcement: 'announcements',
-          promotion: 'promotions',
-          policy: 'policies',
-          team: 'team_members',
-          role: 'roles'
-        };
-        
-        try {
-          await sb.from(tableMap[type]).delete().eq('id', id);
-          await loadAllData();
-          toast('Deleted successfully', 'success');
-        } catch (e) {
-          console.error('Delete error:', e);
-          toast('Error deleting item', 'error');
-        }
-      };
-      openModal('delete');
-    }
+    // Navigation
+    function switchSection(id, el) { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); if (el) el.classList.add('active'); document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); closeSidebar(); }
 
-    function confirmDelete() {
-      if (deleteCallback) deleteCallback();
-      closeModal('delete');
-      deleteCallback = null;
-    }
+    // Mobile
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('open'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
 
-    // Modal handling
-    function openModal(type) {
-      if (type === 'policy') {
-        renderCategoryDropdown();
-      }
-      if (type === 'team') {
-        renderRoleDropdown();
-      }
-      if (type === 'role') {
-        // Set up event listeners for preview
-        document.getElementById('roleName').oninput = updateRolePreview;
-        document.getElementById('roleColor').oninput = updateRolePreview;
-      }
-      document.getElementById(type + 'Modal').classList.add('active');
-    }
+    // Toast
+    function toast(msg, type = '') { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show ' + type; setTimeout(() => t.classList.remove('show'), 3000); }
 
-    function closeModal(type) {
-      document.getElementById(type + 'Modal').classList.remove('active');
-      
-      // Reset forms
-      if (type === 'announcement') resetAnnouncementForm();
-      if (type === 'promotion') resetPromotionForm();
-      if (type === 'policy') resetPolicyForm();
-      if (type === 'team') resetTeamForm();
-      if (type === 'role') resetRoleForm();
-    }
-
-    function closeModalOnOverlay(event, type) {
-      if (event.target === event.currentTarget) {
-        closeModal(type);
-      }
-    }
-
-    // Section switching
-    function switchSection(id, el) {
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      if (el) el.classList.add('active');
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      closeSidebar();
-    }
-
-    // Mobile sidebar
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('sidebarOverlay').classList.toggle('open');
-    }
-
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarOverlay').classList.remove('open');
-    }
-
-    // Toast notification
-    function toast(message, type = '') {
-      const t = document.getElementById('toast');
-      t.textContent = message;
-      t.className = 'toast show ' + type;
-      setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    // Initialize on load
     document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>

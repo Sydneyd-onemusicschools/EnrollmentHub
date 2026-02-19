@@ -1190,7 +1190,7 @@
 
     // Stats
     function updateStats() {
-      const activePromos = promotions.filter(p => getPromoStatus(p) === 'active').length;
+      const activePromos = promotions.filter(p => getPromoStatus(p) === 'active' && p.type === 'promo').length;
       document.getElementById('activePromoCount').textContent = activePromos;
       document.getElementById('announcementCount').textContent = announcements.length;
     }

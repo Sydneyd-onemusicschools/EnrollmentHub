@@ -955,9 +955,33 @@
             </button>
           </div>
         </div>
-        
-        <!-- Workflow Image Upload -->
+
+        <!-- Workflow Notes (now first) -->
         <div class="card" style="margin-bottom: 20px;">
+          <div style="padding: 24px;">
+            <label class="form-label">Workflow Description</label>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">Add instructions or details about the workflow process</p>
+            <div class="editor-container">
+              <div class="editor-toolbar">
+                <button class="editor-btn" onclick="formatDoc('bold')"><strong>B</strong></button>
+                <button class="editor-btn" onclick="formatDoc('italic')"><em>I</em></button>
+                <button class="editor-btn" onclick="formatDoc('underline')"><u>U</u></button>
+                <button class="editor-btn" onclick="formatBlock('h2')">H2</button>
+                <button class="editor-btn" onclick="formatBlock('h3')">H3</button>
+                <button class="editor-btn" onclick="formatDoc('insertUnorderedList')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </button>
+                <button class="editor-btn" onclick="formatDoc('insertOrderedList')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><text x="3" y="7" font-size="8" fill="currentColor">1</text><text x="3" y="13" font-size="8" fill="currentColor">2</text><text x="3" y="19" font-size="8" fill="currentColor">3</text></svg>
+                </button>
+              </div>
+              <div class="editor-content" id="workflowEditor" contenteditable="true"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Workflow Image Upload (now second) -->
+        <div class="card">
           <div style="padding: 24px;">
             <label class="form-label">Workflow Diagram</label>
             <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">Upload an image of your workflow process (PNG, JPG, or GIF)</p>
@@ -986,30 +1010,6 @@
                 </button>
                 <input type="hidden" id="workflowImageUrl">
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Workflow Notes -->
-        <div class="card">
-          <div style="padding: 24px;">
-            <label class="form-label">Additional Notes</label>
-            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">Add any extra instructions or details about the workflow</p>
-            <div class="editor-container">
-              <div class="editor-toolbar">
-                <button class="editor-btn" onclick="formatDoc('bold')"><strong>B</strong></button>
-                <button class="editor-btn" onclick="formatDoc('italic')"><em>I</em></button>
-                <button class="editor-btn" onclick="formatDoc('underline')"><u>U</u></button>
-                <button class="editor-btn" onclick="formatBlock('h2')">H2</button>
-                <button class="editor-btn" onclick="formatBlock('h3')">H3</button>
-                <button class="editor-btn" onclick="formatDoc('insertUnorderedList')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                </button>
-                <button class="editor-btn" onclick="formatDoc('insertOrderedList')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><text x="3" y="7" font-size="8" fill="currentColor">1</text><text x="3" y="13" font-size="8" fill="currentColor">2</text><text x="3" y="19" font-size="8" fill="currentColor">3</text></svg>
-                </button>
-              </div>
-              <div class="editor-content" id="workflowEditor" contenteditable="true"></div>
             </div>
           </div>
         </div>

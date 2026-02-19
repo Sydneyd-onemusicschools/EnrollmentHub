@@ -1291,7 +1291,7 @@
 
     function esc(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
     function formatDate(d) { if (!d) return '-'; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-    function getPromoStatus(p) { const now = new Date(); now.setHours(0,0,0,0); const s = new Date(p.start_date), e = p.end_date ? new Date(p.end_date) : null; if (s > now) return 'upcoming'; if (e && e < now) return 'expired'; return 'active'; }
+    function getPromoStatus(p) { const now = new Date(); now.setHours(0,0,0,0); if (!p.start_date) return 'active'; const s = new Date(p.start_date), e = p.end_date ? new Date(p.end_date) : null; if (s > now) return 'upcoming'; if (e && e < now) return 'expired'; return 'active'; }
 
     // Announcements
     function renderAnnouncements() {
@@ -1326,7 +1326,7 @@
     async function savePromotion() {
       const id = document.getElementById('promotionId').value;
       const data = { title: document.getElementById('promotionTitle').value.trim(), description: document.getElementById('promotionDescription').innerHTML.trim(), type: document.getElementById('promotionType').value, discount_label: document.getElementById('promotionDiscount').value.trim(), start_date: document.getElementById('promotionStartDate').value, end_date: document.getElementById('promotionEndDate').value || null };
-      if (!data.title || !data.start_date) { toast('Title and start date required', 'error'); return; }
+      if (!data.title) { toast('Title required', 'error'); return; }
       try { if (id) await sb.from('promotions').update(data).eq('id', id); else { data.sort_order = promotions.length; await sb.from('promotions').insert(data); } await loadAllData(); closeModal('promotion'); resetPromotionForm(); toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); }
     }
 

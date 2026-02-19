@@ -1554,13 +1554,13 @@
     function resetRoleForm() { document.getElementById('roleId').value = ''; document.getElementById('roleName').value = ''; document.getElementById('roleColor').value = '#F97B5F'; document.getElementById('roleColorText').value = '#F97B5F'; document.getElementById('roleFeatured').checked = false; document.getElementById('rolePreviewBadge').textContent = 'Role Name'; document.getElementById('rolePreviewBadge').style.background = 'rgba(249,123,95,0.1)'; document.getElementById('rolePreviewBadge').style.color = '#F97B5F'; document.getElementById('roleModalTitle').textContent = 'Add Role'; }
 
     // Script
-    async function saveScript() { const content = document.getElementById('scriptEditor').innerHTML; try { await sb.from('content_blocks').upsert({ slug: 'enrollment_script', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' }); scriptContent = content; toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); } }
+    async function saveScript() { const content = document.getElementById('scriptEditor').innerHTML; try { await sb.from('content_blocks').upsert({ slug: 'enrollment_script', title: 'Enrollment Script', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' }); scriptContent = content; toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); } }
 
     // What We Do
     async function saveWhatWeDo() { 
       const content = document.getElementById('whatWeDoEditor').innerHTML; 
       try { 
-        await sb.from('content_blocks').upsert({ slug: 'what_we_do', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' });
+        await sb.from('content_blocks').upsert({ slug: 'what_we_do', title: 'What We Do', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' });
         whatWeDoContent = content; 
         toast('Saved!', 'success'); 
       } catch (e) { console.error(e); toast('Error saving', 'error'); } 
@@ -1572,8 +1572,8 @@
       const imageUrl = document.getElementById('workflowImageUrl').value;
       try { 
         await Promise.all([
-          sb.from('content_blocks').upsert({ slug: 'workflow', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' }),
-          sb.from('content_blocks').upsert({ slug: 'workflow_image', content: imageUrl, updated_at: new Date().toISOString() }, { onConflict: 'slug' })
+          sb.from('content_blocks').upsert({ slug: 'workflow', title: 'Our Workflow', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' }),
+          sb.from('content_blocks').upsert({ slug: 'workflow_image', title: 'Workflow Image', content: imageUrl, updated_at: new Date().toISOString() }, { onConflict: 'slug' })
         ]);
         workflowContent = content;
         workflowImageUrl = imageUrl;

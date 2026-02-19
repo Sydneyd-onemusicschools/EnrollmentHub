@@ -683,6 +683,44 @@
       color: var(--color-coral);
     }
 
+    /* Workflow Image Upload */
+    .workflow-image-upload {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .workflow-image-preview {
+      background: var(--color-bg);
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .workflow-image-placeholder {
+      text-align: center;
+      color: var(--color-text-light);
+      padding: 40px;
+    }
+
+    .workflow-image-placeholder svg {
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .workflow-image-placeholder p {
+      font-size: 14px;
+    }
+
+    .workflow-image-actions {
+      display: flex;
+      gap: 12px;
+    }
+
     /* Category Pills */
     .category-pills { display: flex; flex-wrap: wrap; gap: 8px; }
 
@@ -782,9 +820,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
             Promotions
           </div>
-          <div class="nav-item" onclick="switchSection('policies', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-            Policies
+          <div class="nav-item" onclick="switchSection('responsibilities', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg>
+            Responsibilities
           </div>
           <div class="nav-item" onclick="switchSection('script', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
@@ -793,10 +831,18 @@
         </div>
 
         <div class="nav-section">
-          <div class="nav-section-title">People</div>
+          <div class="nav-section-title">Enrollment Team</div>
           <div class="nav-item" onclick="switchSection('team', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
             Team Members
+          </div>
+          <div class="nav-item" onclick="switchSection('whatwedo', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg>
+            What We Do
+          </div>
+          <div class="nav-item" onclick="switchSection('workflow', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            Our Workflow
           </div>
           <div class="nav-item" onclick="switchSection('roles', this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
@@ -861,31 +907,111 @@
         </div>
       </section>
 
-      <!-- Policies -->
-      <section id="policies" class="section">
+      <!-- What We Do -->
+      <section id="whatwedo" class="section">
         <div class="page-header">
           <div class="page-header-row">
             <div>
-              <h1>Policies</h1>
-              <p>Manage policy documents and categories</p>
+              <h1>What We Do</h1>
+              <p>Describe what the enrollment team does</p>
             </div>
-            <div style="display:flex;gap:12px;">
-              <button class="btn btn-secondary" onclick="openModal('category')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path></svg>
-                Categories
-              </button>
-              <button class="btn btn-primary" onclick="openModal('policy')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Add Policy
-              </button>
-            </div>
+            <button class="btn btn-primary" onclick="saveWhatWeDo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              Save
+            </button>
           </div>
         </div>
         <div class="card">
-          <table class="data-table">
-            <thead><tr><th>Title</th><th>Category</th><th>URL</th><th style="width:100px;text-align:right;">Actions</th></tr></thead>
-            <tbody id="policiesList"></tbody>
-          </table>
+          <div class="editor-container">
+            <div class="editor-toolbar">
+              <button class="editor-btn" onclick="formatDoc('bold')"><strong>B</strong></button>
+              <button class="editor-btn" onclick="formatDoc('italic')"><em>I</em></button>
+              <button class="editor-btn" onclick="formatDoc('underline')"><u>U</u></button>
+              <button class="editor-btn" onclick="formatBlock('h2')">H2</button>
+              <button class="editor-btn" onclick="formatBlock('h3')">H3</button>
+              <button class="editor-btn" onclick="formatDoc('insertUnorderedList')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              </button>
+              <button class="editor-btn" onclick="formatDoc('insertOrderedList')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><text x="3" y="7" font-size="8" fill="currentColor">1</text><text x="3" y="13" font-size="8" fill="currentColor">2</text><text x="3" y="19" font-size="8" fill="currentColor">3</text></svg>
+              </button>
+            </div>
+            <div class="editor-content" id="whatWeDoEditor" contenteditable="true"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Our Workflow -->
+      <section id="workflow" class="section">
+        <div class="page-header">
+          <div class="page-header-row">
+            <div>
+              <h1>Our Workflow</h1>
+              <p>Upload a workflow diagram and add notes</p>
+            </div>
+            <button class="btn btn-primary" onclick="saveWorkflow()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              Save
+            </button>
+          </div>
+        </div>
+        
+        <!-- Workflow Image Upload -->
+        <div class="card" style="margin-bottom: 20px;">
+          <div style="padding: 24px;">
+            <label class="form-label">Workflow Diagram</label>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">Upload an image of your workflow process (PNG, JPG, or GIF)</p>
+            
+            <div class="workflow-image-upload">
+              <div class="workflow-image-preview" id="workflowImagePreview">
+                <div class="workflow-image-placeholder" id="workflowImagePlaceholder">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <p>No workflow image uploaded</p>
+                </div>
+                <img id="workflowImageImg" src="" alt="Workflow diagram" style="display: none; max-width: 100%; border-radius: 8px;">
+              </div>
+              <div class="workflow-image-actions">
+                <input type="file" id="workflowImageFile" accept="image/*" onchange="previewWorkflowImage(this)" style="display: none;">
+                <label for="workflowImageFile" class="btn btn-secondary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  Upload Image
+                </label>
+                <button class="btn btn-secondary" onclick="removeWorkflowImage()" id="removeWorkflowImageBtn" style="display: none;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
+                  Remove
+                </button>
+                <input type="hidden" id="workflowImageUrl">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workflow Notes -->
+        <div class="card">
+          <div style="padding: 24px;">
+            <label class="form-label">Additional Notes</label>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">Add any extra instructions or details about the workflow</p>
+            <div class="editor-container">
+              <div class="editor-toolbar">
+                <button class="editor-btn" onclick="formatDoc('bold')"><strong>B</strong></button>
+                <button class="editor-btn" onclick="formatDoc('italic')"><em>I</em></button>
+                <button class="editor-btn" onclick="formatDoc('underline')"><u>U</u></button>
+                <button class="editor-btn" onclick="formatBlock('h2')">H2</button>
+                <button class="editor-btn" onclick="formatBlock('h3')">H3</button>
+                <button class="editor-btn" onclick="formatDoc('insertUnorderedList')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </button>
+                <button class="editor-btn" onclick="formatDoc('insertOrderedList')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><text x="3" y="7" font-size="8" fill="currentColor">1</text><text x="3" y="13" font-size="8" fill="currentColor">2</text><text x="3" y="19" font-size="8" fill="currentColor">3</text></svg>
+                </button>
+              </div>
+              <div class="editor-content" id="workflowEditor" contenteditable="true"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1250,7 +1376,7 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
     
     let sb, deleteCallback = null, currentPromoTab = 'active';
-    let announcements = [], promotions = [], policies = [], categories = [], teamMembers = [], roles = [], scriptContent = '';
+    let announcements = [], promotions = [], teamMembers = [], roles = [], scriptContent = '', whatWeDoContent = '', workflowContent = '', workflowImageUrl = '';
 
     async function init() {
       sb = window.supabase.createClient(SB_URL, SB_KEY);
@@ -1259,22 +1385,24 @@
 
     async function loadAllData() {
       try {
-        const [annRes, promoRes, policyRes, catRes, teamRes, rolesRes, scriptRes] = await Promise.all([
+        const [annRes, promoRes, teamRes, rolesRes, scriptRes, whatWeDoRes, workflowRes, workflowImgRes] = await Promise.all([
           sb.from('announcements').select('*').order('sort_order').order('date', { ascending: false }),
           sb.from('promotions').select('*').order('sort_order').order('start_date', { ascending: false }),
-          sb.from('policies').select('*').order('sort_order'),
-          sb.from('policy_categories').select('*').order('sort_order'),
           sb.from('team_members').select('*').order('sort_order'),
           sb.from('roles').select('*').order('sort_order'),
-          sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single()
+          sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single(),
+          sb.from('content_blocks').select('*').eq('slug', 'what_we_do').single(),
+          sb.from('content_blocks').select('*').eq('slug', 'workflow').single(),
+          sb.from('content_blocks').select('*').eq('slug', 'workflow_image').single()
         ]);
         announcements = annRes.data || [];
         promotions = promoRes.data || [];
-        policies = policyRes.data || [];
-        categories = catRes.data || [];
         teamMembers = teamRes.data || [];
         roles = rolesRes.data || [];
         scriptContent = scriptRes.data?.content || '';
+        whatWeDoContent = whatWeDoRes.data?.content || '';
+        workflowContent = workflowRes.data?.content || '';
+        workflowImageUrl = workflowImgRes.data?.content || '';
         renderAll();
       } catch (e) { console.error('Load error:', e); toast('Error loading data', 'error'); }
     }
@@ -1282,11 +1410,20 @@
     function renderAll() {
       renderAnnouncements();
       renderPromotions();
-      renderPolicies();
-      renderCategories();
       renderTeam();
       renderRoles();
       document.getElementById('scriptEditor').innerHTML = scriptContent;
+      document.getElementById('whatWeDoEditor').innerHTML = whatWeDoContent;
+      document.getElementById('workflowEditor').innerHTML = workflowContent;
+      
+      // Workflow image
+      if (workflowImageUrl) {
+        document.getElementById('workflowImageImg').src = workflowImageUrl;
+        document.getElementById('workflowImageImg').style.display = 'block';
+        document.getElementById('workflowImagePlaceholder').style.display = 'none';
+        document.getElementById('removeWorkflowImageBtn').style.display = 'inline-flex';
+        document.getElementById('workflowImageUrl').value = workflowImageUrl;
+      }
     }
 
     function esc(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
@@ -1417,7 +1554,68 @@
     function resetRoleForm() { document.getElementById('roleId').value = ''; document.getElementById('roleName').value = ''; document.getElementById('roleColor').value = '#F97B5F'; document.getElementById('roleColorText').value = '#F97B5F'; document.getElementById('roleFeatured').checked = false; document.getElementById('rolePreviewBadge').textContent = 'Role Name'; document.getElementById('rolePreviewBadge').style.background = 'rgba(249,123,95,0.1)'; document.getElementById('rolePreviewBadge').style.color = '#F97B5F'; document.getElementById('roleModalTitle').textContent = 'Add Role'; }
 
     // Script
-    async function saveScript() { const content = document.getElementById('scriptEditor').innerHTML; try { await sb.from('content_blocks').update({ content, updated_at: new Date().toISOString() }).eq('slug', 'enrollment_script'); scriptContent = content; toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); } }
+    async function saveScript() { const content = document.getElementById('scriptEditor').innerHTML; try { await sb.from('content_blocks').upsert({ slug: 'enrollment_script', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' }); scriptContent = content; toast('Saved!', 'success'); } catch (e) { console.error(e); toast('Error saving', 'error'); } }
+
+    // What We Do
+    async function saveWhatWeDo() { 
+      const content = document.getElementById('whatWeDoEditor').innerHTML; 
+      try { 
+        await sb.from('content_blocks').upsert({ slug: 'what_we_do', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' });
+        whatWeDoContent = content; 
+        toast('Saved!', 'success'); 
+      } catch (e) { console.error(e); toast('Error saving', 'error'); } 
+    }
+
+    // Workflow
+    async function saveWorkflow() { 
+      const content = document.getElementById('workflowEditor').innerHTML; 
+      const imageUrl = document.getElementById('workflowImageUrl').value;
+      try { 
+        await Promise.all([
+          sb.from('content_blocks').upsert({ slug: 'workflow', content, updated_at: new Date().toISOString() }, { onConflict: 'slug' }),
+          sb.from('content_blocks').upsert({ slug: 'workflow_image', content: imageUrl, updated_at: new Date().toISOString() }, { onConflict: 'slug' })
+        ]);
+        workflowContent = content;
+        workflowImageUrl = imageUrl;
+        toast('Saved!', 'success'); 
+      } catch (e) { console.error(e); toast('Error saving', 'error'); } 
+    }
+
+    // Workflow image preview
+    async function previewWorkflowImage(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 10 * 1024 * 1024) { toast('Image must be under 10MB', 'error'); input.value = ''; return; }
+        
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById('workflowImageImg').src = e.target.result;
+          document.getElementById('workflowImageImg').style.display = 'block';
+          document.getElementById('workflowImagePlaceholder').style.display = 'none';
+          document.getElementById('removeWorkflowImageBtn').style.display = 'inline-flex';
+        };
+        reader.readAsDataURL(file);
+        
+        try {
+          toast('Uploading...', '');
+          const fileName = `workflow-${Date.now()}.${file.name.split('.').pop()}`;
+          const { data, error } = await sb.storage.from('avatars').upload(fileName, file, { cacheControl: '3600', upsert: false });
+          if (error) { toast('Error: ' + error.message, 'error'); return; }
+          const { data: urlData } = sb.storage.from('avatars').getPublicUrl(fileName);
+          document.getElementById('workflowImageUrl').value = urlData.publicUrl;
+          toast('Uploaded! Click Save to confirm.', 'success');
+        } catch (e) { console.error(e); toast('Error uploading', 'error'); }
+      }
+    }
+
+    function removeWorkflowImage() {
+      document.getElementById('workflowImageImg').src = '';
+      document.getElementById('workflowImageImg').style.display = 'none';
+      document.getElementById('workflowImagePlaceholder').style.display = 'flex';
+      document.getElementById('removeWorkflowImageBtn').style.display = 'none';
+      document.getElementById('workflowImageUrl').value = '';
+      document.getElementById('workflowImageFile').value = '';
+    }
 
     // Formatting
     function formatDoc(cmd) { document.execCommand(cmd, false, null); }

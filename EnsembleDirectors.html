@@ -382,6 +382,51 @@
       line-height: 1.6;
     }
 
+    /* Rich Content Styling (bullets, lists, etc) */
+    .rich-content ul,
+    .rich-content ol,
+    .announcement-content ul,
+    .announcement-content ol,
+    .promo-description ul,
+    .promo-description ol {
+      margin: 10px 0;
+      padding-left: 24px;
+      list-style-position: outside;
+    }
+
+    .rich-content ul,
+    .announcement-content ul,
+    .promo-description ul {
+      list-style-type: disc;
+    }
+
+    .rich-content ol,
+    .announcement-content ol,
+    .promo-description ol {
+      list-style-type: decimal;
+    }
+
+    .rich-content li,
+    .announcement-content li,
+    .promo-description li {
+      margin-bottom: 6px;
+      padding-left: 4px;
+      line-height: 1.6;
+    }
+
+    .rich-content p,
+    .announcement-content > div > p,
+    .promo-description p {
+      margin-bottom: 10px;
+    }
+
+    .rich-content strong,
+    .announcement-content strong,
+    .promo-description strong {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
     /* Promotions */
     .promo-grid {
       display: grid;
@@ -979,8 +1024,9 @@
             </div>
           </div>
           <div class="promo-tabs">
-            <button class="promo-tab-btn active" onclick="switchPromoTab('active', this)">Active</button>
-            <button class="promo-tab-btn" onclick="switchPromoTab('upcoming', this)">Upcoming</button>
+            <button class="promo-tab-btn active" onclick="switchPromoTab('all', this)">All</button>
+            <button class="promo-tab-btn" onclick="switchPromoTab('promo', this)">Promos</button>
+            <button class="promo-tab-btn" onclick="switchPromoTab('discount', this)">Discounts</button>
           </div>
           <div class="promo-grid" id="promoGrid"></div>
         </div>
@@ -1054,7 +1100,7 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
     
     let sb;
-    let currentPromoTab = 'active';
+    let currentPromoTab = 'all';
 
     // Data stores
     let announcements = [];
@@ -1202,12 +1248,23 @@
 
     function renderPromotions() {
       const container = document.getElementById('promoGrid');
-      const filtered = promotions.filter(p => getPromoStatus(p) === currentPromoTab);
+      
+      // Only show active and upcoming promotions (not expired)
+      const activePromos = promotions.filter(p => {
+        const status = getPromoStatus(p);
+        return status === 'active' || status === 'upcoming';
+      });
+      
+      // Filter by type if not "all"
+      const filtered = currentPromoTab === 'all' 
+        ? activePromos 
+        : activePromos.filter(p => p.type === currentPromoTab);
 
       if (!filtered.length) {
         const messages = {
-          active: 'No active promotions right now',
-          upcoming: 'No upcoming promotions scheduled'
+          all: 'No promotions or discounts available',
+          promo: 'No promos available right now',
+          discount: 'No discounts available right now'
         };
         container.innerHTML = `
           <div class="empty-state" style="grid-column: 1 / -1;">

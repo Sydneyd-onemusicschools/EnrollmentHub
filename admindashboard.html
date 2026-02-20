@@ -1474,8 +1474,8 @@
                     supabaseClient.from('dashboard_promos').select('*').order('order_index'),
                     supabaseClient.from('dashboard_notes').select('*').order('order_index'),
                     supabaseClient.from('dashboard_individual_goals').select('*, team_members(id, first_name, last_name)'),
-                    supabaseClient.from('dashboard_schedule_items').select('*, team_members(id, first_name, last_name)'),
-                    supabaseClient.from('team_members').select('id, first_name, last_name').order('first_name')
+                    supabaseClient.from('dashboard_individual_goals').select('*'),
+                    supabaseClient.from('dashboard_schedule_items').select('*')
                 ]);
 
                 stats = statsResult.data || [];

@@ -990,8 +990,8 @@
                     supabaseClient.from('dashboard_shoutouts').select('*').order('order_index'),
                     supabaseClient.from('dashboard_promos').select('*').order('order_index'),
                     supabaseClient.from('dashboard_notes').select('*').order('order_index'),
-                    supabaseClient.from('dashboard_individual_goals').select('*, team_members(id, first_name, last_name)'),
-                    supabaseClient.from('dashboard_schedule_items').select('*, team_members(id, first_name, last_name)')
+                    supabaseClient.from('dashboard_individual_goals').select('*, team_members!team_member_id(id, first_name, last_name)'),
+                    supabaseClient.from('dashboard_schedule_items').select('*, team_members!team_member_id(id, first_name, last_name)')
                 ]);
 
                 stats = statsResult.data || [];

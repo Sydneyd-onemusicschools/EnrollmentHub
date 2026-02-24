@@ -1228,7 +1228,7 @@
         </div>
     </div>
 
-    <!-- Individual Goal Modal -->
+    <!-- Individual Goal Modal - NOW WITH TEXT INPUT -->
     <div id="individualGoalModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1240,10 +1240,8 @@
                     <input type="hidden" id="individualGoalId">
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Team Member *</label>
-                            <select class="form-select" id="individualGoalMember" required>
-                                <option value="">Select member...</option>
-                            </select>
+                            <label class="form-label">Team Member Name *</label>
+                            <input type="text" class="form-input" id="individualGoalMemberName" required placeholder="e.g., John Smith">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Goal Type *</label>
@@ -1294,7 +1292,7 @@
         </div>
     </div>
 
-    <!-- Schedule Modal -->
+    <!-- Schedule Modal - NOW WITH TEXT INPUT -->
     <div id="scheduleModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1306,10 +1304,8 @@
                     <input type="hidden" id="scheduleId">
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Team Member *</label>
-                            <select class="form-select" id="scheduleMember" required>
-                                <option value="">Select member...</option>
-                            </select>
+                            <label class="form-label">Team Member Name *</label>
+                            <input type="text" class="form-input" id="scheduleMemberName" required placeholder="e.g., John Smith">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Weekday *</label>
@@ -1387,7 +1383,6 @@
         let notes = [];
         let individualGoals = [];
         let scheduleItems = [];
-        let teamMembers = [];
         let currentGoalFilter = 'all';
         let currentScheduleFilter = 'all';
 
@@ -1466,14 +1461,13 @@
 
         async function loadData() {
             try {
-                const [statsResult, teamGoalsResult, announcementsResult, shoutoutsResult, promosResult, notesResult, individualGoalsResult, scheduleResult, teamMembersResult] = await Promise.all([
+                const [statsResult, teamGoalsResult, announcementsResult, shoutoutsResult, promosResult, notesResult, individualGoalsResult, scheduleResult] = await Promise.all([
                     supabaseClient.from('dashboard_stats').select('*').order('order_index'),
                     supabaseClient.from('dashboard_team_goals').select('*'),
                     supabaseClient.from('dashboard_announcements').select('*').order('order_index'),
                     supabaseClient.from('dashboard_shoutouts').select('*').order('order_index'),
                     supabaseClient.from('dashboard_promos').select('*').order('order_index'),
                     supabaseClient.from('dashboard_notes').select('*').order('order_index'),
-                    supabaseClient.from('dashboard_individual_goals').select('*, team_members(id, first_name, last_name)'),
                     supabaseClient.from('dashboard_individual_goals').select('*'),
                     supabaseClient.from('dashboard_schedule_items').select('*')
                 ]);
@@ -1486,13 +1480,11 @@
                 notes = notesResult.data || [];
                 individualGoals = individualGoalsResult.data || [];
                 scheduleItems = scheduleResult.data || [];
-                teamMembers = teamMembersResult.data || [];
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
 
                 renderAll();
-                populateMemberSelects();
             } catch (error) {
                 console.error('Error loading data:', error);
                 showToast('Error loading data. Please refresh.', 'error');
@@ -1508,12 +1500,6 @@
             renderNotes();
             renderIndividualGoals();
             renderSchedule();
-        }
-
-        function populateMemberSelects() {
-            const options = '<option value="">Select member...</option>' + teamMembers.map(m => `<option value="${m.id}">${m.first_name} ${m.last_name}</option>`).join('');
-            document.getElementById('individualGoalMember').innerHTML = options;
-            document.getElementById('scheduleMember').innerHTML = options;
         }
 
         // ============ STATS ============
@@ -1930,7 +1916,7 @@
             } catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
-        // ============ INDIVIDUAL GOALS ============
+        // ============ INDIVIDUAL GOALS - NOW USING member_name ============
         function filterIndividualGoals(filter) {
             currentGoalFilter = filter;
             document.querySelectorAll('[data-goal-filter]').forEach(btn => {
@@ -1947,7 +1933,7 @@
                 return;
             }
             container.innerHTML = filteredGoals.map(g => {
-                const name = g.team_members ? `${g.team_members.first_name} ${g.team_members.last_name}` : 'Unknown';
+                const name = g.member_name || 'Unknown';
                 const typeLabel = g.goal_type === 'current_month' ? 'Current Month' : g.goal_type === 'last_month' ? 'Last Month' : 'Next Month';
                 return `
                     <div class="goal-card">
@@ -1981,7 +1967,7 @@
         function editIndividualGoal(g) {
             document.getElementById('individualGoalModalTitle').textContent = 'Edit Individual Goal';
             document.getElementById('individualGoalId').value = g.id;
-            document.getElementById('individualGoalMember').value = g.team_member_id || '';
+            document.getElementById('individualGoalMemberName').value = g.member_name || '';
             document.getElementById('individualGoalType').value = g.goal_type || '';
             document.getElementById('individualGoalProgress').value = g.current_progress || 0;
             document.getElementById('individualGoalFinal').value = g.final_count || 0;
@@ -1996,7 +1982,19 @@
 
         async function saveIndividualGoal() {
             const id = document.getElementById('individualGoalId').value;
-            const data = { team_member_id: document.getElementById('individualGoalMember').value || null, goal_type: document.getElementById('individualGoalType').value, current_progress: parseInt(document.getElementById('individualGoalProgress').value) || 0, final_count: parseInt(document.getElementById('individualGoalFinal').value) || 0, quota_goal: parseInt(document.getElementById('individualGoalQuota').value) || 0, bronze_goal: parseInt(document.getElementById('individualGoalBronze').value) || null, silver_goal: parseInt(document.getElementById('individualGoalSilver').value) || null, gold_goal: parseInt(document.getElementById('individualGoalGold').value) || null };
+            const memberName = document.getElementById('individualGoalMemberName').value.trim();
+            if (!memberName) { showToast('Team member name is required', 'error'); return; }
+            
+            const data = { 
+                member_name: memberName,
+                goal_type: document.getElementById('individualGoalType').value, 
+                current_progress: parseInt(document.getElementById('individualGoalProgress').value) || 0, 
+                final_count: parseInt(document.getElementById('individualGoalFinal').value) || 0, 
+                quota_goal: parseInt(document.getElementById('individualGoalQuota').value) || 0, 
+                bronze_goal: parseInt(document.getElementById('individualGoalBronze').value) || null, 
+                silver_goal: parseInt(document.getElementById('individualGoalSilver').value) || null, 
+                gold_goal: parseInt(document.getElementById('individualGoalGold').value) || null 
+            };
             try {
                 let result;
                 if (id) { result = await supabaseClient.from('dashboard_individual_goals').update(data).eq('id', id); }
@@ -2014,7 +2012,7 @@
             catch (error) { console.error('Error:', error); showToast('Error deleting.', 'error'); }
         }
 
-        // ============ SCHEDULE ============
+        // ============ SCHEDULE - NOW USING member_name ============
         function filterSchedule(filter) {
             currentScheduleFilter = filter;
             document.querySelectorAll('[data-schedule-filter]').forEach(btn => {
@@ -2031,7 +2029,7 @@
                 return;
             }
             container.innerHTML = filteredSchedule.map(s => {
-                const name = s.team_members ? `${s.team_members.first_name} ${s.team_members.last_name}` : 'Unknown';
+                const name = s.member_name || 'Unknown';
                 return `
                     <div class="schedule-card">
                         <div class="schedule-card-header"><div class="schedule-card-name">${name}</div><div class="schedule-card-day">${s.weekday || ''}</div></div>
@@ -2062,7 +2060,7 @@
         function editSchedule(s) {
             document.getElementById('scheduleModalTitle').textContent = 'Edit Schedule Item';
             document.getElementById('scheduleId').value = s.id;
-            document.getElementById('scheduleMember').value = s.team_member_id || '';
+            document.getElementById('scheduleMemberName').value = s.member_name || '';
             document.getElementById('scheduleWeekday').value = s.weekday || '';
             document.getElementById('scheduleHours').value = s.hours || '';
             document.getElementById('scheduleWorkMode').value = s.work_mode || '';
@@ -2077,8 +2075,11 @@
 
         async function saveSchedule() {
             const id = document.getElementById('scheduleId').value;
+            const memberName = document.getElementById('scheduleMemberName').value.trim();
+            if (!memberName) { showToast('Team member name is required', 'error'); return; }
+            
             const data = { 
-                team_member_id: document.getElementById('scheduleMember').value || null, 
+                member_name: memberName,
                 weekday: document.getElementById('scheduleWeekday').value || null, 
                 hours: document.getElementById('scheduleHours').value || null, 
                 work_mode: document.getElementById('scheduleWorkMode').value || null, 
@@ -2087,8 +2088,6 @@
                 notes: document.getElementById('scheduleNotes').value || null,
                 meeting_link: document.getElementById('scheduleMeetingLink').value || null
             };
-            
-            console.log('Saving schedule data:', data);
             
             try {
                 let result;
@@ -2100,7 +2099,7 @@
                 
                 if (result.error) {
                     console.error('Supabase error:', result.error);
-                    alert('Database Error: ' + result.error.message + '\n\nDetails: ' + result.error.details + '\n\nHint: ' + result.error.hint);
+                    showToast('Error: ' + result.error.message, 'error');
                     return;
                 }
                 
@@ -2109,7 +2108,7 @@
                 loadData();
             } catch (error) { 
                 console.error('Error:', error); 
-                alert('Error: ' + error.message);
+                showToast('Error saving.', 'error');
             }
         }
 

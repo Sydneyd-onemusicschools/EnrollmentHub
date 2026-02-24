@@ -990,8 +990,8 @@
                     supabaseClient.from('dashboard_shoutouts').select('*').order('order_index'),
                     supabaseClient.from('dashboard_promos').select('*').order('order_index'),
                     supabaseClient.from('dashboard_notes').select('*').order('order_index'),
-                    supabaseClient.from('dashboard_individual_goals').select('*, team_members!team_member_id(id, first_name, last_name)'),
-                    supabaseClient.from('dashboard_schedule_items').select('*, team_members!team_member_id(id, first_name, last_name)')
+                    supabaseClient.from('dashboard_individual_goals').select('*'),
+                    supabaseClient.from('dashboard_schedule_items').select('*')
                 ]);
 
                 stats = statsResult.data || [];
@@ -1165,7 +1165,7 @@
             }
 
             container.innerHTML = filtered.map(g => {
-                const name = g.team_members ? `${g.team_members.first_name} ${g.team_members.last_name}` : 'Unknown';
+                const name = g.member_name || 'Unknown';
                 const typeLabel = g.goal_type === 'current_month' ? 'Current Month' : g.goal_type === 'last_month' ? 'Last Month' : 'Next Month';
                 
                 // Achievement highlighting logic
@@ -1267,7 +1267,7 @@
             }
 
             container.innerHTML = filtered.map(s => {
-                const name = s.team_members ? `${s.team_members.first_name} ${s.team_members.last_name}` : 'Unknown';
+                const name = s.member_name || 'Unknown';
                 const workModeDisplay = s.work_mode === 'in_office' ? 'In Office' : s.work_mode === 'remote' ? 'Remote' : s.work_mode === 'hybrid' ? 'Hybrid' : s.work_mode || '';
                 
                 return `

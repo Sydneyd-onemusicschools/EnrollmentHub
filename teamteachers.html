@@ -278,6 +278,16 @@
         .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .badge-info { background: rgba(250, 128, 114, 0.1); color: var(--primary); }
         .badge-purple { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
+        .badge-comfort { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+
+        /* Comfort Level Mini Display */
+        .comfort-indicator {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            padding: 0.2rem 0.5rem; border-radius: 6px;
+            font-size: 0.6875rem; font-weight: 600;
+            background: rgba(139, 92, 246, 0.1); color: #8B5CF6;
+        }
+        .comfort-indicator i { font-size: 0.625rem; }
 
         /* Teacher Detail Modal */
         .modal {
@@ -328,6 +338,28 @@
             padding: 0.5rem 0; font-size: 0.9375rem; color: var(--text-primary);
         }
         .strength-item i { color: var(--primary); margin-top: 0.125rem; font-size: 0.75rem; }
+
+        /* Comfort Level Display in Modal */
+        .comfort-level-display {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1rem; background: var(--gray-50); border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .comfort-level-bar {
+            flex: 1; height: 8px; background: var(--gray-200); border-radius: 4px;
+            overflow: hidden;
+        }
+        .comfort-level-fill {
+            height: 100%; border-radius: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        .comfort-level-value {
+            font-size: 1.25rem; font-weight: 700; color: var(--primary);
+            min-width: 50px; text-align: center;
+        }
+        .comfort-level-label {
+            font-size: 0.875rem; color: var(--text-secondary);
+        }
 
         /* Empty & Loading */
         .empty-state { text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary); }
@@ -465,7 +497,7 @@
                     <select id="filterInstrument" class="filter-select"><option value="">All Instruments</option></select>
                 </div>
                 <div class="filter-group">
-                    <label>Level</label>
+                    <label>Highest Level</label>
                     <select id="filterLevel" class="filter-select">
                         <option value="">All Levels</option>
                         <option value="beginner">Beginner</option>
@@ -486,6 +518,33 @@
                         <option value="5">5</option>
                         <option value="6">6</option>
                         <option value="7">7</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Language</label>
+                    <select id="filterLanguage" class="filter-select"><option value="">All Languages</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>Learning Needs Comfort</label>
+                    <select id="filterComfort" class="filter-select">
+                        <option value="">Any Comfort Level</option>
+                        <option value="7">7+ (Comfortable)</option>
+                        <option value="8">8+ (Very Comfortable)</option>
+                        <option value="9">9+ (Highly Experienced)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Special Needs</label>
+                    <select id="filterSpecialNeeds" class="filter-select">
+                        <option value="">Any</option>
+                        <option value="yes">Willing to Teach</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Formal Education</label>
+                    <select id="filterFormalEd" class="filter-select">
+                        <option value="">Any</option>
+                        <option value="yes">Has Formal Education</option>
                     </select>
                 </div>
 
@@ -572,7 +631,11 @@
 
         function setupFilterListeners() {
             document.getElementById('teacherSearch').addEventListener('input', applyFilters);
-            ['filterState', 'filterBrand', 'filterCity', 'filterInstrument', 'filterLevel', 'filterGenre', 'filterAge'].forEach(id => {
+            [
+                'filterState', 'filterBrand', 'filterCity', 'filterInstrument', 
+                'filterLevel', 'filterGenre', 'filterAge', 'filterLanguage',
+                'filterComfort', 'filterSpecialNeeds', 'filterFormalEd'
+            ].forEach(id => {
                 document.getElementById(id).addEventListener('change', applyFilters);
             });
         }
@@ -637,6 +700,10 @@
             const instrumentNames = [...new Set(teachers.flatMap(t => t.instruments.map(i => i.instrument)).filter(Boolean))].sort();
             populateSelect('filterInstrument', instrumentNames, 'All Instruments');
 
+            // Languages
+            const languageNames = [...new Set(teachers.flatMap(t => t.languages.map(l => l.language)).filter(Boolean))].sort();
+            populateSelect('filterLanguage', languageNames, 'All Languages');
+
             // Genres — split comma-separated values
             const allGenres = new Set();
             teachers.forEach(t => {
@@ -697,7 +764,11 @@
             if (search) filters.search = search;
             if (activeZone !== 'all') filters.zone = activeZone;
 
-            ['filterState', 'filterBrand', 'filterCity', 'filterInstrument', 'filterLevel', 'filterGenre', 'filterAge'].forEach(id => {
+            [
+                'filterState', 'filterBrand', 'filterCity', 'filterInstrument', 
+                'filterLevel', 'filterGenre', 'filterAge', 'filterLanguage',
+                'filterComfort', 'filterSpecialNeeds', 'filterFormalEd'
+            ].forEach(id => {
                 const val = document.getElementById(id).value;
                 if (val) filters[id] = val;
             });
@@ -723,6 +794,9 @@
 
                 // City
                 if (filters.filterCity && !t.cities.some(c => c.city === filters.filterCity)) return false;
+
+                // Language
+                if (filters.filterLanguage && !t.languages.some(l => l.language === filters.filterLanguage)) return false;
 
                 // Instrument
                 if (filters.filterInstrument && !t.instruments.some(i => i.instrument === filters.filterInstrument)) return false;
@@ -760,6 +834,18 @@
                     if (!acceptsAge) return false;
                 }
 
+                // Learning Needs Comfort Level
+                if (filters.filterComfort) {
+                    const minComfort = parseInt(filters.filterComfort);
+                    if (!t.learning_needs_comfort || t.learning_needs_comfort < minComfort) return false;
+                }
+
+                // Special Needs Willing
+                if (filters.filterSpecialNeeds === 'yes' && !t.special_needs_willing) return false;
+
+                // Formal Education
+                if (filters.filterFormalEd === 'yes' && !t.formal_music_education) return false;
+
                 return true;
             });
 
@@ -780,6 +866,10 @@
                 filterLevel: () => `Level: ${filters.filterLevel}`,
                 filterGenre: () => `Genre: ${filters.filterGenre}`,
                 filterAge: () => `Age: ${filters.filterAge}`,
+                filterLanguage: () => `Language: ${filters.filterLanguage}`,
+                filterComfort: () => `Comfort: ${filters.filterComfort}+`,
+                filterSpecialNeeds: () => `Special Needs: Yes`,
+                filterFormalEd: () => `Formal Education: Yes`,
             };
 
             Object.keys(labels).forEach(key => {
@@ -810,7 +900,11 @@
             document.getElementById('teacherSearch').value = '';
             activeZone = 'all';
             renderZoneTabs();
-            ['filterState', 'filterBrand', 'filterCity', 'filterInstrument', 'filterLevel', 'filterGenre', 'filterAge'].forEach(id => {
+            [
+                'filterState', 'filterBrand', 'filterCity', 'filterInstrument', 
+                'filterLevel', 'filterGenre', 'filterAge', 'filterLanguage',
+                'filterComfort', 'filterSpecialNeeds', 'filterFormalEd'
+            ].forEach(id => {
                 document.getElementById(id).value = '';
             });
             applyFilters();
@@ -847,6 +941,7 @@
 
                 const cityList = t.cities.map(c => c.city).join(', ');
                 const languageList = t.languages.map(l => l.language).join(', ');
+                const comfortLevel = t.learning_needs_comfort;
 
                 return `
                     <div class="teacher-card" onclick="openTeacherDetail('${t.id}')" style="cursor:pointer;">
@@ -857,6 +952,7 @@
                         <div class="teacher-card-body">
                             ${t.state ? `<div class="teacher-info-row"><i class="fas fa-map-marker-alt"></i><span>${t.state}${cityList ? ' — ' + cityList : ''}</span></div>` : ''}
                             ${languageList ? `<div class="teacher-info-row"><i class="fas fa-language"></i><span>${languageList}</span></div>` : ''}
+                            ${comfortLevel ? `<div class="teacher-info-row"><i class="fas fa-heart"></i><span>Learning Needs Comfort: ${comfortLevel}/10</span></div>` : ''}
                             ${t.instruments.length > 0 ? `
                                 <div class="teacher-instruments-list">
                                     <div class="teacher-instruments-label">Instruments</div>
@@ -866,8 +962,7 @@
                             <div class="teacher-badges">
                                 ${t.formal_music_education ? '<span class="teacher-badge badge-info">Formal Education</span>' : ''}
                                 ${t.special_needs_willing ? '<span class="teacher-badge badge-success">Special Needs</span>' : ''}
-                                ${t.online_willing ? '<span class="teacher-badge badge-info">Online</span>' : ''}
-                                ${t.online_only ? '<span class="teacher-badge badge-purple">Online Only</span>' : ''}
+                                ${comfortLevel && comfortLevel >= 8 ? '<span class="teacher-badge badge-purple">High Comfort w/ Learning Needs</span>' : ''}
                             </div>
                         </div>
                     </div>
@@ -885,6 +980,7 @@
             const strengths = [t.teaching_strength_1, t.teaching_strength_2, t.teaching_strength_3].filter(Boolean);
             const cityList = t.cities.map(c => c.city).join(', ') || 'N/A';
             const languageList = t.languages.map(l => l.language).join(', ') || 'N/A';
+            const comfortLevel = t.learning_needs_comfort || 0;
 
             let html = `
                 <div class="detail-section">
@@ -900,6 +996,32 @@
                     </div>
                 </div>
             `;
+
+            // Learning Needs Comfort
+            if (comfortLevel > 0) {
+                html += `
+                    <div class="detail-section">
+                        <div class="detail-section-title">Student Learning Needs</div>
+                        <div class="comfort-level-display">
+                            <div style="flex: 1;">
+                                <div class="comfort-level-label">Comfort with diverse learning needs (ADHD, autism, dyslexia, etc.)</div>
+                                <div class="comfort-level-bar" style="margin-top: 0.5rem;">
+                                    <div class="comfort-level-fill" style="width: ${comfortLevel * 10}%;"></div>
+                                </div>
+                            </div>
+                            <div class="comfort-level-value">${comfortLevel}/10</div>
+                        </div>
+                        ${t.special_needs_willing ? `<div class="strength-item"><i class="fas fa-check-circle"></i><span>Willing to teach special needs students</span></div>` : ''}
+                    </div>
+                `;
+            } else if (t.special_needs_willing) {
+                html += `
+                    <div class="detail-section">
+                        <div class="detail-section-title">Student Learning Needs</div>
+                        <div class="strength-item"><i class="fas fa-check-circle"></i><span>Willing to teach special needs students</span></div>
+                    </div>
+                `;
+            }
 
             // Education & Strengths
             if (t.formal_music_education || t.formal_education_details || strengths.length > 0) {
@@ -920,11 +1042,11 @@
                     <div class="detail-instrument-card">
                         <div class="detail-instrument-name">${i.instrument}</div>
                         <div class="detail-instrument-grid">
-                            <div class="detail-item"><label>Level</label><p>${i.teacher_level || 'N/A'}</p></div>
+                            <div class="detail-item"><label>Highest Teaching Level</label><p>${i.teacher_level || 'N/A'}</p></div>
                             <div class="detail-item"><label>Youngest Age</label><p>${i.youngest_age_preference ? i.youngest_age_preference + '+' : 'N/A'}</p></div>
-                            <div class="detail-item"><label>Year Started</label><p>${i.year_started || 'N/A'}</p></div>
+                            <div class="detail-item"><label>Year Started Teaching</label><p>${i.year_started || 'N/A'}</p></div>
                             <div class="detail-item"><label>Genres</label><p>${i.genres || 'N/A'}</p></div>
-                            ${i.achievements_credentials ? `<div class="detail-item" style="grid-column: 1/-1;"><label>Achievements</label><p>${i.achievements_credentials}</p></div>` : ''}
+                            ${i.achievements_credentials ? `<div class="detail-item" style="grid-column: 1/-1;"><label>Certifications & Experience</label><p>${i.achievements_credentials}</p></div>` : ''}
                             ${i.notes ? `<div class="detail-item" style="grid-column: 1/-1;"><label>Notes</label><div style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5;">${i.notes}</div></div>` : ''}
                         </div>
                     </div>
@@ -932,21 +1054,14 @@
                 html += `</div>`;
             }
 
-            // Preferences
-            const prefs = [];
-            if (t.special_needs_willing) prefs.push('Willing to teach special needs students');
-            if (t.online_willing) prefs.push('Available for online lessons');
-            if (t.online_only) prefs.push('Online only');
-
-            if (prefs.length > 0 || t.additional_notes) {
-                html += `<div class="detail-section"><div class="detail-section-title">Preferences & Notes</div>`;
-                if (prefs.length > 0) {
-                    html += prefs.map(p => `<div class="strength-item"><i class="fas fa-star"></i><span>${p}</span></div>`).join('');
-                }
-                if (t.additional_notes) {
-                    html += `<div style="margin-top: 0.75rem; font-size: 0.9375rem; color: var(--text-primary); line-height: 1.6;">${t.additional_notes}</div>`;
-                }
-                html += `</div>`;
+            // Additional Notes
+            if (t.additional_notes) {
+                html += `
+                    <div class="detail-section">
+                        <div class="detail-section-title">Additional Notes</div>
+                        <div style="font-size: 0.9375rem; color: var(--text-primary); line-height: 1.6;">${t.additional_notes}</div>
+                    </div>
+                `;
             }
 
             document.getElementById('modalBody').innerHTML = html;

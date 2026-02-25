@@ -328,6 +328,7 @@
         }
         .form-textarea { resize: vertical; min-height: 100px; }
         .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .form-hint { font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem; }
 
         /* Toggle Switch */
         .toggle-group {
@@ -349,6 +350,46 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         }
         .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+        /* Comfort Level Slider */
+        .comfort-slider-group {
+            padding: 1.25rem; background: var(--gray-50); border-radius: 10px; margin-bottom: 1rem;
+        }
+        .comfort-slider-label {
+            font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;
+        }
+        .comfort-slider-description {
+            font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5;
+        }
+        .comfort-slider-wrapper {
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .comfort-slider-input {
+            flex: 1; -webkit-appearance: none; appearance: none;
+            height: 8px; border-radius: 4px; background: var(--gray-200); outline: none;
+        }
+        .comfort-slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            cursor: pointer; box-shadow: 0 2px 6px rgba(96, 165, 250, 0.4);
+        }
+        .comfort-slider-input::-moz-range-thumb {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            cursor: pointer; border: none;
+        }
+        .comfort-slider-value {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: 700;
+        }
+        .comfort-slider-labels {
+            display: flex; justify-content: space-between;
+            margin-top: 0.5rem; font-size: 0.6875rem; color: var(--text-light);
+        }
 
         /* Rich Text Editor */
         .rich-editor {
@@ -620,7 +661,7 @@
         </div>
     </main>
 
-    <!-- Teacher Modal (same as before with all tabs) -->
+    <!-- Teacher Modal -->
     <div id="teacherModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -638,37 +679,151 @@
                         <button type="button" class="modal-tab" data-modal-tab="languages">Languages</button>
                         <button type="button" class="modal-tab" data-modal-tab="instruments">Instruments</button>
                     </div>
+
+                    <!-- Basic Info Tab -->
                     <div id="basicTab" class="modal-tab-content active">
-                        <div class="form-row"><div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="teacherFirstName" required></div><div class="form-group"><label class="form-label">Last Name *</label><input type="text" class="form-input" id="teacherLastName" required></div></div>
-                        <div class="form-row"><div class="form-group"><label class="form-label">Studio Brand *</label><input type="text" class="form-input" id="teacherBrand" required placeholder="e.g., Main Music School"></div><div class="form-group"><label class="form-label">State</label><input type="text" class="form-input" id="teacherState" placeholder="e.g., Utah"></div></div>
-                        <div class="form-row"><div class="form-group"><label class="form-label">Gender</label><select class="form-select" id="teacherGender"><option value="">Select gender...</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div><div class="form-group"><label class="form-label">Year Started at Studio</label><input type="number" class="form-input" id="teacherYearStarted" placeholder="e.g., 2020"></div></div>
-                        <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="teacherStatus"><option value="active">Active</option><option value="pending">Pending</option><option value="inactive">Inactive</option></select></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name *</label>
+                                <input type="text" class="form-input" id="teacherFirstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name *</label>
+                                <input type="text" class="form-input" id="teacherLastName" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Studio Brand *</label>
+                                <input type="text" class="form-input" id="teacherBrand" required placeholder="e.g., Main Music School">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-input" id="teacherState" placeholder="e.g., Utah">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Gender</label>
+                                <select class="form-select" id="teacherGender">
+                                    <option value="">Select gender...</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                    <option value="Prefer not to say">Prefer not to say</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Year Started at Studio</label>
+                                <input type="number" class="form-input" id="teacherYearStarted" placeholder="e.g., 2020" min="1950" max="2026">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="teacherStatus">
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <!-- Education Tab -->
                     <div id="educationTab" class="modal-tab-content">
-                        <div class="toggle-group"><span class="toggle-label">Formal Music Education</span><label class="toggle-switch"><input type="checkbox" id="teacherFormalEducation"><span class="toggle-slider"></span></label></div>
-                        <div class="form-group"><label class="form-label">Education Details</label><div class="rich-editor"><div class="rich-editor-toolbar"><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherEducationDetails').focus();document.execCommand('bold')" title="Bold"><i class="fas fa-bold"></i></button><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherEducationDetails').focus();document.execCommand('italic')" title="Italic"><i class="fas fa-italic"></i></button></div><div class="rich-editor-content" id="teacherEducationDetails" contenteditable="true" data-placeholder="e.g., Juilliard School - Bachelor of Music"></div></div></div>
-                        <div class="form-group"><label class="form-label">Teaching Strength 1</label><input type="text" class="form-input" id="teacherStrength1" placeholder="e.g., Patient with beginners"></div>
-                        <div class="form-group"><label class="form-label">Teaching Strength 2</label><input type="text" class="form-input" id="teacherStrength2" placeholder="e.g., Strong classical technique"></div>
-                        <div class="form-group"><label class="form-label">Teaching Strength 3</label><input type="text" class="form-input" id="teacherStrength3" placeholder="e.g., Competition preparation"></div>
+                        <div class="toggle-group">
+                            <span class="toggle-label">Formal Music Education</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="teacherFormalEducation">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Education Details</label>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="document.getElementById('teacherEducationDetails').focus();document.execCommand('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                    <button type="button" class="toolbar-btn" onclick="document.getElementById('teacherEducationDetails').focus();document.execCommand('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                </div>
+                                <div class="rich-editor-content" id="teacherEducationDetails" contenteditable="true" data-placeholder="e.g., Juilliard School - Bachelor of Music"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teaching Strength 1</label>
+                            <input type="text" class="form-input" id="teacherStrength1" placeholder="e.g., Patient with beginners">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teaching Strength 2</label>
+                            <input type="text" class="form-input" id="teacherStrength2" placeholder="e.g., Strong classical technique">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teaching Strength 3</label>
+                            <input type="text" class="form-input" id="teacherStrength3" placeholder="e.g., Competition preparation">
+                        </div>
                     </div>
+
+                    <!-- Preferences Tab -->
                     <div id="preferencesTab" class="modal-tab-content">
-                        <div class="toggle-group"><span class="toggle-label">Willing to Teach Special Needs Students</span><label class="toggle-switch"><input type="checkbox" id="teacherSpecialNeeds"><span class="toggle-slider"></span></label></div>
-                        <div class="toggle-group"><span class="toggle-label">Willing to Teach Online</span><label class="toggle-switch"><input type="checkbox" id="teacherOnline"><span class="toggle-slider"></span></label></div>
-                        <div class="toggle-group"><span class="toggle-label">Online Only</span><label class="toggle-switch"><input type="checkbox" id="teacherOnlineOnly"><span class="toggle-slider"></span></label></div>
-                        <div class="form-group"><label class="form-label">Additional Notes</label><div class="rich-editor"><div class="rich-editor-toolbar"><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherNotes').focus();document.execCommand('bold')" title="Bold"><i class="fas fa-bold"></i></button><button type="button" class="toolbar-btn" onclick="document.getElementById('teacherNotes').focus();document.execCommand('italic')" title="Italic"><i class="fas fa-italic"></i></button></div><div class="rich-editor-content" id="teacherNotes" contenteditable="true" data-placeholder="Any other information about this teacher..."></div></div></div>
+                        <div class="toggle-group">
+                            <span class="toggle-label">Willing to Teach Special Needs Students</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="teacherSpecialNeeds">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="comfort-slider-group">
+                            <div class="comfort-slider-label">Comfort Level with Diverse Learning Needs</div>
+                            <div class="comfort-slider-description">
+                                How comfortable is this teacher with students who have ADHD, autism spectrum, dyslexia, or other conditions requiring adapted teaching?
+                            </div>
+                            <div class="comfort-slider-wrapper">
+                                <input type="range" class="comfort-slider-input" id="teacherLearningNeedsComfort" min="1" max="10" value="5" oninput="updateComfortSliderDisplay(this.value)">
+                                <div class="comfort-slider-value" id="comfortSliderValue">5</div>
+                            </div>
+                            <div class="comfort-slider-labels">
+                                <span>1 - Less comfortable</span>
+                                <span>10 - Very comfortable</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes</label>
+                            <div class="rich-editor">
+                                <div class="rich-editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="document.getElementById('teacherNotes').focus();document.execCommand('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                                    <button type="button" class="toolbar-btn" onclick="document.getElementById('teacherNotes').focus();document.execCommand('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                                </div>
+                                <div class="rich-editor-content" id="teacherNotes" contenteditable="true" data-placeholder="Any other information about this teacher..."></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Cities Tab -->
                     <div id="citiesTab" class="modal-tab-content">
                         <div class="form-label" style="margin-bottom: 0.75rem;">Cities Where Teacher Works</div>
                         <div id="citiesContainer" class="tags-container"></div>
-                        <div class="add-tag-row"><input type="text" id="newCity" placeholder="Add city"><button type="button" class="btn btn-primary btn-small" onclick="addCity()"><i class="fas fa-plus"></i> Add</button></div>
+                        <div class="add-tag-row">
+                            <input type="text" id="newCity" placeholder="Add city">
+                            <button type="button" class="btn btn-primary btn-small" onclick="addCity()"><i class="fas fa-plus"></i> Add</button>
+                        </div>
                     </div>
+
+                    <!-- Languages Tab -->
                     <div id="languagesTab" class="modal-tab-content">
                         <div class="form-label" style="margin-bottom: 0.75rem;">Languages Teacher Can Teach In</div>
                         <div id="languagesContainer" class="tags-container"></div>
-                        <div class="add-tag-row"><input type="text" id="newLanguage" placeholder="Add language"><button type="button" class="btn btn-primary btn-small" onclick="addLanguage()"><i class="fas fa-plus"></i> Add</button></div>
+                        <div class="add-tag-row">
+                            <input type="text" id="newLanguage" placeholder="Add language">
+                            <button type="button" class="btn btn-primary btn-small" onclick="addLanguage()"><i class="fas fa-plus"></i> Add</button>
+                        </div>
                     </div>
+
+                    <!-- Instruments Tab -->
                     <div id="instrumentsTab" class="modal-tab-content">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><div class="form-label" style="margin-bottom: 0;">Instruments Taught</div><button type="button" class="btn btn-primary btn-small" onclick="addInstrument()"><i class="fas fa-plus"></i> Add Instrument</button></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div class="form-label" style="margin-bottom: 0;">Instruments Taught</div>
+                            <button type="button" class="btn btn-primary btn-small" onclick="addInstrument()"><i class="fas fa-plus"></i> Add Instrument</button>
+                        </div>
                         <div id="instrumentsContainer"></div>
                     </div>
                 </form>
@@ -708,6 +863,10 @@
             setupImportDragDrop();
             loadTeachers();
         });
+
+        function updateComfortSliderDisplay(value) {
+            document.getElementById('comfortSliderValue').textContent = value;
+        }
 
         function setupSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -820,6 +979,7 @@
 
             container.innerHTML = teachersList.map(teacher => {
                 const isPending = teacher.status === 'pending';
+                const comfortLevel = teacher.learning_needs_comfort;
                 return `
                 <div class="teacher-card ${isPending ? 'pending-card' : ''}">
                     <div class="teacher-card-header ${isPending ? 'pending-header' : ''}">
@@ -829,12 +989,13 @@
                     <div class="teacher-card-body">
                         ${teacher.state ? `<div class="teacher-info-row"><i class="fas fa-map-marker-alt"></i><span>${teacher.state}</span></div>` : ''}
                         ${teacher.instruments && teacher.instruments.length > 0 ? `<div class="teacher-info-row"><i class="fas fa-music"></i><span>${teacher.instruments.map(i => i.instrument).join(', ')}</span></div>` : ''}
+                        ${comfortLevel ? `<div class="teacher-info-row"><i class="fas fa-heart"></i><span>Learning Needs Comfort: ${comfortLevel}/10</span></div>` : ''}
                         <div class="teacher-badges">
                             <span class="teacher-badge ${teacher.status === 'active' ? 'badge-success' : teacher.status === 'pending' ? 'badge-pending' : 'badge-warning'}">
                                 ${teacher.status || 'active'}
                             </span>
                             ${teacher.formal_music_education ? '<span class="teacher-badge badge-info">Formal Education</span>' : ''}
-                            ${teacher.online_willing ? '<span class="teacher-badge badge-info">Online</span>' : ''}
+                            ${teacher.special_needs_willing ? '<span class="teacher-badge badge-purple">Special Needs</span>' : ''}
                         </div>
                         <div class="teacher-card-actions">
                             ${isPending ? `
@@ -974,8 +1135,7 @@
                         teaching_strength_2: row.teaching_strength_2 || null,
                         teaching_strength_3: row.teaching_strength_3 || null,
                         special_needs_willing: row.special_needs_willing === 'true' || row.special_needs_willing === true,
-                        online_willing: row.online_willing === 'true' || row.online_willing === true,
-                        online_only: row.online_only === 'true' || row.online_only === true,
+                        learning_needs_comfort: row.learning_needs_comfort ? parseInt(row.learning_needs_comfort) : null,
                         additional_notes: row.additional_notes || null
                     };
 
@@ -1021,7 +1181,7 @@
 
         function downloadTemplate(type) {
             if (type === 'csv') {
-                const csv = 'first_name,last_name,brand,state,gender,year_started_at_studio,formal_music_education,formal_education_details,teaching_strength_1,teaching_strength_2,teaching_strength_3,special_needs_willing,online_willing,online_only,additional_notes,cities,languages,instruments\nJane,Smith,Music Academy,Utah,Female,2020,true,Berklee - BM,Patient with beginners,Strong technique,,true,true,false,,Salt Lake City;Provo,English;Spanish,Piano;Guitar';
+                const csv = 'first_name,last_name,brand,state,gender,year_started_at_studio,formal_music_education,formal_education_details,teaching_strength_1,teaching_strength_2,teaching_strength_3,special_needs_willing,learning_needs_comfort,additional_notes,cities,languages,instruments\nJane,Smith,Music Academy,Utah,Female,2020,true,Berklee - BM,Patient with beginners,Strong technique,,true,7,,Salt Lake City;Provo,English;Spanish,Piano;Guitar';
                 downloadFile(csv, 'teacher_import_template.csv', 'text/csv');
             } else {
                 const json = JSON.stringify([{
@@ -1029,7 +1189,7 @@
                     gender: "Female", year_started_at_studio: 2020, formal_music_education: true,
                     formal_education_details: "Berklee - BM", teaching_strength_1: "Patient with beginners",
                     teaching_strength_2: "Strong technique", teaching_strength_3: "",
-                    special_needs_willing: true, online_willing: true, online_only: false,
+                    special_needs_willing: true, learning_needs_comfort: 7,
                     additional_notes: "", cities: "Salt Lake City;Provo", languages: "English;Spanish",
                     instruments: "Piano;Guitar"
                 }], null, 2);
@@ -1054,6 +1214,8 @@
             document.querySelectorAll('.modal-tab-content').forEach((tc, i) => tc.classList.toggle('active', i === 0));
             document.getElementById('teacherEducationDetails').innerHTML = '';
             document.getElementById('teacherNotes').innerHTML = '';
+            document.getElementById('teacherLearningNeedsComfort').value = 5;
+            updateComfortSliderDisplay(5);
             currentCities = []; currentLanguages = []; currentInstruments = [];
             deletedCityIds = []; deletedLanguageIds = []; deletedInstrumentIds = [];
             renderCities(); renderLanguages(); renderInstruments();
@@ -1080,12 +1242,23 @@
             document.getElementById('teacherStrength2').value = teacher.teaching_strength_2 || '';
             document.getElementById('teacherStrength3').value = teacher.teaching_strength_3 || '';
             document.getElementById('teacherSpecialNeeds').checked = teacher.special_needs_willing || false;
-            document.getElementById('teacherOnline').checked = teacher.online_willing || false;
-            document.getElementById('teacherOnlineOnly').checked = teacher.online_only || false;
+            const comfortVal = teacher.learning_needs_comfort || 5;
+            document.getElementById('teacherLearningNeedsComfort').value = comfortVal;
+            updateComfortSliderDisplay(comfortVal);
             document.getElementById('teacherNotes').innerHTML = teacher.additional_notes || '';
             currentCities = (teacher.cities || []).map(c => ({ id: c.id, city: c.city, isNew: false })); deletedCityIds = []; renderCities();
             currentLanguages = (teacher.languages || []).map(l => ({ id: l.id, language: l.language, isNew: false })); deletedLanguageIds = []; renderLanguages();
-            currentInstruments = (teacher.instruments || []).map(i => ({ id: i.id, instrument: i.instrument, teacher_level: i.teacher_level || '', youngest_age_preference: i.youngest_age_preference || '', achievements_credentials: i.achievements_credentials || '', year_started: i.year_started || '', genres: i.genres || '', notes: i.notes || '', isNew: false }));
+            currentInstruments = (teacher.instruments || []).map(i => ({ 
+                id: i.id, 
+                instrument: i.instrument, 
+                teacher_level: i.teacher_level || '', 
+                youngest_age_preference: i.youngest_age_preference || '', 
+                achievements_credentials: i.achievements_credentials || '', 
+                year_started: i.year_started || '', 
+                genres: i.genres || '', 
+                notes: i.notes || '', 
+                isNew: false 
+            }));
             deletedInstrumentIds = []; renderInstruments();
             document.getElementById('teacherModal').classList.add('active');
         }
@@ -1103,8 +1276,20 @@
         function renderLanguages() { const c = document.getElementById('languagesContainer'); if (currentLanguages.length === 0) { c.innerHTML = '<span style="color:var(--text-light);font-size:0.875rem;">No languages added yet</span>'; return; } c.innerHTML = currentLanguages.map((l, i) => `<span class="tag">${l.language}<button type="button" onclick="removeLanguage(${i})"><i class="fas fa-times"></i></button></span>`).join(''); }
 
         // Instruments
-        function addInstrument() { currentInstruments.push({ id: null, instrument: '', teacher_level: '', youngest_age_preference: '', achievements_credentials: '', year_started: '', genres: '', notes: '', isNew: true }); renderInstruments(); }
-        function removeInstrument(i) { const inst = currentInstruments[i]; if (inst.id && !inst.isNew) deletedInstrumentIds.push(inst.id); currentInstruments.splice(i, 1); renderInstruments(); }
+        function addInstrument() { 
+            currentInstruments.push({ 
+                id: null, instrument: '', teacher_level: '', youngest_age_preference: '', 
+                achievements_credentials: '', year_started: '', genres: '', notes: '', isNew: true 
+            }); 
+            renderInstruments(); 
+        }
+        function removeInstrument(i) { 
+            if (!confirm('Are you sure you want to remove this instrument?')) return;
+            const inst = currentInstruments[i]; 
+            if (inst.id && !inst.isNew) deletedInstrumentIds.push(inst.id); 
+            currentInstruments.splice(i, 1); 
+            renderInstruments(); 
+        }
         function updateInstrument(i, f, v) { currentInstruments[i][f] = v; }
 
         function renderInstruments() {
@@ -1112,12 +1297,49 @@
             if (currentInstruments.length === 0) { c.innerHTML = '<p style="color:var(--text-light);font-size:0.875rem;text-align:center;padding:2rem;">No instruments added yet.</p>'; return; }
             c.innerHTML = currentInstruments.map((inst, i) => `
                 <div class="instrument-card">
-                    <div class="instrument-card-header"><span class="instrument-card-title">${inst.instrument || 'New Instrument'}</span><button type="button" class="remove-instrument-btn" onclick="removeInstrument(${i})"><i class="fas fa-times"></i></button></div>
-                    <div class="form-row"><div class="form-group"><label class="form-label">Instrument Name *</label><input type="text" class="form-input" value="${inst.instrument}" onchange="updateInstrument(${i},'instrument',this.value)" placeholder="e.g., Piano"></div><div class="form-group"><label class="form-label">Teaching Level</label><select class="form-select" onchange="updateInstrument(${i},'teacher_level',this.value)"><option value="">Select level...</option><option value="beginner" ${inst.teacher_level === 'beginner' ? 'selected' : ''}>Beginner</option><option value="intermediate" ${inst.teacher_level === 'intermediate' ? 'selected' : ''}>Intermediate</option><option value="advanced" ${inst.teacher_level === 'advanced' ? 'selected' : ''}>Advanced</option></select></div></div>
-                    <div class="form-row"><div class="form-group"><label class="form-label">Youngest Age Preference</label><input type="number" class="form-input" value="${inst.youngest_age_preference}" onchange="updateInstrument(${i},'youngest_age_preference',this.value)" placeholder="e.g., 5"></div><div class="form-group"><label class="form-label">Year Started Teaching</label><input type="number" class="form-input" value="${inst.year_started}" onchange="updateInstrument(${i},'year_started',this.value)" placeholder="e.g., 2015"></div></div>
-                    <div class="form-group"><label class="form-label">Genres</label><input type="text" class="form-input" value="${inst.genres}" onchange="updateInstrument(${i},'genres',this.value)" placeholder="e.g., Classical, Jazz, Pop"></div>
-                    <div class="form-group"><label class="form-label">Achievements / Credentials</label><input type="text" class="form-input" value="${inst.achievements_credentials}" onchange="updateInstrument(${i},'achievements_credentials',this.value)" placeholder="e.g., MTAC Certified"></div>
-                    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" style="min-height:60px;" onchange="updateInstrument(${i},'notes',this.value)" placeholder="Additional notes...">${inst.notes || ''}</textarea></div>
+                    <div class="instrument-card-header">
+                        <span class="instrument-card-title">${inst.instrument || 'New Instrument'}</span>
+                        <button type="button" class="remove-instrument-btn" onclick="removeInstrument(${i})"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Instrument Name *</label>
+                            <input type="text" class="form-input" value="${inst.instrument}" onchange="updateInstrument(${i},'instrument',this.value)" placeholder="e.g., Piano">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Highest Teaching Level</label>
+                            <select class="form-select" onchange="updateInstrument(${i},'teacher_level',this.value)">
+                                <option value="">Select level...</option>
+                                <option value="beginner" ${inst.teacher_level === 'beginner' ? 'selected' : ''}>Beginner</option>
+                                <option value="intermediate" ${inst.teacher_level === 'intermediate' ? 'selected' : ''}>Intermediate</option>
+                                <option value="advanced" ${inst.teacher_level === 'advanced' ? 'selected' : ''}>Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Youngest Age Preference</label>
+                            <input type="number" class="form-input" value="${inst.youngest_age_preference}" onchange="updateInstrument(${i},'youngest_age_preference',this.value)" placeholder="e.g., 5" min="3" max="18">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Year Started Teaching</label>
+                            <input type="number" class="form-input" value="${inst.year_started}" onchange="updateInstrument(${i},'year_started',this.value)" placeholder="e.g., 2015" min="1950" max="2026">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Genres</label>
+                        <input type="text" class="form-input" value="${inst.genres}" onchange="updateInstrument(${i},'genres',this.value)" placeholder="e.g., Classical, Jazz, Pop">
+                        <div class="form-hint">At our studio, teachers teach all genres. List any specializations here.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Certifications & Experience</label>
+                        <input type="text" class="form-input" value="${inst.achievements_credentials}" onchange="updateInstrument(${i},'achievements_credentials',this.value)" placeholder="e.g., MTAC Certified, 10 years teaching">
+                        <div class="form-hint">Certifications (MTAC, RCM) and notable experience</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-textarea" style="min-height:60px;" onchange="updateInstrument(${i},'notes',this.value)" placeholder="Additional notes...">${inst.notes || ''}</textarea>
+                    </div>
                 </div>
             `).join('');
         }
@@ -1139,8 +1361,7 @@
                 teaching_strength_2: document.getElementById('teacherStrength2').value,
                 teaching_strength_3: document.getElementById('teacherStrength3').value,
                 special_needs_willing: document.getElementById('teacherSpecialNeeds').checked,
-                online_willing: document.getElementById('teacherOnline').checked,
-                online_only: document.getElementById('teacherOnlineOnly').checked,
+                learning_needs_comfort: parseInt(document.getElementById('teacherLearningNeedsComfort').value),
                 additional_notes: document.getElementById('teacherNotes').innerHTML || null
             };
 
@@ -1164,7 +1385,17 @@
 
                 for (let i = 0; i < currentInstruments.length; i++) {
                     const inst = currentInstruments[i];
-                    const instData = { teacher_id: teacherId, instrument: inst.instrument, teacher_level: inst.teacher_level || null, youngest_age_preference: inst.youngest_age_preference ? parseInt(inst.youngest_age_preference) : null, achievements_credentials: inst.achievements_credentials || null, year_started: inst.year_started ? parseInt(inst.year_started) : null, genres: inst.genres || null, notes: inst.notes || null, order_index: i };
+                    const instData = { 
+                        teacher_id: teacherId, 
+                        instrument: inst.instrument, 
+                        teacher_level: inst.teacher_level || null, 
+                        youngest_age_preference: inst.youngest_age_preference ? parseInt(inst.youngest_age_preference) : null, 
+                        achievements_credentials: inst.achievements_credentials || null, 
+                        year_started: inst.year_started ? parseInt(inst.year_started) : null, 
+                        genres: inst.genres || null, 
+                        notes: inst.notes || null, 
+                        order_index: i 
+                    };
                     if (inst.isNew) await supabaseClient.from('teacher_instruments').insert(instData);
                     else await supabaseClient.from('teacher_instruments').update(instData).eq('id', inst.id);
                 }

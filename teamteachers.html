@@ -367,6 +367,50 @@
         .empty-state p { font-size: 1rem; }
         .loading { display: flex; align-items: center; justify-content: center; min-height: 400px; color: var(--text-secondary); font-size: 1.125rem; }
 
+        /* Instrument Checkbox Filter */
+        .instrument-filter-section {
+            grid-column: 1 / -1;
+            margin-top: 0.5rem;
+        }
+        .instrument-filter-label {
+            font-size: 0.75rem; font-weight: 600;
+            color: var(--text-secondary); margin-bottom: 0.5rem;
+            text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .instrument-checkbox-grid {
+            display: flex; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .instrument-checkbox {
+            display: flex; align-items: center; gap: 0.375rem;
+            padding: 0.5rem 0.75rem; background: var(--gray-50);
+            border: 1.5px solid var(--gray-200); border-radius: 8px;
+            cursor: pointer; transition: all 0.2s; user-select: none;
+            font-size: 0.8125rem; font-weight: 500; color: var(--text-primary);
+        }
+        .instrument-checkbox:hover { border-color: var(--primary-light); }
+        .instrument-checkbox.selected {
+            border-color: var(--primary);
+            background: rgba(250, 128, 114, 0.1);
+            color: var(--primary-dark);
+        }
+        .instrument-checkbox .check-icon {
+            width: 16px; height: 16px;
+            border: 2px solid var(--gray-300); border-radius: 3px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.625rem; color: transparent; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .instrument-checkbox.selected .check-icon {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-color: transparent; color: white;
+        }
+        .selected-instruments-info {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
         /* List view card adjustments */
         .teachers-grid.list-view .teacher-card { flex-direction: row; }
         .teachers-grid.list-view .teacher-card-header { min-width: 220px; display: flex; flex-direction: column; justify-content: center; }
@@ -482,20 +526,24 @@
                 <!-- Dropdowns -->
                 <div class="filter-group">
                     <label>State</label>
-                    <select id="filterState" class="filter-select"><option value="">All States</option></select>
+                    <select id="filterState" class="filter-select" onchange="onStateFilterChange()"><option value="">All States</option></select>
                 </div>
                 <div class="filter-group">
                     <label>Brand / Studio</label>
-                    <select id="filterBrand" class="filter-select"><option value="">All Brands</option></select>
+                    <select id="filterBrand" class="filter-select" onchange="onBrandFilterChange()"><option value="">All Brands</option></select>
                 </div>
                 <div class="filter-group">
                     <label>City</label>
                     <select id="filterCity" class="filter-select"><option value="">All Cities</option></select>
                 </div>
-                <div class="filter-group">
-                    <label>Instrument</label>
-                    <select id="filterInstrument" class="filter-select"><option value="">All Instruments</option></select>
+                
+                <!-- Instrument Checkboxes -->
+                <div class="instrument-filter-section">
+                    <div class="instrument-filter-label">Instruments (select multiple to find teachers who teach ALL selected)</div>
+                    <div id="instrumentCheckboxGrid" class="instrument-checkbox-grid"></div>
+                    <div id="selectedInstrumentsInfo" class="selected-instruments-info"></div>
                 </div>
+                
                 <div class="filter-group">
                     <label>Highest Level</label>
                     <select id="filterLevel" class="filter-select">
@@ -525,12 +573,15 @@
                     <select id="filterLanguage" class="filter-select"><option value="">All Languages</option></select>
                 </div>
                 <div class="filter-group">
-                    <label>Learning Needs Comfort</label>
+                    <label>Neurodiverse Comfort</label>
                     <select id="filterComfort" class="filter-select">
                         <option value="">Any Comfort Level</option>
+                        <option value="5">5+ (Some Experience)</option>
+                        <option value="6">6+ (Moderate)</option>
                         <option value="7">7+ (Comfortable)</option>
                         <option value="8">8+ (Very Comfortable)</option>
                         <option value="9">9+ (Highly Experienced)</option>
+                        <option value="10">10 (Expert)</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -596,6 +647,7 @@
         let zones = [];
         let currentView = 'grid';
         let activeZone = 'all';
+        let selectedInstruments = []; // Array of selected instrument names for multi-select
 
         document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -632,7 +684,7 @@
         function setupFilterListeners() {
             document.getElementById('teacherSearch').addEventListener('input', applyFilters);
             [
-                'filterState', 'filterBrand', 'filterCity', 'filterInstrument', 
+                'filterCity', 
                 'filterLevel', 'filterGenre', 'filterAge', 'filterLanguage',
                 'filterComfort', 'filterSpecialNeeds', 'filterFormalEd'
             ].forEach(id => {
@@ -684,21 +736,16 @@
         }
 
         function populateFilterOptions() {
-            // States
+            // States - always show all states from teachers
             const states = [...new Set(teachers.map(t => t.state).filter(Boolean))].sort();
             populateSelect('filterState', states, 'All States');
 
-            // Brands
-            const brandNames = [...new Set(teachers.map(t => t.brand).filter(Boolean))].sort();
-            populateSelect('filterBrand', brandNames, 'All Brands');
+            // Initial population of brands and cities (all)
+            updateBrandOptions();
+            updateCityOptions();
 
-            // Cities
-            const cityNames = [...new Set(teachers.flatMap(t => t.cities.map(c => c.city)).filter(Boolean))].sort();
-            populateSelect('filterCity', cityNames, 'All Cities');
-
-            // Instruments
-            const instrumentNames = [...new Set(teachers.flatMap(t => t.instruments.map(i => i.instrument)).filter(Boolean))].sort();
-            populateSelect('filterInstrument', instrumentNames, 'All Instruments');
+            // Instruments - render as checkboxes
+            renderInstrumentCheckboxes();
 
             // Languages
             const languageNames = [...new Set(teachers.flatMap(t => t.languages.map(l => l.language)).filter(Boolean))].sort();
@@ -717,6 +764,105 @@
                 });
             });
             populateSelect('filterGenre', [...allGenres].sort(), 'All Genres');
+        }
+
+        function onStateFilterChange() {
+            // Reset brand and city when state changes
+            document.getElementById('filterBrand').value = '';
+            document.getElementById('filterCity').value = '';
+            updateBrandOptions();
+            updateCityOptions();
+            applyFilters();
+        }
+
+        function onBrandFilterChange() {
+            // Reset city when brand changes
+            document.getElementById('filterCity').value = '';
+            updateCityOptions();
+            applyFilters();
+        }
+
+        function updateBrandOptions() {
+            const selectedState = document.getElementById('filterState').value;
+            
+            // Get brands based on state filter
+            let filteredTeachers = teachers;
+            if (selectedState) {
+                filteredTeachers = teachers.filter(t => t.state === selectedState);
+            }
+            
+            const brandNames = [...new Set(filteredTeachers.map(t => t.brand).filter(Boolean))].sort();
+            const currentBrand = document.getElementById('filterBrand').value;
+            populateSelect('filterBrand', brandNames, 'All Brands');
+            
+            // Restore selection if still valid
+            if (brandNames.includes(currentBrand)) {
+                document.getElementById('filterBrand').value = currentBrand;
+            }
+        }
+
+        function updateCityOptions() {
+            const selectedState = document.getElementById('filterState').value;
+            const selectedBrand = document.getElementById('filterBrand').value;
+            
+            // Get cities based on state and brand filters
+            let filteredTeachers = teachers;
+            if (selectedState) {
+                filteredTeachers = filteredTeachers.filter(t => t.state === selectedState);
+            }
+            if (selectedBrand) {
+                filteredTeachers = filteredTeachers.filter(t => t.brand === selectedBrand);
+            }
+            
+            const cityNames = [...new Set(filteredTeachers.flatMap(t => t.cities.map(c => c.city)).filter(Boolean))].sort();
+            const currentCity = document.getElementById('filterCity').value;
+            populateSelect('filterCity', cityNames, 'All Cities');
+            
+            // Restore selection if still valid
+            if (cityNames.includes(currentCity)) {
+                document.getElementById('filterCity').value = currentCity;
+            }
+        }
+
+        function renderInstrumentCheckboxes() {
+            const instrumentNames = [...new Set(teachers.flatMap(t => t.instruments.map(i => i.instrument)).filter(Boolean))].sort();
+            const container = document.getElementById('instrumentCheckboxGrid');
+            
+            container.innerHTML = instrumentNames.map(inst => {
+                const isSelected = selectedInstruments.includes(inst);
+                return `
+                    <div class="instrument-checkbox ${isSelected ? 'selected' : ''}" onclick="toggleInstrumentFilter('${inst}', this)">
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                        <span>${inst}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            updateSelectedInstrumentsInfo();
+        }
+
+        function toggleInstrumentFilter(instrument, el) {
+            const idx = selectedInstruments.indexOf(instrument);
+            if (idx === -1) {
+                selectedInstruments.push(instrument);
+                el.classList.add('selected');
+            } else {
+                selectedInstruments.splice(idx, 1);
+                el.classList.remove('selected');
+            }
+            updateSelectedInstrumentsInfo();
+            applyFilters();
+        }
+
+        function updateSelectedInstrumentsInfo() {
+            const info = document.getElementById('selectedInstrumentsInfo');
+            if (selectedInstruments.length === 0) {
+                info.textContent = '';
+            } else if (selectedInstruments.length === 1) {
+                info.textContent = `Showing teachers who teach: ${selectedInstruments[0]}`;
+            } else {
+                info.textContent = `Showing teachers who teach ALL of: ${selectedInstruments.join(', ')}`;
+            }
         }
 
         function populateSelect(id, values, defaultLabel) {
@@ -765,13 +911,19 @@
             if (activeZone !== 'all') filters.zone = activeZone;
 
             [
-                'filterState', 'filterBrand', 'filterCity', 'filterInstrument', 
+                'filterState', 'filterBrand', 'filterCity', 
                 'filterLevel', 'filterGenre', 'filterAge', 'filterLanguage',
                 'filterComfort', 'filterSpecialNeeds', 'filterFormalEd'
             ].forEach(id => {
                 const val = document.getElementById(id).value;
                 if (val) filters[id] = val;
             });
+            
+            // Add selected instruments
+            if (selectedInstruments.length > 0) {
+                filters.selectedInstruments = [...selectedInstruments];
+            }
+            
             return filters;
         }
 
@@ -798,16 +950,25 @@
                 // Language
                 if (filters.filterLanguage && !t.languages.some(l => l.language === filters.filterLanguage)) return false;
 
-                // Instrument
-                if (filters.filterInstrument && !t.instruments.some(i => i.instrument === filters.filterInstrument)) return false;
+                // Instruments - must teach ALL selected instruments
+                if (filters.selectedInstruments && filters.selectedInstruments.length > 0) {
+                    const teacherInstruments = t.instruments.map(i => i.instrument);
+                    const hasAllInstruments = filters.selectedInstruments.every(inst => 
+                        teacherInstruments.includes(inst)
+                    );
+                    if (!hasAllInstruments) return false;
+                }
 
                 // Level — teacher has at least one instrument at or above this level
                 if (filters.filterLevel) {
                     const levelOrder = { beginner: 1, intermediate: 2, advanced: 3 };
                     const targetLevel = levelOrder[filters.filterLevel] || 0;
                     let relevantInstruments = t.instruments;
-                    if (filters.filterInstrument) {
-                        relevantInstruments = relevantInstruments.filter(i => i.instrument === filters.filterInstrument);
+                    // If instruments are selected, only check level for those instruments
+                    if (filters.selectedInstruments && filters.selectedInstruments.length > 0) {
+                        relevantInstruments = relevantInstruments.filter(i => 
+                            filters.selectedInstruments.includes(i.instrument)
+                        );
                     }
                     const hasLevel = relevantInstruments.some(i => (levelOrder[i.teacher_level] || 0) >= targetLevel);
                     if (!hasLevel) return false;
@@ -815,7 +976,14 @@
 
                 // Genre
                 if (filters.filterGenre) {
-                    const hasGenre = t.instruments.some(i =>
+                    let relevantInstruments = t.instruments;
+                    // If instruments are selected, only check genres for those instruments
+                    if (filters.selectedInstruments && filters.selectedInstruments.length > 0) {
+                        relevantInstruments = relevantInstruments.filter(i => 
+                            filters.selectedInstruments.includes(i.instrument)
+                        );
+                    }
+                    const hasGenre = relevantInstruments.some(i =>
                         i.genres && i.genres.split(',').map(g => g.trim()).includes(filters.filterGenre)
                     );
                     if (!hasGenre) return false;
@@ -825,8 +993,11 @@
                 if (filters.filterAge) {
                     const age = parseInt(filters.filterAge);
                     let relevantInstruments = t.instruments;
-                    if (filters.filterInstrument) {
-                        relevantInstruments = relevantInstruments.filter(i => i.instrument === filters.filterInstrument);
+                    // If instruments are selected, only check age for those instruments
+                    if (filters.selectedInstruments && filters.selectedInstruments.length > 0) {
+                        relevantInstruments = relevantInstruments.filter(i => 
+                            filters.selectedInstruments.includes(i.instrument)
+                        );
                     }
                     const acceptsAge = relevantInstruments.some(i =>
                         i.youngest_age_preference && parseInt(i.youngest_age_preference) <= age
@@ -862,7 +1033,6 @@
                 filterState: () => `State: ${filters.filterState}`,
                 filterBrand: () => `Brand: ${filters.filterBrand}`,
                 filterCity: () => `City: ${filters.filterCity}`,
-                filterInstrument: () => `Instrument: ${filters.filterInstrument}`,
                 filterLevel: () => `Level: ${filters.filterLevel}`,
                 filterGenre: () => `Genre: ${filters.filterGenre}`,
                 filterAge: () => `Age: ${filters.filterAge}`,
@@ -883,6 +1053,13 @@
                     }
                 }
             });
+            
+            // Add chips for each selected instrument
+            if (filters.selectedInstruments) {
+                filters.selectedInstruments.forEach(inst => {
+                    chips.push(`<span class="filter-chip">Instrument: ${inst}<button onclick="clearInstrumentFilter('${inst}')">&times;</button></span>`);
+                });
+            }
 
             if (chips.length > 1) {
                 chips.push(`<button class="clear-all-btn" onclick="clearAllFilters()">Clear All</button>`);
@@ -891,8 +1068,29 @@
             container.innerHTML = chips.join('');
         }
 
+        function clearInstrumentFilter(instrument) {
+            const idx = selectedInstruments.indexOf(instrument);
+            if (idx !== -1) {
+                selectedInstruments.splice(idx, 1);
+            }
+            renderInstrumentCheckboxes();
+            applyFilters();
+        }
+
         function clearFilter(filterId) {
             document.getElementById(filterId).value = '';
+            
+            // Handle cascading resets
+            if (filterId === 'filterState') {
+                document.getElementById('filterBrand').value = '';
+                document.getElementById('filterCity').value = '';
+                updateBrandOptions();
+                updateCityOptions();
+            } else if (filterId === 'filterBrand') {
+                document.getElementById('filterCity').value = '';
+                updateCityOptions();
+            }
+            
             applyFilters();
         }
 
@@ -901,12 +1099,18 @@
             activeZone = 'all';
             renderZoneTabs();
             [
-                'filterState', 'filterBrand', 'filterCity', 'filterInstrument', 
+                'filterState', 'filterBrand', 'filterCity', 
                 'filterLevel', 'filterGenre', 'filterAge', 'filterLanguage',
                 'filterComfort', 'filterSpecialNeeds', 'filterFormalEd'
             ].forEach(id => {
                 document.getElementById(id).value = '';
             });
+            // Clear selected instruments
+            selectedInstruments = [];
+            renderInstrumentCheckboxes();
+            // Reset cascading filters
+            updateBrandOptions();
+            updateCityOptions();
             applyFilters();
         }
 

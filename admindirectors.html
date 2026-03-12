@@ -382,6 +382,78 @@
     .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; }
     .checkbox-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--color-coral); }
 
+    /* ── RESPONSIBILITIES STYLES ── */
+    .resp-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+
+    .resp-tab-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border: 1px solid var(--color-border);
+      background: var(--color-white); border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500; color: var(--color-text-muted);
+      cursor: pointer; transition: all 0.15s ease; font-family: inherit;
+    }
+
+    .resp-tab-btn:hover { border-color: var(--color-coral); color: var(--color-text); }
+    .resp-tab-btn.active { background: var(--gradient-hero); color: white; border-color: transparent; }
+    .resp-tab-btn.active .resp-tab-dot { opacity: 0.8; }
+
+    .resp-tab-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    .resp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .resp-card {
+      background: var(--color-white); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); overflow: hidden;
+      transition: all 0.15s ease;
+    }
+
+    .resp-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+    .resp-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--color-border);
+      gap: 10px;
+    }
+
+    .resp-card-title-row { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+
+    .resp-owner-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; flex-shrink: 0;
+    }
+
+    .resp-owner-badge.enrollment {
+      background: rgba(249, 123, 95, 0.12); color: var(--color-coral);
+    }
+
+    .resp-owner-badge.studio {
+      background: rgba(59, 130, 246, 0.12); color: var(--color-info);
+    }
+
+    .resp-card-title { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .resp-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .resp-card-actions .action-btn { width: 28px; height: 28px; }
+    .resp-card-actions .action-btn svg { width: 13px; height: 13px; }
+
+    .resp-card-body {
+      padding: 14px 16px; font-size: 13px; color: var(--color-text-muted);
+      line-height: 1.6; max-height: 200px; overflow-y: auto;
+    }
+
+    .resp-card-body ul, .resp-card-body ol { padding-left: 18px; }
+    .resp-card-body li { margin-bottom: 4px; }
+    .resp-card-body p { margin-bottom: 8px; }
+    .resp-card-body p:last-child { margin-bottom: 0; }
+    .resp-card-body:empty::before { content: 'No notes added.'; color: var(--color-text-light); font-style: italic; }
+
     /* ── LINKS SECTION STYLES ── */
     .links-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; }
 
@@ -647,22 +719,29 @@
       </div>
     </section>
 
-    <!-- Responsibilities placeholder -->
+    <!-- Responsibilities -->
     <section id="responsibilities" class="section">
       <div class="page-header">
         <div class="page-header-row">
-          <div><h1>Responsibilities</h1><p>Define team responsibilities</p></div>
+          <div><h1>Responsibilities</h1><p>Manage Studio and Enrollment responsibilities</p></div>
+          <button class="btn btn-primary" onclick="openModal('responsibility')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Responsibility
+          </button>
         </div>
       </div>
-      <div class="card">
-        <div class="empty-state">
-          <div class="empty-state-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path></svg>
-          </div>
-          <h3>Coming soon</h3>
-          <p>The responsibilities section is being built out.</p>
-        </div>
+
+      <div class="resp-tabs">
+        <button class="resp-tab-btn active" onclick="switchRespTab('all', this)">All</button>
+        <button class="resp-tab-btn" onclick="switchRespTab('enrollment', this)">
+          <span class="resp-tab-dot" style="background:#F97B5F;"></span>Enrollment
+        </button>
+        <button class="resp-tab-btn" onclick="switchRespTab('studio', this)">
+          <span class="resp-tab-dot" style="background:#3B82F6;"></span>Studio
+        </button>
       </div>
+
+      <div id="responsibilitiesGrid" class="resp-grid"></div>
     </section>
 
     <!-- Script -->
@@ -1034,6 +1113,53 @@
   </div>
 </div>
 
+<!-- Responsibility Modal -->
+<div class="modal-overlay" id="responsibilityModal" onclick="closeModalOnOverlay(event, 'responsibility')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="responsibilityModalTitle">Add Responsibility</h2>
+      <button class="modal-close" onclick="closeModal('responsibility')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="responsibilityId">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Owner *</label>
+          <select class="form-select" id="responsibilityOwner">
+            <option value="enrollment">Enrollment</option>
+            <option value="studio">Studio</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input type="text" class="form-input" id="responsibilityTitle" placeholder="e.g., Follow-up calls">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <div class="editor-container">
+          <div class="editor-toolbar">
+            <button class="editor-btn" onclick="formatDocIn('responsibilityNotes', 'bold')"><strong>B</strong></button>
+            <button class="editor-btn" onclick="formatDocIn('responsibilityNotes', 'italic')"><em>I</em></button>
+            <button class="editor-btn" onclick="formatDocIn('responsibilityNotes', 'underline')"><u>U</u></button>
+            <button class="editor-btn" onclick="formatDocIn('responsibilityNotes', 'insertUnorderedList')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </button>
+            <button class="editor-btn" onclick="formatDocIn('responsibilityNotes', 'insertOrderedList')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="editor-content" id="responsibilityNotes" contenteditable="true" style="min-height:140px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('responsibility')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveResponsibility()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- Link Modal -->
 <div class="modal-overlay" id="linkModal" onclick="closeModalOnOverlay(event, 'link')">
   <div class="modal">
@@ -1101,7 +1227,7 @@
   // Data
   let announcements = [], promotions = [], teamMembers = [], roles = [];
   let scriptContent = '', whatWeDoContent = '', workflowContent = '', workflowImageUrl = '';
-  let links = [], linkCategories = [];
+  let links = [], linkCategories = [], responsibilities = [];
 
   async function init() {
     sb = window.supabase.createClient(SB_URL, SB_KEY);
@@ -1110,7 +1236,7 @@
 
   async function loadAllData() {
     try {
-      const [annRes, promoRes, teamRes, rolesRes, scriptRes, whatWeDoRes, workflowRes, workflowImgRes, linksRes, linkCatsRes] = await Promise.all([
+      const [annRes, promoRes, teamRes, rolesRes, scriptRes, whatWeDoRes, workflowRes, workflowImgRes, linksRes, linkCatsRes, respRes] = await Promise.all([
         sb.from('announcements').select('*').order('sort_order').order('date', { ascending: false }),
         sb.from('promotions').select('*').order('sort_order').order('start_date', { ascending: false }),
         sb.from('team_members').select('*').order('sort_order'),
@@ -1121,6 +1247,7 @@
         sb.from('content_blocks').select('*').eq('slug', 'workflow_image').single(),
         sb.from('links').select('*').order('sort_order').order('created_at'),
         sb.from('link_categories').select('*').order('sort_order').order('created_at'),
+        sb.from('responsibilities').select('*').order('sort_order').order('created_at'),
       ]);
 
       announcements   = annRes.data || [];
@@ -1133,6 +1260,7 @@
       workflowImageUrl = workflowImgRes.data?.content || '';
       links           = linksRes.data || [];
       linkCategories  = linkCatsRes.data || [];
+      responsibilities = respRes.data || [];
 
       renderAll();
     } catch (e) { console.error('Load error:', e); toast('Error loading data', 'error'); }
@@ -1143,6 +1271,7 @@
     renderPromotions();
     renderTeam();
     renderRoles();
+    renderResponsibilities();
     renderLinksSection();
     document.getElementById('scriptEditor').innerHTML = scriptContent;
     document.getElementById('whatWeDoEditor').innerHTML = whatWeDoContent;
@@ -1256,6 +1385,92 @@
   }
 
   function resetRoleForm() { document.getElementById('roleId').value = ''; document.getElementById('roleName').value = ''; document.getElementById('roleColor').value = '#F97B5F'; document.getElementById('roleColorText').value = '#F97B5F'; document.getElementById('roleFeatured').checked = false; document.getElementById('rolePreviewBadge').textContent = 'Role Name'; document.getElementById('rolePreviewBadge').style.background = 'rgba(249,123,95,0.1)'; document.getElementById('rolePreviewBadge').style.color = '#F97B5F'; document.getElementById('roleModalTitle').textContent = 'Add Role'; }
+
+  // ── RESPONSIBILITIES ──
+  let activeRespTab = 'all';
+
+  function switchRespTab(tab, btn) {
+    activeRespTab = tab;
+    document.querySelectorAll('.resp-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderResponsibilities();
+  }
+
+  function renderResponsibilities() {
+    const grid = document.getElementById('responsibilitiesGrid');
+    const filtered = activeRespTab === 'all' ? responsibilities : responsibilities.filter(r => r.owner === activeRespTab);
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+        <div class="empty-state-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg>
+        </div>
+        <h3>No responsibilities</h3>
+        <p>${activeRespTab === 'all' ? 'Add your first responsibility.' : `No ${activeRespTab} responsibilities yet.`}</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(r => `
+      <div class="resp-card">
+        <div class="resp-card-header">
+          <div class="resp-card-title-row">
+            <span class="resp-owner-badge ${r.owner}">${r.owner === 'enrollment' ? 'Enrollment' : 'Studio'}</span>
+            <span class="resp-card-title">${esc(r.title)}</span>
+          </div>
+          <div class="resp-card-actions">
+            <button class="action-btn" onclick="editResponsibility('${r.id}')" title="Edit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+            </button>
+            <button class="action-btn delete" onclick="deleteItem('responsibility','${r.id}')" title="Delete">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
+            </button>
+          </div>
+        </div>
+        <div class="resp-card-body">${r.notes || ''}</div>
+      </div>`).join('');
+  }
+
+  function editResponsibility(id) {
+    const r = responsibilities.find(x => x.id === id);
+    if (!r) return;
+    document.getElementById('responsibilityId').value = r.id;
+    document.getElementById('responsibilityOwner').value = r.owner || 'enrollment';
+    document.getElementById('responsibilityTitle').value = r.title || '';
+    document.getElementById('responsibilityNotes').innerHTML = r.notes || '';
+    document.getElementById('responsibilityModalTitle').textContent = 'Edit Responsibility';
+    openModal('responsibility');
+  }
+
+  async function saveResponsibility() {
+    const id = document.getElementById('responsibilityId').value;
+    const data = {
+      owner: document.getElementById('responsibilityOwner').value,
+      title: document.getElementById('responsibilityTitle').value.trim(),
+      notes: document.getElementById('responsibilityNotes').innerHTML.trim(),
+    };
+    if (!data.title) { toast('Title required', 'error'); return; }
+    try {
+      if (id) {
+        await sb.from('responsibilities').update(data).eq('id', id);
+      } else {
+        data.sort_order = responsibilities.length;
+        await sb.from('responsibilities').insert(data);
+      }
+      await loadAllData();
+      closeModal('responsibility');
+      resetResponsibilityForm();
+      toast('Saved!', 'success');
+    } catch (e) { console.error(e); toast('Error saving', 'error'); }
+  }
+
+  function resetResponsibilityForm() {
+    document.getElementById('responsibilityId').value = '';
+    document.getElementById('responsibilityOwner').value = 'enrollment';
+    document.getElementById('responsibilityTitle').value = '';
+    document.getElementById('responsibilityNotes').innerHTML = '';
+    document.getElementById('responsibilityModalTitle').textContent = 'Add Responsibility';
+  }
 
   // ── LINKS ──
   function renderLinksSection() {
@@ -1464,7 +1679,7 @@
   // ── DELETE ──
   function deleteItem(type, id) {
     document.getElementById('deleteMessage').textContent = 'Are you sure you want to delete this? This cannot be undone.';
-    const tables = { announcement: 'announcements', promotion: 'promotions', team: 'team_members', role: 'roles', link: 'links' };
+    const tables = { announcement: 'announcements', promotion: 'promotions', team: 'team_members', role: 'roles', link: 'links', responsibility: 'responsibilities' };
     deleteCallback = async () => {
       try { await sb.from(tables[type]).delete().eq('id', id); await loadAllData(); toast('Deleted', 'success'); }
       catch (e) { console.error(e); toast('Error', 'error'); }
@@ -1489,6 +1704,7 @@
     if (type === 'team') resetTeamForm();
     if (type === 'role') resetRoleForm();
     if (type === 'link') resetLinkForm();
+    if (type === 'responsibility') resetResponsibilityForm();
   }
 
   function closeModalOnOverlay(e, type) { if (e.target === e.currentTarget) closeModal(type); }

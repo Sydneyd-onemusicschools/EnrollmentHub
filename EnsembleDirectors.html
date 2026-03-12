@@ -61,67 +61,32 @@
       justify-content: space-between;
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
 
     .logo {
-      width: 42px;
-      height: 42px;
+      width: 42px; height: 42px;
       background: var(--gradient-hero);
       border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 16px;
     }
 
-    .header-title h1 {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--color-text);
-    }
+    .header-title h1 { font-size: 18px; font-weight: 700; color: var(--color-text); }
+    .header-title p { font-size: 13px; color: var(--color-text-muted); }
 
-    .header-title p {
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+    .header-right { display: flex; align-items: center; gap: 16px; }
 
     .header-date {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
       padding: 10px 16px;
-      background: var(--color-bg);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text);
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; color: var(--color-text);
     }
 
-    .header-date svg {
-      width: 16px;
-      height: 16px;
-      color: var(--color-coral);
-    }
+    .header-date svg { width: 16px; height: 16px; color: var(--color-coral); }
 
-    /* Main Content */
-    .main {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 32px;
-    }
+    /* Main */
+    .main { max-width: 1400px; margin: 0 auto; padding: 32px; }
 
     /* Stat Cards */
     .stat-cards {
@@ -145,86 +110,43 @@
 
     .stat-card::before {
       content: '';
-      position: absolute;
-      top: -30%;
-      right: -10%;
-      width: 150px;
-      height: 150px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
+      position: absolute; top: -30%; right: -10%;
+      width: 150px; height: 150px;
+      background: rgba(255,255,255,0.1); border-radius: 50%;
     }
 
     .stat-card::after {
       content: '';
-      position: absolute;
-      bottom: -20%;
-      right: 20%;
-      width: 80px;
-      height: 80px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
+      position: absolute; bottom: -20%; right: 20%;
+      width: 80px; height: 80px;
+      background: rgba(255,255,255,0.08); border-radius: 50%;
     }
 
-    .stat-card.coral {
-      background: var(--gradient-coral);
-    }
-
-    .stat-card.salmon {
-      background: var(--gradient-salmon);
-    }
+    .stat-card.coral { background: var(--gradient-coral); }
+    .stat-card.salmon { background: var(--gradient-salmon); }
 
     .stat-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      position: relative;
-      z-index: 1;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      position: relative; z-index: 1;
     }
 
-    .stat-card-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      opacity: 0.9;
-    }
+    .stat-card-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; }
 
     .stat-card-icon {
-      width: 44px;
-      height: 44px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 44px; height: 44px;
+      background: rgba(255,255,255,0.2); border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
     }
 
-    .stat-card-icon svg {
-      width: 22px;
-      height: 22px;
-    }
+    .stat-card-icon svg { width: 22px; height: 22px; }
 
-    .stat-card-content {
-      position: relative;
-      z-index: 1;
-    }
+    .stat-card-content { position: relative; z-index: 1; }
 
-    .stat-card-value {
-      font-size: 42px;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 4px;
-    }
+    .stat-card-value { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 4px; }
 
-    .stat-card-subtitle {
-      font-size: 13px;
-      opacity: 0.85;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+    .stat-card-subtitle { font-size: 13px; opacity: 0.85; display: flex; align-items: center; gap: 4px; }
 
-    /* Tab Navigation */
+    /* Tab Container */
     .tab-container {
       background: var(--color-white);
       border-radius: var(--radius-lg);
@@ -242,50 +164,31 @@
 
     .tab-btn {
       padding: 16px 24px;
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 14px; font-weight: 500;
       color: var(--color-text-muted);
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      white-space: nowrap;
-      transition: color 0.2s ease;
+      background: transparent; border: none;
+      cursor: pointer; position: relative;
+      white-space: nowrap; transition: color 0.2s ease;
     }
 
-    .tab-btn:hover {
-      color: var(--color-coral);
-    }
+    .tab-btn:hover { color: var(--color-coral); }
 
-    .tab-btn.active {
-      color: var(--color-coral);
-      font-weight: 600;
-    }
+    .tab-btn.active { color: var(--color-coral); font-weight: 600; }
 
     .tab-btn.active::after {
       content: '';
-      position: absolute;
-      bottom: 0;
-      left: 24px;
-      right: 24px;
+      position: absolute; bottom: 0;
+      left: 24px; right: 24px;
       height: 3px;
       background: var(--color-coral);
       border-radius: 3px 3px 0 0;
     }
 
     /* Tab Content */
-    .tab-content {
-      padding: 28px;
-    }
+    .tab-content { padding: 28px; }
 
-    .tab-panel {
-      display: none;
-      animation: fadeIn 0.25s ease;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
+    .tab-panel { display: none; animation: fadeIn 0.25s ease; }
+    .tab-panel.active { display: block; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(8px); }
@@ -293,781 +196,394 @@
     }
 
     /* Section Header */
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
 
     .section-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, rgba(249,123,95,0.1) 0%, rgba(244,114,182,0.1) 100%);
       border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       color: var(--color-coral);
     }
 
-    .section-icon svg {
-      width: 20px;
-      height: 20px;
-    }
+    .section-icon svg { width: 20px; height: 20px; }
 
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--color-text);
-    }
-
-    .section-subtitle {
-      font-size: 13px;
-      color: var(--color-text-muted);
-    }
+    .section-title { font-size: 18px; font-weight: 700; color: var(--color-text); }
+    .section-subtitle { font-size: 13px; color: var(--color-text-muted); }
 
     /* Announcements */
-    .announcement-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .announcement-list { display: flex; flex-direction: column; gap: 16px; }
 
     .announcement-item {
-      display: flex;
-      gap: 20px;
-      padding: 20px;
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      border-left: 4px solid var(--color-coral);
-      transition: all 0.15s ease;
+      display: flex; gap: 20px; padding: 20px;
+      background: var(--color-bg); border-radius: var(--radius-md);
+      border-left: 4px solid var(--color-coral); transition: all 0.15s ease;
     }
 
     .announcement-item:hover {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.05) 0%, rgba(244, 114, 182, 0.05) 100%);
+      background: linear-gradient(135deg, rgba(249,123,95,0.05) 0%, rgba(244,114,182,0.05) 100%);
     }
 
-    .announcement-date {
-      text-align: center;
-      min-width: 55px;
-      flex-shrink: 0;
+    .announcement-date { text-align: center; min-width: 55px; flex-shrink: 0; }
+    .announcement-date .day { font-size: 28px; font-weight: 800; color: var(--color-coral); line-height: 1.1; }
+    .announcement-date .month { font-size: 12px; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; }
+
+    .announcement-content h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
+    .announcement-content p, .announcement-content div { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
+
+    /* Rich Content */
+    .rich-content ul, .rich-content ol,
+    .announcement-content ul, .announcement-content ol,
+    .promo-description ul, .promo-description ol {
+      margin: 10px 0; padding-left: 24px; list-style-position: outside;
     }
 
-    .announcement-date .day {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--color-coral);
-      line-height: 1.1;
-    }
-
-    .announcement-date .month {
-      font-size: 12px;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .announcement-content h4 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--color-text);
-    }
-
-    .announcement-content p,
-    .announcement-content div {
-      font-size: 14px;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-    }
-
-    /* Rich Content Styling (bullets, lists, etc) */
-    .rich-content ul,
-    .rich-content ol,
-    .announcement-content ul,
-    .announcement-content ol,
-    .promo-description ul,
-    .promo-description ol {
-      margin: 10px 0;
-      padding-left: 24px;
-      list-style-position: outside;
-    }
-
-    .rich-content ul,
-    .announcement-content ul,
-    .promo-description ul {
-      list-style-type: disc;
-    }
-
-    .rich-content ol,
-    .announcement-content ol,
-    .promo-description ol {
-      list-style-type: decimal;
-    }
-
-    .rich-content li,
-    .announcement-content li,
-    .promo-description li {
-      margin-bottom: 6px;
-      padding-left: 4px;
-      line-height: 1.6;
-    }
-
-    .rich-content p,
-    .announcement-content > div > p,
-    .promo-description p {
-      margin-bottom: 10px;
-    }
-
-    .rich-content strong,
-    .announcement-content strong,
-    .promo-description strong {
-      font-weight: 600;
-      color: var(--color-text);
-    }
+    .rich-content ul, .announcement-content ul, .promo-description ul { list-style-type: disc; }
+    .rich-content ol, .announcement-content ol, .promo-description ol { list-style-type: decimal; }
+    .rich-content li, .announcement-content li, .promo-description li { margin-bottom: 6px; padding-left: 4px; line-height: 1.6; }
+    .rich-content p, .announcement-content > div > p, .promo-description p { margin-bottom: 10px; }
+    .rich-content strong, .announcement-content strong, .promo-description strong { font-weight: 600; color: var(--color-text); }
 
     /* Promotions */
-    .promo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-    }
+    .promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
 
     .promo-card {
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      border: 1px solid var(--color-border);
+      background: var(--color-bg); border-radius: var(--radius-md);
+      padding: 24px; border: 1px solid var(--color-border);
       transition: all 0.2s ease;
-      cursor: pointer;
     }
 
-    .promo-card:hover {
-      border-color: var(--color-coral);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
+    .promo-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); transform: translateY(-2px); }
 
-    .promo-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
+    .promo-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 
-    .promo-status {
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: capitalize;
-    }
+    .promo-status { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: capitalize; }
+    .promo-status.active { background: rgba(16,185,129,0.1); color: var(--color-success); }
+    .promo-status.upcoming { background: rgba(59,130,246,0.1); color: var(--color-info); }
 
-    .promo-status.active {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--color-success);
-    }
+    .promo-type { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-text-light); font-weight: 600; }
 
-    .promo-status.upcoming {
-      background: rgba(59, 130, 246, 0.1);
-      color: var(--color-info);
-    }
+    .promo-card h4 { font-size: 17px; font-weight: 600; margin-bottom: 10px; color: var(--color-text); }
 
-    .promo-type {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--color-text-light);
-      font-weight: 600;
-    }
+    .promo-dates { font-size: 13px; color: var(--color-text-muted); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+    .promo-dates svg { width: 14px; height: 14px; }
 
-    .promo-card h4 {
-      font-size: 17px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: var(--color-text);
-    }
+    .promo-discount { display: inline-block; background: var(--gradient-hero); color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; }
 
-    .promo-dates {
-      font-size: 13px;
-      color: var(--color-text-muted);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .promo-description { margin-top: 14px; font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
 
-    .promo-dates svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .promo-discount {
-      display: inline-block;
-      background: var(--gradient-hero);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .promo-description {
-      margin-top: 14px;
-      font-size: 14px;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-    }
-
-    /* Promo Tabs */
-    .promo-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
+    .promo-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
 
     .promo-tab-btn {
-      padding: 8px 16px;
-      border: 1px solid var(--color-border);
-      background: var(--color-white);
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
+      padding: 8px 16px; border: 1px solid var(--color-border);
+      background: var(--color-white); border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500; color: var(--color-text-muted);
+      cursor: pointer; transition: all 0.15s ease;
     }
 
-    .promo-tab-btn:hover {
-      border-color: var(--color-coral);
-      color: var(--color-coral);
-    }
+    .promo-tab-btn:hover { border-color: var(--color-coral); color: var(--color-coral); }
+    .promo-tab-btn.active { background: var(--gradient-hero); color: white; border-color: transparent; }
 
-    .promo-tab-btn.active {
-      background: var(--gradient-hero);
-      color: white;
-      border-color: transparent;
-    }
-
-    /* Sub-tabs (within Enrollment Team) */
-    .sub-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
+    /* Sub-tabs */
+    .sub-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
 
     .sub-tab-btn {
-      padding: 10px 20px;
-      border: 1px solid var(--color-border);
-      background: var(--color-white);
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
+      padding: 10px 20px; border: 1px solid var(--color-border);
+      background: var(--color-white); border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 500; color: var(--color-text-muted);
+      cursor: pointer; transition: all 0.15s ease;
     }
 
-    .sub-tab-btn:hover {
-      border-color: var(--color-coral);
-      color: var(--color-coral);
-    }
+    .sub-tab-btn:hover { border-color: var(--color-coral); color: var(--color-coral); }
+    .sub-tab-btn.active { background: var(--gradient-hero); color: white; border-color: transparent; }
 
-    .sub-tab-btn.active {
-      background: var(--gradient-hero);
-      color: white;
-      border-color: transparent;
-    }
+    .sub-panel { display: none; animation: fadeIn 0.25s ease; }
+    .sub-panel.active { display: block; }
 
-    .sub-panel {
-      display: none;
-      animation: fadeIn 0.25s ease;
-    }
-
-    .sub-panel.active {
-      display: block;
-    }
-
-    /* Content Block (for What We Do, Workflow) */
+    /* Content Block */
     .content-block {
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      padding: 32px;
-      font-size: 15px;
-      line-height: 1.8;
+      background: var(--color-bg); border-radius: var(--radius-md);
+      padding: 32px; font-size: 15px; line-height: 1.8;
       border: 1px solid var(--color-border);
     }
 
-    .content-block h2 {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 28px 0 12px;
-      color: var(--color-coral);
-    }
-
+    .content-block h2 { font-size: 20px; font-weight: 700; margin: 28px 0 12px; color: var(--color-coral); }
     .content-block h2:first-child { margin-top: 0; }
-
-    .content-block h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 22px 0 10px;
-      color: var(--color-text);
-    }
-
+    .content-block h3 { font-size: 16px; font-weight: 600; margin: 22px 0 10px; color: var(--color-text); }
     .content-block p { margin-bottom: 14px; }
-
-    .content-block ul, .content-block ol {
-      margin: 14px 0;
-      padding-left: 24px;
-      list-style-position: outside;
-    }
-
+    .content-block ul, .content-block ol { margin: 14px 0; padding-left: 24px; list-style-position: outside; }
     .content-block ul { list-style-type: disc; }
     .content-block ol { list-style-type: decimal; }
     .content-block li { margin-bottom: 8px; }
     .content-block strong { color: var(--color-text); }
 
-    /* Workflow Display */
-    .workflow-notes {
-      margin-bottom: 24px;
-    }
-
-    .workflow-notes:only-child {
-      margin-bottom: 0;
-    }
-
-    .workflow-notes h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 24px 0 12px;
-      color: var(--color-coral);
-    }
-
+    /* Workflow */
+    .workflow-notes { margin-bottom: 24px; }
+    .workflow-notes:only-child { margin-bottom: 0; }
+    .workflow-notes h2 { font-size: 18px; font-weight: 700; margin: 24px 0 12px; color: var(--color-coral); }
     .workflow-notes h2:first-child { margin-top: 0; }
-
-    .workflow-notes h3 {
-      font-size: 15px;
-      font-weight: 600;
-      margin: 18px 0 8px;
-      color: var(--color-text);
-    }
-
+    .workflow-notes h3 { font-size: 15px; font-weight: 600; margin: 18px 0 8px; color: var(--color-text); }
     .workflow-notes p { margin-bottom: 12px; }
-
-    .workflow-notes ul, .workflow-notes ol {
-      margin: 12px 0;
-      padding-left: 24px;
-      list-style-position: outside;
-    }
-
+    .workflow-notes ul, .workflow-notes ol { margin: 12px 0; padding-left: 24px; list-style-position: outside; }
     .workflow-notes ul { list-style-type: disc; }
     .workflow-notes ol { list-style-type: decimal; }
     .workflow-notes li { margin-bottom: 6px; }
     .workflow-notes strong { color: var(--color-text); }
+    .workflow-image { text-align: center; padding-top: 20px; border-top: 1px solid var(--color-border); }
+    .workflow-image img { max-width: 100%; border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
 
-    .workflow-image {
-      text-align: center;
-      padding-top: 20px;
-      border-top: 1px solid var(--color-border);
+    /* Script & Responsibilities */
+    .script-content {
+      background: var(--color-bg); border-radius: var(--radius-md);
+      padding: 32px; font-size: 15px; line-height: 1.8; border: 1px solid var(--color-border);
     }
 
-    .workflow-image img {
-      max-width: 100%;
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-md);
+    .script-content h2 { font-size: 20px; font-weight: 700; margin: 28px 0 12px; color: var(--color-coral); }
+    .script-content h2:first-child { margin-top: 0; }
+    .script-content h3 { font-size: 16px; font-weight: 600; margin: 22px 0 10px; color: var(--color-text); }
+    .script-content p { margin-bottom: 14px; }
+    .script-content ul, .script-content ol { margin: 14px 0; padding-left: 24px; list-style-position: outside; }
+    .script-content ul { list-style-type: disc; }
+    .script-content ol { list-style-type: decimal; }
+    .script-content li { margin-bottom: 8px; }
+    .script-content strong { color: var(--color-text); }
+
+    /* Responsibilities */
+    .resp-filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+
+    .resp-filter-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border: 1px solid var(--color-border);
+      background: var(--color-white); border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500; color: var(--color-text-muted);
+      cursor: pointer; transition: all 0.15s ease;
     }
 
-    /* Policies */
-    .policy-category {
-      margin-bottom: 28px;
-    }
+    .resp-filter-btn:hover { border-color: var(--color-coral); color: var(--color-text); }
+    .resp-filter-btn.active { background: var(--gradient-hero); color: white; border-color: transparent; }
 
-    .policy-category:last-child {
-      margin-bottom: 0;
-    }
+    .resp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-    .policy-category-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--color-text);
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .policy-category-title svg {
-      width: 18px;
-      height: 18px;
-      color: var(--color-coral);
-    }
-
-    .policy-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .policy-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 16px 20px;
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.15s ease;
-    }
-
-    .policy-item:hover {
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.08) 0%, rgba(244, 114, 182, 0.08) 100%);
-    }
-
-    .policy-icon {
-      width: 42px;
-      height: 42px;
-      background: var(--color-white);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-coral);
-      flex-shrink: 0;
-      border: 1px solid var(--color-border);
-    }
-
-    .policy-icon svg { width: 20px; height: 20px; }
-
-    .policy-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .policy-info h4 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--color-text);
-    }
-
-    .policy-info p {
-      font-size: 13px;
-      color: var(--color-text-muted);
-      line-height: 1.5;
-    }
-
-    .policy-arrow {
-      color: var(--color-text-light);
-      flex-shrink: 0;
-    }
-
-    .policy-arrow svg { width: 18px; height: 18px; }
-
-    /* Script Content */
-    .script-content,
-    .responsibilities-content {
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      padding: 32px;
-      font-size: 15px;
-      line-height: 1.8;
-      border: 1px solid var(--color-border);
-    }
-
-    .script-content h2,
-    .responsibilities-content h2 {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 28px 0 12px;
-      color: var(--color-coral);
-    }
-
-    .script-content h2:first-child,
-    .responsibilities-content h2:first-child { margin-top: 0; }
-
-    .script-content h3,
-    .responsibilities-content h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 22px 0 10px;
-      color: var(--color-text);
-    }
-
-    .script-content p,
-    .responsibilities-content p { margin-bottom: 14px; }
-
-    .script-content ul, .script-content ol,
-    .responsibilities-content ul, .responsibilities-content ol {
-      margin: 14px 0;
-      padding-left: 24px;
-      list-style-position: outside;
-    }
-
-    .script-content ul,
-    .responsibilities-content ul {
-      list-style-type: disc;
-    }
-
-    .script-content ol,
-    .responsibilities-content ol {
-      list-style-type: decimal;
-    }
-
-    .script-content li,
-    .responsibilities-content li { margin-bottom: 8px; }
-
-    .script-content strong,
-    .responsibilities-content strong { color: var(--color-text); }
-
-    /* Team */
-    .team-filter {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .team-filter label {
-      font-size: 14px;
-      color: var(--color-text-muted);
-      font-weight: 500;
-    }
-
-    .team-filter select {
-      padding: 10px 16px;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      background: var(--color-white);
-      cursor: pointer;
-      color: var(--color-text);
-    }
-
-    .team-filter select:focus {
-      outline: none;
-      border-color: var(--color-coral);
-    }
-
-    .team-grid {
+    .resp-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
+      gap: 16px;
     }
+
+    .resp-card {
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); overflow: hidden; transition: all 0.15s ease;
+    }
+
+    .resp-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+    .resp-card-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; border-bottom: 1px solid var(--color-border);
+    }
+
+    .resp-owner-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; flex-shrink: 0;
+    }
+
+    .resp-owner-badge.enrollment { background: rgba(249,123,95,0.12); color: var(--color-coral); }
+    .resp-owner-badge.studio { background: rgba(59,130,246,0.12); color: var(--color-info); }
+
+    .resp-card-title { font-size: 14px; font-weight: 600; }
+
+    .resp-card-body {
+      padding: 14px 16px; font-size: 14px; color: var(--color-text-muted);
+      line-height: 1.7;
+    }
+
+    .resp-card-body ul, .resp-card-body ol { padding-left: 20px; margin: 8px 0; }
+    .resp-card-body ul { list-style-type: disc; }
+    .resp-card-body ol { list-style-type: decimal; }
+    .resp-card-body li { margin-bottom: 5px; }
+    .resp-card-body p { margin-bottom: 8px; }
+    .resp-card-body p:last-child { margin-bottom: 0; }
+    .resp-card-body strong { color: var(--color-text); font-weight: 600; }
+
+    /* Team */
+    .team-filter { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .team-filter label { font-size: 14px; color: var(--color-text-muted); font-weight: 500; }
+    .team-filter select {
+      padding: 10px 16px; border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm); font-size: 14px;
+      background: var(--color-white); cursor: pointer; color: var(--color-text);
+    }
+    .team-filter select:focus { outline: none; border-color: var(--color-coral); }
+
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
 
     .team-card {
-      background: var(--color-bg);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); padding: 24px; transition: all 0.2s ease;
+      position: relative; overflow: hidden;
     }
 
-    .team-card:hover {
-      border-color: var(--color-coral);
-      box-shadow: var(--shadow-md);
-    }
+    .team-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); }
 
     .team-card-featured {
       border: 2px solid var(--featured-color, var(--color-coral));
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.03) 0%, rgba(244, 114, 182, 0.03) 100%);
+      background: linear-gradient(135deg, rgba(249,123,95,0.03) 0%, rgba(244,114,182,0.03) 100%);
     }
 
-    .team-card-featured:hover {
-      box-shadow: 0 8px 30px rgba(249, 123, 95, 0.15);
-      transform: translateY(-2px);
-    }
+    .team-card-featured:hover { box-shadow: 0 8px 30px rgba(249,123,95,0.15); transform: translateY(-2px); }
 
     .featured-banner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: var(--color-coral);
-      color: white;
-      font-size: 11px;
-      font-weight: 600;
-      text-align: center;
-      padding: 5px 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      position: absolute; top: 0; left: 0; right: 0;
+      background: var(--color-coral); color: white;
+      font-size: 11px; font-weight: 600; text-align: center;
+      padding: 5px 8px; text-transform: uppercase; letter-spacing: 0.5px;
     }
 
-    .team-card-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
+    .team-card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
 
     .team-avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: var(--color-white);
-      border: 3px solid var(--color-white);
-      flex-shrink: 0;
+      width: 64px; height: 64px; border-radius: 50%;
+      object-fit: cover; background: var(--color-white);
+      border: 3px solid var(--color-white); flex-shrink: 0;
     }
 
-    .team-info {
-      min-width: 0;
-      flex: 1;
-    }
+    .team-info { min-width: 0; flex: 1; }
+    .team-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
+    .team-info .zone { font-size: 12px; color: var(--color-text-muted); margin-top: 6px; }
 
-    .team-info h4 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--color-text);
-    }
+    .role-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
 
-    .team-info .zone {
-      font-size: 12px;
-      color: var(--color-text-muted);
-      margin-top: 6px;
-    }
+    .team-details { display: flex; flex-direction: column; gap: 10px; padding-top: 16px; border-top: 1px solid var(--color-border); }
 
-    .role-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .team-details {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding-top: 16px;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .team-detail {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      color: var(--color-text-muted);
-      min-width: 0;
-    }
-
-    .team-detail svg {
-      width: 16px;
-      height: 16px;
-      color: var(--color-text-light);
-      flex-shrink: 0;
-    }
-
-    .team-detail a {
-      color: var(--color-coral);
-      text-decoration: none;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
+    .team-detail { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--color-text-muted); min-width: 0; }
+    .team-detail svg { width: 16px; height: 16px; color: var(--color-text-light); flex-shrink: 0; }
+    .team-detail a { color: var(--color-coral); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .team-detail a:hover { text-decoration: underline; }
 
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--color-text-muted);
+    /* ── LINKS STYLES ── */
+    .links-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 20px;
+      align-items: start;
     }
 
-    .empty-state-icon {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, rgba(249, 123, 95, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px;
+    .links-cat-sidebar {
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); overflow: hidden; position: sticky; top: 90px;
+    }
+
+    .links-cat-sidebar-header {
+      padding: 12px 14px; border-bottom: 1px solid var(--color-border);
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--color-text-light);
+    }
+
+    .links-cat-list { padding: 6px; }
+
+    .links-cat-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 10px; border-radius: var(--radius-sm);
+      cursor: pointer; transition: all 0.15s ease;
+      font-size: 14px; font-weight: 500; color: var(--color-text-muted); gap: 6px;
+    }
+
+    .links-cat-item:hover { background: var(--color-white); color: var(--color-text); }
+
+    .links-cat-item.active {
+      background: linear-gradient(135deg, rgba(249,123,95,0.1) 0%, rgba(244,114,182,0.1) 100%);
       color: var(--color-coral);
+    }
+
+    .links-cat-item-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .links-cat-count {
+      font-size: 11px; font-weight: 600; padding: 2px 7px;
+      background: var(--color-white); border-radius: 10px;
+      color: var(--color-text-light); flex-shrink: 0;
+    }
+
+    .links-cat-item.active .links-cat-count {
+      background: rgba(249,123,95,0.15); color: var(--color-coral);
+    }
+
+    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+    .link-card {
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); padding: 18px;
+      transition: all 0.15s ease; display: flex; flex-direction: column; gap: 10px;
+      text-decoration: none; color: inherit;
+    }
+
+    .link-card:hover { border-color: var(--color-coral); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+    .link-card-icon {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(249,123,95,0.12) 0%, rgba(244,114,182,0.12) 100%);
+      display: flex; align-items: center; justify-content: center; color: var(--color-coral);
+    }
+
+    .link-card-icon svg { width: 18px; height: 18px; }
+
+    .link-card h4 { font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--color-text); }
+
+    .link-card p { font-size: 13px; color: var(--color-text-muted); line-height: 1.5; flex: 1; }
+
+    .link-card-url {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--color-coral);
+    }
+
+    .link-card-url svg { width: 12px; height: 12px; flex-shrink: 0; }
+    .link-card-url span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .links-panel-header { margin-bottom: 16px; }
+    .links-panel-title { font-size: 15px; font-weight: 600; color: var(--color-text); }
+
+    /* Empty State */
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--color-text-muted); }
+
+    .empty-state-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, rgba(249,123,95,0.1) 0%, rgba(244,114,182,0.1) 100%);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px; color: var(--color-coral);
     }
 
     .empty-state-icon svg { width: 28px; height: 28px; }
-
-    .empty-state h3 {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--color-text);
-      margin-bottom: 6px;
-    }
-
+    .empty-state h3 { font-size: 17px; font-weight: 600; color: var(--color-text); margin-bottom: 6px; }
     .empty-state p { font-size: 14px; }
 
     /* Responsive */
-    @media (max-width: 768px) {
-      .header {
-        padding: 14px 16px;
-      }
+    @media (max-width: 900px) {
+      .links-layout { grid-template-columns: 1fr; }
+      .links-cat-sidebar { position: static; }
+    }
 
+    @media (max-width: 768px) {
+      .header { padding: 14px 16px; }
       .header-title h1 { font-size: 16px; }
       .header-title p { display: none; }
       .header-date span { display: none; }
-
-      .main {
-        padding: 20px 16px;
-      }
-
-      .stat-cards {
-        grid-template-columns: 1fr;
-      }
-
+      .main { padding: 20px 16px; }
+      .stat-cards { grid-template-columns: 1fr; }
       .stat-card-value { font-size: 36px; }
-
-      .tab-nav {
-        padding: 0;
-      }
-
-      .tab-btn {
-        padding: 14px 16px;
-        font-size: 13px;
-      }
-
-      .tab-btn.active::after {
-        left: 16px;
-        right: 16px;
-      }
-
-      .tab-content {
-        padding: 20px;
-      }
-
-      .promo-grid,
-      .team-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .announcement-item {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .announcement-date {
-        text-align: left;
-        display: flex;
-        align-items: baseline;
-        gap: 6px;
-      }
-
-      .announcement-date .day {
-        font-size: 20px;
-      }
+      .tab-nav { padding: 0; }
+      .tab-btn { padding: 14px 16px; font-size: 13px; }
+      .tab-btn.active::after { left: 16px; right: 16px; }
+      .tab-content { padding: 20px; }
+      .promo-grid, .team-grid, .resp-grid, .links-grid { grid-template-columns: 1fr; }
+      .announcement-item { flex-direction: column; gap: 12px; }
+      .announcement-date { text-align: left; display: flex; align-items: baseline; gap: 6px; }
+      .announcement-date .day { font-size: 20px; }
     }
   </style>
 </head>
 <body>
+
   <!-- Header -->
   <header class="header">
     <div class="header-content">
@@ -1092,8 +608,9 @@
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Main -->
   <main class="main">
+
     <!-- Stat Cards -->
     <div class="stat-cards">
       <div class="stat-card coral">
@@ -1135,11 +652,14 @@
         <button class="tab-btn active" onclick="switchTab('announcements', this)">Announcements</button>
         <button class="tab-btn" onclick="switchTab('promotions', this)">Promotions</button>
         <button class="tab-btn" onclick="switchTab('script', this)">Enrollment Script</button>
+        <button class="tab-btn" onclick="switchTab('responsibilities', this)">Responsibilities</button>
         <button class="tab-btn" onclick="switchTab('enrollment-team', this)">Enrollment Team</button>
+        <button class="tab-btn" onclick="switchTab('links', this)">Links</button>
       </nav>
 
       <div class="tab-content">
-        <!-- Announcements Tab -->
+
+        <!-- Announcements -->
         <div id="announcements" class="tab-panel active">
           <div class="section-header">
             <div class="section-icon">
@@ -1155,7 +675,7 @@
           <div class="announcement-list" id="announcementList"></div>
         </div>
 
-        <!-- Promotions Tab -->
+        <!-- Promotions -->
         <div id="promotions" class="tab-panel">
           <div class="section-header">
             <div class="section-icon">
@@ -1178,7 +698,7 @@
           <div class="promo-grid" id="promoGrid"></div>
         </div>
 
-        <!-- Script Tab -->
+        <!-- Script -->
         <div id="script" class="tab-panel">
           <div class="section-header">
             <div class="section-icon">
@@ -1194,7 +714,35 @@
           <div class="script-content" id="scriptContent"></div>
         </div>
 
-        <!-- Enrollment Team Tab -->
+        <!-- Responsibilities -->
+        <div id="responsibilities" class="tab-panel">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 class="section-title">Responsibilities</h2>
+              <p class="section-subtitle">Studio and Enrollment responsibilities</p>
+            </div>
+          </div>
+
+          <div class="resp-filter-tabs">
+            <button class="resp-filter-btn active" onclick="switchRespFilter('all', this)">All</button>
+            <button class="resp-filter-btn" onclick="switchRespFilter('enrollment', this)">
+              <span class="resp-dot" style="background:#F97B5F;"></span>Enrollment
+            </button>
+            <button class="resp-filter-btn" onclick="switchRespFilter('studio', this)">
+              <span class="resp-dot" style="background:#3B82F6;"></span>Studio
+            </button>
+          </div>
+
+          <div class="resp-grid" id="respGrid"></div>
+        </div>
+
+        <!-- Enrollment Team -->
         <div id="enrollment-team" class="tab-panel">
           <div class="section-header">
             <div class="section-icon">
@@ -1211,14 +759,12 @@
             </div>
           </div>
 
-          <!-- Sub-tabs -->
           <div class="sub-tabs">
             <button class="sub-tab-btn active" onclick="switchTeamSubTab('meet', this)">Meet the Team</button>
             <button class="sub-tab-btn" onclick="switchTeamSubTab('whatwedo', this)">What We Do</button>
             <button class="sub-tab-btn" onclick="switchTeamSubTab('workflow', this)">Our Workflow</button>
           </div>
 
-          <!-- Meet the Team Sub-panel -->
           <div id="meet" class="sub-panel active">
             <div class="team-filter">
               <label>Filter by zone:</label>
@@ -1229,39 +775,64 @@
             <div class="team-grid" id="teamGrid"></div>
           </div>
 
-          <!-- What We Do Sub-panel -->
           <div id="whatwedo" class="sub-panel">
             <div class="content-block" id="whatWeDoContent"></div>
           </div>
 
-          <!-- Our Workflow Sub-panel -->
           <div id="workflow" class="sub-panel">
             <div class="content-block" id="workflowContent"></div>
           </div>
         </div>
+
+        <!-- Links -->
+        <div id="links" class="tab-panel">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 class="section-title">Links</h2>
+              <p class="section-subtitle">Useful resources and references</p>
+            </div>
+          </div>
+
+          <div class="links-layout">
+            <!-- Category sidebar -->
+            <div class="links-cat-sidebar">
+              <div class="links-cat-sidebar-header">Categories</div>
+              <div class="links-cat-list" id="linksCatList"></div>
+            </div>
+
+            <!-- Links grid -->
+            <div>
+              <div class="links-panel-header">
+                <div class="links-panel-title" id="linksPanelTitle">All Links</div>
+              </div>
+              <div class="links-grid" id="linksGrid"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </main>
 
   <script>
-    // Supabase Config
     const SB_URL = 'https://kvyvjwepfrqqkvyyutdw.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2eXZqd2VwZnJxcWt2eXl1dGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcyMjgyOTgsImV4cCI6MjA4MjgwNDI5OH0.ZayLxzQCEFENvQ9FwpLm4x2le2Y9kJvSslX8DVRzAh8';
-    
+
     let sb;
     let currentPromoTab = 'all';
+    let activeRespFilter = 'all';
+    let activeLinkCatId = null;
 
-    // Data stores
-    let announcements = [];
-    let promotions = [];
-    let teamMembers = [];
-    let roles = [];
-    let scriptContent = '';
-    let whatWeDoContent = '';
-    let workflowContent = '';
-    let workflowImageUrl = '';
+    let announcements = [], promotions = [], teamMembers = [], roles = [];
+    let scriptContent = '', whatWeDoContent = '', workflowContent = '', workflowImageUrl = '';
+    let responsibilities = [], links = [], linkCategories = [];
 
-    // Initialize
     async function init() {
       sb = window.supabase.createClient(SB_URL, SB_KEY);
       setCurrentDate();
@@ -1270,13 +841,12 @@
 
     function setCurrentDate() {
       const now = new Date();
-      const options = { month: 'short', day: 'numeric', year: 'numeric' };
-      document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+      document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
     async function loadAllData() {
       try {
-        const [annRes, promoRes, teamRes, rolesRes, scriptRes, whatWeDoRes, workflowRes, workflowImgRes] = await Promise.all([
+        const [annRes, promoRes, teamRes, rolesRes, scriptRes, whatWeDoRes, workflowRes, workflowImgRes, respRes, linksRes, linkCatsRes] = await Promise.all([
           sb.from('announcements').select('*').eq('is_active', true).order('sort_order').order('date', { ascending: false }),
           sb.from('promotions').select('*').order('sort_order').order('start_date', { ascending: false }),
           sb.from('team_members').select('*').order('sort_order'),
@@ -1284,68 +854,57 @@
           sb.from('content_blocks').select('*').eq('slug', 'enrollment_script').single(),
           sb.from('content_blocks').select('*').eq('slug', 'what_we_do').single(),
           sb.from('content_blocks').select('*').eq('slug', 'workflow').single(),
-          sb.from('content_blocks').select('*').eq('slug', 'workflow_image').single()
+          sb.from('content_blocks').select('*').eq('slug', 'workflow_image').single(),
+          sb.from('responsibilities').select('*').order('sort_order').order('created_at'),
+          sb.from('links').select('*').order('sort_order').order('created_at'),
+          sb.from('link_categories').select('*').order('sort_order').order('created_at'),
         ]);
 
-        announcements = annRes.data || [];
-        promotions = promoRes.data || [];
-        teamMembers = teamRes.data || [];
-        roles = rolesRes.data || [];
-        scriptContent = scriptRes.data?.content || '';
-        whatWeDoContent = whatWeDoRes.data?.content || '';
-        workflowContent = workflowRes.data?.content || '';
+        announcements    = annRes.data || [];
+        promotions       = promoRes.data || [];
+        teamMembers      = teamRes.data || [];
+        roles            = rolesRes.data || [];
+        scriptContent    = scriptRes.data?.content || '';
+        whatWeDoContent  = whatWeDoRes.data?.content || '';
+        workflowContent  = workflowRes.data?.content || '';
         workflowImageUrl = workflowImgRes.data?.content || '';
+        responsibilities = respRes.data || [];
+        links            = linksRes.data || [];
+        linkCategories   = linkCatsRes.data || [];
 
         renderAll();
-      } catch (e) {
-        console.error('Load error:', e);
-      }
+      } catch (e) { console.error('Load error:', e); }
     }
 
     function renderAll() {
       updateStats();
       renderAnnouncements();
       renderPromotions();
+      renderResponsibilities();
       renderTeam();
       renderZoneFilter();
-      document.getElementById('scriptContent').innerHTML = scriptContent || '<p style="color: var(--color-text-muted);">No script content available.</p>';
-      document.getElementById('whatWeDoContent').innerHTML = whatWeDoContent || '<p style="color: var(--color-text-muted);">No content available yet.</p>';
-      
-      // Workflow - text above, image below
+      renderLinksSection();
+
+      document.getElementById('scriptContent').innerHTML = scriptContent || '<p style="color:var(--color-text-muted);">No script content available.</p>';
+      document.getElementById('whatWeDoContent').innerHTML = whatWeDoContent || '<p style="color:var(--color-text-muted);">No content available yet.</p>';
+
       let workflowHtml = '';
-      if (workflowContent) {
-        workflowHtml += `<div class="workflow-notes">${workflowContent}</div>`;
-      }
-      if (workflowImageUrl) {
-        workflowHtml += `<div class="workflow-image"><img src="${workflowImageUrl}" alt="Workflow diagram"></div>`;
-      }
-      if (!workflowHtml) {
-        workflowHtml = '<p style="color: var(--color-text-muted);">No workflow content available yet.</p>';
-      }
+      if (workflowContent) workflowHtml += `<div class="workflow-notes">${workflowContent}</div>`;
+      if (workflowImageUrl) workflowHtml += `<div class="workflow-image"><img src="${workflowImageUrl}" alt="Workflow diagram"></div>`;
+      if (!workflowHtml) workflowHtml = '<p style="color:var(--color-text-muted);">No workflow content available yet.</p>';
       document.getElementById('workflowContent').innerHTML = workflowHtml;
     }
 
-    // Utility functions
-    function esc(str) {
-      if (!str) return '';
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+    function esc(str) { if (!str) return ''; const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
 
-    function formatDate(dateStr, format = 'short') {
+    function formatDate(dateStr) {
       if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      if (format === 'short') {
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      }
-      return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
     function getPromoStatus(promo) {
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
-      if (!promo.start_date) return 'active'; // No start date = always active
+      const now = new Date(); now.setHours(0,0,0,0);
+      if (!promo.start_date) return 'active';
       const start = new Date(promo.start_date);
       const end = promo.end_date ? new Date(promo.end_date) : null;
       if (start > now) return 'upcoming';
@@ -1353,14 +912,12 @@
       return 'active';
     }
 
-    // Stats
     function updateStats() {
-      const activePromos = promotions.filter(p => getPromoStatus(p) === 'active' && p.type === 'promo').length;
-      document.getElementById('activePromoCount').textContent = activePromos;
+      document.getElementById('activePromoCount').textContent = promotions.filter(p => getPromoStatus(p) === 'active').length;
       document.getElementById('announcementCount').textContent = announcements.length;
     }
 
-    // Tab switching
+    // ── TABS ──
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -1368,7 +925,6 @@
       document.getElementById(tabId).classList.add('active');
     }
 
-    // Sub-tab switching (within Enrollment Team)
     function switchTeamSubTab(subTabId, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
@@ -1376,43 +932,29 @@
       document.getElementById(subTabId).classList.add('active');
     }
 
-    // Announcements
+    // ── ANNOUNCEMENTS ──
     function renderAnnouncements() {
       const container = document.getElementById('announcementList');
-
       if (!announcements.length) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path>
-              </svg>
-            </div>
-            <h3>No announcements yet</h3>
-            <p>Check back soon for updates</p>
-          </div>
-        `;
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 4H5a2 2 0 00-2 2v14l4-4h12a2 2 0 002-2V6a2 2 0 00-2-2z"></path></svg></div><h3>No announcements yet</h3><p>Check back soon for updates</p></div>`;
         return;
       }
-
       container.innerHTML = announcements.map(a => {
         const date = new Date(a.date);
-        return `
-          <div class="announcement-item">
-            <div class="announcement-date">
-              <div class="day">${date.getDate()}</div>
-              <div class="month">${date.toLocaleString('en', { month: 'short' })}</div>
-            </div>
-            <div class="announcement-content">
-              <h4>${esc(a.title)}</h4>
-              <div>${a.content || ''}</div>
-            </div>
+        return `<div class="announcement-item">
+          <div class="announcement-date">
+            <div class="day">${date.getDate()}</div>
+            <div class="month">${date.toLocaleString('en', { month: 'short' })}</div>
           </div>
-        `;
+          <div class="announcement-content">
+            <h4>${esc(a.title)}</h4>
+            <div>${a.content || ''}</div>
+          </div>
+        </div>`;
       }).join('');
     }
 
-    // Promotions
+    // ── PROMOTIONS ──
     function switchPromoTab(tab, btn) {
       currentPromoTab = tab;
       document.querySelectorAll('.promo-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1422,182 +964,64 @@
 
     function renderPromotions() {
       const container = document.getElementById('promoGrid');
-      
-      // Only show active and upcoming promotions (not expired)
-      const activePromos = promotions.filter(p => {
-        const status = getPromoStatus(p);
-        return status === 'active' || status === 'upcoming';
-      });
-      
-      // Filter by type if not "all"
-      const filtered = currentPromoTab === 'all' 
-        ? activePromos 
-        : activePromos.filter(p => p.type === currentPromoTab);
+      const active = promotions.filter(p => { const s = getPromoStatus(p); return s === 'active' || s === 'upcoming'; });
+      const filtered = currentPromoTab === 'all' ? active : active.filter(p => p.type === currentPromoTab);
 
       if (!filtered.length) {
-        const messages = {
-          all: 'No promotions or discounts available',
-          promo: 'No promos available right now',
-          discount: 'No discounts available right now'
-        };
-        container.innerHTML = `
-          <div class="empty-state" style="grid-column: 1 / -1;">
-            <div class="empty-state-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                <path d="M2 17l10 5 10-5"></path>
-                <path d="M2 12l10 5 10-5"></path>
-              </svg>
-            </div>
-            <h3>${messages[currentPromoTab]}</h3>
-            <p>Check back soon for updates</p>
-          </div>
-        `;
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path></svg></div><h3>No promotions available</h3><p>Check back soon for updates</p></div>`;
         return;
       }
 
       container.innerHTML = filtered.map(p => {
         const status = getPromoStatus(p);
-        return `
-          <div class="promo-card">
-            <div class="promo-card-header">
-              <span class="promo-status ${status}">${status}</span>
-              <span class="promo-type">${esc(p.type)}</span>
-            </div>
-            <h4>${esc(p.title)}</h4>
-            ${p.start_date || p.end_date ? `
-            <div class="promo-dates">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              ${p.start_date ? formatDate(p.start_date) : 'Now'} - ${p.end_date ? formatDate(p.end_date) : 'Ongoing'}
-            </div>
-            ` : ''}
-            ${p.discount_label ? `<div class="promo-discount">${esc(p.discount_label)}</div>` : ''}
-            ${p.description ? `<div class="promo-description">${p.description}</div>` : ''}
+        return `<div class="promo-card">
+          <div class="promo-card-header">
+            <span class="promo-status ${status}">${status}</span>
+            <span class="promo-type">${esc(p.type)}</span>
           </div>
-        `;
+          <h4>${esc(p.title)}</h4>
+          ${p.start_date || p.end_date ? `<div class="promo-dates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>${p.start_date ? formatDate(p.start_date) : 'Now'} – ${p.end_date ? formatDate(p.end_date) : 'Ongoing'}</div>` : ''}
+          ${p.discount_label ? `<div class="promo-discount">${esc(p.discount_label)}</div>` : ''}
+          ${p.description ? `<div class="promo-description">${p.description}</div>` : ''}
+        </div>`;
       }).join('');
     }
 
-    // Policies
-    function renderPolicies() {
-      const container = document.getElementById('policiesContainer');
+    // ── RESPONSIBILITIES ──
+    function switchRespFilter(filter, btn) {
+      activeRespFilter = filter;
+      document.querySelectorAll('.resp-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderResponsibilities();
+    }
 
-      if (!policies.length) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-            </div>
-            <h3>No policies yet</h3>
-            <p>Policy documents will appear here</p>
-          </div>
-        `;
+    function renderResponsibilities() {
+      const grid = document.getElementById('respGrid');
+      const filtered = activeRespFilter === 'all' ? responsibilities : responsibilities.filter(r => r.owner === activeRespFilter);
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg></div><h3>No responsibilities yet</h3><p>${activeRespFilter === 'all' ? '' : `No ${activeRespFilter} responsibilities added yet.`}</p></div>`;
         return;
       }
 
-      // Group by category
-      const grouped = {};
-      const uncategorized = [];
-
-      policies.forEach(p => {
-        if (p.category_id) {
-          const cat = categories.find(c => c.id === p.category_id);
-          const catName = cat ? cat.name : 'Other';
-          if (!grouped[catName]) grouped[catName] = [];
-          grouped[catName].push(p);
-        } else {
-          uncategorized.push(p);
-        }
-      });
-
-      let html = '';
-
-      Object.entries(grouped).forEach(([catName, items]) => {
-        html += `
-          <div class="policy-category">
-            <div class="policy-category-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path>
-              </svg>
-              ${esc(catName)}
-            </div>
-            <div class="policy-list">
-              ${items.map(p => renderPolicyItem(p)).join('')}
-            </div>
+      grid.innerHTML = filtered.map(r => `
+        <div class="resp-card">
+          <div class="resp-card-header">
+            <span class="resp-owner-badge ${r.owner}">${r.owner === 'enrollment' ? 'Enrollment' : 'Studio'}</span>
+            <span class="resp-card-title">${esc(r.title)}</span>
           </div>
-        `;
-      });
-
-      if (uncategorized.length) {
-        html += `
-          <div class="policy-category">
-            <div class="policy-category-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-              General
-            </div>
-            <div class="policy-list">
-              ${uncategorized.map(p => renderPolicyItem(p)).join('')}
-            </div>
-          </div>
-        `;
-      }
-
-      container.innerHTML = html;
+          <div class="resp-card-body">${r.notes || ''}</div>
+        </div>`).join('');
     }
 
-    function renderPolicyItem(policy) {
-      const hasUrl = policy.url && policy.url.trim();
-      const tag = hasUrl ? 'a' : 'div';
-      const href = hasUrl ? `href="${esc(policy.url)}" target="_blank"` : '';
-      
-      return `
-        <${tag} ${href} class="policy-item">
-          <div class="policy-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-            </svg>
-          </div>
-          <div class="policy-info">
-            <h4>${esc(policy.title)}</h4>
-            ${policy.description ? `<p>${policy.description}</p>` : ''}
-          </div>
-          ${hasUrl ? `
-            <div class="policy-arrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </div>
-          ` : ''}
-        </${tag}>
-      `;
-    }
-
-    // Team
+    // ── TEAM ──
     function renderZoneFilter() {
       const select = document.getElementById('zoneFilter');
       const zones = [...new Set(teamMembers.map(t => t.zone).filter(Boolean))];
-      
-      select.innerHTML = '<option value="all">All Zones</option>' + 
-        zones.map(z => `<option value="${esc(z)}">${esc(z)}</option>`).join('');
+      select.innerHTML = '<option value="all">All Zones</option>' + zones.map(z => `<option value="${esc(z)}">${esc(z)}</option>`).join('');
     }
 
-    function filterTeam() {
-      renderTeam();
-    }
+    function filterTeam() { renderTeam(); }
 
     function renderTeam() {
       const container = document.getElementById('teamGrid');
@@ -1605,27 +1029,15 @@
       const filtered = filter === 'all' ? teamMembers : teamMembers.filter(t => t.zone === filter);
 
       if (!filtered.length) {
-        container.innerHTML = `
-          <div class="empty-state" style="grid-column: 1 / -1;">
-            <div class="empty-state-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <h3>No team members found</h3>
-            <p>${filter === 'all' ? 'Team directory is empty' : 'No team members in this zone'}</p>
-          </div>
-        `;
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div><h3>No team members found</h3><p>${filter === 'all' ? 'Team directory is empty' : 'No team members in this zone'}</p></div>`;
         return;
       }
 
-      // Sort featured first
       const sorted = [...filtered].sort((a, b) => {
-        const roleA = roles.find(r => r.id === a.role_id);
-        const roleB = roles.find(r => r.id === b.role_id);
-        if (roleA?.is_featured && !roleB?.is_featured) return -1;
-        if (!roleA?.is_featured && roleB?.is_featured) return 1;
+        const rA = roles.find(r => r.id === a.role_id);
+        const rB = roles.find(r => r.id === b.role_id);
+        if (rA?.is_featured && !rB?.is_featured) return -1;
+        if (!rA?.is_featured && rB?.is_featured) return 1;
         return 0;
       });
 
@@ -1633,41 +1045,94 @@
         const role = roles.find(r => r.id === t.role_id);
         const roleName = role ? role.name : (t.role || 'Team Member');
         const roleColor = role ? role.color : '#64748B';
-        const isFeatured = role ? role.is_featured : false;
-        
-        return `
-        <div class="team-card ${isFeatured ? 'team-card-featured' : ''}" ${isFeatured ? `style="--featured-color: ${roleColor}"` : ''}>
-          ${isFeatured ? `<div class="featured-banner" style="background: ${roleColor}">★ ${esc(roleName)}</div>` : ''}
-          <div class="team-card-header" ${isFeatured ? 'style="margin-top: 20px;"' : ''}>
+        const isFeatured = role?.is_featured || false;
+        return `<div class="team-card ${isFeatured ? 'team-card-featured' : ''}" ${isFeatured ? `style="--featured-color:${roleColor}"` : ''}>
+          ${isFeatured ? `<div class="featured-banner" style="background:${roleColor}">★ ${esc(roleName)}</div>` : ''}
+          <div class="team-card-header" ${isFeatured ? 'style="margin-top:20px;"' : ''}>
             <img src="${esc(t.avatar_url) || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'}" class="team-avatar" alt="${esc(t.first_name)}">
             <div class="team-info">
               <h4>${esc(t.first_name)} ${esc(t.last_name)}</h4>
-              <span class="role-badge" style="background: ${roleColor}15; color: ${roleColor};">${esc(roleName)}</span>
+              <span class="role-badge" style="background:${roleColor}15;color:${roleColor};">${esc(roleName)}</span>
               ${t.zone ? `<div class="zone">${esc(t.zone)}</div>` : ''}
             </div>
           </div>
           <div class="team-details">
             <div class="team-detail">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"></path>
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"></path></svg>
               <a href="mailto:${esc(t.email)}">${esc(t.email)}</a>
             </div>
-            ${t.phone_extension ? `
-              <div class="team-detail">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
-                </svg>
-                Ext. ${esc(t.phone_extension)}
-              </div>
-            ` : ''}
+            ${t.phone_extension ? `<div class="team-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path></svg>Ext. ${esc(t.phone_extension)}</div>` : ''}
           </div>
-        </div>
-      `}).join('');
+        </div>`;
+      }).join('');
     }
 
-    // Initialize on load
+    // ── LINKS ──
+    function renderLinksSection() {
+      renderLinksCatSidebar();
+      renderLinksGrid();
+    }
+
+    function renderLinksCatSidebar() {
+      const container = document.getElementById('linksCatList');
+      const allCount = links.length;
+
+      let html = `<div class="links-cat-item ${activeLinkCatId === null ? 'active' : ''}" onclick="setActiveLinkCat(null)">
+        <span class="links-cat-item-label">All Links</span>
+        <span class="links-cat-count">${allCount}</span>
+      </div>`;
+
+      linkCategories.forEach(cat => {
+        const count = links.filter(l => l.category_id === cat.id).length;
+        html += `<div class="links-cat-item ${activeLinkCatId === cat.id ? 'active' : ''}" onclick="setActiveLinkCat('${cat.id}')">
+          <span class="links-cat-item-label">${esc(cat.name)}</span>
+          <span class="links-cat-count">${count}</span>
+        </div>`;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderLinksGrid() {
+      const grid = document.getElementById('linksGrid');
+      const title = document.getElementById('linksPanelTitle');
+
+      let filtered;
+      if (activeLinkCatId === null) {
+        filtered = links;
+        title.textContent = 'All Links';
+      } else {
+        filtered = links.filter(l => l.category_id === activeLinkCatId);
+        const cat = linkCategories.find(c => c.id === activeLinkCatId);
+        title.textContent = cat ? cat.name : 'Links';
+      }
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path></svg></div><h3>No links here</h3><p>${activeLinkCatId ? 'No links in this category yet.' : 'No links have been added yet.'}</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(link => {
+        const displayUrl = link.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        return `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"></path></svg>
+          </div>
+          <h4>${esc(link.title)}</h4>
+          ${link.description ? `<p>${esc(link.description)}</p>` : ''}
+          <div class="link-card-url">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>${esc(displayUrl)}</span>
+          </div>
+        </a>`;
+      }).join('');
+    }
+
+    function setActiveLinkCat(id) {
+      activeLinkCatId = id;
+      renderLinksSection();
+    }
+
     document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
